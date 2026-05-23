@@ -57,7 +57,7 @@ function PickupForm() {
     if (form.phone.length !== 10) return showToast("error", "Enter 10-digit mobile number");
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/forgot-password", { mobile: form.phone });
+      const { data } = await API.post("/auth/forgot-password", { mobile: form.phone, name: form.name });
       if (data.success) {
         setOtpSent(true);
         showToast("success", "OTP sent to your mobile!");
