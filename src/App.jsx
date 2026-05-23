@@ -13,7 +13,7 @@ import FranchiseDashboard from "./pages/FranchiseDashboard";
 import TermsConditions from "./pages/TermsConditions";
 import MyPickups from "./pages/MyPickups";
 import Profile from "./pages/Profile";
-import AdminLogin from "./pages/Adminlogin";
+import AdminLogin from "./pages/AdminLogin";
 import FranchiseLogin from "./pages/FranchiseLogin";
 import CollectorLogin from "./pages/CollectorLogin";
 import CollectorRegister from "./pages/CollectorRegister";
