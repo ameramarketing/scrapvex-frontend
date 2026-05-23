@@ -52,13 +52,20 @@ function ForgotPassword() {
     }
   };
 
-  const handleVerifyOTP = (e) => {
+  const handleVerifyOTP = async (e) => {
     e.preventDefault();
-    if (otp === "1234") {
-      setStep(3);
-      showToast("success", "OTP Verified!");
-    } else {
-      showToast("error", "Invalid OTP. Use 1234 for testing.");
+    if (otp.length !== 4) return showToast("error", "Enter 4 digit OTP");
+    setLoading(true);
+    try {
+      const { data } = await API.post("/auth/verify-otp", { mobile, otp });
+      if (data.success) {
+        setStep(3);
+        showToast("success", "OTP Verified!");
+      }
+    } catch (error) {
+      showToast("error", error.response?.data?.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +76,7 @@ function ForgotPassword() {
 
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/reset-password", { mobile, role, newPassword });
+      const { data } = await API.post("/auth/reset-password", { mobile, otp, role, newPassword });
       if (data.success) {
         showToast("success", "Password Reset Successfully!");
         setTimeout(() => {
@@ -139,8 +146,10 @@ function ForgotPassword() {
                   required 
                 />
               </div>
-              <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", marginTop: "10px" }}>Use 1234 for testing</p>
-              <button type="submit" style={{...btn, background: "var(--primary)"}}>Verify & Continue <FaArrowRight /></button>
+              <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", marginTop: "10px" }}>OTP has been sent to your mobile number</p>
+              <button type="submit" style={{...btn, background: "var(--primary)"}} disabled={loading}>
+                {loading ? <FaSpinner className="spin" /> : <>Verify & Continue <FaArrowRight /></>}
+              </button>
             </form>
           )}
 
