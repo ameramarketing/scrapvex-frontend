@@ -36,7 +36,7 @@ function PickupForm() {
     API.get("/settings").then(({ data }) => {
       if (data.success) setSettings(data.data);
     });
-    API.get("/pickups/active-cities").then(({ data }) => {
+    API.get("/scrap-items/cities").then(({ data }) => {
       if (data.success) setActiveCities(data.cities || []);
     });
   }, []);
@@ -52,17 +52,37 @@ function PickupForm() {
     }
   }, [form.city]);
 
-  const sendOtp = () => {
+  const sendOtp = async () => {
     if (!form.name.trim()) return showToast("error", "Enter your name");
     if (form.phone.length !== 10) return showToast("error", "Enter 10-digit mobile number");
     setLoading(true);
-    setTimeout(() => { setLoading(false); setOtpSent(true); showToast("info", "Demo OTP: 1234"); }, 800);
+    try {
+      const { data } = await API.post("/auth/forgot-password", { mobile: form.phone });
+      if (data.success) {
+        setOtpSent(true);
+        showToast("success", "OTP sent to your mobile!");
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Failed to send OTP. Check number.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const verifyOtp = () => {
-    if (form.otp !== "1234") return showToast("error", "Invalid OTP");
+  const verifyOtp = async () => {
+    if (form.otp.length !== 4) return showToast("error", "Enter 4 digit OTP");
     setLoading(true);
-    setTimeout(() => { showToast("success", "Verified! ✨"); setStep(2); setLoading(false); }, 500);
+    try {
+      const { data } = await API.post("/auth/verify-otp", { mobile: form.phone, otp: form.otp });
+      if (data.success) {
+        showToast("success", "Verified! ✨");
+        setStep(2);
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getLiveLocation = () => {
@@ -187,7 +207,7 @@ function PickupForm() {
               </button>
             ) : (
               <>
-                <Input icon={<FaLock />} placeholder="Enter 1234 (Demo)" value={form.otp} onChange={v => update("otp", v)} />
+                <Input icon={<FaLock />} placeholder="Enter OTP from SMS" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 4))} />
                 <button className="btn-premium full-width-mobile" onClick={verifyOtp} disabled={loading}>Verify OTP</button>
               </>
             )}
