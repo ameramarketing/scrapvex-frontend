@@ -1,0 +1,93 @@
+import React, { useState, useEffect } from "react";
+import API from "../services/api";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
+function BannerCarousel() {
+  const [ads, setAds] = useState([]);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    fetchAds();
+  }, []);
+
+  const fetchAds = async () => {
+    try {
+      const { data } = await API.get("/ads");
+      if (data.success) {
+        setAds(data.data.filter(ad => ad.isActive));
+      }
+    } catch (e) { console.error(e); }
+  };
+
+  useEffect(() => {
+    if (ads.length > 0) {
+      const timer = setInterval(() => {
+        setCurrent((prev) => (prev === ads.length - 1 ? 0 : prev + 1));
+      }, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [ads]);
+
+  if (ads.length === 0) return null;
+
+  return (
+    <div style={container} className="reveal active">
+      <div style={carousel}>
+        {ads.map((ad, index) => (
+          <div
+            key={ad._id}
+            style={{
+              ...slide,
+              opacity: index === current ? 1 : 0,
+              transform: `scale(${index === current ? 1 : 0.95})`,
+              zIndex: index === current ? 1 : 0,
+            }}
+          >
+            <a href={ad.link} target="_blank" rel="noreferrer">
+              <img src={ad.imageUrl} alt={ad.title} style={image} />
+            </a>
+            <div style={overlay}>
+              <h3 style={adTitle}>{ad.title}</h3>
+            </div>
+          </div>
+        ))}
+
+        {/* CONTROLS */}
+        <button style={leftBtn} onClick={() => setCurrent(current === 0 ? ads.length - 1 : current - 1)}>
+          <FaChevronLeft />
+        </button>
+        <button style={rightBtn} onClick={() => setCurrent(current === ads.length - 1 ? 0 : current + 1)}>
+          <FaChevronRight />
+        </button>
+
+        {/* DOTS */}
+        <div style={dotsWrap}>
+          {ads.map((_, i) => (
+            <div
+              key={i}
+              onClick={() => setCurrent(i)}
+              style={{
+                ...dot,
+                background: i === current ? "#0b8f3a" : "rgba(255,255,255,0.5)",
+                width: i === current ? "25px" : "8px"
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const container = { margin: "30px 0", width: "100%" };
+const carousel = { position: "relative", height: "320px", borderRadius: "24px", overflow: "hidden", boxShadow: "0 20px 40px rgba(0,0,0,0.1)" };
+const slide = { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", transition: "all 0.8s ease" };
+const image = { width: "100%", height: "100%", objectFit: "cover" };
+const overlay = { position: "absolute", bottom: 0, left: 0, right: 0, padding: "40px", background: "linear-gradient(transparent, rgba(0,0,0,0.7))", color: "#fff" };
+const adTitle = { fontSize: "24px", fontWeight: "bold", margin: 0 };
+const leftBtn = { position: "absolute", left: "20px", top: "50%", transform: "translateY(-50%)", zIndex: 5, background: "rgba(255,255,255,0.2)", border: "none", color: "#fff", padding: "10px", borderRadius: "50%", cursor: "pointer", backdropFilter: "blur(5px)" };
+const rightBtn = { ...leftBtn, left: "auto", right: "20px" };
+const dotsWrap = { position: "absolute", bottom: "20px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "8px", zIndex: 5 };
+const dot = { height: "8px", borderRadius: "4px", cursor: "pointer", transition: "0.3s" };
+
+export default BannerCarousel;
