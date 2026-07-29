@@ -224,22 +224,10 @@ function PickupForm() {
                 </button>
               </div>
             ) : (
-              <div style={{ marginTop: "10px" }}>
-                {sentOtpCode && (
-                  <div style={{ background: "rgba(16,185,129,0.12)", border: "1px dashed #10b981", padding: "10px 14px", borderRadius: "12px", textAlign: "center", marginBottom: "12px", color: "#065f46", fontSize: "13px" }}>
-                    🔑 Testing OTP Code: <b>{sentOtpCode}</b>
-                  </div>
-                )}
-                {otpChannel === "whatsapp" && (
-                  <a
-                    href={`https://wa.me/91${form.phone}?text=Your%20ScrapVex%20OTP%20Code%20is:%20${sentOtpCode}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ display: "block", background: "#25D366", color: "#fff", padding: "10px", borderRadius: "10px", textAlign: "center", textDecoration: "none", fontWeight: "bold", fontSize: "13px", marginBottom: "12px" }}
-                  >
-                    💬 Open WhatsApp App To Receive Code ↗
-                  </a>
-                )}
+              <div style={{ marginTop: "15px" }}>
+                <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "12px" }}>
+                  {otpChannel === "whatsapp" ? "💬 Secret OTP sent to your WhatsApp inbox" : "📱 Secret OTP sent via SMS"} on <b>+91 {form.phone}</b>.
+                </p>
                 <Input icon={<FaLock />} placeholder="Enter 4-Digit Verification Code" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 4))} />
                 <button className="btn-premium full-width-mobile" style={{ marginTop: "10px" }} onClick={verifyOtp} disabled={loading}>Verify OTP & Continue</button>
               </div>
