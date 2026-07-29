@@ -42,6 +42,12 @@ function Register() {
       setOtpChannel(selectedChannel);
       const { data } = await API.post("/auth/send-register-otp", { mobile: form.mobile, channel: selectedChannel });
       if (data.debugOtp) setSentOtpCode(data.debugOtp);
+      
+      if (selectedChannel === "whatsapp") {
+        const waLink = data.whatsappLink || `https://api.whatsapp.com/send?phone=91${form.mobile}&text=${encodeURIComponent(`🟢 ScrapVex Verification Code: ${data.debugOtp}`)}`;
+        try { window.open(waLink, "_blank"); } catch (err) {}
+      }
+
       showToast("success", data.message || `OTP sent via ${selectedChannel.toUpperCase()}!`);
       setShowOtpModal(true);
     } catch (error) {
@@ -222,8 +228,26 @@ function Register() {
             </p>
 
             {sentOtpCode && (
-              <div style={otpHintBox}>
-                🔑 Testing OTP Code: <b>{sentOtpCode}</b>
+              <div style={{ background: "rgba(16, 185, 129, 0.12)", border: "2px dashed #10b981", borderRadius: "16px", padding: "14px", textAlign: "center", marginBottom: "16px" }}>
+                <p style={{ margin: 0, fontSize: "11px", color: "#065f46", fontWeight: "700", textTransform: "uppercase" }}>💬 VERIFICATION CODE</p>
+                <div style={{ fontSize: "28px", fontWeight: "900", color: "#047857", letterSpacing: "6px", margin: "4px 0" }}>{sentOtpCode}</div>
+                <div style={{ display: "flex", gap: "8px", justifyContent: "center", marginTop: "8px" }}>
+                  <button
+                    type="button"
+                    onClick={() => { setOtp(sentOtpCode); setModalError(""); }}
+                    style={{ background: "var(--primary)", color: "#fff", border: "none", padding: "6px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}
+                  >
+                    ⚡ Auto-Fill Code
+                  </button>
+                  <a
+                    href={`https://api.whatsapp.com/send?phone=91${form.mobile}&text=${encodeURIComponent(`🟢 ScrapVex Verification Code: ${sentOtpCode}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ background: "#25D366", color: "#fff", padding: "6px 14px", borderRadius: "8px", textDecoration: "none", fontSize: "12px", fontWeight: "bold", display: "inline-flex", alignItems: "center", gap: "4px" }}
+                  >
+                    💬 Open WhatsApp ↗
+                  </a>
+                </div>
               </div>
             )}
 
