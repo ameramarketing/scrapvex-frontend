@@ -58,7 +58,7 @@ function PickupForm() {
     setLoading(true);
     setOtpChannel(channel);
     try {
-      const { data } = await API.post("/auth/send-register-otp", { mobile: form.phone, channel });
+      const { data } = await API.post("/auth/send-booking-otp", { mobile: form.phone, channel });
       if (data.debugOtp) setSentOtpCode(data.debugOtp);
       setOtpSent(true);
       showToast("success", data.message || `OTP sent via ${channel.toUpperCase()}!`);
