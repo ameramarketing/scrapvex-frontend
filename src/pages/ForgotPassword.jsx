@@ -9,7 +9,9 @@ import {
   FaShieldAlt,
   FaKey,
   FaWhatsapp,
-  FaSms
+  FaSms,
+  FaEye,
+  FaEyeSlash
 } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
@@ -30,6 +32,8 @@ function ForgotPassword() {
   const [otpChannel, setOtpChannel] = useState("whatsapp");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role, setRole] = useState(initialRole);
 
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
@@ -185,27 +189,42 @@ function ForgotPassword() {
 
           {step === 3 && (
             <form onSubmit={handleResetPassword}>
-              <div style={{...inputWrap, background: "var(--bg-main)", border: "1px solid var(--glass-border)"}}>
-                <FaLock style={{...icon, color: "var(--primary)"}} />
+              <div style={{ ...inputWrap, background: "var(--bg-main)", border: "1px solid var(--glass-border)", position: "relative" }}>
+                <FaLock style={{ ...icon, color: "var(--primary)" }} />
                 <input 
-                  type="password" 
+                  type={showNewPassword ? "text" : "password"} 
                   placeholder="New Password" 
                   value={newPassword} 
                   onChange={(e) => setNewPassword(e.target.value)} 
-                  style={{...input, color: "var(--text-main)"}} 
+                  style={{ ...input, color: "var(--text-main)", paddingRight: "45px" }} 
                   required 
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
+                >
+                  {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
-              <div style={{...inputWrap, background: "var(--bg-main)", border: `1px solid ${confirmPassword && newPassword !== confirmPassword ? '#e74c3c' : 'var(--glass-border)'}`}}>
-                <FaCheckCircle style={{...icon, color: confirmPassword && newPassword === confirmPassword ? '#0b8f3a' : 'var(--primary)'}} />
+
+              <div style={{ ...inputWrap, background: "var(--bg-main)", border: `1px solid ${confirmPassword && newPassword !== confirmPassword ? '#e74c3c' : 'var(--glass-border)'}`, position: "relative" }}>
+                <FaCheckCircle style={{ ...icon, color: confirmPassword && newPassword === confirmPassword ? '#0b8f3a' : 'var(--primary)' }} />
                 <input 
-                  type="password" 
+                  type={showConfirmPassword ? "text" : "password"} 
                   placeholder="Confirm Password" 
                   value={confirmPassword} 
                   onChange={(e) => setConfirmPassword(e.target.value)} 
-                  style={{...input, color: "var(--text-main)"}} 
+                  style={{ ...input, color: "var(--text-main)", paddingRight: "45px" }} 
                   required 
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
+                >
+                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
               {confirmPassword && newPassword !== confirmPassword && (
                 <p style={{ color: '#e74c3c', fontSize: '12px', marginTop: '-12px', marginBottom: '12px', textAlign: 'left' }}>⚠ Passwords do not match</p>

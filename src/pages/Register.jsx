@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaSpinner, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms } from "react-icons/fa";
+import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaSpinner, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash } from "react-icons/fa";
 import { setCookie } from "../utils/cookies";
 
 import Navbar from "../components/Navbar";
@@ -10,6 +10,8 @@ import API from "../services/api";
 function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", mobile: "", email: "", password: "", confirmPassword: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [otp, setOtp] = useState("");
   const [sentOtpCode, setSentOtpCode] = useState("");
   const [otpChannel, setOtpChannel] = useState("whatsapp");
@@ -139,28 +141,42 @@ function Register() {
               />
             </div>
 
-            <div style={inputGroup}>
+            <div style={{ ...inputGroup, position: "relative" }}>
               <FaLock style={icon} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Password (Min 6 chars) *"
                 value={form.password}
                 onChange={handleChange}
-                style={input}
+                style={{ ...input, paddingRight: "45px" }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
 
-            <div style={inputGroup}>
+            <div style={{ ...inputGroup, position: "relative" }}>
               <FaCheckCircle style={icon} />
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 placeholder="Confirm Password *"
                 value={form.confirmPassword}
                 onChange={handleChange}
-                style={input}
+                style={{ ...input, paddingRight: "45px" }}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
 
             {/* DUAL OTP CHANNEL SELECTION BUTTONS */}

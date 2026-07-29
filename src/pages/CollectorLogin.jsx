@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaGoogle
+  FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaGoogle, FaEye, FaEyeSlash
 } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
@@ -21,6 +21,7 @@ function CollectorLogin() {
 
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
@@ -123,15 +124,22 @@ function CollectorLogin() {
           />
         </div>
 
-        <div style={inputWrap}>
+        <div style={{ ...inputWrap, position: "relative" }}>
           <FaLock style={icon} />
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={input}
+            style={{ ...input, paddingRight: "45px" }}
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "-6px", marginBottom: "18px" }}>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaSpinner
+  FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaEye, FaEyeSlash
 } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
@@ -11,6 +11,7 @@ function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
   
@@ -72,9 +73,16 @@ function AdminLogin() {
             <FaEnvelope style={icon} />
             <input type="email" placeholder="Admin Email" value={email} onChange={(e) => setEmail(e.target.value)} style={input} />
           </div>
-          <div style={inputWrap}>
+          <div style={{ ...inputWrap, position: "relative" }}>
             <FaLock style={icon} />
-            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} />
+            <input type={showPassword ? "text" : "password"} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ ...input, paddingRight: "45px" }} />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
           <button type="submit" style={btn} className="btn pulse-btn" disabled={loading}>
             {loading ? <><FaSpinner className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}

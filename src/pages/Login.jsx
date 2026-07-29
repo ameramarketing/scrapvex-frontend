@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaPhoneAlt, FaLock, FaArrowRight, FaSpinner, FaUserShield } from "react-icons/fa";
+import { FaPhoneAlt, FaLock, FaArrowRight, FaSpinner, FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
 import { setCookie, getCookie } from "../utils/cookies";
 
 import Navbar from "../components/Navbar";
@@ -11,6 +11,7 @@ function Login() {
   const navigate = useNavigate();
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
 
@@ -79,15 +80,23 @@ function Login() {
               />
             </div>
 
-            <div style={inputGroup}>
+            <div style={{ ...inputGroup, position: "relative" }}>
               <FaLock style={icon} />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={input}
+                style={{ ...input, paddingRight: "45px" }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={eyeBtn}
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
 
             <div style={{ textAlign: "right" }}>
@@ -110,22 +119,116 @@ function Login() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }
 
-/* STYLES */
-const wrap = { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "calc(100vh - 200px)", padding: "40px 20px" };
-const card = { width: "100%", maxWidth: "420px", padding: "40px" };
-const iconCircle = { width: "80px", height: "80px", background: "var(--primary-light)", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "35px", color: "var(--primary)", margin: "0 auto" };
-const inputGroup = { display: "flex", alignItems: "center", gap: "12px", background: "var(--bg-main)", padding: "14px 18px", borderRadius: "12px", border: "1px solid var(--glass-border)" };
-const icon = { color: "#0b8f3a", fontSize: "14px" };
-const input = { border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "15px", color: "var(--text-main)" };
-const forgotLink = { color: "#0b8f3a", fontSize: "13px", textDecoration: "none", fontWeight: "600" };
-const footerText = { marginTop: "30px", textAlign: "center", fontSize: "14px", color: "#666" };
-const authLink = { color: "#0b8f3a", fontWeight: "700", textDecoration: "none" };
-const roleLoginBtn = { display: "block", background: "#f0fdf4", color: "#0b8f3a", padding: "10px 14px", borderRadius: "10px", textDecoration: "none", fontSize: "13px", fontWeight: "700", border: "1px solid #bbf7d0", transition: "0.2s" };
-const divider = { height: "1px", background: "#eee", margin: "15px auto", width: "50%" };
+const wrap = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  minHeight: "80vh",
+  padding: "20px 0"
+};
+
+const card = {
+  width: "100%",
+  maxWidth: "440px",
+  padding: "35px 30px",
+  borderRadius: "24px"
+};
+
+const iconCircle = {
+  width: "60px",
+  height: "60px",
+  borderRadius: "50%",
+  background: "linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.2))",
+  color: "var(--primary)",
+  fontSize: "24px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  margin: "0 auto 10px"
+};
+
+const inputGroup = {
+  display: "flex",
+  alignItems: "center",
+  background: "var(--bg-main)",
+  border: "1.5px solid var(--border-color)",
+  borderRadius: "14px",
+  padding: "0 15px",
+  transition: "all 0.3s ease"
+};
+
+const icon = {
+  color: "#94a3b8",
+  marginRight: "12px",
+  fontSize: "16px"
+};
+
+const input = {
+  width: "100%",
+  padding: "14px 0",
+  border: "none",
+  background: "transparent",
+  color: "var(--text-main)",
+  fontSize: "15px",
+  outline: "none"
+};
+
+const eyeBtn = {
+  position: "absolute",
+  right: "14px",
+  top: "50%",
+  transform: "translateY(-50%)",
+  background: "none",
+  border: "none",
+  color: "#64748b",
+  cursor: "pointer",
+  fontSize: "18px",
+  display: "flex",
+  alignItems: "center",
+  padding: "4px"
+};
+
+const forgotLink = {
+  color: "var(--primary)",
+  fontSize: "13px",
+  textDecoration: "none",
+  fontWeight: "500"
+};
+
+const authLink = {
+  color: "var(--primary)",
+  fontWeight: "600",
+  textDecoration: "none"
+};
+
+const footerText = {
+  textAlign: "center",
+  marginTop: "25px",
+  fontSize: "14px",
+  color: "#64748b"
+};
+
+const divider = {
+  height: "1px",
+  background: "var(--border-color)",
+  margin: "15px 0"
+};
+
+const roleLoginBtn = {
+  display: "block",
+  padding: "10px",
+  borderRadius: "10px",
+  background: "var(--bg-main)",
+  color: "var(--text-main)",
+  textDecoration: "none",
+  fontSize: "13px",
+  fontWeight: "600",
+  textAlign: "center",
+  border: "1px solid var(--border-color)"
+};
 
 export default Login;

@@ -52,16 +52,16 @@ function PickupForm() {
     }
   }, [form.city]);
 
-  const sendOtp = async () => {
+  const sendOtp = async (channel = "whatsapp") => {
     if (!form.name.trim()) return showToast("error", "Enter your name");
     if (form.phone.length !== 10) return showToast("error", "Enter 10-digit mobile number");
     setLoading(true);
+    setOtpChannel(channel);
     try {
-      const { data } = await API.post("/auth/forgot-password", { mobile: form.phone, name: form.name });
-      if (data.success) {
-        setOtpSent(true);
-        showToast("success", "OTP sent to your mobile!");
-      }
+      const { data } = await API.post("/auth/send-register-otp", { mobile: form.phone, channel });
+      if (data.debugOtp) setSentOtpCode(data.debugOtp);
+      setOtpSent(true);
+      showToast("success", data.message || `OTP sent via ${channel.toUpperCase()}!`);
     } catch (e) {
       showToast("error", e.response?.data?.message || "Failed to send OTP. Check number.");
     } finally {
@@ -198,18 +198,51 @@ function PickupForm() {
       <div style={stepContent}>
         {step === 1 && (
           <div className="fade-up">
-            <h3 style={stepTitle}>Identity Check</h3>
-            <Input icon={<FaUser />} placeholder="Full Name" value={form.name} onChange={v => update("name", v)} />
-            <Input icon={<FaPhoneAlt />} placeholder="10-Digit Mobile" value={form.phone} onChange={v => update("phone", v.replace(/\D/g, "").slice(0, 10))} />
+            <h3 style={stepTitle}>Identity & Verification Check</h3>
+            <Input icon={<FaUser />} placeholder="Full Name *" value={form.name} onChange={v => update("name", v)} />
+            <Input icon={<FaPhoneAlt />} placeholder="10-Digit Mobile *" value={form.phone} onChange={v => update("phone", v.replace(/\D/g, "").slice(0, 10))} />
+            
             {!otpSent ? (
-              <button className="btn-premium full-width-mobile" onClick={sendOtp} disabled={loading}>
-                {loading ? <FaSpinner className="spin" /> : "Send Verification OTP"}
-              </button>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+                <button
+                  type="button"
+                  className="btn-premium full-width-mobile pulse-btn"
+                  style={{ background: "#25D366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  onClick={() => sendOtp("whatsapp")}
+                  disabled={loading}
+                >
+                  {loading ? <FaSpinner className="spin" /> : <>💬 Get OTP on WhatsApp</>}
+                </button>
+                <button
+                  type="button"
+                  className="btn-premium full-width-mobile"
+                  style={{ background: "var(--primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  onClick={() => sendOtp("sms")}
+                  disabled={loading}
+                >
+                  {loading ? <FaSpinner className="spin" /> : <>📱 Get OTP via SMS</>}
+                </button>
+              </div>
             ) : (
-              <>
-                <Input icon={<FaLock />} placeholder="Enter OTP from SMS" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 4))} />
-                <button className="btn-premium full-width-mobile" onClick={verifyOtp} disabled={loading}>Verify OTP</button>
-              </>
+              <div style={{ marginTop: "10px" }}>
+                {sentOtpCode && (
+                  <div style={{ background: "rgba(16,185,129,0.12)", border: "1px dashed #10b981", padding: "10px 14px", borderRadius: "12px", textAlign: "center", marginBottom: "12px", color: "#065f46", fontSize: "13px" }}>
+                    🔑 Testing OTP Code: <b>{sentOtpCode}</b>
+                  </div>
+                )}
+                {otpChannel === "whatsapp" && (
+                  <a
+                    href={`https://wa.me/91${form.phone}?text=Your%20ScrapVex%20OTP%20Code%20is:%20${sentOtpCode}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: "block", background: "#25D366", color: "#fff", padding: "10px", borderRadius: "10px", textAlign: "center", textDecoration: "none", fontWeight: "bold", fontSize: "13px", marginBottom: "12px" }}
+                  >
+                    💬 Open WhatsApp App To Receive Code ↗
+                  </a>
+                )}
+                <Input icon={<FaLock />} placeholder="Enter 4-Digit Verification Code" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 4))} />
+                <button className="btn-premium full-width-mobile" style={{ marginTop: "10px" }} onClick={verifyOtp} disabled={loading}>Verify OTP & Continue</button>
+              </div>
             )}
           </div>
         )}
