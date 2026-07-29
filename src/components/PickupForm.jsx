@@ -58,12 +58,12 @@ function PickupForm() {
     setLoading(true);
     setOtpChannel(channel);
     try {
-      const { data } = await API.post("/auth/send-booking-otp", { mobile: form.phone, channel });
+      const { data } = await API.post("/auth/send-booking-otp", { mobile: form.phone, channel }, { timeout: 10000 });
       if (data.debugOtp) setSentOtpCode(data.debugOtp);
       setOtpSent(true);
       showToast("success", data.message || `OTP sent via ${channel.toUpperCase()}!`);
     } catch (e) {
-      showToast("error", e.response?.data?.message || "Failed to send OTP. Check number.");
+      showToast("error", e.response?.data?.message || e.message || "Failed to send OTP. Check number.");
     } finally {
       setLoading(false);
     }
