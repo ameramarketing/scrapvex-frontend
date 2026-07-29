@@ -1392,7 +1392,7 @@ function AdminDashboard() {
                   </p>
                 </div>
                 <a 
-                  href="http://localhost:5000/api/auth/whatsapp-qr" 
+                  href={`${(import.meta.env.VITE_API_URL || 'https://scrapvex-backend.onrender.com').replace(/\/api\/?$/, '')}/api/auth/whatsapp-qr`} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{ background: "#25D366", color: "#fff", padding: "12px 20px", borderRadius: "14px", textDecoration: "none", fontWeight: "bold", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 15px rgba(37,211,102,0.3)" }}
@@ -1403,7 +1403,7 @@ function AdminDashboard() {
 
               <div style={{ background: "#0f172a", borderRadius: "24px", border: "1px solid var(--glass-border)", padding: "10px", boxShadow: "0 15px 35px rgba(0,0,0,0.15)", minHeight: "560px" }}>
                 <iframe
-                  src="http://localhost:5000/api/auth/whatsapp-qr"
+                  src={`${(import.meta.env.VITE_API_URL || 'https://scrapvex-backend.onrender.com').replace(/\/api\/?$/, '')}/api/auth/whatsapp-qr`}
                   title="WhatsApp Gateway QR Code"
                   style={{ width: "100%", height: "550px", border: "none", borderRadius: "18px", background: "#0f172a" }}
                 />
