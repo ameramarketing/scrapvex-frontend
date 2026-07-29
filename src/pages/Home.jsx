@@ -45,7 +45,7 @@ function Home() {
       {/* HERO SECTION */}
       <div className="container section-padding grid-2" style={{alignItems:"center"}}>
         <div className="hero-card-mobile fade-up">
-          <p style={heroTag}>Trusted Scrap Pickup in Rajouri </p>
+          <p style={heroTag}>Trusted Scrap Pickup in Jammu & Kashmir </p>
           <h1 className="hero-title" style={heroTitle}>
             Smart Scrap Pickup <br /> at Your Doorstep
           </h1>

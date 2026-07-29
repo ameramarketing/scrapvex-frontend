@@ -5,7 +5,7 @@ import {
   FaSignOutAlt, FaTrash, FaPlus, FaKey, FaBell, FaInfoCircle,
   FaAd, FaTag, FaTools, FaStar, FaUserPlus, FaBars, FaTimes, FaCog,
   FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram, FaRecycle, FaWallet, FaHistory, FaArrowUp, FaArrowDown, FaChartLine,
-  FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt, FaBoxOpen
+  FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt, FaBoxOpen, FaWhatsapp
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
@@ -49,6 +49,8 @@ function AdminDashboard() {
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [showEditRateModal, setShowEditRateModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [brandLogoFile, setBrandLogoFile] = useState(null);
   const [walletForm, setWalletForm] = useState({ userId: "", amount: "", type: "credit", description: "" });
   
   const [accountingStats, setAccountingStats] = useState({ totalPurchaseAmount: 0, todayPurchaseAmount: 0, totalSaleAmount: 0, todaySaleAmount: 0, overallProfit: 0, todayProfit: 0, totalCommission: 0, todayCommission: 0, stockValue: 0 });
@@ -455,8 +457,22 @@ function AdminDashboard() {
 
   const handleUpdateSettings = async () => {
     try {
-      const { data } = await API.put("/settings", settings);
-      if (data.success) showToast("success", "Platform Settings Updated!");
+      const formData = new FormData();
+      Object.keys(settings).forEach(key => {
+        if (key !== 'brandLogo') {
+          formData.append(key, settings[key] !== undefined && settings[key] !== null ? settings[key] : '');
+        }
+      });
+      if (brandLogoFile) {
+        formData.append('brandLogo', brandLogoFile);
+      }
+      const { data } = await API.put("/settings", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      if (data.success) {
+        showToast("success", "Platform & Brand Settings Updated Successfully!");
+        if (data.data) setSettings(data.data);
+      }
     } catch (e) { showToast("error", "Failed to save settings"); }
   };
 
@@ -611,6 +627,7 @@ function AdminDashboard() {
       <NavItem active={activeTab === "ads"} icon={<FaAd />} text="Banners" onClick={() => {setActiveTab("ads"); setIsMobileMenuOpen(false);}} />
       <NavItem active={activeTab === "reviews"} icon={<FaStar />} text="Reviews" onClick={() => {setActiveTab("reviews"); setIsMobileMenuOpen(false);}} />
       <NavItem active={activeTab === "settings"} icon={<FaCog />} text="Settings" onClick={() => {setActiveTab("settings"); setIsMobileMenuOpen(false);}} />
+      <NavItem active={activeTab === "whatsapp"} icon={<FaWhatsapp style={{ color: "#25D366" }} />} text="WhatsApp QR 💬" onClick={() => {setActiveTab("whatsapp"); setIsMobileMenuOpen(false);}} />
     </>
   );
 
@@ -750,15 +767,64 @@ function AdminDashboard() {
 
           {activeTab === "settings" && (
              <div style={box} className="premium-card">
-                <h3 style={boxTitle}>Global Platform Settings</h3>
+                <h3 style={boxTitle}>Global Platform & Dynamic Brand Settings</h3>
                 <div style={settingsGrid}>
                    <div style={settingsSection}>
-                      <label style={labelStyle}><FaRupeeSign/> Min Order Value</label>
+                      <h4 style={{ margin: "0 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🎨 Brand & App Identity</h4>
+                      
+                      <label style={labelStyle}> Upload Brand Logo</label>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={e => setBrandLogoFile(e.target.files[0])}
+                        style={{ ...inputStyle, padding: "8px" }}
+                      />
+                      {settings.brandLogo && (
+                        <div style={{ margin: "5px 0 15px 0" }}>
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>Current Active Logo:</small>
+                          <img src={`http://localhost:5000${settings.brandLogo}`} alt="Brand Logo" style={{ height: "45px", objectFit: "contain", borderRadius: "8px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                        </div>
+                      )}
+
+                      <label style={labelStyle}> Brand Tagline</label>
+                      <Input value={settings.brandTagline || ""} onChange={v => setSettings({...settings, brandTagline: v})} placeholder="e.g. Jammu & Kashmir Ka Pehla Digital Kabadiwala" />
+
+                      <h4 style={{ margin: "15px 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🚨 App Maintenance Control</h4>
+                      <label style={labelStyle}> Maintenance Mode Status</label>
+                      <select 
+                        style={{ ...inputStyle, cursor: "pointer", fontWeight: "bold", background: settings.isMaintenanceMode ? "#fff5f5" : "#eef8f1", color: settings.isMaintenanceMode ? "#dc3545" : "#0b8f3a" }} 
+                        value={settings.isMaintenanceMode ? "true" : "false"} 
+                        onChange={e => setSettings({...settings, isMaintenanceMode: e.target.value === "true"})}
+                      >
+                        <option value="false">🟢 LIVE (App & Website Working Normal)</option>
+                        <option value="true">🔴 MAINTENANCE MODE ON (Block App & Show Banner)</option>
+                      </select>
+
+                      <label style={labelStyle}> Maintenance Banner Message</label>
+                      <Input value={settings.maintenanceMessage || ""} onChange={v => setSettings({...settings, maintenanceMessage: v})} placeholder="Message displayed to users when maintenance is ON" />
+
+                      <h4 style={{ margin: "15px 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>📢 Top Live Alert Announcement</h4>
+                      <label style={labelStyle}> Live Ticker Message (Shown on Top Header)</label>
+                      <Input value={settings.announcementText || ""} onChange={v => setSettings({...settings, announcementText: v})} placeholder="e.g. ⚡ Special Rate Boost Today: Copper rates up by 5% in Jammu!" />
+
+                      <label style={labelStyle}><FaRupeeSign/> Min Order Value (₹)</label>
                       <Input type="number" value={settings.minAmount} onChange={v => setSettings({...settings, minAmount: v})} />
                       
                       <label style={labelStyle}><FaPercent/> Pickup Commission (%)</label>
                       <Input type="number" value={settings.pickupCommissionPercentage} onChange={v => setSettings({...settings, pickupCommissionPercentage: v})} />
+                   </div>
+
+                   <div style={settingsSection}>
+                      <h4 style={{ margin: "0 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🎁 Rewards & Operational Charges</h4>
                       
+                      <label style={labelStyle}><FaRupeeSign/> Referral Cash Bonus (₹)</label>
+                      <Input type="number" value={settings.referralBonusAmount || 50} onChange={v => setSettings({...settings, referralBonusAmount: v})} placeholder="Cash awarded on successful referral" />
+
+                      <label style={labelStyle}><FaRupeeSign/> Optional Service / Handling Fee (₹)</label>
+                      <Input type="number" value={settings.serviceCharge || 0} onChange={v => setSettings({...settings, serviceCharge: v})} placeholder="Set 0 for Free Pickup" />
+
+                      <h4 style={{ margin: "15px 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>📞 Contact & Social Links</h4>
+
                       <label style={labelStyle}><FaEnvelope/> Business Email</label>
                       <Input value={settings.contactEmail} onChange={v => setSettings({...settings, contactEmail: v})} />
                       
@@ -767,8 +833,7 @@ function AdminDashboard() {
                       
                       <label style={labelStyle}><FaRupeeSign/> Platform UPI ID for Deposits</label>
                       <Input value={settings.upiId || ""} onChange={v => setSettings({...settings, upiId: v})} />
-                   </div>
-                   <div style={settingsSection}>
+
                       <label style={labelStyle}><FaMapMarkerAlt/> Office Address</label>
                       <Input value={settings.officeAddress} onChange={v => setSettings({...settings, officeAddress: v})} />
 
@@ -777,12 +842,6 @@ function AdminDashboard() {
 
                       <label style={labelStyle}><FaInstagram/> Instagram URL</label>
                       <Input value={settings.instagramUrl} onChange={v => setSettings({...settings, instagramUrl: v})} />
-
-                      <label style={labelStyle}> LinkedIn URL</label>
-                      <Input value={settings.linkedinUrl} onChange={v => setSettings({...settings, linkedinUrl: v})} />
-
-                      <label style={labelStyle}> App Download Link</label>
-                      <Input value={settings.appDownloadLink} onChange={v => setSettings({...settings, appDownloadLink: v})} />
                    </div>
                 </div>
                 <button style={saveBtnBig} onClick={handleUpdateSettings}>Save All Configurations</button>
@@ -1317,6 +1376,37 @@ function AdminDashboard() {
                   </div>
                 ))}
                 {contacts.length === 0 && <p style={muted}>No inquiries found.</p>}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "whatsapp" && (
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <div>
+                  <h2 style={{ margin: "0 0 5px 0", color: "var(--text-main)", display: "flex", alignItems: "center", gap: "10px" }}>
+                    <FaWhatsapp style={{ color: "#25D366", fontSize: "28px" }} /> WhatsApp Gateway Setup (Admin Only)
+                  </h2>
+                  <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "14px" }}>
+                    Scan QR code below with your WhatsApp app to enable 100% Free OTPs & Pickup Notifications.
+                  </p>
+                </div>
+                <a 
+                  href="http://localhost:5000/api/auth/whatsapp-qr" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ background: "#25D366", color: "#fff", padding: "12px 20px", borderRadius: "14px", textDecoration: "none", fontWeight: "bold", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 15px rgba(37,211,102,0.3)" }}
+                >
+                  <FaWhatsapp style={{ fontSize: "18px" }} /> Open Full Scanner Window ↗
+                </a>
+              </div>
+
+              <div style={{ background: "#0f172a", borderRadius: "24px", border: "1px solid var(--glass-border)", padding: "10px", boxShadow: "0 15px 35px rgba(0,0,0,0.15)", minHeight: "560px" }}>
+                <iframe
+                  src="http://localhost:5000/api/auth/whatsapp-qr"
+                  title="WhatsApp Gateway QR Code"
+                  style={{ width: "100%", height: "550px", border: "none", borderRadius: "18px", background: "#0f172a" }}
+                />
               </div>
             </div>
           )}

@@ -16,7 +16,7 @@ function BookPickup() {
       {/* HERO SECTION */}
       <div className="container section-padding grid-2" style={{alignItems:"center"}}>
         <div className="hero-card-mobile fade-up">
-          <p style={tag}>Doorstep Scrap Pickup in Rajouri </p>
+          <p style={tag}>Doorstep Scrap Pickup in Jammu & Kashmir </p>
           <h1 style={title}>
             Book Scrap Pickup <br /> In Just Minutes
           </h1>

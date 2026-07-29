@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaSpinner, FaUserPlus } from "react-icons/fa";
+import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaSpinner, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms } from "react-icons/fa";
 import { setCookie } from "../utils/cookies";
 
 import Navbar from "../components/Navbar";
@@ -9,7 +9,12 @@ import API from "../services/api";
 
 function Register() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", mobile: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", mobile: "", email: "", password: "", confirmPassword: "" });
+  const [otp, setOtp] = useState("");
+  const [sentOtpCode, setSentOtpCode] = useState("");
+  const [otpChannel, setOtpChannel] = useState("whatsapp");
+  const [modalError, setModalError] = useState("");
+  const [showOtpModal, setShowOtpModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
 
@@ -21,22 +26,54 @@ function Register() {
     setForm({ ...form, [e.target.name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Step 1: Request OTP via WhatsApp or SMS
+  const handleRequestOtp = async (e, selectedChannel = "whatsapp") => {
+    if (e) e.preventDefault();
     if (!form.name.trim()) return showToast("error", "Enter your full name");
     if (form.mobile.length !== 10) return showToast("error", "Enter valid 10-digit mobile number");
     if (form.password.length < 6) return showToast("error", "Password must be at least 6 characters");
+    if (form.password !== form.confirmPassword) return showToast("error", "Passwords do not match!");
 
     try {
       setLoading(true);
-      const { data } = await API.post("/auth/register", form);
-      
-      // Store in localStorage
+      setModalError("");
+      setOtpChannel(selectedChannel);
+      const { data } = await API.post("/auth/send-register-otp", { mobile: form.mobile, channel: selectedChannel });
+      if (data.debugOtp) setSentOtpCode(data.debugOtp);
+      showToast("success", data.message || `OTP sent via ${selectedChannel.toUpperCase()}!`);
+      setShowOtpModal(true);
+    } catch (error) {
+      showToast("error", error.response?.data?.message || error.customMessage || error.message || "Failed to send OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Step 2: Verify OTP & Complete Registration
+  const handleFinalRegister = async (e) => {
+    e.preventDefault();
+    setModalError("");
+    if (otp.length !== 4) {
+      setModalError("Please enter 4-digit OTP code");
+      return showToast("error", "Please enter 4-digit OTP code");
+    }
+
+    try {
+      setLoading(true);
+      const registerPayload = {
+        name: form.name,
+        mobile: form.mobile,
+        email: form.email,
+        password: form.password,
+        otp
+      };
+
+      const { data } = await API.post("/auth/register", registerPayload);
+
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("role", "user");
 
-      // Store in Cookies
       setCookie("token", data.token);
       setCookie("user", JSON.stringify(data.user));
       setCookie("role", "user");
@@ -44,85 +81,182 @@ function Register() {
       showToast("success", "Registration Successful! 🎉");
       setTimeout(() => navigate("/dashboard"), 800);
     } catch (error) {
-      showToast("error", error.response?.data?.message || "Registration Failed");
+      const errMsg = error.response?.data?.message || "Invalid OTP code. Please try again.";
+      setModalError(errMsg);
+      showToast("error", errMsg);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{background:"var(--bg-main)", minHeight:"100vh"}}>
+    <div style={{ background: "var(--bg-main)", minHeight: "100vh" }}>
       <Navbar />
-      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({...toast, show: false})} />
+      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <div className="container" style={wrap}>
         <div className="card-premium fade-up" style={card}>
           <div style={{ textAlign: "center", marginBottom: "30px" }}>
             <div style={iconCircle}><FaUserPlus /></div>
-            <h1 style={{fontSize:"28px", margin:"10px 0", color: "var(--text-main)"}}>Create Account</h1>
-            <p style={{ color: "var(--text-muted)", fontSize:"14px" }}>Start recycling smarter with Scrapvex</p>
+            <h1 style={{ fontSize: "28px", margin: "10px 0", color: "var(--text-main)" }}>Create Account</h1>
+            <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>Start recycling smarter with ScrapVex</p>
           </div>
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+          <form onSubmit={(e) => handleRequestOtp(e, "whatsapp")} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
             <div style={inputGroup}>
-               <FaUser style={icon} />
-               <input 
-                 type="text" 
-                 name="name"
-                 placeholder="Full Name" 
-                 value={form.name} 
-                 onChange={handleChange} 
-                 style={input} 
-               />
+              <FaUser style={icon} />
+              <input
+                type="text"
+                name="name"
+                placeholder="Full Name *"
+                value={form.name}
+                onChange={handleChange}
+                style={input}
+              />
             </div>
 
             <div style={inputGroup}>
-               <FaPhoneAlt style={icon} />
-               <input 
-                 type="text" 
-                 name="mobile"
-                 placeholder="Mobile Number" 
-                 value={form.mobile} 
-                 onChange={handleChange} 
-                 style={input} 
-               />
+              <FaPhoneAlt style={icon} />
+              <input
+                type="text"
+                name="mobile"
+                placeholder="Mobile Number *"
+                value={form.mobile}
+                onChange={handleChange}
+                style={input}
+              />
             </div>
 
             <div style={inputGroup}>
-               <FaEnvelope style={icon} />
-               <input 
-                 type="email" 
-                 name="email"
-                 placeholder="Email (Optional)" 
-                 value={form.email} 
-                 onChange={handleChange} 
-                 style={input} 
-               />
+              <FaEnvelope style={icon} />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email (Optional)"
+                value={form.email}
+                onChange={handleChange}
+                style={input}
+              />
             </div>
 
             <div style={inputGroup}>
-               <FaLock style={icon} />
-               <input 
-                 type="password" 
-                 name="password"
-                 placeholder="Password (Min 6 chars)" 
-                 value={form.password} 
-                 onChange={handleChange} 
-                 style={input} 
-               />
+              <FaLock style={icon} />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password (Min 6 chars) *"
+                value={form.password}
+                onChange={handleChange}
+                style={input}
+              />
             </div>
 
-            <button type="submit" className="btn-premium" style={{marginTop:"15px"}} disabled={loading}>
-              {loading ? <FaSpinner className="spin" /> : <>Register <FaArrowRight /></>}
-            </button>
+            <div style={inputGroup}>
+              <FaCheckCircle style={icon} />
+              <input
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm Password *"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                style={input}
+              />
+            </div>
+
+            {/* DUAL OTP CHANNEL SELECTION BUTTONS */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "15px" }}>
+              <button
+                type="button"
+                className="btn-premium"
+                style={{ background: "#25D366", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
+                disabled={loading}
+                onClick={(e) => handleRequestOtp(e, "whatsapp")}
+              >
+                {loading ? <FaSpinner className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
+              </button>
+
+              <button
+                type="button"
+                className="btn-premium"
+                style={{ background: "var(--primary)", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
+                disabled={loading}
+                onClick={(e) => handleRequestOtp(e, "sms")}
+              >
+                {loading ? <FaSpinner className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
+              </button>
+            </div>
           </form>
 
-          <div style={{...footerText, color: "var(--text-muted)"}}>
-             <p>Already have an account? <Link to="/login" style={{...authLink, color: "var(--primary)"}}>Login Here</Link></p>
+          <div style={{ ...footerText, color: "var(--text-muted)" }}>
+            <p>Already have an account? <Link to="/login" style={{ ...authLink, color: "var(--primary)" }}>Login Here</Link></p>
           </div>
         </div>
       </div>
 
+      {/* OTP VERIFICATION MODAL */}
+      {showOtpModal && (
+        <div style={modalBackdrop}>
+          <div style={modalCard} className="fade-up">
+            <div style={modalHeaderIcon}>
+              <FaKey />
+            </div>
+            <h3 style={{ fontSize: "22px", margin: "10px 0 6px 0", color: "#0f172a" }}>Enter 4-Digit OTP</h3>
+            <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 10px 0" }}>
+              {otpChannel === "whatsapp" ? "💬 Sent to your WhatsApp" : "📱 Sent via SMS"} <b>+91 {form.mobile}</b>
+            </p>
+
+            {sentOtpCode && (
+              <div style={otpHintBox}>
+                🔑 Testing OTP Code: <b>{sentOtpCode}</b>
+              </div>
+            )}
+
+            {modalError && (
+              <div style={modalErrorBox}>
+                ⚠️ {modalError}
+              </div>
+            )}
+
+            <form onSubmit={handleFinalRegister}>
+              <div style={otpInputGroup}>
+                <input
+                  type="text"
+                  maxLength="4"
+                  placeholder="0 0 0 0"
+                  value={otp}
+                  onChange={(e) => {
+                    setModalError("");
+                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 4));
+                  }}
+                  style={otpInput}
+                  autoFocus
+                />
+              </div>
+
+              <button type="submit" className="btn-premium" style={{ width: "100%", marginTop: "18px", padding: "14px" }} disabled={loading}>
+                {loading ? <FaSpinner className="spin" /> : <>Verify & Complete Registration <FaCheckCircle /></>}
+              </button>
+            </form>
+
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "16px" }}>
+              <button
+                type="button"
+                onClick={(e) => handleRequestOtp(e, otpChannel)}
+                style={{ background: "none", border: "none", color: "#0b8f3a", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}
+              >
+                Resend OTP
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowOtpModal(false)}
+                style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -136,5 +270,80 @@ const icon = { color: "#0b8f3a", fontSize: "14px" };
 const input = { border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "15px", color: "var(--text-main)" };
 const footerText = { marginTop: "30px", textAlign: "center", fontSize: "14px", color: "#666" };
 const authLink = { color: "#0b8f3a", fontWeight: "700", textDecoration: "none" };
+
+const modalBackdrop = {
+  position: "fixed",
+  top: 0, left: 0, right: 0, bottom: 0,
+  background: "rgba(15, 23, 42, 0.75)",
+  backdropFilter: "blur(6px)",
+  zIndex: 99999,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "20px"
+};
+
+const modalCard = {
+  background: "#ffffff",
+  width: "100%",
+  maxWidth: "400px",
+  borderRadius: "24px",
+  padding: "30px 26px",
+  textAlign: "center",
+  boxShadow: "0 20px 50px rgba(0,0,0,0.25)"
+};
+
+const modalHeaderIcon = {
+  width: "60px",
+  height: "60px",
+  borderRadius: "50%",
+  background: "#f0fdf4",
+  color: "#0b8f3a",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "26px",
+  margin: "0 auto"
+};
+
+const otpHintBox = {
+  background: "#f0fdf4",
+  border: "1px solid #bbf7d0",
+  color: "#15803d",
+  padding: "8px 12px",
+  borderRadius: "10px",
+  fontSize: "13px",
+  marginBottom: "14px"
+};
+
+const modalErrorBox = {
+  background: "#fef2f2",
+  border: "1px solid #fecaca",
+  color: "#dc2626",
+  padding: "8px 12px",
+  borderRadius: "10px",
+  fontSize: "13px",
+  fontWeight: "600",
+  marginBottom: "14px"
+};
+
+const otpInputGroup = {
+  background: "#f8fafc",
+  borderRadius: "16px",
+  padding: "12px",
+  border: "2px solid #0b8f3a"
+};
+
+const otpInput = {
+  width: "100%",
+  border: "none",
+  outline: "none",
+  background: "transparent",
+  textAlign: "center",
+  fontSize: "28px",
+  fontWeight: "800",
+  letterSpacing: "12px",
+  color: "#0f172a"
+};
 
 export default Register;

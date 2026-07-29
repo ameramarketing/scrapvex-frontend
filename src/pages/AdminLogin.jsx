@@ -15,16 +15,21 @@ function AdminLogin() {
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
   
   React.useEffect(() => {
-    const rawUser = localStorage.getItem("user") || getCookie("user");
-    const role = localStorage.getItem("role") || getCookie("role");
-    if (rawUser && role === "admin") {
-      navigate("/admin-dashboard");
+    try {
+      const rawUser = localStorage.getItem("user") || getCookie("user");
+      const role = localStorage.getItem("role") || getCookie("role");
+      if (rawUser && rawUser !== "undefined" && rawUser !== "null" && role === "admin") {
+        navigate("/admin-dashboard");
+      }
+    } catch (e) {
+      console.error("Storage error:", e);
     }
   }, [navigate]);
 
   const showToast = (type, message) => setToast({ show: true, type, message });
 
   const handleLogin = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!email) return showToast("error", "Enter admin email");
     if (!password) return showToast("error", "Enter password");
     setLoading(true);
@@ -62,17 +67,19 @@ function AdminLogin() {
           <span style={pill}><FaCheckCircle /> Secure</span>
           <span style={pill}><FaCheckCircle /> Private</span>
         </div>
-        <div style={inputWrap}>
-          <FaEnvelope style={icon} />
-          <input type="email" placeholder="Admin Email" value={email} onChange={(e) => setEmail(e.target.value)} style={input} />
-        </div>
-        <div style={inputWrap}>
-          <FaLock style={icon} />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} />
-        </div>
-        <button style={btn} className="btn pulse-btn" onClick={handleLogin}>
-          {loading ? <><FaSpinner className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}
-        </button>
+        <form onSubmit={handleLogin}>
+          <div style={inputWrap}>
+            <FaEnvelope style={icon} />
+            <input type="email" placeholder="Admin Email" value={email} onChange={(e) => setEmail(e.target.value)} style={input} />
+          </div>
+          <div style={inputWrap}>
+            <FaLock style={icon} />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} />
+          </div>
+          <button type="submit" style={btn} className="btn pulse-btn" disabled={loading}>
+            {loading ? <><FaSpinner className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}
+          </button>
+        </form>
       </div>
     </div>
   );

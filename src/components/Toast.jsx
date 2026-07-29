@@ -99,7 +99,7 @@ const wrap = {
   position: "fixed",
   top: "20px",
   right: "20px",
-  zIndex: 9999
+  zIndex: 9999999
 };
 
 const toast = {

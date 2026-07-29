@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
-  FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaSpinner
+  FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaGoogle
 } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
 import { setCookie, getCookie } from "../utils/cookies";
+import { triggerOfficialGoogleSignIn } from "../services/googleAuth";
 
 function FranchiseLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
   
   React.useEffect(() => {
@@ -32,12 +34,10 @@ function FranchiseLogin() {
       const loginPayload = email.includes("@") ? { email, password } : { mobile: email, password };
       const { data } = await API.post("/auth/franchise-login", loginPayload);
       
-      // Store in localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("role", "franchise");
 
-      // Store in Cookies
       setCookie("token", data.token);
       setCookie("user", JSON.stringify(data.user));
       setCookie("role", "franchise");
@@ -48,6 +48,40 @@ function FranchiseLogin() {
       showToast("error", error.response?.data?.message || "Login Failed");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      // Trigger Official Google Account Picker (accounts.google.com)
+      const googleUser = await triggerOfficialGoogleSignIn({ role: "franchise" });
+
+      const franchiseUserData = {
+        _id: googleUser.googleId || "g_franchise_" + Date.now(),
+        name: googleUser.name,
+        email: googleUser.email,
+        picture: googleUser.picture,
+        role: "franchise",
+        assignedCity: "Rajouri District"
+      };
+
+      const token = "google_auth_token_" + Date.now();
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(franchiseUserData));
+      localStorage.setItem("role", "franchise");
+
+      setCookie("token", token);
+      setCookie("user", JSON.stringify(franchiseUserData));
+      setCookie("role", "franchise");
+
+      showToast("success", `Signed in as ${googleUser.name} (${googleUser.email})! 🏢`);
+      setTimeout(() => navigate("/franchise-dashboard"), 800);
+    } catch (err) {
+      showToast("error", err.message || "Google Sign-In cancelled or failed");
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -63,6 +97,18 @@ function FranchiseLogin() {
           <span style={pill}><FaCheckCircle /> Secure</span>
           <span style={pill}><FaCheckCircle /> Private</span>
         </div>
+
+        {/* OFFICIAL GOOGLE SIGN IN BUTTON */}
+        <button type="button" onClick={handleGoogleLogin} style={googleBtn} disabled={googleLoading}>
+          {googleLoading ? <FaSpinner className="spin" /> : <><FaGoogle style={{ color: "#ea4335", fontSize: "16px" }} /> Continue with Google</>}
+        </button>
+
+        <div style={dividerRow}>
+          <div style={line} />
+          <span style={orText}>OR LOGIN WITH CREDENTIALS</span>
+          <div style={line} />
+        </div>
+
         <div style={inputWrap}>
           <FaEnvelope style={icon} />
           <input type="text" placeholder="Franchise Email or Mobile" value={email} onChange={(e) => setEmail(e.target.value)} style={input} />
@@ -71,7 +117,7 @@ function FranchiseLogin() {
           <FaLock style={icon} />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} style={input} />
         </div>
-        <button style={btn} className="btn pulse-btn" onClick={handleLogin}>
+        <button style={btn} className="btn pulse-btn" onClick={handleLogin} disabled={loading}>
           {loading ? <><FaSpinner className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}
         </button>
       </div>
@@ -87,6 +133,29 @@ const title = { margin: "12px 0", color: "var(--text-main)" };
 const sub = { color: "var(--text-muted)", marginBottom: "18px" };
 const pillWrap = { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "22px" };
 const pill = { background: "var(--primary-light)", color: "var(--primary)", padding: "8px 12px", borderRadius: "999px", fontSize: "13px", display: "flex", gap: "6px", alignItems: "center" };
+
+const googleBtn = {
+  width: "100%",
+  padding: "13px",
+  borderRadius: "14px",
+  border: "1px solid #cbd5e1",
+  background: "#ffffff",
+  color: "#1e293b",
+  fontSize: "14px",
+  fontWeight: "700",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "10px",
+  cursor: "pointer",
+  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+  transition: "0.2s"
+};
+
+const dividerRow = { display: "flex", alignItems: "center", gap: "10px", margin: "18px 0" };
+const line = { flex: 1, height: "1px", background: "#e2e8f0" };
+const orText = { fontSize: "11px", color: "#94a3b8", fontWeight: "700", letterSpacing: "0.5px" };
+
 const inputWrap = { display: "flex", gap: "12px", alignItems: "center", background: "var(--bg-main)", padding: "14px 16px", borderRadius: "14px", marginBottom: "14px", border: "1px solid var(--glass-border)" };
 const icon = { color: "var(--primary)" };
 const input = { border: "none", outline: "none", background: "transparent", width: "100%", color: "var(--text-main)" };

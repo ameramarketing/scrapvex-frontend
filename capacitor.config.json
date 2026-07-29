@@ -1,0 +1,9 @@
+{
+  "appId": "com.scrapvex.app",
+  "appName": "ScrapVex",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

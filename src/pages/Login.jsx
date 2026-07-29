@@ -48,7 +48,7 @@ function Login() {
         navigate("/dashboard");
       }, 700);
     } catch (error) {
-      showToast("error", error.response?.data?.message || "Login Failed");
+      showToast("error", error.response?.data?.message || error.customMessage || error.message || "Login Failed");
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,11 @@ function Login() {
           <div style={footerText}>
             <p>New user? <Link to="/register" style={authLink}>Create Account</Link></p>
             <div style={divider} />
-            <Link to="/collector-login" style={{ ...authLink, fontSize: "13px", opacity: 0.8 }}>Login as Collector</Link>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "10px" }}>
+              <Link to="/collector-login" style={roleLoginBtn}>🚛 Login as Collector</Link>
+              <Link to="/franchise-login" style={roleLoginBtn}>🏢 Login as Franchise Partner</Link>
+              <Link to="/admin-login" style={{ ...roleLoginBtn, background: "#f8fafc", color: "#64748b" }}>🛡️ Login as System Admin</Link>
+            </div>
           </div>
         </div>
       </div>
@@ -121,6 +125,7 @@ const input = { border: "none", outline: "none", background: "transparent", widt
 const forgotLink = { color: "#0b8f3a", fontSize: "13px", textDecoration: "none", fontWeight: "600" };
 const footerText = { marginTop: "30px", textAlign: "center", fontSize: "14px", color: "#666" };
 const authLink = { color: "#0b8f3a", fontWeight: "700", textDecoration: "none" };
+const roleLoginBtn = { display: "block", background: "#f0fdf4", color: "#0b8f3a", padding: "10px 14px", borderRadius: "10px", textDecoration: "none", fontSize: "13px", fontWeight: "700", border: "1px solid #bbf7d0", transition: "0.2s" };
 const divider = { height: "1px", background: "#eee", margin: "15px auto", width: "50%" };
 
 export default Login;

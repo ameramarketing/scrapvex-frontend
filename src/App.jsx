@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 /* Pages */
 import Home from "./pages/Home";
@@ -24,128 +24,174 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Wallet from "./pages/Wallet";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
+import Onboarding from "./pages/Onboarding";
+import SplashScreen from "./components/SplashScreen";
+import Notifications from "./pages/Notifications";
+
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ThemeProvider } from "./context/ThemeContext";
 import FloatingActions from "./components/FloatingActions";
+import MobileBottomNav from "./components/MobileBottomNav";
+import MobileAppShell from "./components/MobileAppShell";
+
+function InitialHomeScreen() {
+  const isCapacitor = typeof window !== "undefined" && (
+    (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) ||
+    window.location.search.includes("app=true")
+  );
+  
+  const onboardingDone = localStorage.getItem("scrapvex_onboarding_done") === "true";
+  
+  if (isCapacitor && !onboardingDone) {
+    return <Navigate to="/onboarding" replace />;
+  }
+  if (isCapacitor) {
+    return <BookPickup />;
+  }
+  return <Home />;
+}
 
 function App() {
+  const [showSplash, setShowSplash] = React.useState(() => {
+    // Show splash once per session or on app load
+    const sessionSeen = sessionStorage.getItem("splash_seen");
+    return !sessionSeen;
+  });
+
+  const handleSplashFinish = () => {
+    sessionStorage.setItem("splash_seen", "true");
+    setShowSplash(false);
+  };
+
   return (
     <ThemeProvider>
+      {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       <BrowserRouter>
-        <Routes>
-          {/* PUBLIC ROUTES */}
-          <Route path="/" element={<Home />} />
-          <Route path="/rates" element={<Rates />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/book" element={<BookPickup />} />
-          <Route path="/terms" element={<TermsConditions />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
+        <MobileAppShell>
+          <Routes>
+            {/* PUBLIC ROUTES */}
+            <Route path="/" element={<InitialHomeScreen />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/splash" element={<SplashScreen onFinish={() => window.location.href="/onboarding"} />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/rates" element={<Rates />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/book" element={<BookPickup />} />
+            <Route path="/terms" element={<TermsConditions />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
 
-          {/* USER ROUTES */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          />
+            {/* USER ROUTES */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/user"
-            element={
-              <ProtectedRoute>
-                <UserDashboard />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/user"
+              element={
+                <ProtectedRoute>
+                  <UserDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/my-pickups"
-            element={
-              <ProtectedRoute>
-                <MyPickups />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/wallet"
-            element={
-              <ProtectedRoute>
-                <Wallet />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/my-pickups"
+              element={
+                <ProtectedRoute>
+                  <MyPickups />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/wallet"
+              element={
+                <ProtectedRoute>
+                  <Wallet />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* ADMIN ROUTES */}
-          <Route
-            path="/admin-login"
-            element={<AdminLogin />}
-          />
+            {/* ADMIN ROUTES */}
+            <Route path="/admin" element={<Navigate to="/admin-login" replace />} />
+            <Route path="/admin/login" element={<Navigate to="/admin-login" replace />} />
+            <Route
+              path="/admin-login"
+              element={<AdminLogin />}
+            />
 
-          <Route
-            path="/admin-dashboard"
-            element={
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectedRoute role="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* FRANCHISE ROUTES */}
-          <Route
-            path="/franchise-login"
-            element={<FranchiseLogin />}
-          />
+            {/* FRANCHISE ROUTES */}
+            <Route path="/franchise" element={<Navigate to="/franchise-login" replace />} />
+            <Route path="/franchise/login" element={<Navigate to="/franchise-login" replace />} />
+            <Route
+              path="/franchise-login"
+              element={<FranchiseLogin />}
+            />
 
-          <Route
-            path="/franchise-dashboard"
-            element={
-              <ProtectedRoute role="franchise">
-                <FranchiseDashboard />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/franchise-dashboard"
+              element={
+                <ProtectedRoute role="franchise">
+                  <FranchiseDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* COLLECTOR ROUTES */}
-          <Route
-            path="/collector-register"
-            element={<CollectorRegister />}
-          />
+            {/* COLLECTOR ROUTES */}
+            <Route path="/collector" element={<Navigate to="/collector-login" replace />} />
+            <Route path="/collector/login" element={<Navigate to="/collector-login" replace />} />
+            <Route
+              path="/collector-register"
+              element={<CollectorRegister />}
+            />
 
-          <Route
-            path="/collector-login"
-            element={<CollectorLogin />}
-          />
+            <Route
+              path="/collector-login"
+              element={<CollectorLogin />}
+            />
 
-          <Route
-            path="/collector-dashboard"
-            element={
-              <ProtectedRoute role="collector">
-                <CollectorDashboard />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/collector-dashboard"
+              element={
+                <ProtectedRoute role="collector">
+                  <CollectorDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* 404 */}
-          <Route
-            path="*"
-            element={<NotFound />}
-          />
-        </Routes>
+            {/* 404 */}
+            <Route
+              path="*"
+              element={<NotFound />}
+            />
+          </Routes>
+        </MobileAppShell>
         <FloatingActions />
       </BrowserRouter>
     </ThemeProvider>

@@ -63,7 +63,7 @@ function Navbar() {
       <div className="container" style={navInner}>
         {/* LOGO */}
         <Link to="/" style={logo} onClick={closeMenu} className="logo-zoom">
-          <div style={logoIcon}><FaRecycle /></div>
+          <img src="/04_Square_Logo.png" alt="ScrapVex" style={{width: "42px", height: "42px", borderRadius: "12px", objectFit: "cover", border: "1.5px solid var(--primary)"}} />
           <span style={logoText}>Scrapvex</span>
         </Link>
 

@@ -7,7 +7,9 @@ import {
   FaSpinner,
   FaCheckCircle,
   FaShieldAlt,
-  FaKey
+  FaKey,
+  FaWhatsapp,
+  FaSms
 } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
@@ -24,6 +26,8 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
+  const [debugOtp, setDebugOtp] = useState("");
+  const [otpChannel, setOtpChannel] = useState("whatsapp");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState(initialRole);
@@ -34,15 +38,17 @@ function ForgotPassword() {
     setToast({ show: true, type, message });
   };
 
-  const handleSendOTP = async (e) => {
-    e.preventDefault();
-    if (mobile.length !== 10) return showToast("error", "Enter valid 10-digit mobile");
+  const handleSendOTP = async (e, selectedChannel = "whatsapp") => {
+    if (e) e.preventDefault();
+    if (mobile.length !== 10) return showToast("error", "Enter valid 10-digit mobile number");
 
     setLoading(true);
+    setOtpChannel(selectedChannel);
     try {
-      const { data } = await API.post("/auth/forgot-password", { mobile, role });
+      const { data } = await API.post("/auth/forgot-password", { mobile, role, channel: selectedChannel });
       if (data.success) {
-        showToast("success", "OTP sent to your mobile (Simulated)");
+        if (data.debugOtp) setDebugOtp(data.debugOtp);
+        showToast("success", data.message || `OTP sent via ${selectedChannel.toUpperCase()}`);
         setStep(2);
       }
     } catch (error) {
@@ -115,21 +121,38 @@ function ForgotPassword() {
           </div>
 
           {step === 1 && (
-            <form onSubmit={handleSendOTP}>
+            <form onSubmit={(e) => handleSendOTP(e, "whatsapp")}>
               <div style={{...inputWrap, background: "var(--bg-main)", border: "1px solid var(--glass-border)"}}>
                 <FaPhoneAlt style={{...icon, color: "var(--primary)"}} />
                 <input 
                   type="text" 
-                  placeholder="Mobile Number" 
+                  placeholder="Mobile Number *" 
                   value={mobile} 
                   onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} 
                   style={{...input, color: "var(--text-main)"}} 
                   required 
                 />
               </div>
-              <button type="submit" style={{...btn, background: "var(--primary)"}} disabled={loading}>
-                {loading ? <FaSpinner className="spin" /> : <>Send OTP <FaArrowRight /></>}
-              </button>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "15px" }}>
+                <button
+                  type="button"
+                  style={{ ...btn, background: "#25D366" }}
+                  disabled={loading}
+                  onClick={(e) => handleSendOTP(e, "whatsapp")}
+                >
+                  {loading ? <FaSpinner className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
+                </button>
+
+                <button
+                  type="button"
+                  style={{ ...btn, background: "var(--primary)" }}
+                  disabled={loading}
+                  onClick={(e) => handleSendOTP(e, "sms")}
+                >
+                  {loading ? <FaSpinner className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
+                </button>
+              </div>
             </form>
           )}
 
@@ -139,15 +162,22 @@ function ForgotPassword() {
                 <FaShieldAlt style={{...icon, color: "var(--primary)"}} />
                 <input 
                   type="text" 
-                  placeholder="Enter 4-digit OTP" 
+                  placeholder="Enter 4-digit OTP *" 
                   value={otp} 
                   onChange={(e) => setOtp(e.target.value.slice(0, 4))} 
                   style={{...input, color: "var(--text-main)"}} 
                   required 
                 />
               </div>
-              <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", marginTop: "10px" }}>OTP has been sent to your mobile number</p>
-              <button type="submit" style={{...btn, background: "var(--primary)"}} disabled={loading}>
+              {debugOtp && (
+                <div style={{ marginBottom: "16px", padding: "10px 12px", borderRadius: "12px", background: "#f0fdf4", color: "#15803d", border: "1px solid #bbf7d0", fontSize: "13px", textAlign: "center" }}>
+                  🔑 Demo OTP: <strong>{debugOtp}</strong>
+                </div>
+              )}
+              <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", marginTop: "10px" }}>
+                {otpChannel === "whatsapp" ? "💬 OTP sent to your WhatsApp" : "📱 OTP sent via SMS"}
+              </p>
+              <button type="submit" style={{...btn, background: "var(--primary)", marginTop: "12px"}} disabled={loading}>
                 {loading ? <FaSpinner className="spin" /> : <>Verify & Continue <FaArrowRight /></>}
               </button>
             </form>

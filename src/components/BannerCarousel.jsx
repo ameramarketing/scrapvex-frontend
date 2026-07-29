@@ -13,11 +13,21 @@ function BannerCarousel() {
   const fetchAds = async () => {
     try {
       const { data } = await API.get("/ads");
-      if (data.success) {
+      if (data.success && data.data.filter(ad => ad.isActive).length > 0) {
         setAds(data.data.filter(ad => ad.isActive));
+      } else {
+        setAds(defaultBanners);
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+      setAds(defaultBanners); 
+    }
   };
+
+  const defaultBanners = [
+    { _id: "b1", title: "Doorstep Scrap Pickup in Rajouri", imageUrl: "/05_Hero_Banner_01.png", link: "/book", isActive: true },
+    { _id: "b2", title: "Best Scrap Market Rates & Instant Cash", imageUrl: "/06_Hero_Banner_02.png", link: "/rates", isActive: true },
+    { _id: "b3", title: "Certified Digital Weight Guarantee", imageUrl: "/07_Hero_Banner_03.png", link: "/book", isActive: true }
+  ];
 
   useEffect(() => {
     if (ads.length > 0) {
