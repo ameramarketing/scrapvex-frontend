@@ -11,6 +11,8 @@ function PickupForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [otpSent, setOtpSent] = useState(false);
+  const [sentOtpCode, setSentOtpCode] = useState("");
+  const [otpChannel, setOtpChannel] = useState("whatsapp");
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
