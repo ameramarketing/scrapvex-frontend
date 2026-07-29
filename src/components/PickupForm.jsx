@@ -75,9 +75,9 @@ function PickupForm() {
     if (form.otp.length !== 4) return showToast("error", "Enter 4 digit OTP");
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/verify-otp", { mobile: form.phone, otp: form.otp });
+      const { data } = await API.post("/auth/verify-otp", { mobile: form.phone, otp: form.otp, name: form.name });
       if (data.success) {
-        showToast("success", "Verified! ✨");
+        showToast("success", data.autoCreated ? "Verified & Account Created! ✨" : "Verified! ✨");
         setStep(2);
       }
     } catch (e) {
