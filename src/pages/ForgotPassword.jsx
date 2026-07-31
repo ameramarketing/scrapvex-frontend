@@ -51,7 +51,6 @@ function ForgotPassword() {
     try {
       const { data } = await API.post("/auth/forgot-password", { mobile, role, channel: selectedChannel });
       if (data.success) {
-        if (data.debugOtp) setDebugOtp(data.debugOtp);
         showToast("success", data.message || `OTP sent via ${selectedChannel.toUpperCase()}`);
         setStep(2);
       }
@@ -173,11 +172,6 @@ function ForgotPassword() {
                   required 
                 />
               </div>
-              {debugOtp && (
-                <div style={{ marginBottom: "16px", padding: "10px 12px", borderRadius: "12px", background: "#f0fdf4", color: "#15803d", border: "1px solid #bbf7d0", fontSize: "13px", textAlign: "center" }}>
-                  🔑 Demo OTP: <strong>{debugOtp}</strong>
-                </div>
-              )}
               <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", marginTop: "10px" }}>
                 {otpChannel === "whatsapp" ? "💬 OTP sent to your WhatsApp" : "📱 OTP sent via SMS"}
               </p>

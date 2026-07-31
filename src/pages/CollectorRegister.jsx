@@ -55,7 +55,6 @@ function CollectorRegister() {
       setModalError("");
       setOtpChannel(selectedChannel);
       const { data } = await API.post("/auth/send-register-otp", { mobile: form.mobile, channel: selectedChannel });
-      if (data.debugOtp) setSentOtpCode(data.debugOtp);
       showToast("success", data.message || `OTP sent via ${selectedChannel.toUpperCase()}!`);
       setShowOtpModal(true);
     } catch (error) {

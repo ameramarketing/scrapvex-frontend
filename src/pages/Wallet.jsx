@@ -74,11 +74,8 @@ function Wallet() {
         name: withdrawForm.name
       });
       if (data.success) {
-        showToast("success", "Security OTP sent to registered mobile number!");
+        showToast("success", "Security OTP sent to your WhatsApp!");
         setWithdrawOtpSent(true);
-        if (data.otp) {
-          setDemoOtp(data.otp);
-        }
       }
     } catch (error) {
       showToast("error", error.response?.data?.message || "Failed to send OTP");
@@ -302,12 +299,6 @@ function Wallet() {
                      style={{...input, color: "var(--text-main)", fontWeight: "bold", textAlign: "center", letterSpacing: "4px"}} 
                    />
                  </div>
-
-                 {demoOtp && (
-                   <div style={{ background: "rgba(11, 143, 58, 0.1)", border: "1px dashed #0b8f3a", padding: "10px", borderRadius: "8px", fontSize: "11px", color: "#0b8f3a", textAlign: "center", marginBottom: "15px" }}>
-                     🔐 <strong>Staging Simulator:</strong> SMS OTP is <strong>{demoOtp}</strong>
-                   </div>
-                 )}
 
                  <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
                    {submitting ? <FaSpinner className="spin" /> : "Confirm & Withdraw Funds"}

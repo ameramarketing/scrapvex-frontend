@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaGoogle, FaEye, FaEyeSlash
+  FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaGoogle, FaEye, FaEyeSlash, FaHome
 } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
@@ -92,6 +92,11 @@ function CollectorLogin() {
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <div style={card} className="rate-card">
+        <div style={{ textAlign: "left", marginBottom: "15px" }}>
+          <Link to="/" style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "var(--primary)", fontWeight: "600", fontSize: "14px", textDecoration: "none", background: "var(--primary-light)", padding: "8px 14px", borderRadius: "10px" }}>
+            <FaHome /> Back to Home
+          </Link>
+        </div>
         <div style={topIcon}><FaTruck /></div>
         <p style={tag}>Pickup Staff Access 🚚</p>
         <h1 style={title}>Collector Login</h1>

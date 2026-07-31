@@ -200,11 +200,8 @@ function CollectorDashboard() {
         name
       });
       if (data.success) {
-        showToast("success", `OTP sent successfully to registered mobile!`);
+        showToast("success", `OTP sent to your WhatsApp!`);
         setWithdrawalOtpSent(true);
-        if (data.otp) {
-          setDemoOtp(data.otp);
-        }
       }
     } catch (e) {
       showToast("error", e.response?.data?.message || "Failed to send OTP");
@@ -1067,12 +1064,6 @@ function CollectorDashboard() {
                     onChange={e => setWithdrawalOtp(e.target.value.replace(/\D/g, ""))} 
                   />
                 </div>
-
-                {demoOtp && (
-                  <div style={{ background: "rgba(11, 143, 58, 0.1)", border: "1px dashed #0b8f3a", padding: "10px", borderRadius: "8px", fontSize: "12px", color: "#0b8f3a", textAlign: "center" }}>
-                    🔐 <strong>Staging Simulator:</strong> SMS OTP is <strong>{demoOtp}</strong>
-                  </div>
-                )}
 
                 <button 
                   style={{ ...viewBtn, width: "100%", padding: "15px", justifyContent: "center", display: "flex", fontSize: "14px", fontWeight: "bold", background: "var(--primary)" }} 
