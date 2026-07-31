@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaUser, FaPhoneAlt, FaLock, FaMapMarkerAlt, FaCalendarAlt,
-  FaClock, FaRecycle, FaGift, FaCheckCircle, FaSpinner, FaChevronRight, FaInfoCircle, FaPlus, FaMinus
+  FaClock, FaRecycle, FaGift, FaCheckCircle, FaSpinner, FaChevronRight, FaInfoCircle, FaPlus, FaMinus, FaCrosshairs
 } from "react-icons/fa";
 import Toast from "./Toast";
 import API from "../services/api";
@@ -87,15 +87,42 @@ function PickupForm() {
   };
 
   const getLiveLocation = () => {
-    if (!navigator.geolocation) return showToast("error", "Not supported");
+    if (!navigator.geolocation) return showToast("error", "GPS Geolocation is not supported by your device");
     setLocationLoading(true);
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        update("address", `Lat: ${pos.coords.latitude.toFixed(4)}, Long: ${pos.coords.longitude.toFixed(4)}`);
-        update("lat", pos.coords.latitude); update("lng", pos.coords.longitude);
-        setLocationLoading(false); showToast("success", "Location pinned! 📍");
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        update("lat", lat);
+        update("lng", lng);
+
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+          const data = await res.json();
+          const addr = data.address;
+          const road = addr?.road || addr?.suburb || addr?.neighbourhood || addr?.residential || "";
+          const city = addr?.city || addr?.town || addr?.village || addr?.county || "Rajouri";
+          const postcode = addr?.postcode || "185131";
+
+          const formattedAddress = `${road ? road + ", " : ""}${city} (GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+          update("address", formattedAddress);
+          if (city) update("city", city.includes("Rajouri") ? "Rajouri Town, J&K" : city);
+          if (postcode && postcode.length === 6) update("pincode", postcode);
+
+          showToast("success", "Live GPS Location Pinned! 📍");
+        } catch (err) {
+          console.error("Geocoding error", err);
+          update("address", `Live GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+          showToast("success", "Live GPS Coordinates Pinned! 📍");
+        } finally {
+          setLocationLoading(false);
+        }
       },
-      () => { setLocationLoading(false); showToast("error", "Failed to get location"); }
+      (err) => {
+        setLocationLoading(false);
+        showToast("error", "Could not detect live GPS. Please check location permissions.");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
@@ -239,9 +266,35 @@ function PickupForm() {
         {step === 2 && (
           <div className="fade-up">
             <h3 style={stepTitle}>Pickup Location</h3>
+
+            <button
+              type="button"
+              onClick={getLiveLocation}
+              disabled={locationLoading}
+              style={{
+                width: "100%",
+                padding: "12px 14px",
+                borderRadius: "12px",
+                border: "1px solid #bbf7d0",
+                background: "#f0fdf4",
+                color: "#15803d",
+                fontWeight: "700",
+                fontSize: "13px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                cursor: "pointer",
+                marginBottom: "14px"
+              }}
+            >
+              {locationLoading ? <FaSpinner className="spin" /> : <FaCrosshairs style={{ color: "#0b8f3a" }} />}
+              <span>{locationLoading ? "Detecting Live GPS Location..." : "📍 Detect My Live GPS Location (For Collector Navigation)"}</span>
+            </button>
+
             <div style={{ position: "relative" }}>
-              <Input icon={<FaMapMarkerAlt />} placeholder="House / Street / Area" value={form.address} onChange={v => update("address", v)} />
-              <button onClick={getLiveLocation} style={locBtn}>{locationLoading ? <FaSpinner className="spin" /> : <FaMapMarkerAlt />}</button>
+              <Input icon={<FaMapMarkerAlt />} placeholder="House / Street / Area / Landmark" value={form.address} onChange={v => update("address", v)} />
+              <button onClick={getLiveLocation} style={locBtn} title="Pin Live GPS">{locationLoading ? <FaSpinner className="spin" /> : <FaCrosshairs />}</button>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={customInputWrap}>
