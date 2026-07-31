@@ -888,8 +888,19 @@ function CollectorDashboard() {
                  } />
                  <div style={{gridColumn:"span 2"}}>
                     <InfoItem label="Address" value={selectedPickup.address} />
-                    <a href={`https://www.google.com/maps?q=${encodeURIComponent(selectedPickup.address)}`} target="_blank" rel="noreferrer" style={navLink}>
-                       <FaMapMarkerAlt/> Open Navigation
+                    <a 
+                      href={(() => {
+                        if (selectedPickup.lat && selectedPickup.lng) return `https://www.google.com/maps/dir/?api=1&destination=${selectedPickup.lat},${selectedPickup.lng}`;
+                        if (selectedPickup.latitude && selectedPickup.longitude) return `https://www.google.com/maps/dir/?api=1&destination=${selectedPickup.latitude},${selectedPickup.longitude}`;
+                        const match = selectedPickup.address?.match(/GPS:\s*([0-9.-]+),\s*([0-9.-]+)/i);
+                        if (match) return `https://www.google.com/maps/dir/?api=1&destination=${match[1]},${match[2]}`;
+                        return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedPickup.address)}`;
+                      })()} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      style={navLink}
+                    >
+                       <FaMapMarkerAlt/> Open Direct Live GPS Navigation
                     </a>
                  </div>
               </div>

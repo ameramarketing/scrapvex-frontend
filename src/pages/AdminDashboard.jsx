@@ -51,6 +51,9 @@ function AdminDashboard() {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [brandLogoFile, setBrandLogoFile] = useState(null);
+  const [faviconFile, setFaviconFile] = useState(null);
+  const [appIconFile, setAppIconFile] = useState(null);
+  const [heroBannerFile, setHeroBannerFile] = useState(null);
   const [walletForm, setWalletForm] = useState({ userId: "", amount: "", type: "credit", description: "" });
   
   const [accountingStats, setAccountingStats] = useState({ totalPurchaseAmount: 0, todayPurchaseAmount: 0, totalSaleAmount: 0, todaySaleAmount: 0, overallProfit: 0, todayProfit: 0, totalCommission: 0, todayCommission: 0, stockValue: 0 });
@@ -459,18 +462,20 @@ function AdminDashboard() {
     try {
       const formData = new FormData();
       Object.keys(settings).forEach(key => {
-        if (key !== 'brandLogo') {
+        if (!['brandLogo', 'favicon', 'appIcon', 'heroBanner'].includes(key)) {
           formData.append(key, settings[key] !== undefined && settings[key] !== null ? settings[key] : '');
         }
       });
-      if (brandLogoFile) {
-        formData.append('brandLogo', brandLogoFile);
-      }
+      if (brandLogoFile) formData.append('brandLogo', brandLogoFile);
+      if (faviconFile) formData.append('favicon', faviconFile);
+      if (appIconFile) formData.append('appIcon', appIconFile);
+      if (heroBannerFile) formData.append('heroBanner', heroBannerFile);
+
       const { data } = await API.put("/settings", formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
       if (data.success) {
-        showToast("success", "Platform & Brand Settings Updated Successfully!");
+        showToast("success", "Platform, Festival Logo & Favicon Settings Updated!");
         if (data.data) setSettings(data.data);
       }
     } catch (e) { showToast("error", "Failed to save settings"); }
@@ -770,9 +775,9 @@ function AdminDashboard() {
                 <h3 style={boxTitle}>Global Platform & Dynamic Brand Settings</h3>
                 <div style={settingsGrid}>
                    <div style={settingsSection}>
-                      <h4 style={{ margin: "0 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🎨 Brand & App Identity</h4>
+                      <h4 style={{ margin: "0 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🎨 Brand, Festival Logo & Icons</h4>
                       
-                      <label style={labelStyle}> Upload Brand Logo</label>
+                      <label style={labelStyle}> Upload Brand / Festival Logo</label>
                       <input 
                         type="file" 
                         accept="image/*" 
@@ -781,8 +786,50 @@ function AdminDashboard() {
                       />
                       {settings.brandLogo && (
                         <div style={{ margin: "5px 0 15px 0" }}>
-                          <small style={{ color: "var(--text-muted)", display: "block" }}>Current Active Logo:</small>
-                          <img src={`http://localhost:5000${settings.brandLogo}`} alt="Brand Logo" style={{ height: "45px", objectFit: "contain", borderRadius: "8px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>Active Website Logo:</small>
+                          <img src={settings.brandLogo.startsWith("http") ? settings.brandLogo : `http://localhost:5000${settings.brandLogo}`} alt="Brand Logo" style={{ height: "45px", objectFit: "contain", borderRadius: "8px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                        </div>
+                      )}
+
+                      <label style={labelStyle}> Upload Favicon (Browser Tab Icon)</label>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={e => setFaviconFile(e.target.files[0])}
+                        style={{ ...inputStyle, padding: "8px" }}
+                      />
+                      {settings.favicon && (
+                        <div style={{ margin: "5px 0 15px 0" }}>
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>Active Favicon Icon:</small>
+                          <img src={settings.favicon.startsWith("http") ? settings.favicon : `http://localhost:5000${settings.favicon}`} alt="Favicon" style={{ height: "32px", width: "32px", objectFit: "contain", borderRadius: "6px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                        </div>
+                      )}
+
+                      <label style={labelStyle}> Upload Mobile App Icon</label>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={e => setAppIconFile(e.target.files[0])}
+                        style={{ ...inputStyle, padding: "8px" }}
+                      />
+                      {settings.appIcon && (
+                        <div style={{ margin: "5px 0 15px 0" }}>
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>Active App Icon:</small>
+                          <img src={settings.appIcon.startsWith("http") ? settings.appIcon : `http://localhost:5000${settings.appIcon}`} alt="App Icon" style={{ height: "45px", width: "45px", objectFit: "contain", borderRadius: "10px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                        </div>
+                      )}
+
+                      <label style={labelStyle}> Upload Festival Hero Banner</label>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={e => setHeroBannerFile(e.target.files[0])}
+                        style={{ ...inputStyle, padding: "8px" }}
+                      />
+                      {settings.heroBanner && (
+                        <div style={{ margin: "5px 0 15px 0" }}>
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>Active Festival Banner:</small>
+                          <img src={settings.heroBanner.startsWith("http") ? settings.heroBanner : `http://localhost:5000${settings.heroBanner}`} alt="Hero Banner" style={{ height: "60px", maxWidth: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd" }} />
                         </div>
                       )}
 

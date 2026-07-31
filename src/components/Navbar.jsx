@@ -32,6 +32,19 @@ function Navbar() {
   }, []);
 
   useEffect(() => {
+    if (settings?.favicon) {
+      const faviconUrl = settings.favicon.startsWith("http") ? settings.favicon : `http://localhost:5000${settings.favicon}`;
+      let faviconLink = document.querySelector("link[rel*='icon']");
+      if (!faviconLink) {
+        faviconLink = document.createElement("link");
+        faviconLink.rel = "shortcut icon";
+        document.getElementsByTagName("head")[0].appendChild(faviconLink);
+      }
+      faviconLink.href = faviconUrl;
+    }
+  }, [settings?.favicon]);
+
+  useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     if (open) { document.body.style.overflow = "hidden"; } else { document.body.style.overflow = "auto"; }
@@ -43,10 +56,10 @@ function Navbar() {
 
   const navLinks = [
     { name: "Home", path: "/", icon: <FaHome /> },
-    { name: "Rates", path: "/rates", icon: <FaTags /> },
+    { name: "Scrap Rates", path: "/rates", icon: <FaTags /> },
     { name: "Book Pickup", path: "/book", icon: <FaPlusCircle /> },
-    { name: "Terms", path: "/terms", icon: <FaFileContract /> },
-    { name: "About", path: "/about", icon: <FaInfoCircle /> },
+    { name: "About Us", path: "/about", icon: <FaInfoCircle /> },
+    { name: "Contact", path: "/contact", icon: <FaFileContract /> },
   ];
 
   const getDashboardPath = () => {
@@ -63,7 +76,11 @@ function Navbar() {
       <div className="container" style={navInner}>
         {/* LOGO */}
         <Link to="/" style={logo} onClick={closeMenu} className="logo-zoom">
-          <img src="/04_Square_Logo.png" alt="ScrapVex" style={{width: "42px", height: "42px", borderRadius: "12px", objectFit: "cover", border: "1.5px solid var(--primary)"}} />
+          <img 
+            src={settings?.brandLogo ? (settings.brandLogo.startsWith("http") ? settings.brandLogo : `http://localhost:5000${settings.brandLogo}`) : "/04_Square_Logo.png"} 
+            alt="ScrapVex" 
+            style={{width: "42px", height: "42px", borderRadius: "12px", objectFit: "cover", border: "1.5px solid var(--primary)"}} 
+          />
           <span style={logoText}>Scrapvex</span>
         </Link>
 

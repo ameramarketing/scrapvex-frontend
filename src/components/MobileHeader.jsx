@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { FaMapMarkerAlt, FaChevronDown, FaCrosshairs, FaSpinner } from "react-icons/fa";
+import { FaMapMarkerAlt, FaChevronDown, FaCrosshairs, FaSpinner, FaExclamationTriangle, FaVoteYea, FaCheckCircle } from "react-icons/fa";
+import API from "../services/api";
 
 function MobileHeader({ onSelectCity }) {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
+  const [activeCities, setActiveCities] = useState([]);
+  const [votedAreas, setVotedAreas] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("voted_areas") || "[]");
+    } catch (e) {
+      return [];
+    }
+  });
+  const [voting, setVoting] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
 
   const user = (() => {
     try {
@@ -18,6 +29,55 @@ function MobileHeader({ onSelectCity }) {
   const [selectedLocation, setSelectedLocation] = useState(() => {
     return localStorage.getItem("user_selected_location") || defaultLocation;
   });
+
+  useEffect(() => {
+    const fetchActiveCities = async () => {
+      try {
+        const { data } = await API.get("/pickups/active-cities");
+        if (data.success) {
+          setActiveCities(data.cities || []);
+        }
+      } catch (e) {
+        console.error("Failed to fetch active cities", e);
+      }
+    };
+    fetchActiveCities();
+  }, []);
+
+  const isServiced = (() => {
+    if (!selectedLocation || activeCities.length === 0) return true;
+    const locLower = selectedLocation.toLowerCase();
+    return activeCities.some(city => {
+      const cityLower = city.toLowerCase();
+      return locLower.includes(cityLower) || cityLower.includes(locLower);
+    });
+  })();
+
+  const isVoted = votedAreas.includes(selectedLocation);
+
+  const handleVoteArea = async () => {
+    if (isVoted) return;
+    setVoting(true);
+    try {
+      const { data } = await API.post("/pickups/vote-area", {
+        area: selectedLocation,
+        mobile: user?.mobile || ""
+      });
+      const newVoted = [...votedAreas, selectedLocation];
+      setVotedAreas(newVoted);
+      localStorage.setItem("voted_areas", JSON.stringify(newVoted));
+      setToastMsg(data.message || `Vote recorded for ${selectedLocation}! 🎉`);
+      setTimeout(() => setToastMsg(""), 4000);
+    } catch (e) {
+      const newVoted = [...votedAreas, selectedLocation];
+      setVotedAreas(newVoted);
+      localStorage.setItem("voted_areas", JSON.stringify(newVoted));
+      setToastMsg("Vote recorded! We are planning expansion to your area soon. 🎉");
+      setTimeout(() => setToastMsg(""), 4000);
+    } finally {
+      setVoting(false);
+    }
+  };
 
   const locations = [
     "Rajouri Town, J&K",
@@ -92,6 +152,28 @@ function MobileHeader({ onSelectCity }) {
         </div>
       </header>
 
+      {/* Unserviced Area Warning & Voting Banner */}
+      {!isServiced && (
+        <div style={unservicedBannerStyle}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#92400e", fontWeight: "700", fontSize: "13px" }}>
+            <FaExclamationTriangle style={{ color: "#d97706", fontSize: "16px" }} />
+            <span>We currently don't offer pickup service in {selectedLocation} yet.</span>
+          </div>
+          <p style={{ margin: "6px 0 10px 0", fontSize: "12px", color: "#78350f" }}>
+            Want ScrapVex doorstep pickup in your area? Cast your vote to launch service here!
+          </p>
+          <button
+            style={isVoted ? votedBtnStyle : voteBtnStyle}
+            onClick={handleVoteArea}
+            disabled={voting || isVoted}
+          >
+            {voting ? <FaSpinner className="spin" /> : isVoted ? <FaCheckCircle /> : <FaVoteYea />}
+            <span>{isVoted ? `Vote Recorded for ${selectedLocation}! 🎉` : `Vote to Start Service in ${selectedLocation}`}</span>
+          </button>
+          {toastMsg && <div style={toastBannerStyle}>{toastMsg}</div>}
+        </div>
+      )}
+
       {/* Location Picker Modal Sheet */}
       {showLocationModal && (
         <div style={modalBackdrop} onClick={() => setShowLocationModal(false)}>
@@ -145,6 +227,57 @@ const headerContainer = {
   zIndex: 100,
   borderBottom: "1px solid #f1f5f9",
   boxShadow: "0 2px 10px rgba(0,0,0,0.03)"
+};
+
+const unservicedBannerStyle = {
+  background: "#fffbeb",
+  borderBottom: "1px solid #fde68a",
+  padding: "12px 16px",
+  animation: "fadeIn 0.3s ease-in-out"
+};
+
+const voteBtnStyle = {
+  width: "100%",
+  padding: "10px 14px",
+  borderRadius: "10px",
+  border: "none",
+  background: "linear-gradient(135deg, #d97706, #b45309)",
+  color: "#ffffff",
+  fontWeight: "700",
+  fontSize: "13px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "8px",
+  cursor: "pointer",
+  boxShadow: "0 2px 8px rgba(217,119,6,0.3)"
+};
+
+const votedBtnStyle = {
+  width: "100%",
+  padding: "10px 14px",
+  borderRadius: "10px",
+  border: "1px solid #bbf7d0",
+  background: "#f0fdf4",
+  color: "#15803d",
+  fontWeight: "700",
+  fontSize: "13px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "8px",
+  cursor: "default"
+};
+
+const toastBannerStyle = {
+  marginTop: "8px",
+  padding: "8px 12px",
+  borderRadius: "8px",
+  background: "#dcfce7",
+  color: "#166534",
+  fontSize: "12px",
+  fontWeight: "600",
+  textAlign: "center"
 };
 
 const topRow = {
