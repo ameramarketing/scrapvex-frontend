@@ -1,11 +1,23 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaMapMarkerAlt, FaBell, FaChevronDown, FaUserCircle } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaMapMarkerAlt, FaChevronDown, FaCrosshairs, FaSpinner } from "react-icons/fa";
 
 function MobileHeader({ onSelectCity }) {
-  const navigate = useNavigate();
   const [showLocationModal, setShowLocationModal] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("Rajouri Town, J&K");
+  const [geoLoading, setGeoLoading] = useState(false);
+
+  const user = (() => {
+    try {
+      const u = localStorage.getItem("user");
+      return u ? JSON.parse(u) : null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  const defaultLocation = user?.area || user?.address || user?.assignedCity || "Rajouri Town, J&K";
+  const [selectedLocation, setSelectedLocation] = useState(() => {
+    return localStorage.getItem("user_selected_location") || defaultLocation;
+  });
 
   const locations = [
     "Rajouri Town, J&K",
@@ -19,19 +31,51 @@ function MobileHeader({ onSelectCity }) {
     "Kalakote, Rajouri"
   ];
 
-  const user = (() => {
-    try {
-      const u = localStorage.getItem("user");
-      return u ? JSON.parse(u) : null;
-    } catch (e) {
-      return null;
+  // Auto-detect live GPS location if available
+  const detectLiveLocation = () => {
+    if ("geolocation" in navigator) {
+      setGeoLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords;
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+            const data = await res.json();
+            const liveName = data.address?.suburb || data.address?.neighbourhood || data.address?.city || data.address?.town || data.address?.county || `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+            const fullLoc = `${liveName}, Rajouri`;
+            setSelectedLocation(fullLoc);
+            localStorage.setItem("user_selected_location", fullLoc);
+            if (onSelectCity) onSelectCity(fullLoc);
+          } catch (e) {
+            console.error("Geocoding failed", e);
+            if (user?.area || user?.address) {
+              const loc = user.area || user.address;
+              setSelectedLocation(loc);
+            }
+          } finally {
+            setGeoLoading(false);
+            setShowLocationModal(false);
+          }
+        },
+        (error) => {
+          console.warn("GPS error", error);
+          setGeoLoading(false);
+        },
+        { timeout: 10000, maximumAge: 60000 }
+      );
     }
-  })();
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem("user_selected_location")) {
+      detectLiveLocation();
+    }
+  }, []);
 
   return (
     <>
       <header style={headerContainer}>
-        {/* Top Location Bar & Action Icons */}
+        {/* Top Location Bar ONLY (Bell & Profile removed per user request) */}
         <div style={topRow}>
           <div style={locationPicker} onClick={() => setShowLocationModal(true)}>
             <div style={locationIconCircle}>
@@ -45,20 +89,6 @@ function MobileHeader({ onSelectCity }) {
               </div>
             </div>
           </div>
-
-          <div style={rightActions}>
-            <button style={actionIconBtn} onClick={() => navigate("/notifications")}>
-              <FaBell />
-              <span style={notificationBadge} />
-            </button>
-            <button style={profileAvatarBtn} onClick={() => navigate(user ? "/profile" : "/login")}>
-              {user ? (
-                <div style={userInitialBadge}>{user.name?.charAt(0).toUpperCase() || "U"}</div>
-              ) : (
-                <FaUserCircle style={{ fontSize: "28px", color: "#0b8f3a" }} />
-              )}
-            </button>
-          </div>
         </div>
       </header>
 
@@ -67,8 +97,17 @@ function MobileHeader({ onSelectCity }) {
         <div style={modalBackdrop} onClick={() => setShowLocationModal(false)}>
           <div style={modalSheet} onClick={(e) => e.stopPropagation()}>
             <div style={sheetHandle} />
-            <h3 style={sheetTitle}>Select Your Location in Rajouri</h3>
+            <h3 style={sheetTitle}>Select Your Location</h3>
             <p style={sheetSubtitle}>Choose area for instant doorstep pickup availability</p>
+
+            <button
+              style={gpsDetectBtn}
+              onClick={detectLiveLocation}
+              disabled={geoLoading}
+            >
+              {geoLoading ? <FaSpinner className="spin" /> : <FaCrosshairs style={{ color: "#0b8f3a" }} />}
+              <span>{geoLoading ? "Detecting Live Location..." : "Use Current Live GPS Location"}</span>
+            </button>
 
             <div style={locationList}>
               {locations.map((loc, idx) => (
@@ -81,6 +120,7 @@ function MobileHeader({ onSelectCity }) {
                   }}
                   onClick={() => {
                     setSelectedLocation(loc);
+                    localStorage.setItem("user_selected_location", loc);
                     setShowLocationModal(false);
                     if (onSelectCity) onSelectCity(loc);
                   }}
@@ -153,54 +193,21 @@ const locationMainTitle = {
   gap: "4px"
 };
 
-const rightActions = {
-  display: "flex",
-  alignItems: "center",
-  gap: "10px"
-};
-
-const actionIconBtn = {
-  width: "36px",
-  height: "36px",
-  borderRadius: "50%",
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0",
+const gpsDetectBtn = {
+  width: "100%",
+  padding: "12px 14px",
+  borderRadius: "12px",
+  border: "1px solid #bbf7d0",
+  background: "#f0fdf4",
+  color: "#15803d",
+  fontWeight: "700",
+  fontSize: "13px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  color: "#475569",
+  gap: "8px",
   cursor: "pointer",
-  position: "relative"
-};
-
-const notificationBadge = {
-  position: "absolute",
-  top: "8px",
-  right: "8px",
-  width: "7px",
-  height: "7px",
-  borderRadius: "50%",
-  background: "#ef4444"
-};
-
-const profileAvatarBtn = {
-  background: "none",
-  border: "none",
-  padding: 0,
-  cursor: "pointer"
-};
-
-const userInitialBadge = {
-  width: "34px",
-  height: "34px",
-  borderRadius: "50%",
-  background: "#0b8f3a",
-  color: "#fff",
-  fontWeight: "700",
-  fontSize: "14px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center"
+  marginBottom: "12px"
 };
 
 const modalBackdrop = {
