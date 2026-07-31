@@ -104,16 +104,6 @@ function FranchiseLogin() {
           <span style={pill}><FaCheckCircle /> Private</span>
         </div>
 
-        {/* OFFICIAL GOOGLE SIGN IN BUTTON */}
-        <button type="button" onClick={handleGoogleLogin} style={googleBtn} disabled={googleLoading}>
-          {googleLoading ? <FaSpinner className="spin" /> : <><FaGoogle style={{ color: "#ea4335", fontSize: "16px" }} /> Continue with Google</>}
-        </button>
-
-        <div style={dividerRow}>
-          <div style={line} />
-          <span style={orText}>OR LOGIN WITH CREDENTIALS</span>
-          <div style={line} />
-        </div>
 
         <div style={inputWrap}>
           <FaEnvelope style={icon} />

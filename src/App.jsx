@@ -34,6 +34,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import FloatingActions from "./components/FloatingActions";
 import MobileBottomNav from "./components/MobileBottomNav";
 import MobileAppShell from "./components/MobileAppShell";
+import GlobalLoader from "./components/GlobalLoader";
 
 function InitialHomeScreen() {
   const isCapacitor = typeof window !== "undefined" && (
@@ -68,6 +69,7 @@ function App() {
     <ThemeProvider>
       {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       <BrowserRouter>
+        <GlobalLoader />
         <MobileAppShell>
           <Routes>
             {/* PUBLIC ROUTES */}
