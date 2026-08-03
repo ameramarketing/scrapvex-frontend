@@ -54,6 +54,8 @@ function AdminDashboard() {
   const [faviconFile, setFaviconFile] = useState(null);
   const [appIconFile, setAppIconFile] = useState(null);
   const [heroBannerFile, setHeroBannerFile] = useState(null);
+  const [mobileHeroBannerFile, setMobileHeroBannerFile] = useState(null);
+  const [mobileAdFile, setMobileAdFile] = useState(null);
   const [walletForm, setWalletForm] = useState({ userId: "", amount: "", type: "credit", description: "" });
   
   const [accountingStats, setAccountingStats] = useState({ totalPurchaseAmount: 0, todayPurchaseAmount: 0, totalSaleAmount: 0, todaySaleAmount: 0, overallProfit: 0, todayProfit: 0, totalCommission: 0, todayCommission: 0, stockValue: 0 });
@@ -470,6 +472,7 @@ function AdminDashboard() {
       if (faviconFile) formData.append('favicon', faviconFile);
       if (appIconFile) formData.append('appIcon', appIconFile);
       if (heroBannerFile) formData.append('heroBanner', heroBannerFile);
+      if (mobileHeroBannerFile) formData.append('mobileHeroBanner', mobileHeroBannerFile);
 
       const { data } = await API.put("/settings", formData, {
         headers: { "Content-Type": "multipart/form-data" }
@@ -483,16 +486,19 @@ function AdminDashboard() {
 
   // ... (Other handlers like handleCreateAd, handleResetPassword etc same as before)
   const handleCreateAd = async () => {
-    if (!newAd.title || !adFile) return showToast("error", "Select title & image");
+    if (!newAd.title || !adFile) return showToast("error", "Select title & desktop image");
     try {
       const formData = new FormData();
       formData.append("title", newAd.title);
       formData.append("link", newAd.link || "#");
       formData.append("image", adFile);
+      if (mobileAdFile) {
+        formData.append("mobileImage", mobileAdFile);
+      }
       const { data } = await API.post("/ads", formData, { headers: { "Content-Type": "multipart/form-data" } });
       if (data.success) {
-        showToast("success", "Banner Added!");
-        setShowAdModal(false); fetchAds();
+        showToast("success", "Desktop & Mobile Banner Published!");
+        setShowAdModal(false); setAdFile(null); setMobileAdFile(null); fetchAds();
       }
     } catch (e) { showToast("error", "Upload failed"); }
   };
@@ -819,7 +825,7 @@ function AdminDashboard() {
                         </div>
                       )}
 
-                      <label style={labelStyle}> Upload Festival Hero Banner</label>
+                      <label style={labelStyle}> Upload Festival Hero Banner (Desktop - 16:9)</label>
                       <input 
                         type="file" 
                         accept="image/*" 
@@ -828,8 +834,22 @@ function AdminDashboard() {
                       />
                       {settings.heroBanner && (
                         <div style={{ margin: "5px 0 15px 0" }}>
-                          <small style={{ color: "var(--text-muted)", display: "block" }}>Active Festival Banner:</small>
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>Active Desktop Banner:</small>
                           <img src={settings.heroBanner.startsWith("http") ? settings.heroBanner : `http://localhost:5000${settings.heroBanner}`} alt="Hero Banner" style={{ height: "60px", maxWidth: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd" }} />
+                        </div>
+                      )}
+
+                      <label style={labelStyle}> Upload Mobile Festival Hero Banner (Mobile App - 4:3 / 1:1)</label>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={e => setMobileHeroBannerFile(e.target.files[0])}
+                        style={{ ...inputStyle, padding: "8px" }}
+                      />
+                      {settings.mobileHeroBanner && (
+                        <div style={{ margin: "5px 0 15px 0" }}>
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>Active Mobile Banner:</small>
+                          <img src={settings.mobileHeroBanner.startsWith("http") ? settings.mobileHeroBanner : `http://localhost:5000${settings.mobileHeroBanner}`} alt="Mobile Hero Banner" style={{ height: "60px", maxWidth: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd" }} />
                         </div>
                       )}
 
@@ -1476,12 +1496,20 @@ function AdminDashboard() {
       )}
 
       {showAdModal && (
-        <Modal title="Upload Ad Banner" onClose={() => setShowAdModal(false)}>
+        <Modal title="Upload Ad Banner (Desktop & Mobile)" onClose={() => setShowAdModal(false)}>
            <Input placeholder="Title" value={newAd.title} onChange={v => setNewAd({...newAd, title: v})} />
            <Input placeholder="Target Link (optional)" value={newAd.link} onChange={v => setNewAd({...newAd, link: v})} />
-           <div style={{padding:"15px", border:"2px dashed #eee", borderRadius:"12px", textAlign:"center", marginBottom:"15px"}}>
+           
+           <label style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "5px" }}>🖥️ Desktop Banner Image (16:9 Landscape):</label>
+           <div style={{padding:"12px", border:"2px dashed #cbd5e1", borderRadius:"12px", textAlign:"center", marginBottom:"15px", background: "#f8fafc"}}>
               <input type="file" onChange={e => setAdFile(e.target.files[0])} />
            </div>
+
+           <label style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "5px" }}>📱 Mobile App Banner Image (Square / 4:3 Portrait):</label>
+           <div style={{padding:"12px", border:"2px dashed #cbd5e1", borderRadius:"12px", textAlign:"center", marginBottom:"15px", background: "#f8fafc"}}>
+              <input type="file" onChange={e => setMobileAdFile(e.target.files[0])} />
+           </div>
+
            <button style={saveBtnBig} onClick={handleCreateAd}>Publish Banner</button>
         </Modal>
       )}
