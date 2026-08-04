@@ -96,7 +96,6 @@ function FranchiseLogin() {
           </Link>
         </div>
         <div style={topIcon}><FaUserShield /></div>
-        <p style={tag}>Secure Hidden Access 🔒</p>
         <h1 style={title}>Franchise Portal</h1>
         <p style={sub}>Manage your district pickups, collectors and billing.</p>
         <div style={pillWrap}>

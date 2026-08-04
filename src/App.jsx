@@ -18,6 +18,7 @@ import FranchiseLogin from "./pages/FranchiseLogin";
 import CollectorLogin from "./pages/CollectorLogin";
 import CollectorRegister from "./pages/CollectorRegister";
 import About from "./pages/About";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -82,6 +83,7 @@ function App() {
             <Route path="/book" element={<BookPickup />} />
             <Route path="/terms" element={<TermsConditions />} />
             <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />

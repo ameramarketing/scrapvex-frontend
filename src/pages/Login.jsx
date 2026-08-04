@@ -112,9 +112,9 @@ function Login() {
             <p>New user? <Link to="/register" style={authLink}>Create Account</Link></p>
             <div style={divider} />
             <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "10px" }}>
-              <Link to="/collector-login" style={roleLoginBtn}>🚛 Login as Collector</Link>
-              <Link to="/franchise-login" style={roleLoginBtn}>🏢 Login as Franchise Partner</Link>
-              <Link to="/admin-login" style={{ ...roleLoginBtn, background: "#f8fafc", color: "#64748b" }}>🛡️ Login as System Admin</Link>
+              <Link to="/collector-login" style={roleLoginBtn}> Login as Collector</Link>
+              <Link to="/franchise-login" style={roleLoginBtn}> Login as Franchise Partner</Link>
+              <Link to="/admin-login" style={{ ...roleLoginBtn, background: "#f8fafc", color: "#64748b" }}> Login as System Admin</Link>
             </div>
           </div>
         </div>

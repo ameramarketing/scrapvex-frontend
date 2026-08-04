@@ -66,7 +66,6 @@ function AdminLogin() {
           </Link>
         </div>
         <div style={topIcon}><FaUserShield /></div>
-        <p style={tag}>Secure Hidden Access 🔒</p>
         <h1 style={title}>Admin Login</h1>
         <p style={sub}>Manage pickups, users, rates and analytics.</p>
         <div style={pillWrap}>

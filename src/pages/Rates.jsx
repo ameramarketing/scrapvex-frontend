@@ -84,7 +84,17 @@ function Rates() {
       setLoading(true);
       const { data } = await API.get(`/scrap-items?city=${selectedCity}`);
       if (data.success && data.data && data.data.length > 0) {
-        setItems(data.data);
+        const apiMap = new Map(data.data.map(item => [item.name.toLowerCase(), item]));
+        const merged = defaultItems.map(dItem => {
+          const found = apiMap.get(dItem.name.toLowerCase());
+          return found || dItem;
+        });
+        data.data.forEach(item => {
+          if (!merged.some(m => m.name.toLowerCase() === item.name.toLowerCase())) {
+            merged.push(item);
+          }
+        });
+        setItems(merged);
       } else {
         setItems(defaultItems);
       }

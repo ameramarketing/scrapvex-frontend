@@ -239,7 +239,7 @@ function PickupForm() {
                   onClick={() => sendOtp("whatsapp")}
                   disabled={loading}
                 >
-                  {loading ? <FaSpinner className="spin" /> : <>💬 Get OTP on WhatsApp</>}
+                  {loading ? <FaSpinner className="spin" /> : <> Get OTP on WhatsApp</>}
                 </button>
                 <button
                   type="button"
@@ -248,7 +248,7 @@ function PickupForm() {
                   onClick={() => sendOtp("sms")}
                   disabled={loading}
                 >
-                  {loading ? <FaSpinner className="spin" /> : <>📱 Get OTP via SMS</>}
+                  {loading ? <FaSpinner className="spin" /> : <> Get OTP via SMS</>}
                 </button>
               </div>
             ) : (

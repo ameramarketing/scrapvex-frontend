@@ -98,7 +98,7 @@ function CollectorLogin() {
           </Link>
         </div>
         <div style={topIcon}><FaTruck /></div>
-        <p style={tag}>Pickup Staff Access 🚚</p>
+        <p style={tag}>Pickup Staff Access </p>
         <h1 style={title}>Collector Login</h1>
         <p style={sub}>Manage assigned pickups and complete orders.</p>
 

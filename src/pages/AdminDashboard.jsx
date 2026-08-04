@@ -638,7 +638,7 @@ function AdminDashboard() {
       <NavItem active={activeTab === "ads"} icon={<FaAd />} text="Banners" onClick={() => {setActiveTab("ads"); setIsMobileMenuOpen(false);}} />
       <NavItem active={activeTab === "reviews"} icon={<FaStar />} text="Reviews" onClick={() => {setActiveTab("reviews"); setIsMobileMenuOpen(false);}} />
       <NavItem active={activeTab === "settings"} icon={<FaCog />} text="Settings" onClick={() => {setActiveTab("settings"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "whatsapp"} icon={<FaWhatsapp style={{ color: "#25D366" }} />} text="WhatsApp QR 💬" onClick={() => {setActiveTab("whatsapp"); setIsMobileMenuOpen(false);}} />
+      <NavItem active={activeTab === "whatsapp"} icon={<FaWhatsapp style={{ color: "#25D366" }} />} text="WhatsApp QR " onClick={() => {setActiveTab("whatsapp"); setIsMobileMenuOpen(false);}} />
     </>
   );
 
