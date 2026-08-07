@@ -680,7 +680,7 @@ function UserDashboard() {
                                            style={{width: "160px", height: "160px", display: "block", margin: "0 auto"}}
                                         />
                                      </div>
-                                     <div style={{marginTop: "8px", fontWeight: "bold", color: "var(--primary)", fontSize: "14px"}}>UPI ID: ${settings.upiId || "scrapvex@okaxis"}</div>
+                                     <div style={{marginTop: "8px", fontWeight: "bold", color: "var(--primary)", fontSize: "14px"}}>UPI ID: {settings.upiId || "scrapvex@okaxis"}</div>
                                   </div>
 
                                   {/* Mobile Deep Link */}
