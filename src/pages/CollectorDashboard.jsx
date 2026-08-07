@@ -187,11 +187,14 @@ function CollectorDashboard() {
     if (!amount || !upiId || !name) {
       return showToast("error", "All fields are required");
     }
-    if (Number(amount) < 100) {
-      return showToast("error", "Minimum withdrawal ₹100");
+    if (Number(amount) < 1000) {
+      return showToast("error", "Minimum withdrawal amount is ₹1,000!");
+    }
+    if (Number(amount) > 20000) {
+      return showToast("error", "Maximum limit per single withdrawal is ₹20,000!");
     }
     if (Number(amount) > (user?.walletBalance || 0)) {
-      return showToast("error", "Insufficient balance");
+      return showToast("error", `Insufficient balance! Your balance is ₹${user?.walletBalance || 0}`);
     }
     try {
       const { data } = await API.post("/wallet/withdraw/otp", {

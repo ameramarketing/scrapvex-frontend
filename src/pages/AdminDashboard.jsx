@@ -1208,11 +1208,28 @@ function AdminDashboard() {
                       <small style={muted}>{new Date(w.createdAt).toLocaleString()}</small>
                     </div>
                     <div style={{textAlign: "right"}}>
-                      <StatusBadge status={w.status} />
-                      {w.status === "Pending" && <button style={smBtn} onClick={() => {
-                        const tid = prompt("Enter Transaction ID:");
-                        if(tid) API.put(`/withdrawals/${w._id}`, { status: "Completed", transactionId: tid }).then(()=>fetchWithdrawals());
-                      }}>Approve</button>}
+                      {w.status === "Pending" && (
+                        <div style={{display: "flex", gap: "8px", marginTop: "8px", justifyContent: "flex-end"}}>
+                          <button style={{ ...smBtn, background: "#0b8f3a" }} onClick={() => {
+                            const tid = prompt("Enter Bank Payment Reference / UTR:");
+                            if (tid) API.put(`/withdrawals/${w._id}`, { status: "Completed", transactionId: tid }).then(() => {
+                              showToast("success", "Withdrawal Approved & Processed! ✅");
+                              fetchWithdrawals();
+                            });
+                          }}>
+                            Approve ✅
+                          </button>
+                          <button style={{ ...smBtn, background: "#dc2626" }} onClick={() => {
+                            const reason = prompt("Enter Rejection Reason (this will be sent on WhatsApp):");
+                            if (reason) API.put(`/withdrawals/${w._id}`, { status: "Rejected", adminNote: reason }).then(() => {
+                              showToast("success", "Withdrawal Rejected & Refunded! ❌");
+                              fetchWithdrawals();
+                            });
+                          }}>
+                            Reject ❌
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

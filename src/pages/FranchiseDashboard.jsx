@@ -365,7 +365,7 @@ function FranchiseDashboard() {
 
   const handleFranchiseDepositSubmit = async (e) => {
     e.preventDefault();
-    if (!franchiseDepositForm.amount || franchiseDepositForm.amount <= 0) return showToast("error", "Amount zaroori hai aur 0 se bada hona chahiye");
+    if (!franchiseDepositForm.amount || Number(franchiseDepositForm.amount) < 1000) return showToast("error", "Minimum deposit amount is ₹1,000!");
     if (!franchiseDepositForm.upiRefNo || franchiseDepositForm.upiRefNo.replace(/\D/g, "").length !== 12) {
       return showToast("error", "Kripya valid 12-digit UPI Ref No/UTR enter karein");
     }

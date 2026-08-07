@@ -1,0 +1,8 @@
+# Robots.txt for ScrapVex (https://scrapvex.in)
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard
+Disallow: /franchise-dashboard
+Disallow: /collector-dashboard
+
+Sitemap: https://scrapvex.in/sitemap.xml

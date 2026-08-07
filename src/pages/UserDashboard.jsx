@@ -186,7 +186,7 @@ function UserDashboard() {
 
   const handleDepositSubmit = async (e) => {
     e.preventDefault();
-    if (!depositForm.amount || depositForm.amount <= 0) return showToast("error", "Amount zaroori hai aur 0 se bada hona chahiye");
+    if (!depositForm.amount || Number(depositForm.amount) < 1000) return showToast("error", "Minimum deposit amount is ₹1,000!");
     if (!depositForm.upiRefNo || depositForm.upiRefNo.replace(/\D/g, "").length !== 12) {
       return showToast("error", "Kripya valid 12-digit UPI Ref No/UTR enter karein");
     }
@@ -228,8 +228,9 @@ function UserDashboard() {
 
   const handleSendWithdrawalOTP = async (e) => {
     e.preventDefault();
-    if (wallet.balance < withdrawForm.amount) return showToast("error", "Insufficient balance");
-    if (withdrawForm.amount < 100) return showToast("error", "Min withdrawal ₹100");
+    if (wallet.balance < withdrawForm.amount) return showToast("error", `Insufficient balance! Your balance is ₹${wallet.balance}`);
+    if (Number(withdrawForm.amount) < 1000) return showToast("error", "Minimum withdrawal amount is ₹1,000!");
+    if (Number(withdrawForm.amount) > 20000) return showToast("error", "Maximum limit per single withdrawal is ₹20,000!");
     setSubmitting(true);
     try {
       const { data } = await API.post("/wallet/withdraw/otp", {
