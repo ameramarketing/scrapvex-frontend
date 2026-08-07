@@ -689,7 +689,27 @@ function AdminDashboard() {
             <button style={menuBtn} className="mobile-only" onClick={() => setIsMobileMenuOpen(true)}><FaBars /></button>
             <h2 style={headerTitle}>{activeTab.toUpperCase()}</h2>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button 
+              onClick={handleCleanTestData} 
+              style={{
+                background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)", 
+                color: "#fff", 
+                border: "none", 
+                padding: "8px 14px", 
+                borderRadius: "10px", 
+                fontWeight: "bold", 
+                fontSize: "12px", 
+                cursor: "pointer", 
+                display: "flex", 
+                alignItems: "center", 
+                gap: "6px",
+                boxShadow: "0 4px 12px rgba(220, 38, 38, 0.3)"
+              }}
+              title="Clean All Test Data (Keep Admin & Franchise)"
+            >
+              🧹 Clean Test Data
+            </button>
             <div style={{ position: "relative", display:"flex", gap:"10px" }}>
               <button style={bellBtn} onClick={() => { setShowNotifPanel(!showNotifPanel); if(!showNotifPanel) markAllNotificationsRead(); }}>
                 <FaBell /> {notifications.filter(n => !n.isRead).length > 0 && <span style={badge}>{notifications.filter(n => !n.isRead).length}</span>}
