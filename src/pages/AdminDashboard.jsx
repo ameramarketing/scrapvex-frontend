@@ -1652,12 +1652,25 @@ function AdminDashboard() {
            <div style={{border: "1px solid #eee", padding: "15px", borderRadius: "12px", marginBottom: "15px", background: "#f8f9fa"}}>
              <h4 style={{margin: "0 0 10px 0", fontSize: "14px"}}>Add Items to Sale</h4>
              <div style={{display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:"10px"}}>
-               <select style={{...inputStyle, marginBottom: 0}} value={saleItemInput.scrapItem} onChange={e => setSaleItemInput({...saleItemInput, scrapItem: e.target.value})}>
-                 <option value="">Select Item</option>
-                 {inventory.filter(i => i.quantityAvailable > 0).map(i => (
-                   <option key={i.scrapItem?._id} value={i.scrapItem?._id}>{i.scrapItem?.name} (Avail: {i.quantityAvailable})</option>
-                 ))}
-               </select>
+               <select 
+                  style={{...inputStyle, marginBottom: 0}} 
+                  value={saleItemInput.scrapItem} 
+                  onChange={e => {
+                    const selectedId = e.target.value;
+                    const itemObj = items.find(i => i._id === selectedId);
+                    setSaleItemInput({
+                      ...saleItemInput, 
+                      scrapItem: selectedId,
+                      rate: itemObj?.price || saleItemInput.rate,
+                      hsnCode: itemObj?.hsnCode || "47071000"
+                    });
+                  }}
+                >
+                  <option value="">-- Select Scrap Item --</option>
+                  {items.map(i => (
+                    <option key={i._id} value={i._id}>{i.name} ({i.category}) - ₹{i.price}/kg</option>
+                  ))}
+                </select>
                <Input type="text" placeholder="HSN/SAC" value={saleItemInput.hsnCode} onChange={v => setSaleItemInput({...saleItemInput, hsnCode: v})} />
                <Input type="number" placeholder="Qty" value={saleItemInput.quantity} onChange={v => setSaleItemInput({...saleItemInput, quantity: v})} />
                <Input type="number" placeholder="Rate/Unit" value={saleItemInput.rate} onChange={v => setSaleItemInput({...saleItemInput, rate: v})} />
