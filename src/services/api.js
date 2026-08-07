@@ -1,23 +1,26 @@
 import axios from "axios";
 import { getCookie, eraseCookie } from "../utils/cookies";
 
-let envUrl = import.meta.env.VITE_API_URL || "";
+let envUrl = import.meta.env.VITE_API_URL || "https://scrapvex-backend.onrender.com";
 
 // Support custom override or native platform fallback
 const getBaseURL = () => {
   if (typeof window !== "undefined") {
     const customUrl = localStorage.getItem("CUSTOM_API_URL");
     if (customUrl) return `${customUrl.replace(/\/$/, "")}/api`;
+
+    const origin = window.location.origin || "";
+    if (origin.includes("localhost") || origin.includes("capacitor://") || origin.includes("127.0.0.1")) {
+      return "https://scrapvex-backend.onrender.com/api";
+    }
   }
-  if (!envUrl && typeof window !== "undefined") {
-    envUrl = window.location.origin;
-  }
-  return `${envUrl.replace(/\/$/, "")}/api`;
+  const target = envUrl || "https://scrapvex-backend.onrender.com";
+  return `${target.replace(/\/$/, "")}/api`;
 };
 
 const API = axios.create({
   baseURL: getBaseURL(),
-  timeout: 15000,
+  timeout: 20000,
 });
 
 API.interceptors.request.use((req) => {

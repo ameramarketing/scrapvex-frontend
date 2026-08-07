@@ -56,6 +56,30 @@ function Contact() {
     <div style={{ minHeight: "100vh", background: "var(--bg-main)", color: "var(--text-main)" }}>
       <Navbar />
 
+      {/* MOBILE RESPONSIVE CSS */}
+      <style>{`
+        @media (max-width: 768px) {
+          .contact-grid-wrap {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+          }
+          .contact-row-group {
+            flex-direction: column !important;
+          }
+          .contact-hero-box {
+            padding: 30px 16px !important;
+            border-radius: 16px !important;
+          }
+          .contact-hero-title {
+            font-size: 24px !important;
+          }
+          .contact-form-card {
+            padding: 20px !important;
+            border-radius: 16px !important;
+          }
+        }
+      `}</style>
+
       {/* TOAST */}
       {toast.show && (
         <div style={{
@@ -79,9 +103,9 @@ function Contact() {
 
       {/* HERO SECTION */}
       <div style={heroWrap} className="container">
-        <div style={heroBox} className="fade-up">
+        <div style={heroBox} className="fade-up contact-hero-box">
           <p style={heroTag}><FaComments /> WE ARE HERE TO HELP</p>
-          <h1 style={heroTitle}>Contact ScrapVex Support</h1>
+          <h1 style={heroTitle} className="contact-hero-title">Contact ScrapVex Support</h1>
           <p style={heroSub}>
             Have questions about doorstep scrap pickup, rates, wallet payouts, or franchise opportunities? 
             Reach out to our team in Rajouri & Jammu & Kashmir!
@@ -91,7 +115,7 @@ function Contact() {
 
       {/* MAIN CONTENT */}
       <div className="container section-padding">
-        <div style={gridWrap}>
+        <div style={gridWrap} className="contact-grid-wrap">
           
           {/* LEFT: INFO CARDS */}
           <div style={infoCol}>
@@ -147,7 +171,7 @@ function Contact() {
           </div>
 
           {/* RIGHT: INQUIRY FORM */}
-          <div style={formCard}>
+          <div style={formCard} className="contact-form-card">
             <h3 style={formTitle}>Send Us a Message</h3>
             <p style={formSub}>Fill out the form below and our team will reach out to you immediately.</p>
 
@@ -164,7 +188,7 @@ function Contact() {
                 />
               </div>
 
-              <div style={rowGroup}>
+              <div style={rowGroup} className="contact-row-group">
                 <div style={inputGroup}>
                   <label style={labelStyle}>Mobile Number *</label>
                   <input 

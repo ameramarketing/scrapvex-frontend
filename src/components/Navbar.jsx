@@ -130,11 +130,14 @@ function Navbar() {
             <Link to="/login" style={loginBtn} className="hide-on-mobile logo-zoom">Login</Link>
           )}
 
-          {settings && (
-            <a href={settings.appDownloadLink || "#"} target="_blank" rel="noreferrer" style={downloadBtn} className="hide-on-mobile logo-zoom">
-              <FaDownload /> App
-            </a>
-          )}
+          <a 
+            href={settings?.appDownloadLink && settings.appDownloadLink !== "#" ? settings.appDownloadLink : "/ScrapVex.apk"} 
+            download="ScrapVex.apk" 
+            style={downloadBtn} 
+            className="hide-on-mobile logo-zoom"
+          >
+            <FaDownload /> App
+          </a>
 
           <button style={menuBtn} onClick={() => setOpen(!open)} className="show-on-mobile social-glow">
             {open ? <FaTimes /> : <FaBars />}
@@ -172,21 +175,21 @@ function Navbar() {
                 {link.icon} {link.name}
               </Link>
             ))}
-            {settings && (
-              <a 
-                href={settings.appDownloadLink || "#"} 
-                target="_blank" 
-                rel="noreferrer" 
-                style={{...mobileNavLink, color: "var(--primary)"}} 
-                className="nav-link-glow" 
-                onClick={closeMenu}
-              >
-                <FaDownload /> Download App
-              </a>
-            )}
+            <a 
+              href={settings?.appDownloadLink && settings.appDownloadLink !== "#" ? settings.appDownloadLink : "/ScrapVex.apk"} 
+              download="ScrapVex.apk"
+              style={{...mobileNavLink, color: "var(--primary)"}} 
+              className="nav-link-glow" 
+              onClick={closeMenu}
+            >
+              <FaDownload /> Download App
+            </a>
             <div style={divider} />
             {!user ? (
-              <Link to="/login" onClick={closeMenu} style={mobileNavLink} className="nav-link-glow">Login</Link>
+              <>
+                <Link to="/login" onClick={closeMenu} style={mobileNavLink} className="nav-link-glow">Customer Login</Link>
+                <Link to="/admin-login" onClick={closeMenu} style={{...mobileNavLink, color: "var(--primary)"}} className="nav-link-glow"><FaUserShield /> Admin Login</Link>
+              </>
             ) : (
               <button 
                 onClick={() => { 
