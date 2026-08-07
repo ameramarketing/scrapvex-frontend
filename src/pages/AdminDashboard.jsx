@@ -484,6 +484,17 @@ function AdminDashboard() {
     } catch (e) { showToast("error", "Failed to save settings"); }
   };
 
+  const handleCleanTestData = async () => {
+    if (!window.confirm("Are you sure you want to clean all dummy test pickups, test customers, and test transactions? Franchise and Admin accounts will be preserved!")) return;
+    try {
+      const { data } = await API.post("/admin/clean-test-data");
+      if (data.success) {
+        showToast("success", "Dummy test data cleaned! Ready for real commercial pickups.");
+        fetchAdminData();
+      }
+    } catch (e) { showToast("error", "Failed to clean test data"); }
+  };
+
   // ... (Other handlers like handleCreateAd, handleResetPassword etc same as before)
   const handleCreateAd = async () => {
     if (!newAd.title || !adFile) return showToast("error", "Select title & desktop image");
@@ -910,9 +921,12 @@ function AdminDashboard() {
                       <label style={labelStyle}><FaInstagram/> Instagram URL</label>
                       <Input value={settings.instagramUrl} onChange={v => setSettings({...settings, instagramUrl: v})} />
                    </div>
-                </div>
-                <button style={saveBtnBig} onClick={handleUpdateSettings}>Save All Configurations</button>
-             </div>
+                 </div>
+                 <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
+                   <button style={{ ...saveBtnBig, flex: 2 }} onClick={handleUpdateSettings}>Save All Configurations</button>
+                   <button style={{ ...saveBtnBig, flex: 1, background: "#dc2626" }} onClick={handleCleanTestData}>🧹 Clean Test Data (Keep Franchise)</button>
+                 </div>
+              </div>
           )}
 
           {/* OTHER TABS (Users, Collectors, Rates, Ads, Reviews) with same premium-card style... */}
