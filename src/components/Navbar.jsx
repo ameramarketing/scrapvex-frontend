@@ -23,17 +23,34 @@ function Navbar() {
   } catch (e) {
     console.error(e);
   }
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedSettings");
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
 
   useEffect(() => {
     API.get("/settings").then(res => {
-      if (res.data.success) setSettings(res.data.data);
+      if (res.data?.success) {
+        setSettings(res.data.data);
+        localStorage.setItem("cachedSettings", JSON.stringify(res.data.data));
+      }
     }).catch(err => console.error(err));
   }, []);
 
+  const getLogoSrc = (path) => {
+    if (!path) return "/04_Square_Logo.png";
+    if (path.startsWith("http")) return path;
+    const base = (import.meta.env.VITE_API_URL || "https://scrapvex-backend.onrender.com").replace(/\/$/, "");
+    return `${base}${path.startsWith("/") ? "" : "/"}${path}`;
+  };
+
   useEffect(() => {
     if (settings?.favicon) {
-      const faviconUrl = settings.favicon.startsWith("http") ? settings.favicon : `http://localhost:5000${settings.favicon}`;
+      const faviconUrl = getLogoSrc(settings.favicon);
       let faviconLink = document.querySelector("link[rel*='icon']");
       if (!faviconLink) {
         faviconLink = document.createElement("link");
@@ -77,8 +94,9 @@ function Navbar() {
         {/* LOGO */}
         <Link to="/" style={logo} onClick={closeMenu} className="logo-zoom">
           <img 
-            src={settings?.brandLogo ? (settings.brandLogo.startsWith("http") ? settings.brandLogo : `http://localhost:5000${settings.brandLogo}`) : "/04_Square_Logo.png"} 
+            src={getLogoSrc(settings?.brandLogo)} 
             alt="ScrapVex" 
+            onError={(e) => { e.target.src = "/04_Square_Logo.png"; }}
             style={{width: "42px", height: "42px", borderRadius: "12px", objectFit: "cover", border: "1.5px solid var(--primary)"}} 
           />
           <span style={logoText}>Scrapvex</span>
