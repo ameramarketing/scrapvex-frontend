@@ -118,10 +118,11 @@ function UserDashboard() {
   const fetchData = async (isSilent = false) => {
     try {
       if (!isSilent) setLoading(true);
-      const [resP, resN, resW] = await Promise.all([
+      const [resP, resN, resW, resS] = await Promise.all([
         API.get("/pickups/my"),
         API.get("/notifications"),
-        API.get("/wallet/info")
+        API.get("/wallet/info"),
+        API.get("/settings")
       ]);
       if (resP.data.success) setPickups(resP.data.pickups || []);
       if (resN.data.success) setNotifications(resN.data.data || []);
@@ -129,6 +130,7 @@ function UserDashboard() {
         setWallet({ balance: resW.data.balance, pending: resW.data.pendingBalance });
         setTransactions(resW.data.transactions || []);
       }
+      if (resS.data.success) setSettings(resS.data.data);
     } catch (e) {
       console.error("Dashboard Fetch Error:", e);
     } finally {

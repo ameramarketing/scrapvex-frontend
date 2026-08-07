@@ -98,6 +98,7 @@ function FranchiseDashboard() {
 
   useEffect(() => {
     fetchAdminData();
+    fetchSettings();
     fetchNotifications();
     // Animation trigger
     document.body.style.overflowX = "hidden";
@@ -130,6 +131,7 @@ function FranchiseDashboard() {
         setItems(merged);
       }
 
+      fetchSettings();
       fetchReviews();
       fetchWalletStats();
       fetchAccountingData(); // New: Fetch accounting for overview
