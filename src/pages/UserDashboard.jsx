@@ -656,39 +656,95 @@ function UserDashboard() {
                       {walletTab === "deposit" && (
                           <div className="fade-up" style={{display:"flex", flexDirection:"column", gap:"15px"}}>
                              {!showDepositQR ? (
-                               <form onSubmit={(e) => { e.preventDefault(); if (depositForm.amount > 0) setShowDepositQR(true); else alert("Kripya valid amount enter karein"); }} style={{display:"flex", flexDirection:"column", gap:"15px"}}>
-                                  <div style={{display:"flex", alignItems:"center", gap:"12px", background:"var(--bg-main)", padding:"12px 15px", borderRadius:"12px", border:"1px solid var(--glass-border)"}}>
-                                     <span style={{color:"var(--primary)", fontWeight:"bold", fontSize: "16px"}}>₹</span>
+                               <form onSubmit={(e) => { 
+                                 e.preventDefault(); 
+                                 if (!depositForm.amount || Number(depositForm.amount) < 1000) {
+                                   alert("Minimum deposit amount is ₹1,000!");
+                                 } else {
+                                   setShowDepositQR(true);
+                                 }
+                               }} style={{display:"flex", flexDirection:"column", gap:"15px"}}>
+                                  
+                                  <div style={{background: "#eefbf3", padding: "12px", borderRadius: "12px", border: "1px solid #bbf7d0", color: "#0b8f3a", textAlign: "center"}}>
+                                    <div style={{fontWeight: "bold", fontSize: "14px"}}>💵 Deposit Funds to Wallet</div>
+                                    <div style={{fontSize: "12px", marginTop: "4px", color: "#047857"}}>Minimum Deposit Amount is <strong>₹1,000</strong></div>
+                                  </div>
+
+                                  <div style={{display:"flex", alignItems:"center", gap:"12px", background:"var(--bg-main)", padding:"14px 15px", borderRadius:"12px", border:"2px solid #0b8f3a"}}>
+                                     <span style={{color:"var(--primary)", fontWeight:"bold", fontSize: "20px"}}>₹</span>
                                      <input 
                                        type="number" 
-                                       placeholder="Enter Amount to Add (₹)" 
+                                       placeholder="Enter Amount to Add (Min ₹1,000)" 
                                        required 
+                                       min={1000}
                                        value={depositForm.amount} 
                                        onChange={e=>setDepositForm({...depositForm, amount: e.target.value})} 
-                                       style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontSize: "16px", fontWeight: "bold"}} 
+                                       style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontSize: "18px", fontWeight: "bold"}} 
                                      />
                                   </div>
-                                  <button type="submit" className="btn-premium" style={{width:"100%"}}>
-                                     Generate UPI QR Code
+
+                                  {/* Quick Amount Pills */}
+                                  <div style={{display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center"}}>
+                                    {[1000, 2000, 5000, 10000].map(amt => (
+                                      <button 
+                                        key={amt} 
+                                        type="button" 
+                                        onClick={() => setDepositForm({...depositForm, amount: amt.toString()})}
+                                        style={{
+                                          background: Number(depositForm.amount) === amt ? "#0b8f3a" : "var(--bg-main)",
+                                          color: Number(depositForm.amount) === amt ? "#fff" : "var(--text-main)",
+                                          border: "1px solid var(--glass-border)",
+                                          padding: "8px 14px",
+                                          borderRadius: "20px",
+                                          fontSize: "13px",
+                                          fontWeight: "bold",
+                                          cursor: "pointer"
+                                        }}
+                                      >
+                                        + ₹{amt.toLocaleString()}
+                                      </button>
+                                    ))}
+                                  </div>
+
+                                  <button type="submit" className="btn-premium" style={{width:"100%", padding: "14px", fontSize: "16px", fontWeight: "bold"}}>
+                                     Proceed to Payment QR ➡️
                                   </button>
                                </form>
                              ) : (
                                <form onSubmit={handleDepositSubmit} style={{display:"flex", flexDirection:"column", gap:"15px", alignItems: "center"}}>
-                                  <div style={{textAlign: "center", padding: "10px 0"}}>
-                                     <div style={{fontSize: "12px", color: "var(--text-muted)", marginBottom: "5px"}}>SCAN QR TO PAY ₹{depositForm.amount}</div>
+                                  {/* Change amount bar */}
+                                  <div style={{width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--bg-main)", padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--glass-border)"}}>
+                                    <span style={{fontSize: "13px", fontWeight: "bold", color: "var(--text-main)"}}>
+                                      Deposit Amount: <strong style={{color: "var(--primary)", fontSize: "15px"}}>₹{Number(depositForm.amount).toLocaleString()}</strong>
+                                    </span>
+                                    <button 
+                                      type="button" 
+                                      onClick={() => setShowDepositQR(false)}
+                                      style={{background: "none", border: "none", color: "var(--primary)", fontWeight: "bold", cursor: "pointer", fontSize: "12px"}}
+                                    >
+                                      ✏️ Change
+                                    </button>
+                                  </div>
+
+                                  <div style={{textAlign: "center", padding: "10px 0", width: "100%"}}>
+                                     <div style={{fontSize: "12px", color: "var(--text-muted)", marginBottom: "5px", fontWeight: "bold"}}>SCAN QR WITH GPAY / PHONEPE / PAYTM</div>
                                      <div style={{background: "#fff", padding: "15px", borderRadius: "16px", display: "inline-block", boxShadow: "0 10px 25px rgba(0,0,0,0.1)", border: "2px solid var(--primary)"}}>
                                         <img 
-                                           src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "scrapvex@okaxis"}&pn=Scrapvex&am=${depositForm.amount}&tn=WalletDeposit`)}`} 
+                                           src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${depositForm.amount}&tn=WalletDeposit`)}`} 
                                            alt="UPI QR Code" 
                                            style={{width: "160px", height: "160px", display: "block", margin: "0 auto"}}
+                                           onError={(e) => {
+                                             e.target.onerror = null;
+                                             e.target.src = `https://chart.googleapis.com/chart?cht=qr&chs=160x160&chl=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${depositForm.amount}&tn=WalletDeposit`)}`;
+                                           }}
                                         />
                                      </div>
-                                     <div style={{marginTop: "8px", fontWeight: "bold", color: "var(--primary)", fontSize: "14px"}}>UPI ID: {settings.upiId || "scrapvex@okaxis"}</div>
+                                     <div style={{marginTop: "8px", fontWeight: "bold", color: "var(--primary)", fontSize: "14px"}}>UPI ID: {settings.upiId || "8491028539@pthdfc"}</div>
                                   </div>
 
                                   {/* Mobile Deep Link */}
                                   <a 
-                                     href={`upi://pay?pa=${settings.upiId || "scrapvex@okaxis"}&pn=Scrapvex&am=${depositForm.amount}&tn=WalletDeposit`} 
+                                     href={`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${depositForm.amount}&tn=WalletDeposit`} 
                                      className="btn-premium" 
                                      style={{width:"100%", textDecoration: "none", textAlign: "center"}}
                                   >
@@ -708,20 +764,12 @@ function UserDashboard() {
                                        required 
                                        value={depositForm.upiRefNo} 
                                        onChange={e=>setDepositForm({...depositForm, upiRefNo: e.target.value.replace(/\D/g,"")})} 
-                                       style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontWeight: "bold", letterSpacing: "2px", textAlign: "center"}} 
+                                       style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontSize: "14px", fontWeight: "bold"}} 
                                      />
                                   </div>
 
-                                  <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                                     {submitting ? <FaSpinner className="spin" /> : "Submit Deposit Request"}
-                                  </button>
-
-                                  <button 
-                                    type="button"
-                                    style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "12px", cursor: "pointer", marginTop: "5px", width: "100%", textAlign: "center" }} 
-                                    onClick={() => setShowDepositQR(false)}
-                                  >
-                                    ← Change Amount
+                                  <button type="submit" disabled={submitting} className="btn-premium" style={{width:"100%"}}>
+                                     {submitting ? "Submitting Request..." : "Submit Deposit Request 🏦"}
                                   </button>
                                </form>
                              )}

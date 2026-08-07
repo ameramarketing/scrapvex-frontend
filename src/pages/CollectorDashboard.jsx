@@ -1120,8 +1120,8 @@ function CollectorDashboard() {
                 <button 
                   style={{ background: "var(--primary)", color: "#fff", border: "none", width: "100%", padding: "14px", borderRadius: "12px", fontWeight: "bold", fontSize: "14px", cursor: "pointer", transition: "0.2s" }}
                   onClick={() => {
-                    if (!collectorDepositForm.amount || Number(collectorDepositForm.amount) <= 0) {
-                      return showToast("error", "Please enter a valid amount");
+                    if (!collectorDepositForm.amount || Number(collectorDepositForm.amount) < 1000) {
+                      return showToast("error", "Minimum deposit amount is ₹1,000!");
                     }
                     setCollectorDepositStep(2);
                   }}
@@ -1139,17 +1139,21 @@ function CollectorDashboard() {
                 {/* Dynamic QR Code */}
                 <div style={{ background: "#fff", padding: "15px", borderRadius: "20px", border: "1px solid #eee", textAlign: "center" }}>
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "scrapvex@okaxis"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`)}`} 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`)}`} 
                     alt="UPI QR Code" 
                     style={{ width: "160px", height: "160px", display: "block", margin: "0 auto" }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `https://chart.googleapis.com/chart?cht=qr&chs=160x160&chl=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`)}`;
+                    }}
                   />
                 </div>
-                <div style={{ marginTop: "-5px", fontWeight: "bold", color: "var(--primary)", fontSize: "14px" }}>UPI ID: {settings.upiId || "scrapvex@okaxis"}</div>
+                <div style={{ marginTop: "-5px", fontWeight: "bold", color: "var(--primary)", fontSize: "14px" }}>UPI ID: {settings.upiId || "8491028539@pthdfc"}</div>
 
                 <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px" }}>
                   {/* Mobile deep link with warning check */}
                   <a 
-                    href={`upi://pay?pa=${settings.upiId || "scrapvex@okaxis"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`} 
+                    href={`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`} 
                     className="btn-premium" 
                     style={{ width: "100%", textDecoration: "none", textAlign: "center", background: "#0b8f3a", color: "#fff", padding: "12px", borderRadius: "12px", fontWeight: "bold", boxSizing: "border-box", display: "block" }}
                     onClick={(e) => {

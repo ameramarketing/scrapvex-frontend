@@ -42,6 +42,7 @@ function FranchiseDashboard() {
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [showFranchiseDepositModal, setShowFranchiseDepositModal] = useState(false);
   const [showFranchiseQR, setShowFranchiseQR] = useState(false);
+  const [franchiseDepositStep, setFranchiseDepositStep] = useState(1);
   const [franchiseDepositForm, setFranchiseDepositForm] = useState({ amount: "", upiRefNo: "" });
   const [submittingDeposit, setSubmittingDeposit] = useState(false);
   const [walletForm, setWalletForm] = useState({ userId: "", amount: "", type: "credit", description: "" });
@@ -1108,87 +1109,157 @@ function FranchiseDashboard() {
       )}
 
       {showFranchiseDepositModal && (
-        <Modal title="Add Funds to Wallet (UPI Payment & QR)" onClose={() => { setShowFranchiseDepositModal(false); setFranchiseDepositForm({ amount: "", upiRefNo: "" }); }}>
-          <form onSubmit={handleFranchiseDepositSubmit} style={{display:"flex", flexDirection:"column", gap:"15px", alignItems: "center"}}>
-             
-             {/* QR Code & UPI ID Box */}
-             <div style={{textAlign: "center", width: "100%", background: "var(--bg-main)", padding: "16px", borderRadius: "16px", border: "1px solid var(--glass-border)"}}>
-                <div style={{fontSize: "12px", color: "var(--text-muted)", marginBottom: "8px", fontWeight: "bold"}}>SCAN QR WITH ANY UPI APP (GPAY / PHONEPE / PAYTM)</div>
-                
-                <div style={{background: "#fff", padding: "12px", borderRadius: "16px", display: "inline-block", boxShadow: "0 8px 20px rgba(0,0,0,0.08)", border: "2px solid #0b8f3a"}}>
-                   <img 
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=${settings?.upiId || "scrapvex@okaxis"}&pn=ScrapVex&am=${franchiseDepositForm.amount || ""}&tn=WalletDeposit`)}`} 
-                      alt="Official UPI QR Code" 
-                      style={{width: "180px", height: "180px", display: "block", margin: "0 auto"}}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = `https://chart.googleapis.com/chart?cht=qr&chs=180x180&chl=${encodeURIComponent(`upi://pay?pa=${settings?.upiId || "scrapvex@okaxis"}&pn=ScrapVex&am=${franchiseDepositForm.amount || ""}&tn=WalletDeposit`)}`;
-                      }}
-                   />
-                </div>
+        <Modal 
+          title={franchiseDepositStep === 1 ? "Add Funds to Wallet (Step 1 of 2)" : "Scan UPI QR Code & Enter UTR (Step 2 of 2)"} 
+          onClose={() => { setShowFranchiseDepositModal(false); setFranchiseDepositStep(1); setFranchiseDepositForm({ amount: "", upiRefNo: "" }); }}
+        >
+          {franchiseDepositStep === 1 ? (
+            /* STEP 1: AMOUNT ENTRY */
+            <div style={{display:"flex", flexDirection:"column", gap:"18px"}}>
+              <div style={{background: "#eefbf3", padding: "14px", borderRadius: "12px", border: "1px solid #bbf7d0", color: "#0b8f3a", textAlign: "center"}}>
+                <div style={{fontWeight: "bold", fontSize: "15px"}}>💵 Deposit Funds to Wallet</div>
+                <div style={{fontSize: "12px", marginTop: "4px", color: "#047857"}}>Minimum Deposit Amount is <strong>₹1,000</strong></div>
+              </div>
 
-                <div style={{marginTop: "12px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", background: "var(--primary-light)", padding: "8px 14px", borderRadius: "10px"}}>
-                  <strong style={{color: "var(--primary)", fontSize: "14px"}}>UPI ID: {settings?.upiId || "scrapvex@okaxis"}</strong>
+              <div>
+                <label style={{fontSize: "13px", fontWeight: "bold", color: "var(--text-main)", marginBottom: "6px", display: "block"}}>Enter Amount to Deposit (₹) *</label>
+                <div style={{display:"flex", alignItems:"center", gap:"10px", background:"var(--bg-main)", padding:"14px", borderRadius:"12px", border:"2px solid #0b8f3a"}}>
+                  <span style={{color:"var(--primary)", fontWeight:"bold", fontSize: "20px"}}>₹</span>
+                  <input 
+                    type="number" 
+                    placeholder="Enter amount (Min ₹1,000)" 
+                    required 
+                    min={1000}
+                    value={franchiseDepositForm.amount} 
+                    onChange={e => setFranchiseDepositForm({...franchiseDepositForm, amount: e.target.value})} 
+                    style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontSize: "18px", fontWeight: "bold"}} 
+                  />
+                </div>
+              </div>
+
+              {/* Quick Amount Pills */}
+              <div style={{display: "flex", gap: "8px", flexWrap: "wrap", justifyContent: "center"}}>
+                {[1000, 2000, 5000, 10000].map(amt => (
                   <button 
+                    key={amt} 
                     type="button" 
-                    onClick={() => {
-                      navigator.clipboard.writeText(settings?.upiId || "scrapvex@okaxis");
-                      showToast("success", "UPI ID Copied to Clipboard!");
+                    onClick={() => setFranchiseDepositForm({...franchiseDepositForm, amount: amt.toString()})}
+                    style={{
+                      background: Number(franchiseDepositForm.amount) === amt ? "#0b8f3a" : "var(--bg-main)",
+                      color: Number(franchiseDepositForm.amount) === amt ? "#fff" : "var(--text-main)",
+                      border: "1px solid var(--glass-border)",
+                      padding: "8px 14px",
+                      borderRadius: "20px",
+                      fontSize: "13px",
+                      fontWeight: "bold",
+                      cursor: "pointer"
                     }}
-                    style={{background: "var(--primary)", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer"}}
                   >
-                    📋 Copy
+                    + ₹{amt.toLocaleString()}
                   </button>
-                </div>
-             </div>
+                ))}
+              </div>
 
-             {/* Deep Link for Mobile App */}
-             <a 
-                href={`upi://pay?pa=${settings?.upiId || "scrapvex@okaxis"}&pn=ScrapVex&am=${franchiseDepositForm.amount || ""}&tn=WalletDeposit`} 
+              <button 
+                type="button"
+                className="btn-premium"
+                style={{width: "100%", background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)", color: "#fff", padding: "14px", borderRadius: "12px", fontWeight: "bold", fontSize: "16px", border: "none", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px"}}
+                onClick={() => {
+                  if (!franchiseDepositForm.amount || Number(franchiseDepositForm.amount) < 1000) {
+                    return showToast("error", "Minimum deposit amount is ₹1,000!");
+                  }
+                  setFranchiseDepositStep(2);
+                }}
+              >
+                Proceed to Payment QR ➡️
+              </button>
+            </div>
+          ) : (
+            /* STEP 2: QR CODE & UTR SUBMISSION */
+            <form onSubmit={handleFranchiseDepositSubmit} style={{display:"flex", flexDirection:"column", gap:"15px", alignItems: "center"}}>
+              
+              {/* Back / Change Amount bar */}
+              <div style={{width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--bg-main)", padding: "10px 14px", borderRadius: "10px", border: "1px solid var(--glass-border)"}}>
+                <span style={{fontSize: "13px", fontWeight: "bold", color: "var(--text-main)"}}>
+                  Deposit Amount: <strong style={{color: "var(--primary)", fontSize: "15px"}}>₹{Number(franchiseDepositForm.amount).toLocaleString()}</strong>
+                </span>
+                <button 
+                  type="button" 
+                  onClick={() => setFranchiseDepositStep(1)}
+                  style={{background: "none", border: "none", color: "var(--primary)", fontWeight: "bold", cursor: "pointer", fontSize: "12px"}}
+                >
+                  ✏️ Change
+                </button>
+              </div>
+
+              {/* QR Code & UPI ID Box */}
+              <div style={{textAlign: "center", width: "100%", background: "var(--bg-main)", padding: "16px", borderRadius: "16px", border: "1px solid var(--glass-border)"}}>
+                 <div style={{fontSize: "12px", color: "var(--text-muted)", marginBottom: "8px", fontWeight: "bold"}}>SCAN QR WITH ANY UPI APP (GPAY / PHONEPE / PAYTM)</div>
+                 
+                 <div style={{background: "#fff", padding: "12px", borderRadius: "16px", display: "inline-block", boxShadow: "0 8px 20px rgba(0,0,0,0.08)", border: "2px solid #0b8f3a"}}>
+                    <img 
+                       src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=${settings?.upiId || "8491028539@pthdfc"}&pn=ScrapVex&am=${franchiseDepositForm.amount}&tn=WalletDeposit`)}`} 
+                       alt="Official UPI QR Code" 
+                       style={{width: "180px", height: "180px", display: "block", margin: "0 auto"}}
+                       onError={(e) => {
+                         e.target.onerror = null;
+                         e.target.src = `https://chart.googleapis.com/chart?cht=qr&chs=180x180&chl=${encodeURIComponent(`upi://pay?pa=${settings?.upiId || "8491028539@pthdfc"}&pn=ScrapVex&am=${franchiseDepositForm.amount}&tn=WalletDeposit`)}`;
+                       }}
+                    />
+                 </div>
+
+                 <div style={{marginTop: "12px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", background: "var(--primary-light)", padding: "8px 14px", borderRadius: "10px"}}>
+                   <strong style={{color: "var(--primary)", fontSize: "14px"}}>UPI ID: {settings?.upiId || "8491028539@pthdfc"}</strong>
+                   <button 
+                     type="button" 
+                     onClick={() => {
+                       navigator.clipboard.writeText(settings?.upiId || "8491028539@pthdfc");
+                       showToast("success", "UPI ID Copied to Clipboard!");
+                     }}
+                     style={{background: "var(--primary)", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer"}}
+                   >
+                     📋 Copy
+                   </button>
+                 </div>
+              </div>
+
+              {/* Deep Link for Mobile App */}
+              <a 
+                 href={`upi://pay?pa=${settings?.upiId || "8491028539@pthdfc"}&pn=ScrapVex&am=${franchiseDepositForm.amount}&tn=WalletDeposit`} 
+                 className="btn-premium" 
+                 style={{width:"100%", textDecoration: "none", textAlign: "center", background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)", color: "#fff", padding: "12px", borderRadius: "12px", fontWeight: "bold", fontSize: "14px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px"}}
+              >
+                 📲 Pay via UPI App (PhonePe/GPay/Paytm)
+              </a>
+
+              {/* 12-Digit UTR Input */}
+              <div style={{width: "100%"}}>
+                 <label style={{fontSize: "12px", fontWeight: "bold", color: "var(--text-main)", marginBottom: "4px", display: "block"}}>12-Digit UTR / UPI Ref No *</label>
+                 <div style={{display:"flex", alignItems:"center", gap:"10px", background:"var(--bg-main)", padding:"12px 14px", borderRadius:"12px", border:"1px solid var(--glass-border)"}}>
+                    <span style={{color:"var(--primary)", fontWeight:"bold"}}>🔗</span>
+                    <input 
+                      type="text" 
+                      maxLength={12} 
+                      placeholder="Enter 12-digit UTR from payment receipt" 
+                      required 
+                      value={franchiseDepositForm.upiRefNo} 
+                      onChange={e => setFranchiseDepositForm({...franchiseDepositForm, upiRefNo: e.target.value.replace(/\D/g, "")})} 
+                      style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontSize: "14px", fontWeight: "bold"}} 
+                    />
+                 </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={submittingDeposit} 
                 className="btn-premium" 
-                style={{width:"100%", textDecoration: "none", textAlign: "center", background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)", color: "#fff", padding: "12px", borderRadius: "12px", fontWeight: "bold", fontSize: "14px", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px"}}
-             >
-                📲 Pay via UPI App (PhonePe/GPay/Paytm)
-             </a>
+                style={{width:"100%", background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)", color: "#fff", padding: "14px", borderRadius: "12px", fontWeight: "bold", fontSize: "15px", border: "none", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px"}}
+              >
+                {submittingDeposit ? "Submitting Request..." : "Submit Deposit Request 🏦"}
+              </button>
 
-             {/* Input Form */}
-             <div style={{width: "100%", display: "flex", flexDirection: "column", gap: "12px", marginTop: "5px"}}>
-                <div>
-                   <label style={{fontSize: "12px", fontWeight: "bold", color: "var(--text-main)", marginBottom: "4px", display: "block"}}>Amount Paid (₹) *</label>
-                   <div style={{display:"flex", alignItems:"center", gap:"10px", background:"var(--bg-main)", padding:"12px 14px", borderRadius:"12px", border:"1px solid var(--glass-border)"}}>
-                      <span style={{color:"var(--primary)", fontWeight:"bold", fontSize: "16px"}}>₹</span>
-                      <input 
-                        type="number" 
-                        placeholder="Enter amount paid (e.g. 1000)" 
-                        required 
-                        value={franchiseDepositForm.amount} 
-                        onChange={e => setFranchiseDepositForm({...franchiseDepositForm, amount: e.target.value})} 
-                        style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontSize: "15px", fontWeight: "bold"}} 
-                      />
-                   </div>
-                </div>
-
-                <div>
-                   <label style={{fontSize: "12px", fontWeight: "bold", color: "var(--text-main)", marginBottom: "4px", display: "block"}}>12-Digit UTR / UPI Ref No *</label>
-                   <div style={{display:"flex", alignItems:"center", gap:"10px", background:"var(--bg-main)", padding:"12px 14px", borderRadius:"12px", border:"1px solid var(--glass-border)"}}>
-                      <span style={{color:"var(--primary)", fontWeight:"bold"}}>🔗</span>
-                      <input 
-                        type="text" 
-                        maxLength={12} 
-                        placeholder="Enter 12-digit UTR from payment receipt" 
-                        required 
-                        value={franchiseDepositForm.upiRefNo} 
-                        onChange={e => setFranchiseDepositForm({...franchiseDepositForm, upiRefNo: e.target.value.replace(/\D/g,"")})} 
-                        style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontWeight: "bold", letterSpacing: "1px"}} 
-                      />
-                   </div>
-                </div>
-             </div>
-
-             <button type="submit" style={saveBtnBig} disabled={submittingDeposit}>
-                {submittingDeposit ? "Submitting Request..." : "Submit Deposit Request"}
-             </button>
-          </form>
+            </form>
+          )}
         </Modal>
       )}
 
