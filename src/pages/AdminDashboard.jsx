@@ -66,6 +66,14 @@ function AdminDashboard() {
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  // Purchase Bill Modal & Edit
+  const [showPurchaseBillModal, setShowPurchaseBillModal] = useState(false);
+  const [selectedPurchaseBill, setSelectedPurchaseBill] = useState(null);
+  const [supplierPurchaseHistory, setSupplierPurchaseHistory] = useState([]);
+  const [supplierTotalAmount, setSupplierTotalAmount] = useState(0);
+  const [editingPurchase, setEditingPurchase] = useState(null);
+  const [editPurchaseData, setEditPurchaseData] = useState(null);
+  const [showEditPurchaseModal, setShowEditPurchaseModal] = useState(false);
   
   const initialSaleState = { 
     irn: "", ackNo: "", ackDate: "",
@@ -399,6 +407,49 @@ function AdminDashboard() {
         fetchAccountingData();
       }
     } catch(e) { showToast("error", "Failed to record purchase"); }
+  };
+
+  // Open Purchase Bill Modal
+  const openPurchaseBillModal = async (purchase) => {
+    setSelectedPurchaseBill(purchase);
+    setShowPurchaseBillModal(true);
+    try {
+      const { data } = await API.get(`/billing/purchases/by-supplier?supplierName=${encodeURIComponent(purchase.supplierName)}`);
+      if (data.success) {
+        setSupplierPurchaseHistory(data.purchases);
+        setSupplierTotalAmount(data.totalAmount);
+      }
+    } catch(e) { setSupplierPurchaseHistory([purchase]); setSupplierTotalAmount(purchase.totalAmount); }
+  };
+
+  // Open Edit Purchase Modal
+  const openEditPurchase = (purchase) => {
+    setEditingPurchase(purchase);
+    setEditPurchaseData({
+      supplierName: purchase.supplierName,
+      supplierContact: purchase.supplierContact || "",
+      paymentStatus: purchase.paymentStatus,
+      paymentMethod: purchase.paymentMethod,
+      notes: purchase.notes || "",
+      items: purchase.items.map(i => ({ ...i }))
+    });
+    setShowEditPurchaseModal(true);
+  };
+
+  // Save Edit Purchase
+  const handleSaveEditPurchase = async () => {
+    if (!editingPurchase || !editPurchaseData) return;
+    try {
+      const totalAmount = editPurchaseData.items.reduce((acc, item) => acc + (parseFloat(item.amount) || 0), 0);
+      const { data } = await API.put(`/billing/purchases/${editingPurchase._id}`, { ...editPurchaseData, totalAmount });
+      if (data.success) {
+        showToast("success", "Purchase updated successfully! ✅");
+        setShowEditPurchaseModal(false);
+        setEditingPurchase(null);
+        setEditPurchaseData(null);
+        fetchAccountingData();
+      }
+    } catch(e) { showToast("error", e.response?.data?.message || "Failed to update purchase"); }
   };
 
   const handleApproveDeposit = async (id) => {
@@ -1152,14 +1203,18 @@ function AdminDashboard() {
                   <h4>Recent Purchases (Kharida)</h4>
                   <div style={tableContainer}>
                      {purchases.map(p => (
-                       <div key={p._id} style={listRow}>
-                          <div>
+                       <div key={p._id} style={{...listRow, cursor: "pointer"}} onClick={() => openPurchaseBillModal(p)}>
+                          <div style={{flex: 1}}>
                              <div style={rowTitle}>{p.supplierName} <span style={muted}>({p.supplierContact})</span></div>
-                             <small style={muted}>{new Date(p.createdAt).toLocaleDateString()} | Items: {p.items.length}</small>
+                             <small style={muted}>{new Date(p.createdAt).toLocaleDateString()} | Items: {p.items.length} | {p.paymentMethod}</small>
                           </div>
-                          <div style={{textAlign:"right"}}>
+                          <div style={{textAlign:"right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px"}}>
                              <div style={{fontWeight:"bold", color:"#dc3545"}}>-₹{p.totalAmount}</div>
                              <small style={{...statusBadge, background: p.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: p.paymentStatus==="Paid"?"#0b8f3a":"#f39c12"}}>{p.paymentStatus}</small>
+                             <div style={{display: "flex", gap: "5px"}}>
+                               <button style={{...smBtn, fontSize: "10px", padding: "3px 7px", background: "#0b8f3a", color: "#fff"}} onClick={(e) => { e.stopPropagation(); openPurchaseBillModal(p); }}>📄 View Bill</button>
+                               <button style={{...smBtn, fontSize: "10px", padding: "3px 7px", background: "#ff9800", color: "#fff"}} onClick={(e) => { e.stopPropagation(); openEditPurchase(p); }}>✏️ Edit</button>
+                             </div>
                           </div>
                        </div>
                      ))}
@@ -1779,7 +1834,131 @@ function AdminDashboard() {
         </Modal>
       )}
 
+
+      {/* ═══════════════ PURCHASE BILL DETAIL MODAL ═══════════════ */}
+      {showPurchaseBillModal && selectedPurchaseBill && (
+        <div style={modalOverlay} onClick={() => setShowPurchaseBillModal(false)}>
+          <div style={{...modalBox, maxWidth: "520px"}} onClick={e => e.stopPropagation()}>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"18px"}}>
+              <h3 style={{margin:0, color:"var(--primary)"}}>📄 Purchase Bill Details</h3>
+              <button onClick={() => setShowPurchaseBillModal(false)} style={{background:"none", border:"none", fontSize:"20px", cursor:"pointer", color:"#999"}}>✕</button>
+            </div>
+
+            {/* Current Bill */}
+            <div style={{background:"#f8fffe", border:"1px solid #bbf7d0", borderRadius:"15px", padding:"15px", marginBottom:"15px"}}>
+              <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
+                <div>
+                  <div style={{fontWeight:"bold", fontSize:"16px"}}>{selectedPurchaseBill.supplierName}</div>
+                  <div style={{fontSize:"12px", color:"#666"}}>📞 {selectedPurchaseBill.supplierContact || "N/A"}</div>
+                  <div style={{fontSize:"11px", color:"#999"}}>{new Date(selectedPurchaseBill.createdAt).toLocaleString()}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:"22px", fontWeight:"bold", color:"#dc3545"}}>₹{selectedPurchaseBill.totalAmount}</div>
+                  <span style={{background: selectedPurchaseBill.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: selectedPurchaseBill.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", padding:"3px 10px", borderRadius:"8px", fontSize:"11px", fontWeight:"bold"}}>{selectedPurchaseBill.paymentStatus}</span>
+                </div>
+              </div>
+              {/* Items */}
+              <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px", marginTop:"10px"}}>
+                <thead>
+                  <tr style={{background:"#0b8f3a", color:"#fff"}}>
+                    <th style={{padding:"6px 8px", textAlign:"left"}}>Item</th>
+                    <th style={{padding:"6px 8px", textAlign:"center"}}>Qty (kg)</th>
+                    <th style={{padding:"6px 8px", textAlign:"center"}}>Rate</th>
+                    <th style={{padding:"6px 8px", textAlign:"right"}}>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedPurchaseBill.items.map((item, idx) => (
+                    <tr key={idx} style={{borderBottom:"1px solid #eee"}}>
+                      <td style={{padding:"6px 8px"}}>{item.name}</td>
+                      <td style={{padding:"6px 8px", textAlign:"center"}}>{item.quantity}</td>
+                      <td style={{padding:"6px 8px", textAlign:"center"}}>₹{item.rate}</td>
+                      <td style={{padding:"6px 8px", textAlign:"right", fontWeight:"bold"}}>₹{item.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {selectedPurchaseBill.notes && <div style={{marginTop:"8px", fontSize:"11px", color:"#666"}}>📝 {selectedPurchaseBill.notes}</div>}
+            </div>
+
+            {/* All Purchases from same Supplier */}
+            <div style={{marginBottom:"10px"}}>
+              <div style={{fontWeight:"bold", fontSize:"13px", color:"var(--text-main)", marginBottom:"10px"}}>
+                📦 {selectedPurchaseBill.supplierName} Se Sab Purchases ({supplierPurchaseHistory.length} records)
+                <span style={{float:"right", color:"#dc3545", fontWeight:"bold"}}>Total: ₹{supplierTotalAmount}</span>
+              </div>
+              <div style={{maxHeight:"200px", overflowY:"auto"}}>
+                {supplierPurchaseHistory.map((p, idx) => (
+                  <div key={p._id} style={{display:"flex", justifyContent:"space-between", padding:"8px 10px", background: idx%2===0?"#f8fffe":"#fff", borderRadius:"8px", marginBottom:"4px", fontSize:"12px"}}>
+                    <div>
+                      <div style={{fontWeight:"bold"}}>#{p._id.slice(-6).toUpperCase()} — {p.items.length} item(s)</div>
+                      <div style={{color:"#999"}}>{new Date(p.createdAt).toLocaleDateString()} | {p.paymentMethod}</div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div style={{fontWeight:"bold", color:"#dc3545"}}>₹{p.totalAmount}</div>
+                      <span style={{color: p.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", fontSize:"10px"}}>{p.paymentStatus}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button style={{...saveBtnBig, background:"#ff9800"}} onClick={() => { setShowPurchaseBillModal(false); openEditPurchase(selectedPurchaseBill); }}>✏️ Edit This Bill</button>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════ EDIT PURCHASE MODAL ═══════════════ */}
+      {showEditPurchaseModal && editPurchaseData && (
+        <div style={modalOverlay} onClick={() => setShowEditPurchaseModal(false)}>
+          <div style={{...modalBox, maxWidth:"480px"}} onClick={e => e.stopPropagation()}>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"18px"}}>
+              <h3 style={{margin:0, color:"#ff9800"}}>✏️ Edit Purchase</h3>
+              <button onClick={() => setShowEditPurchaseModal(false)} style={{background:"none", border:"none", fontSize:"20px", cursor:"pointer", color:"#999"}}>✕</button>
+            </div>
+            <label style={{fontSize:"12px", fontWeight:"bold", color:"#666"}}>Supplier Name</label>
+            <input style={inputStyle} value={editPurchaseData.supplierName} onChange={e => setEditPurchaseData({...editPurchaseData, supplierName: e.target.value})} />
+            <label style={{fontSize:"12px", fontWeight:"bold", color:"#666"}}>Supplier Contact</label>
+            <input style={inputStyle} value={editPurchaseData.supplierContact} onChange={e => setEditPurchaseData({...editPurchaseData, supplierContact: e.target.value})} />
+            <label style={{fontSize:"12px", fontWeight:"bold", color:"#666"}}>Payment Status</label>
+            <select style={inputStyle} value={editPurchaseData.paymentStatus} onChange={e => setEditPurchaseData({...editPurchaseData, paymentStatus: e.target.value})}>
+              <option>Paid</option><option>Pending</option><option>Partial</option>
+            </select>
+            <label style={{fontSize:"12px", fontWeight:"bold", color:"#666"}}>Payment Method</label>
+            <select style={inputStyle} value={editPurchaseData.paymentMethod} onChange={e => setEditPurchaseData({...editPurchaseData, paymentMethod: e.target.value})}>
+              <option>Cash</option><option>UPI</option><option>Cash Wallet</option>
+            </select>
+            <label style={{fontSize:"12px", fontWeight:"bold", color:"#666"}}>Notes</label>
+            <input style={inputStyle} value={editPurchaseData.notes} onChange={e => setEditPurchaseData({...editPurchaseData, notes: e.target.value})} />
+
+            <label style={{fontSize:"12px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"8px"}}>Items (Qty aur Rate edit karein):</label>
+            {editPurchaseData.items.map((item, idx) => (
+              <div key={idx} style={{display:"flex", gap:"8px", marginBottom:"8px", alignItems:"center"}}>
+                <span style={{flex:1, fontSize:"12px", fontWeight:"bold"}}>{item.name}</span>
+                <input type="number" placeholder="Qty" value={item.quantity} style={{...inputStyle, marginBottom:0, width:"70px"}}
+                  onChange={e => {
+                    const updated = [...editPurchaseData.items];
+                    updated[idx] = {...updated[idx], quantity: e.target.value, amount: parseFloat(e.target.value || 0) * parseFloat(updated[idx].rate || 0)};
+                    setEditPurchaseData({...editPurchaseData, items: updated});
+                  }} />
+                <input type="number" placeholder="Rate" value={item.rate} style={{...inputStyle, marginBottom:0, width:"70px"}}
+                  onChange={e => {
+                    const updated = [...editPurchaseData.items];
+                    updated[idx] = {...updated[idx], rate: e.target.value, amount: parseFloat(updated[idx].quantity || 0) * parseFloat(e.target.value || 0)};
+                    setEditPurchaseData({...editPurchaseData, items: updated});
+                  }} />
+                <span style={{fontSize:"12px", color:"#0b8f3a", fontWeight:"bold", minWidth:"60px"}}>₹{item.amount?.toFixed(0)}</span>
+              </div>
+            ))}
+            <div style={{textAlign:"right", fontWeight:"bold", marginBottom:"15px", color:"#dc3545"}}>
+              Total: ₹{editPurchaseData.items.reduce((acc, i) => acc + (parseFloat(i.amount) || 0), 0).toFixed(0)}
+            </div>
+            <button style={saveBtnBig} onClick={handleSaveEditPurchase}>💾 Save Changes</button>
+          </div>
+        </div>
+      )}
+
       {showInvoiceModal && selectedInvoice && (
+
         <Modal title="Invoice Preview" onClose={() => setShowInvoiceModal(false)}>
           <div id="invoice-print-area" style={{padding: "20px", border: "1px solid #000", background: "#fff", marginBottom: "15px", fontFamily: "Arial, sans-serif", fontSize: "11px", color: "#000"}}>
             
