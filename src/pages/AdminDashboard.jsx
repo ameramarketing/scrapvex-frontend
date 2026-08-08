@@ -436,14 +436,21 @@ function AdminDashboard() {
     setShowEditPurchaseModal(true);
   };
 
-  // Save Edit Purchase
+  // Save Edit Purchase (with WhatsApp PDF Bill)
   const handleSaveEditPurchase = async () => {
     if (!editingPurchase || !editPurchaseData) return;
     try {
       const totalAmount = editPurchaseData.items.reduce((acc, item) => acc + (parseFloat(item.amount) || 0), 0);
       const { data } = await API.put(`/billing/purchases/${editingPurchase._id}`, { ...editPurchaseData, totalAmount });
       if (data.success) {
-        showToast("success", "Purchase updated successfully! ✅");
+        showToast("success", "Purchase updated! WhatsApp bill bheji ja rahi hai... ✅");
+        // Send WhatsApp Bill
+        try {
+          await API.post(`/billing/purchases/${editingPurchase._id}/send-bill`);
+          showToast("success", "📲 WhatsApp bill sent!");
+        } catch(we) {
+          showToast("error", "Bill updated but WhatsApp send failed: " + (we.response?.data?.message || we.message));
+        }
         setShowEditPurchaseModal(false);
         setEditingPurchase(null);
         setEditPurchaseData(null);
