@@ -2260,12 +2260,12 @@ function AdminDashboard() {
                             style={{ padding: "4px 6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "12px", width: "100%" }} />
                           <input type="number" value={it.rate} onChange={e => handleEditPurchaseItem(idx, "rate", e.target.value)}
                             style={{ padding: "4px 6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "12px", width: "100%" }} />
-                          <strong style={{ color: "#0b8f3a" }}>₹${(it.amount || 0).toFixed(0)}</strong>
+                          <strong style={{ color: "#0b8f3a" }}>₹{(it.amount || 0).toFixed(0)}</strong>
                           <button onClick={() => handleRemovePurchaseItem(idx)} style={{ border: "none", background: "none", color: "#dc3545", cursor: "pointer", fontSize: "14px" }}>🗑</button>
                         </div>
                       ))}
                       <div style={{ padding: "10px 12px", background: "#f0fdf4", borderTop: "2px solid #d1fae5", fontWeight: "bold", fontSize: "13px", textAlign: "right", color: "#0b8f3a" }}>
-                        Total: ₹${draft.items.reduce((a, b) => a + (b.amount || 0), 0).toFixed(2)}
+                        Total: ₹{draft.items.reduce((a, b) => a + (b.amount || 0), 0).toFixed(2)}
                       </div>
                     </div>
                   )}
