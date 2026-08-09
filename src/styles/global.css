@@ -225,4 +225,15 @@ body.dark-mode .card-premium {
   0% { transform: translateX(-100%); width: 30%; }
   50% { width: 60%; }
   100% { transform: translateX(300%); width: 30%; }
+}
+
+/* Premium Card Hover Lift Effects */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: 0 20px 35px rgba(11, 143, 58, 0.15) !important;
+  border-color: var(--primary) !important;
 }
