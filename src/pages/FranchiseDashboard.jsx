@@ -55,6 +55,13 @@ function FranchiseDashboard() {
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  // Print bill after purchase complete
+  const [showPurchasePrintModal, setShowPurchasePrintModal] = useState(false);
+  const [lastCreatedPurchase, setLastCreatedPurchase] = useState(null);
+  // Multi-supplier draft tabs
+  const emptyDraft = (id) => ({ id: id || Date.now(), supplierId: "", supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash", pickupId: null });
+  const [purchaseDrafts, setPurchaseDrafts] = useState([emptyDraft(1)]);
+  const [activeDraftId, setActiveDraftId] = useState(1);
 
   const initialSaleState = {
     irn: "", ackNo: "", ackDate: "",
@@ -64,7 +71,6 @@ function FranchiseDashboard() {
     notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash"
   };
   const [newSale, setNewSale] = useState(initialSaleState);
-  const [newPurchase, setNewPurchase] = useState({ supplierId: "", supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash" });
   const [saleItemInput, setSaleItemInput] = useState({ scrapItem: "", name: "", hsnCode: "47071000", quantity: "", rate: "", cgstRate: "2.5", sgstRate: "2.5" });
   const [purchaseItemInput, setPurchaseItemInput] = useState({ scrapItem: "", name: "", quantity: "", rate: "" });
 
@@ -303,21 +309,57 @@ function FranchiseDashboard() {
     } catch (e) { showToast("error", "Failed to record sale"); }
   };
 
+  // ─── Multi-Draft Helpers ───
+  const getActiveDraft = () => purchaseDrafts.find(d => d.id === activeDraftId) || purchaseDrafts[0];
+  const updateActiveDraft = (patch) => {
+    setPurchaseDrafts(prev => prev.map(d => d.id === activeDraftId ? { ...d, ...patch } : d));
+  };
+  const addNewDraft = () => {
+    const newId = Date.now();
+    setPurchaseDrafts(prev => [...prev, emptyDraft(newId)]);
+    setActiveDraftId(newId);
+    setPurchaseItemInput({ scrapItem: "", name: "", quantity: "", rate: "" });
+  };
+  const removeDraft = (id) => {
+    if (purchaseDrafts.length === 1) { setPurchaseDrafts([emptyDraft(Date.now())]); return; }
+    const remaining = purchaseDrafts.filter(d => d.id !== id);
+    setPurchaseDrafts(remaining);
+    if (activeDraftId === id) setActiveDraftId(remaining[remaining.length - 1].id);
+  };
+  const switchDraft = (id) => {
+    setActiveDraftId(id);
+    setPurchaseItemInput({ scrapItem: "", name: "", quantity: "", rate: "" });
+  };
+
   const handleAddPurchaseItem = () => {
     if (!purchaseItemInput.scrapItem || !purchaseItemInput.quantity || !purchaseItemInput.rate) return showToast("error", "Fill all item fields");
     const itemInfo = items.find(i => i._id === purchaseItemInput.scrapItem);
     const amount = parseFloat(purchaseItemInput.quantity) * parseFloat(purchaseItemInput.rate);
-    setNewPurchase({ ...newPurchase, items: [...newPurchase.items, { scrapItem: purchaseItemInput.scrapItem, name: itemInfo?.name || "", quantity: purchaseItemInput.quantity, rate: purchaseItemInput.rate, amount }] });
+    const draft = getActiveDraft();
+    updateActiveDraft({ items: [...draft.items, { scrapItem: purchaseItemInput.scrapItem, name: itemInfo?.name || "", quantity: parseFloat(purchaseItemInput.quantity), rate: parseFloat(purchaseItemInput.rate), amount }] });
     setPurchaseItemInput({ scrapItem: "", name: "", quantity: "", rate: "" });
   };
 
   const handleRemovePurchaseItem = (index) => {
-    const updated = newPurchase.items.filter((_, i) => i !== index);
-    setNewPurchase({ ...newPurchase, items: updated });
+    const draft = getActiveDraft();
+    updateActiveDraft({ items: draft.items.filter((_, i) => i !== index) });
+  };
+
+  const handleEditPurchaseItem = (index, field, value) => {
+    const draft = getActiveDraft();
+    const updated = draft.items.map((it, i) => {
+      if (i !== index) return it;
+      const newIt = { ...it, [field]: parseFloat(value) || 0 };
+      newIt.amount = newIt.quantity * newIt.rate;
+      return newIt;
+    });
+    updateActiveDraft({ items: updated });
   };
 
   const handleConvertPickupToPurchase = (pickup) => {
-    setNewPurchase({
+    const newId = Date.now();
+    const draftData = {
+      id: newId,
       supplierId: pickup.collector?._id || pickup.collector,
       supplierName: pickup.collectorName || "Collector",
       supplierContact: pickup.collectorMobile || "",
@@ -332,35 +374,50 @@ function FranchiseDashboard() {
       paymentStatus: "Paid",
       paymentMethod: "Cash Wallet",
       pickupId: pickup._id
-    });
+    };
+    // Check if there's already a pickup draft open
+    const existing = purchaseDrafts.find(d => d.pickupId === pickup._id);
+    if (existing) {
+      setActiveDraftId(existing.id);
+    } else {
+      setPurchaseDrafts(prev => [...prev, draftData]);
+      setActiveDraftId(newId);
+    }
     setShowPurchaseModal(true);
   };
 
   const handleCreatePurchase = async () => {
-    if (!newPurchase.supplierName || newPurchase.items.length === 0) return showToast("error", "Add supplier and items");
-    const totalAmount = newPurchase.items.reduce((acc, item) => acc + item.amount, 0);
+    const draft = getActiveDraft();
+    if (!draft.supplierName || draft.items.length === 0) return showToast("error", "Supplier aur kam se kam ek item add karein");
+    const totalAmount = draft.items.reduce((acc, item) => acc + item.amount, 0);
 
-    // Wallet Balance Check for App Payments (Accounting for potential debt settlement)
-    if (newPurchase.paymentMethod === "Cash Wallet") {
-       const collector = collectors.find(c => c._id === newPurchase.supplierId);
+    // Wallet Balance Check for App Payments
+    if (draft.paymentMethod === "Cash Wallet") {
+       const collector = collectors.find(c => c._id === draft.supplierId);
        const settlement = (collector && collector.walletBalance < 0) ? Math.min(Math.abs(collector.walletBalance), totalAmount) : 0;
-       
        if (walletStats.totalAvailable + settlement < totalAmount) {
-          return showToast("error", `Insufficient Wallet! Required: ₹${totalAmount}, Available: ₹${walletStats.totalAvailable}${settlement > 0 ? ` (+₹${settlement} settlement)` : ""}`);
+          return showToast("error", `Insufficient Wallet! Required: ₹${totalAmount}, Available: ₹${walletStats.totalAvailable}`);
        }
     }
 
     try {
-      const { data } = await API.post("/billing/purchases", { ...newPurchase, totalAmount });
+      const { data } = await API.post("/billing/purchases", { ...draft, totalAmount });
       if (data.success) {
-        showToast("success", "Purchase Recorded Successfully!");
-        setShowPurchaseModal(false);
-        setNewPurchase({ supplierId: "", supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash" });
+        showToast("success", `✅ ${draft.supplierName} ka purchase complete!`);
+        // Save for print bill
+        setLastCreatedPurchase({ ...draft, totalAmount, createdAt: new Date() });
+        // Remove completed draft
+        removeDraft(activeDraftId);
+        // If no more drafts, close modal
+        const remaining = purchaseDrafts.filter(d => d.id !== activeDraftId);
+        if (remaining.length === 0) setShowPurchaseModal(false);
+        // Show print bill
+        setShowPurchasePrintModal(true);
         fetchAccountingData();
-        fetchWalletStats(); // Refresh wallet
+        fetchWalletStats();
       }
-    } catch (e) { 
-      showToast("error", e.response?.data?.message || "Failed to record purchase"); 
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Purchase record karne mein error");
     }
   };
 
