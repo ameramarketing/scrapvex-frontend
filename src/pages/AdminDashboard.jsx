@@ -10,6 +10,8 @@ import {
 import API from "../services/api";
 import Toast from "../components/Toast";
 import { eraseCookie } from "../utils/cookies";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -2299,27 +2301,14 @@ function AdminDashboard() {
       )}
       
       {/* ── PRINT BILL MODAL (after purchase complete) ── */}
-      {showPurchasePrintModal && lastCreatedPurchase && (
+            {showPurchasePrintModal && lastCreatedPurchase && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
           <div style={{ background: "#fff", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
             <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ color: "#fff", fontWeight: "bold", fontSize: "16px" }}>🧾 Purchase Bill</span>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button onClick={async () => {
-                  try {
-                    const phone = lastCreatedPurchase.supplierContact;
-                    if (!phone) return showToast("error", "Phone number nahi mila");
-                    showToast("info", "WhatsApp sending...");
-                    await API.post(`/billing/purchases/${lastCreatedPurchase._id}/send-bill`);
-                    showToast("success", "WhatsApp bill sent!");
-                  } catch (e) {
-                    showToast("error", "WhatsApp send failed");
-                  }
-                }} style={{ background: "#25D366", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>💬 WhatsApp</button>
-                <button onClick={() => window.print()} style={{ background: "#fff", color: "#0b8f3a", border: "none", borderRadius: "8px", padding: "6px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>🖨️ Print</button>
-                <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
-              </div>
+              <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
             </div>
+            
             <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "#000", background: "#fff" }}>
               <style>{`@media print { body * { visibility: hidden; } #purchase-bill-print, #purchase-bill-print * { visibility: visible; } #purchase-bill-print { position: fixed; left: 0; top: 0; width: 80mm; padding: 5mm; } .no-print { display: none !important; } }`}</style>
               <div style={{ textAlign: "center", borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
@@ -2327,30 +2316,62 @@ function AdminDashboard() {
                 <div style={{ fontSize: "10px", color: "#555" }}>Purchase Receipt</div>
               </div>
               <div style={{ marginBottom: "8px", lineHeight: 1.8 }}>
-                <div><strong>Supplier:</strong> ${lastCreatedPurchase.supplierName}</div>
-                {lastCreatedPurchase.supplierContact && <div><strong>Contact:</strong> ${lastCreatedPurchase.supplierContact}</div>}
-                <div><strong>Date:</strong> ${new Date(lastCreatedPurchase.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
-                <div><strong>Payment:</strong> ${lastCreatedPurchase.paymentStatus} (${lastCreatedPurchase.paymentMethod})</div>
+                <div><strong>Supplier:</strong> {lastCreatedPurchase.supplierName}</div>
+                {lastCreatedPurchase.supplierContact && <div><strong>Contact:</strong> {lastCreatedPurchase.supplierContact}</div>}
+                <div><strong>Date:</strong> {new Date(lastCreatedPurchase.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                <div><strong>Payment:</strong> {lastCreatedPurchase.paymentStatus} ({lastCreatedPurchase.paymentMethod})</div>
               </div>
               <div style={{ borderTop: "1px dashed #000", borderBottom: "1px dashed #000", paddingTop: "6px", paddingBottom: "6px", marginBottom: "8px" }}>
-                ${lastCreatedPurchase.items.map((it, i) => (
-                  `<div key=${i} style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                    <span>${it.name}<br /><span style="font-size: 10px; color: #555;">${it.quantity} × ₹${it.rate}</span></span>
-                    <strong>₹${(it.amount || 0).toFixed(0)}</strong>
-                  </div>`
-                )).join('')}
+                {lastCreatedPurchase.items.map((it, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                    <span>{it.name}<br /><span style={{ fontSize: "10px", color: "#555" }}>{it.quantity} × ₹{it.rate}</span></span>
+                    <strong>₹{(it.amount || 0).toFixed(0)}</strong>
+                  </div>
+                ))}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: "14px", paddingTop: "6px" }}>
-                <span>TOTAL</span><span>₹${(lastCreatedPurchase.totalAmount || 0).toFixed(2)}</span>
+                <span>TOTAL</span><span>₹{(lastCreatedPurchase.totalAmount || 0).toFixed(2)}</span>
               </div>
               <div style={{ textAlign: "center", marginTop: "10px", fontSize: "10px", color: "#888", borderTop: "1px dashed #000", paddingTop: "6px" }}>Thank you! — ScrapVex.in</div>
+            </div>
+
+            {/* Action buttons below receipt - responsive & fits mobile */}
+            <div className="no-print" style={{ display: "flex", gap: "10px", padding: "16px 20px", background: "#f8f9fa", borderTop: "1px solid #eee", flexWrap: "wrap" }}>
+              <button onClick={async () => {
+                try {
+                  const phone = lastCreatedPurchase.supplierContact;
+                  if (!phone) return showToast("error", "Phone number nahi mila");
+                  showToast("info", "WhatsApp sending...");
+                  await API.post(`/billing/purchases/${lastCreatedPurchase._id}/send-bill`);
+                  showToast("success", "WhatsApp bill sent!");
+                } catch (e) {
+                  showToast("error", "WhatsApp send failed");
+                }
+              }} style={{ flex: 1, minWidth: "100px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", background: "#25D366", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>💬 WhatsApp</button>
+              <button onClick={async () => {
+                const element = document.getElementById("purchase-bill-print");
+                if (!element) return;
+                try {
+                  showToast("info", "Generating PDF...");
+                  const canvas = await html2canvas(element, { scale: 2 });
+                  const imgData = canvas.toDataURL("image/png");
+                  const pdf = new jsPDF({
+                    orientation: "portrait",
+                    unit: "mm",
+                    format: [80, (canvas.height * 80) / canvas.width]
+                  });
+                  pdf.addImage(imgData, "PNG", 0, 0, 80, (canvas.height * 80) / canvas.width);
+                  pdf.save(`ScrapVex_PurchaseBill_${lastCreatedPurchase._id || Date.now()}.pdf`);
+                  showToast("success", "PDF Downloaded!");
+                } catch (e) {
+                  showToast("error", "Failed to generate PDF");
+                }
+              }} style={{ flex: 1, minWidth: "120px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", background: "#4f46e5", color: "#fff", border: "none", borderRadius: "10px", padding: "10px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>📥 PDF Download</button>
+              <button onClick={() => window.print()} style={{ flex: 1, minWidth: "80px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", background: "#333", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>🖨️ Print</button>
             </div>
           </div>
         </div>
       )}
-
-
-      {/* ═══════════════ PURCHASE BILL DETAIL MODAL ═══════════════ */}
       {showPurchaseBillModal && selectedPurchaseBill && (
         <div style={modalOverlay} onClick={() => setShowPurchaseBillModal(false)}>
           <div style={{...modalBox, maxWidth: "520px"}} onClick={e => e.stopPropagation()}>
