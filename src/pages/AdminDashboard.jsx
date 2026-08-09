@@ -1930,7 +1930,15 @@ function AdminDashboard() {
              <option value="kg">kg</option><option value="Pcs">Pcs</option><option value="Unit">Unit</option>
           </select>
           <select style={inputStyle} value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})}>
-             <option value="Paper">Paper</option><option value="Plastic">Plastic</option><option value="Metal">Metal</option><option value="Other">Other</option>
+             <option value="Paper">📄 Paper</option>
+             <option value="Plastic">🧴 Plastic</option>
+             <option value="Metal">🔩 Metal</option>
+             <option value="Large Appliances">❄️ Large Appliances</option>
+             <option value="Small Appliances">🔌 Small Appliances</option>
+             <option value="IT-EWaste">💻 IT / E-Waste</option>
+             <option value="Battery">🔋 Battery</option>
+             <option value="Vehicles">🚗 Vehicles</option>
+             <option value="Other">📦 Other</option>
           </select>
           <button style={saveBtnBig} onClick={handleCreateItem}>Add To System</button>
         </Modal>

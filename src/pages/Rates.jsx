@@ -108,37 +108,37 @@ function Rates() {
 
   const getCategoryIcon = (cat) => {
     switch (cat) {
-      case "Paper":
-      case "Plastic":
-      case "Metal":
-        return <FaRecycle />;
+      case "Paper":         return <FaNewspaper />;
+      case "Plastic":       return <FaRecycle />;
+      case "Metal":         return <FaWeightHanging />;
       case "Electronic":
-        return <FaLaptop />;
+      case "IT-EWaste":     return <FaLaptop />;
       case "Appliances":
-        return <FaSnowflake />;
-      case "Vehicles":
-        return <FaCar />;
-      default:
-        return <FaCube />;
+      case "Large Appliances": return <FaSnowflake />;
+      case "Small Appliances": return <FaCog />;
+      case "Battery":       return <FaBatteryFull />;
+      case "Vehicles":      return <FaCar />;
+      default:              return <FaCube />;
     }
   };
 
   const getCategoryTitle = (cat) => {
     switch (cat) {
-      case "Paper":
-      case "Plastic":
-      case "Metal":
-        return "Normal Recyclables";
+      case "Paper":            return "📄 Paper & Cardboard";
+      case "Plastic":          return "🧴 Plastic";
+      case "Metal":            return "🔩 Metal & Alloys";
       case "Electronic":
-        return "IT E-Waste";
+      case "IT-EWaste":        return "💻 IT / E-Waste";
       case "Appliances":
-        return "Large Appliances";
-      case "Vehicles":
-        return "Vehicle Scrap";
-      default:
-        return "Other Items";
+      case "Large Appliances": return "❄️ Large Appliances";
+      case "Small Appliances": return "🔌 Small Appliances";
+      case "Battery":          return "🔋 Batteries";
+      case "Vehicles":         return "🚗 Vehicles";
+      default:                 return `📦 ${cat}`;
     }
   };
+
+
 
   const getItemIcon = (name) => {
     const lower = name.toLowerCase();

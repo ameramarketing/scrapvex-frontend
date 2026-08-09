@@ -1079,7 +1079,15 @@ function FranchiseDashboard() {
             <option value="kg">kg</option><option value="Pcs">Pcs</option><option value="Unit">Unit</option>
           </select>
           <select style={inputStyle} value={newItem.category} onChange={e => setNewItem({ ...newItem, category: e.target.value })}>
-            <option value="Paper">Paper</option><option value="Plastic">Plastic</option><option value="Metal">Metal</option><option value="Other">Other</option>
+            <option value="Paper">📄 Paper</option>
+            <option value="Plastic">🧴 Plastic</option>
+            <option value="Metal">🔩 Metal</option>
+            <option value="Large Appliances">❄️ Large Appliances</option>
+            <option value="Small Appliances">🔌 Small Appliances</option>
+            <option value="IT-EWaste">💻 IT / E-Waste</option>
+            <option value="Battery">🔋 Battery</option>
+            <option value="Vehicles">🚗 Vehicles</option>
+            <option value="Other">📦 Other</option>
           </select>
           <button style={saveBtnBig} onClick={handleCreateItem}>Add To System</button>
         </Modal>
@@ -1410,118 +1418,171 @@ function FranchiseDashboard() {
       )}
 
       {showPurchaseModal && (
-        <Modal title="Record Material Purchase" onClose={() => setShowPurchaseModal(false)}>
+        <Modal title="📦 Record Purchase" onClose={() => { setShowPurchaseModal(false); setPurchaseDrafts([emptyDraft(1)]); setActiveDraftId(1); }}>
           <div style={{ maxHeight: "65vh", overflowY: "auto", paddingRight: "4px" }}>
 
-            <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-              <div style={{ flex: 1 }}>
-                <label style={labelStyle}>Select Collector (Supplier)</label>
-                <select
-                  style={inputStyle}
-                  value={newPurchase.supplierId}
-                  onChange={e => {
-                    const collector = collectors.find(c => c._id === e.target.value);
-                    setNewPurchase({
-                      ...newPurchase,
-                      supplierId: e.target.value,
-                      supplierName: collector?.name || "",
-                      supplierContact: collector?.mobile || ""
-                    });
-                  }}
-                >
-                  <option value="">Choose Collector</option>
-                  {collectors.map(c => <option key={c._id} value={c._id}>{c.name} ({c.mobile})</option>)}
-                </select>
-              </div>
-              <div style={{ flex: 1 }}>
-                <label style={labelStyle}>Contact</label>
-                <Input disabled placeholder="Contact" value={newPurchase.supplierContact} />
-              </div>
-            </div>
-
-            <div style={{ border: "1px solid #eee", padding: "15px", borderRadius: "12px", marginBottom: "15px", background: "#f8f9fa" }}>
-              <h4 style={{ margin: "0 0 10px 0", fontSize: "14px" }}>Add Items</h4>
-              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "10px" }}>
-                <select style={{ ...inputStyle, marginBottom: 0 }} value={purchaseItemInput.scrapItem} onChange={e => setPurchaseItemInput({ ...purchaseItemInput, scrapItem: e.target.value })}>
-                  <option value="">Select Item</option>
-                  {items.map(i => (
-                    <option key={i._id} value={i._id}>{i.name}</option>
-                  ))}
-                </select>
-                <Input type="number" placeholder="Qty" value={purchaseItemInput.quantity} onChange={v => setPurchaseItemInput({ ...purchaseItemInput, quantity: v })} />
-                <Input type="number" placeholder="Rate/Unit" value={purchaseItemInput.rate} onChange={v => setPurchaseItemInput({ ...purchaseItemInput, rate: v })} />
-              </div>
-              <button style={{ ...assignBtn, width: "100%", marginTop: "10px" }} onClick={handleAddPurchaseItem}>Add Item</button>
-            </div>
-
-            {newPurchase.items.length > 0 && (
-              <div style={{ maxHeight: "120px", overflowY: "auto", marginBottom: "15px" }}>
-                {newPurchase.items.map((it, idx) => (
-                  <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid #eee", fontSize: "12px" }}>
-                    <div style={{ flex: 1 }}>
-                      <span style={{ fontWeight: "600" }}>{it.name}</span><br />
-                      <span style={{ color: "#666" }}>{it.quantity} x ₹{it.rate}</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <strong style={{ color: "#0b8f3a" }}>₹{it.amount}</strong>
-                      <button style={{ border: "none", background: "none", color: "#e74c3c", cursor: "pointer", padding: "5px" }} onClick={() => handleRemovePurchaseItem(idx)}>
-                        <FaTrash size={12} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                <div style={{ textAlign: "right", marginTop: "10px", fontWeight: "bold", color: "var(--text-main)" }}>
-                  Total: ₹{newPurchase.items.reduce((a, b) => a + b.amount, 0).toFixed(2)}
+            {/* DRAFT TABS */}
+            <div style={{ display: "flex", gap: "6px", marginBottom: "14px", flexWrap: "wrap", alignItems: "center", borderBottom: "2px solid #e5e7eb", paddingBottom: "10px" }}>
+              {purchaseDrafts.map((draft, idx) => (
+                <div key={draft.id} style={{ display: "flex", alignItems: "center", borderRadius: "10px", overflow: "hidden", border: activeDraftId === draft.id ? "2px solid #0b8f3a" : "2px solid #e5e7eb", background: activeDraftId === draft.id ? "#f0fdf4" : "#f9fafb" }}>
+                  <span style={{ padding: "6px 12px", fontSize: "12px", fontWeight: "bold", color: activeDraftId === draft.id ? "#0b8f3a" : "#555", cursor: "pointer", whiteSpace: "nowrap" }} onClick={() => switchDraft(draft.id)}>
+                    {draft.supplierName ? `📦 ${draft.supplierName.slice(0, 12)}` : `Draft ${idx + 1}`}
+                    {draft.items.length > 0 && <span style={{ marginLeft: "4px", background: "#0b8f3a", color: "#fff", borderRadius: "10px", padding: "1px 6px", fontSize: "10px" }}>{draft.items.length}</span>}
+                  </span>
+                  {purchaseDrafts.length > 1 && (
+                    <span style={{ padding: "6px 8px", cursor: "pointer", color: "#dc3545", fontSize: "13px", fontWeight: "bold" }}
+                      onClick={(e) => { e.stopPropagation(); if (window.confirm(`"${draft.supplierName || `Draft ${idx + 1}`}" delete karein?`)) removeDraft(draft.id); }}>✕</span>
+                  )}
                 </div>
-              </div>
-            )}
-
-            <div style={{ display: "flex", gap: "10px" }}>
-              <div style={{ flex: 1 }}>
-                <label style={labelStyle}>Payment Status</label>
-                <select style={inputStyle} value={newPurchase.paymentStatus} onChange={e => setNewPurchase({ ...newPurchase, paymentStatus: e.target.value })}>
-                  <option value="Paid">Paid</option>
-                  <option value="Pending">Pending</option>
-                </select>
-              </div>
-              <div style={{ flex: 1 }}>
-                <label style={labelStyle}>Method</label>
-                <select style={inputStyle} value={newPurchase.paymentMethod} onChange={e => setNewPurchase({ ...newPurchase, paymentMethod: e.target.value })}>
-                  <option value="Cash">Cash</option>
-                  <option value="Cash Wallet">Cash Wallet (App)</option>
-                  <option value="UPI">UPI</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                </select>
-              </div>
+              ))}
+              <button style={{ padding: "6px 12px", borderRadius: "10px", border: "2px dashed #0b8f3a", background: "transparent", color: "#0b8f3a", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }} onClick={addNewDraft}>
+                + New Supplier
+              </button>
             </div>
 
-            {/* SMART SETTLEMENT INFO — shown once */}
+            {/* ACTIVE DRAFT FORM */}
             {(() => {
-              const selectedCollector = collectors.find(c => c._id === newPurchase.supplierId);
-              const totalAmt = newPurchase.items.reduce((a, b) => a + b.amount, 0);
-              const debtAmount = selectedCollector && selectedCollector.walletBalance < 0 ? Math.abs(selectedCollector.walletBalance) : 0;
-              const autoSettle = Math.min(debtAmount, totalAmt);
-              const freshNeeded = totalAmt - autoSettle;
-              if (autoSettle > 0) {
-                return (
-                  <div style={{ background: "linear-gradient(135deg, #eef8f1, #e8f5e9)", border: "1px solid #c3e6cb", borderRadius: "12px", padding: "12px 15px", marginTop: "15px", fontSize: "13px" }}>
-                    <div style={{ fontWeight: "bold", color: "#0b8f3a", marginBottom: "6px" }}>⚡ Auto-Settlement Will Apply</div>
-                    <div style={{ color: "#555", lineHeight: "1.8" }}>
-                      <div>🔴 Collector Debt: <strong>₹{debtAmount.toFixed(2)}</strong></div>
-                      <div>✅ Auto-Settled: <strong style={{color:"#0b8f3a"}}>₹{autoSettle.toFixed(2)}</strong> (franchise refund + commission)</div>
-                      {freshNeeded > 0 && <div>💰 Fresh Payment: <strong style={{color:"#e67e22"}}>₹{freshNeeded.toFixed(2)}</strong> — select Cash/UPI above</div>}
-                      {freshNeeded === 0 && <div style={{color:"#0b8f3a"}}>✅ No extra payment needed!</div>}
+              const draft = getActiveDraft();
+              if (!draft) return null;
+              return (
+                <>
+                  <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Select Collector (Supplier)</label>
+                      <select style={inputStyle} value={draft.supplierId}
+                        onChange={e => {
+                          const collector = collectors.find(c => c._id === e.target.value);
+                          updateActiveDraft({ supplierId: e.target.value, supplierName: collector?.name || "", supplierContact: collector?.mobile || "" });
+                        }}>
+                        <option value="">Choose Collector</option>
+                        {collectors.map(c => <option key={c._id} value={c._id}>{c.name} ({c.mobile})</option>)}
+                      </select>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Contact</label>
+                      <input style={inputStyle} disabled value={draft.supplierContact} readOnly />
                     </div>
                   </div>
-                );
-              }
-              return null;
+
+                  <div style={{ border: "1px solid #d1fae5", padding: "12px", borderRadius: "12px", marginBottom: "12px", background: "#f0fdf4" }}>
+                    <h4 style={{ margin: "0 0 8px 0", fontSize: "13px", color: "#0b8f3a" }}>➕ Item Add Karein</h4>
+                    <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "8px" }}>
+                      <select style={{ ...inputStyle, marginBottom: 0 }} value={purchaseItemInput.scrapItem} onChange={e => setPurchaseItemInput({ ...purchaseItemInput, scrapItem: e.target.value })}>
+                        <option value="">Select Item</option>
+                        {items.map(i => <option key={i._id} value={i._id}>{i.name}</option>)}
+                      </select>
+                      <input style={{ ...inputStyle, marginBottom: 0 }} type="number" placeholder="Qty" value={purchaseItemInput.quantity} onChange={e => setPurchaseItemInput({ ...purchaseItemInput, quantity: e.target.value })} />
+                      <input style={{ ...inputStyle, marginBottom: 0 }} type="number" placeholder="Rate/kg" value={purchaseItemInput.rate} onChange={e => setPurchaseItemInput({ ...purchaseItemInput, rate: e.target.value })} />
+                    </div>
+                    <button style={{ ...assignBtn, width: "100%", marginTop: "8px" }} onClick={handleAddPurchaseItem}>Add Item</button>
+                  </div>
+
+                  {draft.items.length > 0 && (
+                    <div style={{ marginBottom: "12px", border: "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden" }}>
+                      <div style={{ background: "#f8f9fa", padding: "8px 12px", fontSize: "11px", fontWeight: "bold", color: "#555", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "6px" }}>
+                        <span>Item</span><span>Qty</span><span>Rate</span><span style={{ color: "#0b8f3a" }}>Amount</span><span></span>
+                      </div>
+                      {draft.items.map((it, idx) => (
+                        <div key={idx} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "6px", padding: "8px 12px", borderTop: "1px solid #f0f0f0", alignItems: "center", fontSize: "12px" }}>
+                          <span style={{ fontWeight: "600", color: "#333" }}>{it.name}</span>
+                          <input type="number" value={it.quantity} onChange={e => handleEditPurchaseItem(idx, "quantity", e.target.value)}
+                            style={{ padding: "4px 6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "12px", width: "100%" }} />
+                          <input type="number" value={it.rate} onChange={e => handleEditPurchaseItem(idx, "rate", e.target.value)}
+                            style={{ padding: "4px 6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "12px", width: "100%" }} />
+                          <strong style={{ color: "#0b8f3a" }}>₹{(it.amount || 0).toFixed(0)}</strong>
+                          <button onClick={() => handleRemovePurchaseItem(idx)} style={{ border: "none", background: "none", color: "#dc3545", cursor: "pointer", padding: "4px", fontSize: "14px" }}>🗑</button>
+                        </div>
+                      ))}
+                      <div style={{ padding: "10px 12px", background: "#f0fdf4", borderTop: "2px solid #d1fae5", fontWeight: "bold", fontSize: "13px", textAlign: "right", color: "#0b8f3a" }}>
+                        Total: ₹{draft.items.reduce((a, b) => a + (b.amount || 0), 0).toFixed(2)}
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Payment Status</label>
+                      <select style={inputStyle} value={draft.paymentStatus} onChange={e => updateActiveDraft({ paymentStatus: e.target.value })}>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                      </select>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Method</label>
+                      <select style={inputStyle} value={draft.paymentMethod} onChange={e => updateActiveDraft({ paymentMethod: e.target.value })}>
+                        <option value="Cash">Cash</option>
+                        <option value="Cash Wallet">Cash Wallet (App)</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {(() => {
+                    const col = collectors.find(c => c._id === draft.supplierId);
+                    const totalAmt = draft.items.reduce((a, b) => a + (b.amount || 0), 0);
+                    const debt = col && col.walletBalance < 0 ? Math.abs(col.walletBalance) : 0;
+                    const settle = Math.min(debt, totalAmt);
+                    if (settle > 0) return (
+                      <div style={{ background: "#eef8f1", border: "1px solid #c3e6cb", borderRadius: "12px", padding: "12px", marginTop: "10px", fontSize: "12px" }}>
+                        <div style={{ fontWeight: "bold", color: "#0b8f3a", marginBottom: "4px" }}>⚡ Auto-Settlement</div>
+                        <div>🔴 Collector Debt: <strong>₹{debt.toFixed(2)}</strong></div>
+                        <div>✅ Auto-Settled: <strong style={{ color: "#0b8f3a" }}>₹{settle.toFixed(2)}</strong></div>
+                        {(totalAmt - settle) > 0 && <div>💰 Fresh Payment: <strong style={{ color: "#e67e22" }}>₹{(totalAmt - settle).toFixed(2)}</strong></div>}
+                        {(totalAmt - settle) === 0 && <div style={{ color: "#0b8f3a" }}>✅ No extra payment needed!</div>}
+                      </div>
+                    );
+                    return null;
+                  })()}
+                </>
+              );
             })()}
 
-          </div>{/* end scroll wrapper */}
+          </div>
 
-          <button style={{ ...saveBtnBig, marginTop: "15px" }} onClick={handleCreatePurchase}>Complete Purchase</button>
+          <button style={{ ...saveBtnBig, marginTop: "15px", background: "linear-gradient(135deg,#0b8f3a,#16a34a)" }} onClick={handleCreatePurchase}>
+            ✅ Complete — {getActiveDraft()?.supplierName || "This Draft"}
+          </button>
         </Modal>
+      )}
+
+      {showPurchasePrintModal && lastCreatedPurchase && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
+          <div style={{ background: "#fff", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
+            <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ color: "#fff", fontWeight: "bold", fontSize: "16px" }}>🧾 Purchase Bill</span>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button onClick={() => window.print()} style={{ background: "#fff", color: "#0b8f3a", border: "none", borderRadius: "8px", padding: "6px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>🖨️ Print</button>
+                <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
+              </div>
+            </div>
+            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "#000" }}>
+              <style>{`@media print { body * { visibility: hidden; } #purchase-bill-print, #purchase-bill-print * { visibility: visible; } #purchase-bill-print { position: fixed; left: 0; top: 0; width: 80mm; padding: 5mm; } .no-print { display: none !important; } }`}</style>
+              <div style={{ textAlign: "center", borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
+                <div style={{ fontWeight: "bold", fontSize: "15px" }}>⚡ SCRAPVEX</div>
+                <div style={{ fontSize: "10px" }}>Purchase Receipt</div>
+              </div>
+              <div style={{ marginBottom: "8px", lineHeight: 1.8 }}>
+                <div><strong>Supplier:</strong> {lastCreatedPurchase.supplierName}</div>
+                {lastCreatedPurchase.supplierContact && <div><strong>Contact:</strong> {lastCreatedPurchase.supplierContact}</div>}
+                <div><strong>Date:</strong> {new Date(lastCreatedPurchase.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                <div><strong>Payment:</strong> {lastCreatedPurchase.paymentStatus} ({lastCreatedPurchase.paymentMethod})</div>
+              </div>
+              <div style={{ borderTop: "1px dashed #000", borderBottom: "1px dashed #000", paddingTop: "6px", paddingBottom: "6px", marginBottom: "8px" }}>
+                {lastCreatedPurchase.items.map((it, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                    <span>{it.name}<br /><span style={{ fontSize: "10px", color: "#555" }}>{it.quantity} × ₹{it.rate}</span></span>
+                    <strong>₹{(it.amount || 0).toFixed(0)}</strong>
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: "14px", paddingTop: "6px" }}>
+                <span>TOTAL</span><span>₹{(lastCreatedPurchase.totalAmount || 0).toFixed(2)}</span>
+              </div>
+              <div style={{ textAlign: "center", marginTop: "10px", fontSize: "10px", color: "#888", borderTop: "1px dashed #000", paddingTop: "6px" }}>Thank you! — ScrapVex.in</div>
+            </div>
+          </div>
+        </div>
       )}
 
       {showInvoiceModal && selectedInvoice && (
