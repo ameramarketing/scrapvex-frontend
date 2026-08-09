@@ -62,6 +62,11 @@ function FranchiseDashboard() {
   const emptyDraft = (id) => ({ id: id || Date.now(), supplierId: "", supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash", pickupId: null });
   const [purchaseDrafts, setPurchaseDrafts] = useState([emptyDraft(1)]);
   const [activeDraftId, setActiveDraftId] = useState(1);
+  // Purchase Bill Modal
+  const [showPurchaseBillModal, setShowPurchaseBillModal] = useState(false);
+  const [selectedPurchaseBill, setSelectedPurchaseBill] = useState(null);
+  const [supplierPurchaseHistory, setSupplierPurchaseHistory] = useState([]);
+  const [supplierTotalAmount, setSupplierTotalAmount] = useState(0);
 
   const initialSaleState = {
     irn: "", ackNo: "", ackDate: "",
@@ -405,7 +410,7 @@ function FranchiseDashboard() {
       if (data.success) {
         showToast("success", `✅ ${draft.supplierName} ka purchase complete!`);
         // Save for print bill
-        setLastCreatedPurchase({ ...draft, totalAmount, createdAt: new Date() });
+        setLastCreatedPurchase(data.purchase);
         // Remove completed draft
         removeDraft(activeDraftId);
         // If no more drafts, close modal
@@ -419,6 +424,18 @@ function FranchiseDashboard() {
     } catch (e) {
       showToast("error", e.response?.data?.message || "Purchase record karne mein error");
     }
+  };
+
+  const openPurchaseBillModal = async (purchase) => {
+    setSelectedPurchaseBill(purchase);
+    setShowPurchaseBillModal(true);
+    try {
+      const { data } = await API.get(`/billing/purchases/by-supplier?supplierName=${encodeURIComponent(purchase.supplierName)}`);
+      if (data.success) {
+        setSupplierPurchaseHistory(data.purchases);
+        setSupplierTotalAmount(data.totalAmount);
+      }
+    } catch(e) { setSupplierPurchaseHistory([purchase]); setSupplierTotalAmount(purchase.totalAmount); }
   };
 
   const handleFranchiseDepositSubmit = async (e) => {
@@ -951,10 +968,10 @@ function FranchiseDashboard() {
                   <h4>Recent Purchases</h4>
                   <div style={tableContainer}>
                     {purchases.map(p => (
-                      <div key={p._id} style={listRow}>
+                      <div key={p._id} style={{...listRow, cursor: "pointer"}} onClick={() => openPurchaseBillModal(p)}>
                         <div>
                           <div style={rowTitle}>{p.supplierName} <span style={muted}>({p.supplierContact})</span></div>
-                          <small style={muted}>{new Date(p.createdAt).toLocaleDateString()} | Items: {p.items.length}</small>
+                          <small style={muted}>{new Date(p.createdAt).toLocaleDateString()} | Items: {p.items.length} | <span style={{color: "#0b8f3a", fontWeight: "bold"}}>📄 View Bill</span></small>
                         </div>
                         <div style={{ textAlign: "right" }}>
                           <div style={{ fontWeight: "bold", color: "#dc3545" }}>-₹{p.totalAmount}</div>
@@ -1552,6 +1569,17 @@ function FranchiseDashboard() {
             <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ color: "#fff", fontWeight: "bold", fontSize: "16px" }}>🧾 Purchase Bill</span>
               <div style={{ display: "flex", gap: "8px" }}>
+                <button onClick={async () => {
+                  try {
+                    const phone = lastCreatedPurchase.supplierContact;
+                    if (!phone) return showToast("error", "Phone number nahi mila");
+                    showToast("info", "WhatsApp sending...");
+                    await API.post(`/billing/purchases/${lastCreatedPurchase._id}/send-bill`);
+                    showToast("success", "WhatsApp bill sent!");
+                  } catch (e) {
+                    showToast("error", "WhatsApp send failed");
+                  }
+                }} style={{ background: "#25D366", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>💬 WhatsApp</button>
                 <button onClick={() => window.print()} style={{ background: "#fff", color: "#0b8f3a", border: "none", borderRadius: "8px", padding: "6px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>🖨️ Print</button>
                 <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
               </div>
@@ -1580,6 +1608,81 @@ function FranchiseDashboard() {
                 <span>TOTAL</span><span>₹{(lastCreatedPurchase.totalAmount || 0).toFixed(2)}</span>
               </div>
               <div style={{ textAlign: "center", marginTop: "10px", fontSize: "10px", color: "#888", borderTop: "1px dashed #000", paddingTop: "6px" }}>Thank you! — ScrapVex.in</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════ PURCHASE BILL DETAIL MODAL ═══════════════ */}
+      {showPurchaseBillModal && selectedPurchaseBill && (
+        <div style={modalOverlay} onClick={() => setShowPurchaseBillModal(false)}>
+          <div style={{...modalBox, maxWidth: "520px"}} onClick={e => e.stopPropagation()}>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"18px"}}>
+              <h3 style={{margin:0, color:"var(--primary)"}}>📄 Purchase Bill Details</h3>
+              <button onClick={() => setShowPurchaseBillModal(false)} style={{background:"none", border:"none", fontSize:"20px", cursor:"pointer", color:"#999"}}>✕</button>
+            </div>
+
+            {/* Current Bill */}
+            <div style={{background:"#f8fffe", border:"1px solid #bbf7d0", borderRadius:"15px", padding:"15px", marginBottom:"15px"}}>
+              <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
+                <div>
+                  <div style={{fontWeight:"bold", fontSize:"16px"}}>{selectedPurchaseBill.supplierName}</div>
+                  <div style={{fontSize:"12px", color:"#666"}}>📞 {selectedPurchaseBill.supplierContact || "N/A"}</div>
+                  <div style={{fontSize:"11px", color:"#999"}}>{new Date(selectedPurchaseBill.createdAt).toLocaleString()}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:"22px", fontWeight:"bold", color:"#dc3545"}}>₹{selectedPurchaseBill.totalAmount}</div>
+                  <span style={{background: selectedPurchaseBill.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: selectedPurchaseBill.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", padding:"3px 10px", borderRadius:"8px", fontSize:"11px", fontWeight:"bold"}}>{selectedPurchaseBill.paymentStatus}</span>
+                </div>
+              </div>
+              {/* Items */}
+              <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px", marginTop:"10px"}}>
+                <thead>
+                  <tr style={{background:"#0b8f3a", color:"#fff"}}>
+                    <th style={{padding:"6px 8px", textAlign:"left"}}>Item</th>
+                    <th style={{padding:"6px 8px", textAlign:"center"}}>Qty (kg)</th>
+                    <th style={{padding:"6px 8px", textAlign:"center"}}>Rate</th>
+                    <th style={{padding:"6px 8px", textAlign:"right"}}>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedPurchaseBill.items.map((item, idx) => (
+                    <tr key={idx} style={{borderBottom:"1px solid #eee"}}>
+                      <td style={{padding:"6px 8px"}}>{item.name}</td>
+                      <td style={{padding:"6px 8px", textAlign:"center"}}>{item.quantity}</td>
+                      <td style={{padding:"6px 8px", textAlign:"center"}}>₹{item.rate}</td>
+                      <td style={{padding:"6px 8px", textAlign:"right", fontWeight:"bold"}}>₹{item.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {selectedPurchaseBill.notes && <div style={{marginTop:"8px", fontSize:"11px", color:"#666"}}>📝 {selectedPurchaseBill.notes}</div>}
+            </div>
+
+            {/* All Purchases from same Supplier */}
+            <div style={{marginBottom:"10px"}}>
+              <div style={{fontWeight:"bold", fontSize:"13px", color:"var(--text-main)", marginBottom:"10px"}}>
+                📦 {selectedPurchaseBill.supplierName} Se Sab Purchases ({supplierPurchaseHistory.length} records)
+                <span style={{float:"right", color:"#dc3545", fontWeight:"bold"}}>Total: ₹{supplierTotalAmount}</span>
+              </div>
+              <div style={{maxHeight:"200px", overflowY:"auto"}}>
+                {supplierPurchaseHistory.map((p, idx) => (
+                  <div key={p._id} style={{display:"flex", justifyContent:"space-between", padding:"8px 10px", background: idx%2===0?"#f8fffe":"#fff", borderRadius:"8px", marginBottom:"4px", fontSize:"12px"}}>
+                    <div>
+                      <div style={{fontWeight:"bold"}}>#{p._id.slice(-6).toUpperCase()} — {p.items.length} item(s)</div>
+                      <div style={{color:"#999"}}>{new Date(p.createdAt).toLocaleDateString()} | {p.paymentMethod}</div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div style={{fontWeight:"bold", color:"#dc3545"}}>₹{p.totalAmount}</div>
+                      <span style={{color: p.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", fontSize:"10px"}}>{p.paymentStatus}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div style={{display:"flex", gap:"10px", marginTop:"15px"}}>
+              <button style={{...saveBtnBig, flex:1, margin:0, background:"#0b8f3a"}} onClick={() => { setShowPurchaseBillModal(false); setLastCreatedPurchase(selectedPurchaseBill); setShowPurchasePrintModal(true); }}>🖨️ Print / WhatsApp</button>
             </div>
           </div>
         </div>

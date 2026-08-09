@@ -66,6 +66,13 @@ function AdminDashboard() {
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
+  // Print bill after purchase complete
+  const [showPurchasePrintModal, setShowPurchasePrintModal] = useState(false);
+  const [lastCreatedPurchase, setLastCreatedPurchase] = useState(null);
+  // Multi-supplier draft tabs
+  const emptyDraft = (id) => ({ id: id || Date.now(), supplierId: "", supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash" });
+  const [purchaseDrafts, setPurchaseDrafts] = useState([emptyDraft(1)]);
+  const [activeDraftId, setActiveDraftId] = useState(1);
   // Purchase Bill Modal & Edit
   const [showPurchaseBillModal, setShowPurchaseBillModal] = useState(false);
   const [selectedPurchaseBill, setSelectedPurchaseBill] = useState(null);
@@ -94,7 +101,7 @@ function AdminDashboard() {
     notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash"
   };
   const [newSale, setNewSale] = useState(initialSaleState);
-  const [newPurchase, setNewPurchase] = useState({ supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash" });
+
   const [saleItemInput, setSaleItemInput] = useState({ scrapItem: "", name: "", hsnCode: "47071000", quantity: "", rate: "", cgstRate: "2.5", sgstRate: "2.5" });
   const [purchaseItemInput, setPurchaseItemInput] = useState({ scrapItem: "", name: "", quantity: "", rate: "" });
   
@@ -398,26 +405,75 @@ function AdminDashboard() {
     } catch(e) { showToast("error", "Failed to record sale"); }
   };
 
-  const handleAddPurchaseItem = () => {
-    if(!purchaseItemInput.scrapItem || !purchaseItemInput.quantity || !purchaseItemInput.rate) return showToast("error", "Fill all item fields");
-    const itemInfo = items.find(i => i._id === purchaseItemInput.scrapItem);
-    const amount = parseFloat(purchaseItemInput.quantity) * parseFloat(purchaseItemInput.rate);
-    setNewPurchase({...newPurchase, items: [...newPurchase.items, { scrapItem: purchaseItemInput.scrapItem, name: itemInfo?.name || "", quantity: purchaseItemInput.quantity, rate: purchaseItemInput.rate, amount }]});
+  // ─── Multi-Draft Helpers ───
+  const getActiveDraft = () => purchaseDrafts.find(d => d.id === activeDraftId) || purchaseDrafts[0];
+  const updateActiveDraft = (patch) => {
+    setPurchaseDrafts(prev => prev.map(d => d.id === activeDraftId ? { ...d, ...patch } : d));
+  };
+  const addNewDraft = () => {
+    const newId = Date.now();
+    setPurchaseDrafts(prev => [...prev, emptyDraft(newId)]);
+    setActiveDraftId(newId);
+    setPurchaseItemInput({ scrapItem: "", name: "", quantity: "", rate: "" });
+  };
+  const removeDraft = (id) => {
+    if (purchaseDrafts.length === 1) { setPurchaseDrafts([emptyDraft(Date.now())]); return; }
+    const remaining = purchaseDrafts.filter(d => d.id !== id);
+    setPurchaseDrafts(remaining);
+    if (activeDraftId === id) setActiveDraftId(remaining[remaining.length - 1].id);
+  };
+  const switchDraft = (id) => {
+    setActiveDraftId(id);
     setPurchaseItemInput({ scrapItem: "", name: "", quantity: "", rate: "" });
   };
 
+  const handleAddPurchaseItem = () => {
+    if (!purchaseItemInput.scrapItem || !purchaseItemInput.quantity || !purchaseItemInput.rate) return showToast("error", "Fill all item fields");
+    const itemInfo = items.find(i => i._id === purchaseItemInput.scrapItem);
+    const amount = parseFloat(purchaseItemInput.quantity) * parseFloat(purchaseItemInput.rate);
+    const draft = getActiveDraft();
+    updateActiveDraft({ items: [...draft.items, { scrapItem: purchaseItemInput.scrapItem, name: itemInfo?.name || "", quantity: parseFloat(purchaseItemInput.quantity), rate: parseFloat(purchaseItemInput.rate), amount }] });
+    setPurchaseItemInput({ scrapItem: "", name: "", quantity: "", rate: "" });
+  };
+
+  const handleRemovePurchaseItem = (index) => {
+    const draft = getActiveDraft();
+    updateActiveDraft({ items: draft.items.filter((_, i) => i !== index) });
+  };
+
+  const handleEditPurchaseItem = (index, field, value) => {
+    const draft = getActiveDraft();
+    const updated = draft.items.map((it, i) => {
+      if (i !== index) return it;
+      const newIt = { ...it, [field]: parseFloat(value) || 0 };
+      newIt.amount = newIt.quantity * newIt.rate;
+      return newIt;
+    });
+    updateActiveDraft({ items: updated });
+  };
+
   const handleCreatePurchase = async () => {
-    if(!newPurchase.supplierName || newPurchase.items.length === 0) return showToast("error", "Add supplier and items");
-    const totalAmount = newPurchase.items.reduce((acc, item) => acc + item.amount, 0);
+    const draft = getActiveDraft();
+    if (!draft.supplierName || draft.items.length === 0) return showToast("error", "Supplier aur items add karein");
+    const totalAmount = draft.items.reduce((acc, item) => acc + item.amount, 0);
     try {
-      const { data } = await API.post("/billing/purchases", { ...newPurchase, totalAmount });
-      if(data.success) {
-        showToast("success", "Purchase Recorded!");
-        setShowPurchaseModal(false);
-        setNewPurchase({ supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash" });
+      const { data } = await API.post("/billing/purchases", { ...draft, totalAmount });
+      if (data.success) {
+        showToast("success", `✅ ${draft.supplierName} ka purchase complete!`);
+        // Save for print bill (contains database _id)
+        setLastCreatedPurchase(data.purchase);
+        // Remove completed draft
+        removeDraft(activeDraftId);
+        const remaining = purchaseDrafts.filter(d => d.id !== activeDraftId);
+        if (remaining.length === 0) setShowPurchaseModal(false);
+        // Show print bill
+        setShowPurchasePrintModal(true);
         fetchAccountingData();
+        fetchWalletStats();
       }
-    } catch(e) { showToast("error", "Failed to record purchase"); }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Failed to record purchase");
+    }
   };
 
   // Open Purchase Bill Modal
@@ -2133,68 +2189,164 @@ function AdminDashboard() {
       )}
 
       {showPurchaseModal && (
-        <Modal title="Record Material Purchase" onClose={() => setShowPurchaseModal(false)}>
-           <h4 style={{marginTop:0}}>Select Saved Seller</h4>
-           <select style={{...inputStyle, marginBottom: "20px"}} onChange={(e) => {
-             const s = suppliers.find(sx => sx._id === e.target.value);
-             if(s) setNewPurchase({...newPurchase, supplierId: s._id, supplierName: s.name, supplierContact: s.contact});
-           }}>
-             <option value="">-- Choose Seller --</option>
-             {suppliers.map(s => <option key={s._id} value={s._id}>{s.name} ({s.contact})</option>)}
-           </select>
+        <Modal title="📦 Record Material Purchase" onClose={() => { setShowPurchaseModal(false); setPurchaseDrafts([emptyDraft(1)]); setActiveDraftId(1); }}>
+          <div style={{ maxHeight: "65vh", overflowY: "auto", paddingRight: "4px" }}>
 
-           <div style={{display:"flex", gap:"10px", marginBottom:"10px"}}>
-             <Input placeholder="Supplier Name" value={newPurchase.supplierName} onChange={v => setNewPurchase({...newPurchase, supplierName: v})} />
-             <Input placeholder="Contact" value={newPurchase.supplierContact} onChange={v => setNewPurchase({...newPurchase, supplierContact: v})} />
-           </div>
-           
-           <div style={{border: "1px solid #eee", padding: "15px", borderRadius: "12px", marginBottom: "15px", background: "#f8f9fa"}}>
-             <h4 style={{margin: "0 0 10px 0", fontSize: "14px"}}>Add Items</h4>
-             <div style={{display:"grid", gridTemplateColumns:"2fr 1fr 1fr", gap:"10px"}}>
-               <select style={{...inputStyle, marginBottom: 0}} value={purchaseItemInput.scrapItem} onChange={e => setPurchaseItemInput({...purchaseItemInput, scrapItem: e.target.value})}>
-                 <option value="">Select Item</option>
-                 {items.map(i => (
-                   <option key={i._id} value={i._id}>{i.name}</option>
-                 ))}
-               </select>
-               <Input type="number" placeholder="Qty" value={purchaseItemInput.quantity} onChange={v => setPurchaseItemInput({...purchaseItemInput, quantity: v})} />
-               <Input type="number" placeholder="Rate/Unit" value={purchaseItemInput.rate} onChange={v => setPurchaseItemInput({...purchaseItemInput, rate: v})} />
-             </div>
-             <button style={{...assignBtn, width: "100%", marginTop: "10px"}} onClick={handleAddPurchaseItem}>Add Item</button>
-           </div>
+            {/* ── DRAFT TABS ── */}
+            <div style={{ display: "flex", gap: "6px", marginBottom: "14px", flexWrap: "wrap", alignItems: "center", borderBottom: "2px solid #e5e7eb", paddingBottom: "10px" }}>
+              {purchaseDrafts.map((draft, idx) => (
+                <div key={draft.id} style={{ display: "flex", alignItems: "center", borderRadius: "10px", overflow: "hidden", border: activeDraftId === draft.id ? "2px solid #0b8f3a" : "2px solid #e5e7eb", background: activeDraftId === draft.id ? "#f0fdf4" : "#f9fafb", cursor: "pointer" }}>
+                  <span style={{ padding: "6px 12px", fontSize: "12px", fontWeight: "bold", color: activeDraftId === draft.id ? "#0b8f3a" : "#555", whiteSpace: "nowrap" }} onClick={() => switchDraft(draft.id)}>
+                    {draft.supplierName ? `📦 ${draft.supplierName.slice(0, 12)}` : `Draft ${idx + 1}`}
+                    {draft.items.length > 0 && <span style={{ marginLeft: "4px", background: "#0b8f3a", color: "#fff", borderRadius: "10px", padding: "1px 6px", fontSize: "10px" }}>{draft.items.length}</span>}
+                  </span>
+                  {purchaseDrafts.length > 1 && (
+                    <span style={{ padding: "6px 8px", cursor: "pointer", color: "#dc3545", fontSize: "13px", fontWeight: "bold" }}
+                      onClick={(e) => { e.stopPropagation(); if (window.confirm(`"${draft.supplierName || `Draft ${idx + 1}`}" ka draft delete karein?`)) removeDraft(draft.id); }}>✕</span>
+                  )}
+                </div>
+              ))}
+              <button style={{ padding: "6px 12px", borderRadius: "10px", border: "2px dashed #0b8f3a", background: "transparent", color: "#0b8f3a", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }} onClick={addNewDraft}>
+                + New Supplier
+              </button>
+            </div>
 
-           {newPurchase.items.length > 0 && (
-             <div style={{maxHeight: "120px", overflowY: "auto", marginBottom: "15px"}}>
-               {newPurchase.items.map((it, idx) => (
-                 <div key={idx} style={{display:"flex", justifyContent:"space-between", padding:"5px 0", borderBottom:"1px solid #eee", fontSize:"12px"}}>
-                    <span>{it.name} ({it.quantity} x ₹{it.rate})</span>
-                    <strong>₹{it.amount}</strong>
-                 </div>
-               ))}
-               <div style={{textAlign: "right", marginTop: "10px", fontWeight: "bold"}}>Total: ₹{newPurchase.items.reduce((a, b)=>a+b.amount, 0)}</div>
-             </div>
-           )}
+            {/* ── ACTIVE DRAFT FORM ── */}
+            {(() => {
+              const draft = getActiveDraft();
+              if (!draft) return null;
+              return (
+                <>
+                  <h4 style={{marginTop:0, marginBottom:"5px", fontSize:"13px", color:"#555"}}>Select Saved Seller</h4>
+                  <select style={{...inputStyle, marginBottom: "15px"}} value={draft.supplierId || ""} onChange={(e) => {
+                    const s = suppliers.find(sx => sx._id === e.target.value);
+                    if(s) updateActiveDraft({ supplierId: s._id, supplierName: s.name, supplierContact: s.contact });
+                  }}>
+                    <option value="">-- Choose Seller --</option>
+                    {suppliers.map(s => <option key={s._id} value={s._id}>{s.name} ({s.contact})</option>)}
+                  </select>
 
-           <div style={{display:"flex", gap:"10px"}}>
-             <div style={{flex: 1}}>
-               <label style={labelStyle}>Payment Status</label>
-               <select style={inputStyle} value={newPurchase.paymentStatus} onChange={e=>setNewPurchase({...newPurchase, paymentStatus: e.target.value})}>
-                 <option value="Paid">Paid</option>
-                 <option value="Pending">Pending</option>
-               </select>
-             </div>
-             <div style={{flex: 1}}>
-               <label style={labelStyle}>Method</label>
-               <select style={inputStyle} value={newPurchase.paymentMethod} onChange={e=>setNewPurchase({...newPurchase, paymentMethod: e.target.value})}>
-                 <option value="Cash">Cash</option>
-                 <option value="Bank Transfer">Bank Transfer</option>
-                 <option value="UPI">UPI</option>
-               </select>
-             </div>
-           </div>
-           
-           <button style={saveBtnBig} onClick={handleCreatePurchase}>Complete Purchase</button>
+                  <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                    <Input placeholder="Supplier Name" value={draft.supplierName} onChange={v => updateActiveDraft({ supplierName: v })} />
+                    <Input placeholder="Contact" value={draft.supplierContact} onChange={v => updateActiveDraft({ supplierContact: v })} />
+                  </div>
+
+                  {/* Add Item Row */}
+                  <div style={{ border: "1px solid #d1fae5", padding: "12px", borderRadius: "12px", marginBottom: "12px", background: "#f0fdf4" }}>
+                    <h4 style={{ margin: "0 0 8px 0", fontSize: "13px", color: "#0b8f3a" }}>➕ Item Add Karein</h4>
+                    <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "8px" }}>
+                      <select style={{ ...inputStyle, marginBottom: 0 }} value={purchaseItemInput.scrapItem} onChange={e => setPurchaseItemInput({ ...purchaseItemInput, scrapItem: e.target.value })}>
+                        <option value="">Select Item</option>
+                        {items.map(i => <option key={i._id} value={i._id}>{i.name}</option>)}
+                      </select>
+                      <input style={{ ...inputStyle, marginBottom: 0 }} type="number" placeholder="Qty" value={purchaseItemInput.quantity} onChange={e => setPurchaseItemInput({ ...purchaseItemInput, quantity: e.target.value })} />
+                      <input style={{ ...inputStyle, marginBottom: 0 }} type="number" placeholder="Rate/kg" value={purchaseItemInput.rate} onChange={e => setPurchaseItemInput({ ...purchaseItemInput, rate: e.target.value })} />
+                    </div>
+                    <button style={{ ...assignBtn, width: "100%", marginTop: "8px" }} onClick={handleAddPurchaseItem}>Add Item</button>
+                  </div>
+
+                  {/* Items List with Inline Edit */}
+                  {draft.items.length > 0 && (
+                    <div style={{ marginBottom: "12px", border: "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden" }}>
+                      <div style={{ background: "#f8f9fa", padding: "8px 12px", fontSize: "11px", fontWeight: "bold", color: "#555", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "6px" }}>
+                        <span>Item</span><span>Qty</span><span>Rate</span><span style={{ color: "#0b8f3a" }}>Amount</span><span></span>
+                      </div>
+                      {draft.items.map((it, idx) => (
+                        <div key={idx} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "6px", padding: "8px 12px", borderTop: "1px solid #f0f0f0", alignItems: "center", fontSize: "12px" }}>
+                          <span style={{ fontWeight: "600", color: "#333" }}>{it.name}</span>
+                          <input type="number" value={it.quantity} onChange={e => handleEditPurchaseItem(idx, "quantity", e.target.value)}
+                            style={{ padding: "4px 6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "12px", width: "100%" }} />
+                          <input type="number" value={it.rate} onChange={e => handleEditPurchaseItem(idx, "rate", e.target.value)}
+                            style={{ padding: "4px 6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "12px", width: "100%" }} />
+                          <strong style={{ color: "#0b8f3a" }}>₹${(it.amount || 0).toFixed(0)}</strong>
+                          <button onClick={() => handleRemovePurchaseItem(idx)} style={{ border: "none", background: "none", color: "#dc3545", cursor: "pointer", fontSize: "14px" }}>🗑</button>
+                        </div>
+                      ))}
+                      <div style={{ padding: "10px 12px", background: "#f0fdf4", borderTop: "2px solid #d1fae5", fontWeight: "bold", fontSize: "13px", textAlign: "right", color: "#0b8f3a" }}>
+                        Total: ₹${draft.items.reduce((a, b) => a + (b.amount || 0), 0).toFixed(2)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Payment Options */}
+                  <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Payment Status</label>
+                      <select style={inputStyle} value={draft.paymentStatus} onChange={e => updateActiveDraft({ paymentStatus: e.target.value })}>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                      </select>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <label style={labelStyle}>Method</label>
+                      <select style={inputStyle} value={draft.paymentMethod} onChange={e => updateActiveDraft({ paymentMethod: e.target.value })}>
+                        <option value="Cash">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                      </select>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+
+          </div>
+
+          <button style={{ ...saveBtnBig, marginTop: "15px", background: "linear-gradient(135deg,#0b8f3a,#16a34a)" }} onClick={handleCreatePurchase}>
+            ✅ Complete — ${getActiveDraft()?.supplierName || "This Draft"}
+          </button>
         </Modal>
+      )}
+      
+      {/* ── PRINT BILL MODAL (after purchase complete) ── */}
+      {showPurchasePrintModal && lastCreatedPurchase && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
+          <div style={{ background: "#fff", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
+            <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ color: "#fff", fontWeight: "bold", fontSize: "16px" }}>🧾 Purchase Bill</span>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button onClick={async () => {
+                  try {
+                    const phone = lastCreatedPurchase.supplierContact;
+                    if (!phone) return showToast("error", "Phone number nahi mila");
+                    showToast("info", "WhatsApp sending...");
+                    await API.post(`/billing/purchases/${lastCreatedPurchase._id}/send-bill`);
+                    showToast("success", "WhatsApp bill sent!");
+                  } catch (e) {
+                    showToast("error", "WhatsApp send failed");
+                  }
+                }} style={{ background: "#25D366", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>💬 WhatsApp</button>
+                <button onClick={() => window.print()} style={{ background: "#fff", color: "#0b8f3a", border: "none", borderRadius: "8px", padding: "6px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>🖨️ Print</button>
+                <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
+              </div>
+            </div>
+            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "#000", background: "#fff" }}>
+              <style>{`@media print { body * { visibility: hidden; } #purchase-bill-print, #purchase-bill-print * { visibility: visible; } #purchase-bill-print { position: fixed; left: 0; top: 0; width: 80mm; padding: 5mm; } .no-print { display: none !important; } }`}</style>
+              <div style={{ textAlign: "center", borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
+                <div style={{ fontWeight: "bold", fontSize: "15px" }}>⚡ SCRAPVEX</div>
+                <div style={{ fontSize: "10px", color: "#555" }}>Purchase Receipt</div>
+              </div>
+              <div style={{ marginBottom: "8px", lineHeight: 1.8 }}>
+                <div><strong>Supplier:</strong> ${lastCreatedPurchase.supplierName}</div>
+                {lastCreatedPurchase.supplierContact && <div><strong>Contact:</strong> ${lastCreatedPurchase.supplierContact}</div>}
+                <div><strong>Date:</strong> ${new Date(lastCreatedPurchase.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                <div><strong>Payment:</strong> ${lastCreatedPurchase.paymentStatus} (${lastCreatedPurchase.paymentMethod})</div>
+              </div>
+              <div style={{ borderTop: "1px dashed #000", borderBottom: "1px dashed #000", paddingTop: "6px", paddingBottom: "6px", marginBottom: "8px" }}>
+                ${lastCreatedPurchase.items.map((it, i) => (
+                  `<div key=${i} style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span>${it.name}<br /><span style="font-size: 10px; color: #555;">${it.quantity} × ₹${it.rate}</span></span>
+                    <strong>₹${(it.amount || 0).toFixed(0)}</strong>
+                  </div>`
+                )).join('')}
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: "14px", paddingTop: "6px" }}>
+                <span>TOTAL</span><span>₹${(lastCreatedPurchase.totalAmount || 0).toFixed(2)}</span>
+              </div>
+              <div style={{ textAlign: "center", marginTop: "10px", fontSize: "10px", color: "#888", borderTop: "1px dashed #000", paddingTop: "6px" }}>Thank you! — ScrapVex.in</div>
+            </div>
+          </div>
+        </div>
       )}
 
 
@@ -2265,7 +2417,10 @@ function AdminDashboard() {
                 ))}
               </div>
             </div>
-            <button style={{...saveBtnBig, background:"#ff9800"}} onClick={() => { setShowPurchaseBillModal(false); openEditPurchase(selectedPurchaseBill); }}>✏️ Edit This Bill</button>
+            <div style={{display:"flex", gap:"10px", marginTop:"15px"}}>
+              <button style={{...saveBtnBig, flex:1, margin:0, background:"#ff9800"}} onClick={() => { setShowPurchaseBillModal(false); openEditPurchase(selectedPurchaseBill); }}>✏️ Edit Bill</button>
+              <button style={{...saveBtnBig, flex:1, margin:0, background:"#0b8f3a"}} onClick={() => { setShowPurchaseBillModal(false); setLastCreatedPurchase(selectedPurchaseBill); setShowPurchasePrintModal(true); }}>🖨️ Print / WhatsApp</button>
+            </div>
           </div>
         </div>
       )}
