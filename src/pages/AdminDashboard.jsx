@@ -15,6 +15,11 @@ import html2canvas from "html2canvas";
 
 function AdminDashboard() {
 
+  const getBackendURL = () => {
+    const base = API.defaults.baseURL || "";
+    return base.replace(/\/api$/, "");
+  };
+
 // Synthesize Ding-Dong bell sound using Web Audio API (cross-device/offline friendly)
 const playBellSound = () => {
   try {
@@ -35,6 +40,11 @@ const playBellSound = () => {
     };
     playNote(880, audioCtx.currentTime, 0.4);
     playNote(659.25, audioCtx.currentTime + 0.15, 0.6);
+    
+    // Close context after playback completes (0.15 + 0.6 = 0.75s)
+    setTimeout(() => {
+      audioCtx.close().catch(() => {});
+    }, 1000);
   } catch (e) {
     console.error("Audio Context play failed:", e);
   }
@@ -260,23 +270,33 @@ const playBellSound = () => {
   }, []);
 
   const fetchAdminData = async () => {
+    const safeGet = async (url, fallback) => {
+      try {
+        const res = await API.get(url);
+        return res.data.success ? res.data : fallback;
+      } catch (e) {
+        console.error(`Failed to fetch ${url}:`, e.message);
+        return fallback;
+      }
+    };
+
     try {
       setLoading(true);
-      const [resStats, resPickups, resCollectors, resItems, resUsers, resFranchises] = await Promise.all([
-        API.get("/admin/dashboard"),
-        API.get("/admin/pickups"),
-        API.get("/admin/collectors"),
-        API.get("/scrap-items"),
-        API.get("/admin/users"),
-        API.get("/admin/franchises")
+      const [dataStats, dataPickups, dataCollectors, dataItems, dataUsers, dataFranchises] = await Promise.all([
+        safeGet("/admin/dashboard", { stats: stats }),
+        safeGet("/admin/pickups", { pickups: [] }),
+        safeGet("/admin/collectors", { collectors: [] }),
+        safeGet("/scrap-items", { data: [] }),
+        safeGet("/admin/users", { users: [] }),
+        safeGet("/admin/franchises", { franchises: [] })
       ]);
 
-      if (resStats.data.success) setStats(resStats.data.stats);
-      if (resPickups.data.success) setPickups(resPickups.data.pickups);
-      if (resCollectors.data.success) setCollectors(resCollectors.data.collectors);
-      if (resItems.data.success) setItems(resItems.data.data);
-      if (resUsers.data.success) setAllUsers(resUsers.data.users);
-      if (resFranchises.data.success) setFranchises(resFranchises.data.franchises);
+      if (dataStats.stats) setStats(dataStats.stats);
+      if (dataPickups.pickups) setPickups(dataPickups.pickups);
+      if (dataCollectors.collectors) setCollectors(dataCollectors.collectors);
+      if (dataItems.data) setItems(dataItems.data);
+      if (dataUsers.users) setAllUsers(dataUsers.users);
+      if (dataFranchises.franchises) setFranchises(dataFranchises.franchises);
       
       fetchAds();
       fetchSettings();
@@ -786,7 +806,7 @@ const playBellSound = () => {
     try {
       const formData = new FormData();
       Object.keys(settings).forEach(key => {
-        if (!['brandLogo', 'favicon', 'appIcon', 'heroBanner'].includes(key)) {
+        if (!['brandLogo', 'favicon', 'appIcon', 'heroBanner', 'mobileHeroBanner'].includes(key)) {
           formData.append(key, settings[key] !== undefined && settings[key] !== null ? settings[key] : '');
         }
       });
@@ -1156,7 +1176,7 @@ const playBellSound = () => {
                       {settings.brandLogo && (
                         <div style={{ margin: "5px 0 15px 0" }}>
                           <small style={{ color: "var(--text-muted)", display: "block" }}>Active Website Logo:</small>
-                          <img src={settings.brandLogo.startsWith("http") ? settings.brandLogo : `http://localhost:5000${settings.brandLogo}`} alt="Brand Logo" style={{ height: "45px", objectFit: "contain", borderRadius: "8px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                          <img src={settings.brandLogo.startsWith("http") ? settings.brandLogo : `${getBackendURL()}${settings.brandLogo}`} alt="Brand Logo" style={{ height: "45px", objectFit: "contain", borderRadius: "8px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
                         </div>
                       )}
 
@@ -1170,7 +1190,7 @@ const playBellSound = () => {
                       {settings.favicon && (
                         <div style={{ margin: "5px 0 15px 0" }}>
                           <small style={{ color: "var(--text-muted)", display: "block" }}>Active Favicon Icon:</small>
-                          <img src={settings.favicon.startsWith("http") ? settings.favicon : `http://localhost:5000${settings.favicon}`} alt="Favicon" style={{ height: "32px", width: "32px", objectFit: "contain", borderRadius: "6px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                          <img src={settings.favicon.startsWith("http") ? settings.favicon : `${getBackendURL()}${settings.favicon}`} alt="Favicon" style={{ height: "32px", width: "32px", objectFit: "contain", borderRadius: "6px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
                         </div>
                       )}
 
@@ -1184,7 +1204,7 @@ const playBellSound = () => {
                       {settings.appIcon && (
                         <div style={{ margin: "5px 0 15px 0" }}>
                           <small style={{ color: "var(--text-muted)", display: "block" }}>Active App Icon:</small>
-                          <img src={settings.appIcon.startsWith("http") ? settings.appIcon : `http://localhost:5000${settings.appIcon}`} alt="App Icon" style={{ height: "45px", width: "45px", objectFit: "contain", borderRadius: "10px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
+                          <img src={settings.appIcon.startsWith("http") ? settings.appIcon : `${getBackendURL()}${settings.appIcon}`} alt="App Icon" style={{ height: "45px", width: "45px", objectFit: "contain", borderRadius: "10px", background: "#f8f9fa", padding: "4px", border: "1px solid #ddd" }} />
                         </div>
                       )}
 
@@ -1198,7 +1218,7 @@ const playBellSound = () => {
                       {settings.heroBanner && (
                         <div style={{ margin: "5px 0 15px 0" }}>
                           <small style={{ color: "var(--text-muted)", display: "block" }}>Active Desktop Banner:</small>
-                          <img src={settings.heroBanner.startsWith("http") ? settings.heroBanner : `http://localhost:5000${settings.heroBanner}`} alt="Hero Banner" style={{ height: "60px", maxWidth: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd" }} />
+                          <img src={settings.heroBanner.startsWith("http") ? settings.heroBanner : `${getBackendURL()}${settings.heroBanner}`} alt="Hero Banner" style={{ height: "60px", maxWidth: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd" }} />
                         </div>
                       )}
 
@@ -1212,7 +1232,7 @@ const playBellSound = () => {
                       {settings.mobileHeroBanner && (
                         <div style={{ margin: "5px 0 15px 0" }}>
                           <small style={{ color: "var(--text-muted)", display: "block" }}>Active Mobile Banner:</small>
-                          <img src={settings.mobileHeroBanner.startsWith("http") ? settings.mobileHeroBanner : `http://localhost:5000${settings.mobileHeroBanner}`} alt="Mobile Hero Banner" style={{ height: "60px", maxWidth: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd" }} />
+                          <img src={settings.mobileHeroBanner.startsWith("http") ? settings.mobileHeroBanner : `${getBackendURL()}${settings.mobileHeroBanner}`} alt="Mobile Hero Banner" style={{ height: "60px", maxWidth: "100%", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd" }} />
                         </div>
                       )}
 
@@ -1339,7 +1359,7 @@ const playBellSound = () => {
               {reviews.map(r => (
                 <div key={r._id} style={listRow}>
                    <div>
-                      <div style={{color: "#f39c12", marginBottom:"5px"}}>{[...Array(r.rating)].map((_, i) => <FaStar key={i} size={12}/>)}</div>
+                      <div style={{color: "#f39c12", marginBottom:"5px"}}>{[...Array(Number(r.rating) || 0)].map((_, i) => <FaStar key={i} size={12}/>)}</div>
                       <div style={{fontSize:"14px", marginBottom: "5px"}}>
                         <strong>{r.user?.name}</strong> <span style={{color:"#999", fontSize:"12px"}}>reviewed</span> <strong>{r.collector?.name || "Unknown"}</strong>
                       </div>
