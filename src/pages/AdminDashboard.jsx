@@ -183,7 +183,9 @@ const playBellSound = () => {
         }
       } catch (e) { console.error("Admin polling error:", e); }
     }, 10000);
-    
+    return () => clearInterval(interval);
+  }, []);
+  
   const filteredPickups = useMemo(() => {
     if (!searchQuery) return pickups;
     const q = searchQuery.toLowerCase();
@@ -250,9 +252,6 @@ const playBellSound = () => {
     return withdrawals.filter(w => w.user?.name?.toLowerCase().includes(q) || w.amount?.toString().includes(q) || w.status?.toLowerCase().includes(q));
   }, [withdrawals, searchQuery]);
   
-
-  return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     fetchAdminData();

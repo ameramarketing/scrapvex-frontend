@@ -121,7 +121,9 @@ const playBellSound = () => {
         }
       } catch (e) { console.error("Collector polling error:", e); }
     }, 10000);
-    
+    return () => clearInterval(interval);
+  }, [user?._id]);
+  
   const filteredActivePickups = useMemo(() => {
     const list = pickups.filter(p => ["Pending", "Assigned", "Arrived", "In Progress"].includes(p.status));
     if (!searchQuery) return list;
@@ -148,9 +150,6 @@ const playBellSound = () => {
     return tickets.filter(t => t.subject?.toLowerCase().includes(q) || t.message?.toLowerCase().includes(q) || t.status?.toLowerCase().includes(q));
   }, [tickets, searchQuery]);
   
-
-  return () => clearInterval(interval);
-  }, [user?._id]);
 
   useEffect(() => {
     try {

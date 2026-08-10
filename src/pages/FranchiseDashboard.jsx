@@ -173,7 +173,9 @@ const playBellSound = () => {
         }
       } catch (e) { console.error("Franchise polling error:", e); }
     }, 10000);
-    
+    return () => clearInterval(interval);
+  }, []);
+  
   const filteredPickups = useMemo(() => {
     if (!searchQuery) return pickups;
     const q = searchQuery.toLowerCase();
@@ -222,9 +224,6 @@ const playBellSound = () => {
     return tickets.filter(t => t.subject?.toLowerCase().includes(q) || t.message?.toLowerCase().includes(q) || t.status?.toLowerCase().includes(q));
   }, [tickets, searchQuery]);
   
-
-  return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     fetchAdminData();
