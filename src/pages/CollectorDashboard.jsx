@@ -11,6 +11,32 @@ import Toast from "../components/Toast";
 import { eraseCookie } from "../utils/cookies";
 
 function CollectorDashboard() {
+
+// Synthesize Ding-Dong bell sound using Web Audio API (cross-device/offline friendly)
+const playBellSound = () => {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const audioCtx = new AudioContext();
+    const playNote = (freq, startTime, duration) => {
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, startTime);
+      gainNode.gain.setValueAtTime(0.2, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    };
+    playNote(880, audioCtx.currentTime, 0.4);
+    playNote(659.25, audioCtx.currentTime + 0.15, 0.6);
+  } catch (e) {
+    console.error("Audio Context play failed:", e);
+  }
+};
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [pickups, setPickups] = useState([]);
@@ -69,6 +95,32 @@ function CollectorDashboard() {
   const [profilePhotoFile, setProfilePhotoFile] = useState(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState(null);
   const profileFileInputRef = React.useRef(null);
+
+  useEffect(() => {
+    if (!user?._id) return;
+    const interval = setInterval(async () => {
+      try {
+        const resP = await API.get("/collector/pickups");
+        if (resP.data?.success) {
+          const newPickupsList = resP.data.pickups || [];
+          setPickups(prev => {
+            if (prev.length > 0) {
+              const hasNewPickup = newPickupsList.some(np => !prev.some(op => op._id === np._id));
+              const hasStatusChange = newPickupsList.some(np => {
+                const matchingOld = prev.find(op => op._id === np._id);
+                return matchingOld && matchingOld.status !== np.status;
+              });
+              if (hasNewPickup || hasStatusChange) {
+                playBellSound();
+              }
+            }
+            return newPickupsList;
+          });
+        }
+      } catch (e) { console.error("Collector polling error:", e); }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [user?._id]);
 
   useEffect(() => {
     try {
