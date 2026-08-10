@@ -20,7 +20,8 @@ import {
   FaStar,
   FaCheckCircle,
   FaPrescriptionBottle,
-  FaMapMarkerAlt
+  FaMapMarkerAlt,
+  FaBox
 } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
@@ -142,18 +143,34 @@ function Rates() {
 
   const getItemIcon = (name) => {
     const lower = name.toLowerCase();
-    if (lower.includes("paper")) return <FaFileAlt />;
-    if (lower.includes("news")) return <FaNewspaper />;
+    
+    // Paper & Cardboard
+    if (lower.includes("newspaper") || lower.includes("news")) return <FaNewspaper />;
     if (lower.includes("book")) return <FaBook />;
-    if (lower.includes("iron") || lower.includes("loha")) return <FaCog />;
-    if (lower.includes("copper") || lower.includes("tamba")) return <FaBolt />;
-    if (lower.includes("bottle")) return <FaPrescriptionBottle />;
-    if (lower.includes("laptop")) return <FaLaptop />;
-    if (lower.includes("washing")) return <FaCog />;
-    if (lower.includes("fridge")) return <FaSnowflake />;
-    if (lower.includes("ac ")) return <FaSnowflake />;
-    if (lower.includes("bike") || lower.includes("scooty")) return <FaMotorcycle />;
+    if (lower.includes("cardboard") || lower.includes("gatta")) return <FaBox />;
+    if (lower.includes("paper")) return <FaFileAlt />;
+    
+    // Metals
+    if (lower.includes("iron") || lower.includes("loha") || lower.includes("steel")) return <FaWeightHanging />;
+    if (lower.includes("copper") || lower.includes("tamba") || lower.includes("brass") || lower.includes("peetal")) return <FaWeightHanging />;
+    if (lower.includes("aluminium") || lower.includes("aluminum")) return <FaWeightHanging />;
+    
+    // E-Waste & IT
+    if (lower.includes("laptop") || lower.includes("computer") || lower.includes("cpu")) return <FaLaptop />;
+    if (lower.includes("tv") || lower.includes("monitor")) return <FaTv />;
+    
+    // Appliances
+    if (lower.includes("fridge") || lower.includes("refrigerator") || lower.includes("ac ") || lower.includes("conditioner")) return <FaSnowflake />;
+    if (lower.includes("washing") || lower.includes("microwave") || lower.includes("geyser") || lower.includes("ups") || lower.includes("appliance")) return <FaTv />;
+    if (lower.includes("battery")) return <FaBatteryFull />;
+    
+    // Vehicles
+    if (lower.includes("bike") || lower.includes("scooty") || lower.includes("scooter") || lower.includes("motorcycle")) return <FaMotorcycle />;
     if (lower.includes("car")) return <FaCar />;
+    
+    // Plastic
+    if (lower.includes("bottle") || lower.includes("plastic")) return <FaPrescriptionBottle />;
+    
     return <FaRecycle />;
   };
 
