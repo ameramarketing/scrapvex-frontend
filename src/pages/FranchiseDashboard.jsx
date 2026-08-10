@@ -35,6 +35,9 @@ const playBellSound = () => {
     };
     playNote(880, audioCtx.currentTime, 0.4);
     playNote(659.25, audioCtx.currentTime + 0.15, 0.6);
+    setTimeout(() => {
+      audioCtx.close().catch(() => {});
+    }, 1000);
   } catch (e) {
     console.error("Audio Context play failed:", e);
   }

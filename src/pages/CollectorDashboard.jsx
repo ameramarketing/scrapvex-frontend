@@ -32,6 +32,9 @@ const playBellSound = () => {
     };
     playNote(880, audioCtx.currentTime, 0.4);
     playNote(659.25, audioCtx.currentTime + 0.15, 0.6);
+    setTimeout(() => {
+      audioCtx.close().catch(() => {});
+    }, 1000);
   } catch (e) {
     console.error("Audio Context play failed:", e);
   }
@@ -91,7 +94,7 @@ const playBellSound = () => {
   const [submittingTicket, setSubmittingTicket] = useState(false);
 
   // Profile Edit states
-  const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const baseURL = (API.defaults.baseURL || "").replace(/\/api$/, "") || "https://scrapvex-backend.onrender.com";
   const [editProfileMode, setEditProfileMode] = useState(false);
   const [profileForm, setProfileForm] = useState({ name: "", address: "", area: "", oldPassword: "", newPassword: "", confirmPassword: "" });
   const [profilePhotoFile, setProfilePhotoFile] = useState(null);

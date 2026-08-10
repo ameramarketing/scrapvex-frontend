@@ -19,7 +19,7 @@ function Profile() {
   const [activeTab] = useState("profile");
   
   const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const baseURL = (API.defaults.baseURL || "").replace(/\/api$/, "") || "https://scrapvex-backend.onrender.com";
   const [user, setUser] = useState({
     name: storedUser.name || "Scrapvex User",
     mobile: storedUser.mobile || "",

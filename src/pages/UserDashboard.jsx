@@ -75,6 +75,9 @@ const playBellSound = () => {
     };
     playNote(880, audioCtx.currentTime, 0.4);
     playNote(659.25, audioCtx.currentTime + 0.15, 0.6);
+    setTimeout(() => {
+      audioCtx.close().catch(() => {});
+    }, 1000);
   } catch (e) {
     console.error("Audio Context play failed:", e);
   }
@@ -116,7 +119,7 @@ const playBellSound = () => {
   const [profilePhotoFile, setProfilePhotoFile] = useState(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState("");
   const profileFileInputRef = useRef(null);
-  const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const baseURL = (API.defaults.baseURL || "").replace(/\/api$/, "") || "https://scrapvex-backend.onrender.com";
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
   const [showPasswordOtpModal, setShowPasswordOtpModal] = useState(false);
   const [passwordOtp, setPasswordOtp] = useState("");
