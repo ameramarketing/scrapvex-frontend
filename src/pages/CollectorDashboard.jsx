@@ -48,6 +48,8 @@ const playBellSound = () => {
   const [loadingId, setLoadingId] = useState(null);
   const [selectedPickup, setSelectedPickup] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => { setSearchQuery(""); }, [activeTab]);
 
   // Wallet states
   const [walletTransactions, setWalletTransactions] = useState([]);
@@ -119,7 +121,35 @@ const playBellSound = () => {
         }
       } catch (e) { console.error("Collector polling error:", e); }
     }, 10000);
-    return () => clearInterval(interval);
+    
+  const filteredActivePickups = useMemo(() => {
+    const list = pickups.filter(p => ["Pending", "Assigned", "Arrived", "In Progress"].includes(p.status));
+    if (!searchQuery) return list;
+    const q = searchQuery.toLowerCase();
+    return list.filter(p => p._id.toLowerCase().includes(q) || p.name?.toLowerCase().includes(q) || p.mobile?.includes(q) || p.address?.toLowerCase().includes(q) || p.scrapType?.toLowerCase().includes(q));
+  }, [pickups, searchQuery]);
+
+  const filteredHistory = useMemo(() => {
+    const list = pickups.filter(p => ["Completed", "Cancelled"].includes(p.status));
+    if (!searchQuery) return list;
+    const q = searchQuery.toLowerCase();
+    return list.filter(p => p._id.toLowerCase().includes(q) || p.name?.toLowerCase().includes(q) || p.mobile?.includes(q) || p.address?.toLowerCase().includes(q));
+  }, [pickups, searchQuery]);
+
+  const filteredTransactions = useMemo(() => {
+    if (!searchQuery) return walletTransactions;
+    const q = searchQuery.toLowerCase();
+    return walletTransactions.filter(t => t.description?.toLowerCase().includes(q) || t.amount?.toString().includes(q) || t.type?.toLowerCase().includes(q));
+  }, [walletTransactions, searchQuery]);
+
+  const filteredTickets = useMemo(() => {
+    if (!searchQuery) return tickets;
+    const q = searchQuery.toLowerCase();
+    return tickets.filter(t => t.subject?.toLowerCase().includes(q) || t.message?.toLowerCase().includes(q) || t.status?.toLowerCase().includes(q));
+  }, [tickets, searchQuery]);
+  
+
+  return () => clearInterval(interval);
   }, [user?._id]);
 
   useEffect(() => {
@@ -556,7 +586,7 @@ const playBellSound = () => {
                <div style={mainGrid}>
                   <div style={{...box, flex: 2}} className="premium-card">
                      <h3 style={boxTitle}>Recent Tasks</h3>
-                     {activePickups.slice(0, 3).map(p => (
+                     {filteredActivePickups.slice(0, 3).map(p => (
                        <div key={p._id} style={listRow}>
                           <div>
                              <div style={rowTitle}>{p.scrapType}</div>
@@ -596,7 +626,7 @@ const playBellSound = () => {
                 <span style={{ fontSize: "13px", color: "#999" }}>{activePickups.length} active tasks</span>
               </div>
               <div style={tableContainer}>
-                {activePickups.map(p => (
+                {filteredActivePickups.map(p => (
                   <div key={p._id} style={{ ...listRow, alignItems: "flex-start", gap: "12px" }}>
                     <div>
                       <div style={rowTitle}>{p.scrapType || p.address}</div>
@@ -666,7 +696,7 @@ const playBellSound = () => {
 
                <h4 style={{ marginTop: "30px", marginBottom: "15px", color: "var(--text-main)" }}>Transaction History</h4>
                <div style={tableContainer}>
-                 {walletTransactions.map(tx => (
+                 {filteredTransactions.map(tx => (
                    <div key={tx._id} style={listRow}>
                      <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
                        <div style={{ 
@@ -833,7 +863,7 @@ const playBellSound = () => {
             <div style={box} className="premium-card">
               <h3 style={{ margin: "0 0 20px 0", color: "var(--text-main)", fontWeight: "bold" }}>Completed Pickups</h3>
               <div style={tableContainer}>
-                {history.map(p => (
+                {filteredHistory.map(p => (
                   <div key={p._id} style={listRow}>
                     <div>
                       <div style={rowTitle}>{p.scrapType || p.address}</div>
@@ -901,7 +931,7 @@ const playBellSound = () => {
               </div>
 
               <div style={tableContainer}>
-                {tickets.map(t => (
+                {filteredTickets.map(t => (
                   <div key={t._id} style={{ ...listRow, flexDirection: "column", alignItems: "flex-start", gap: "10px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
                       <div>

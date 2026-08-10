@@ -58,6 +58,8 @@ const playBellSound = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => { setSearchQuery(""); }, [activeTab]);
   
   const [buyers, setBuyers] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -181,7 +183,75 @@ const playBellSound = () => {
         }
       } catch (e) { console.error("Admin polling error:", e); }
     }, 10000);
-    return () => clearInterval(interval);
+    
+  const filteredPickups = useMemo(() => {
+    if (!searchQuery) return pickups;
+    const q = searchQuery.toLowerCase();
+    return pickups.filter(p => p._id.toLowerCase().includes(q) || p.name?.toLowerCase().includes(q) || p.mobile?.includes(q) || p.address?.toLowerCase().includes(q) || p.scrapType?.toLowerCase().includes(q));
+  }, [pickups, searchQuery]);
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery) return items;
+    const q = searchQuery.toLowerCase();
+    return items.filter(it => it.name?.toLowerCase().includes(q) || it.category?.toLowerCase().includes(q));
+  }, [items, searchQuery]);
+
+  const filteredFranchises = useMemo(() => {
+    if (!searchQuery) return franchises;
+    const q = searchQuery.toLowerCase();
+    return franchises.filter(f => f.name?.toLowerCase().includes(q) || f.mobile?.includes(q) || f.assignedCity?.toLowerCase().includes(q));
+  }, [franchises, searchQuery]);
+
+  const filteredCollectors = useMemo(() => {
+    if (!searchQuery) return collectors;
+    const q = searchQuery.toLowerCase();
+    return collectors.filter(c => c.name?.toLowerCase().includes(q) || c.mobile?.includes(q) || c.area?.toLowerCase().includes(q));
+  }, [collectors, searchQuery]);
+
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery) return allUsers;
+    const q = searchQuery.toLowerCase();
+    return allUsers.filter(u => u.name?.toLowerCase().includes(q) || u.mobile?.includes(q) || u.email?.toLowerCase().includes(q));
+  }, [allUsers, searchQuery]);
+
+  const filteredTransactions = useMemo(() => {
+    if (!searchQuery) return transactions;
+    const q = searchQuery.toLowerCase();
+    return transactions.filter(t => t.description?.toLowerCase().includes(q) || t.amount?.toString().includes(q) || t.type?.toLowerCase().includes(q));
+  }, [transactions, searchQuery]);
+
+  const filteredInventory = useMemo(() => {
+    if (!searchQuery) return inventory;
+    const q = searchQuery.toLowerCase();
+    return inventory.filter(inv => inv.scrapItem?.name?.toLowerCase().includes(q) || inv.scrapItem?.category?.toLowerCase().includes(q));
+  }, [inventory, searchQuery]);
+
+  const filteredPurchases = useMemo(() => {
+    if (!searchQuery) return purchases;
+    const q = searchQuery.toLowerCase();
+    return purchases.filter(p => p.supplierName?.toLowerCase().includes(q) || p.supplierContact?.includes(q) || p._id.toLowerCase().includes(q));
+  }, [purchases, searchQuery]);
+
+  const filteredSales = useMemo(() => {
+    if (!searchQuery) return sales;
+    const q = searchQuery.toLowerCase();
+    return sales.filter(s => s.buyerName?.toLowerCase().includes(q) || s.buyerContact?.includes(q) || s.invoiceNumber?.toLowerCase().includes(q));
+  }, [sales, searchQuery]);
+
+  const filteredTickets = useMemo(() => {
+    if (!searchQuery) return tickets;
+    const q = searchQuery.toLowerCase();
+    return tickets.filter(t => t.subject?.toLowerCase().includes(q) || t.message?.toLowerCase().includes(q) || t.status?.toLowerCase().includes(q));
+  }, [tickets, searchQuery]);
+
+  const filteredWithdrawals = useMemo(() => {
+    if (!searchQuery) return withdrawals;
+    const q = searchQuery.toLowerCase();
+    return withdrawals.filter(w => w.user?.name?.toLowerCase().includes(q) || w.amount?.toString().includes(q) || w.status?.toLowerCase().includes(q));
+  }, [withdrawals, searchQuery]);
+  
+
+  return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -965,6 +1035,35 @@ const playBellSound = () => {
         </header>
 
         <div style={content} className="mobile-pad-bottom">
+          {activeTab !== "overview" && activeTab !== "reports" && activeTab !== "support-chat" && (
+            <div style={{ position: "relative", marginBottom: "15px" }}>
+              <input
+                type="text"
+                placeholder={`🔍 Search in ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px 12px 40px",
+                  borderRadius: "12px",
+                  border: "1px solid #d1d5db",
+                  outline: "none",
+                  fontSize: "14px",
+                  background: "#fff",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
+                  transition: "border-color 0.2s ease"
+                }}
+              />
+              <span style={{ position: "absolute", left: "15px", top: "50%", transform: "translateY(-50%)", color: "#888", fontSize: "14px" }}>🔍</span>
+              {searchQuery && (
+                <span 
+                  onClick={() => setSearchQuery("")} 
+                  style={{ position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: "#999", fontWeight: "bold", fontSize: "14px" }}
+                >✕</span>
+              )}
+            </div>
+          )}
+
           {activeTab === "overview" && (
             <>
               <div style={statGrid}>
@@ -983,7 +1082,7 @@ const playBellSound = () => {
                     <h3 style={boxTitle}>Recent Activity</h3>
                     <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
                        <h4 style={{fontSize: "12px", color: "var(--text-muted)", margin: "0"}}>LATEST PICKUPS</h4>
-                       {pickups.slice(0, 3).map(p => (
+                       {filteredPickups.slice(0, 3).map(p => (
                          <div key={p._id} style={listRow}>
                            <span>{p.scrapType} • <span style={{color:"var(--text-muted)"}}>{p.name}</span></span>
                            <StatusBadge status={p.status} />
@@ -1025,7 +1124,7 @@ const playBellSound = () => {
 
 
 <div style={tableContainer}>
-                   {pickups.map(p => (
+                   {filteredPickups.map(p => (
                      <div key={p._id} style={listRow}>
                         <div style={{flex:1}}>
                            <div style={rowTitle}>{p.scrapType}</div>
@@ -1187,7 +1286,7 @@ const playBellSound = () => {
           {activeTab === "rates" && (
              <div style={box} className="premium-card">
                 <div style={titleBar}><h3>SCRAP RATES</h3> <button style={addBtn} onClick={()=>setShowItemModal(true)}><FaPlus/></button></div>
-                {items.map(it => (
+                {filteredItems.map(it => (
                   <div key={it._id} style={listRow}>
                      <span>{it.name} <br/><small style={muted}>{it.category}</small></span>
                      <div style={{display:"flex", gap:"10px", alignItems:"center"}}>
@@ -1204,7 +1303,7 @@ const playBellSound = () => {
             <div style={box} className="premium-card">
               <div style={titleBar}><h3>{activeTab.toUpperCase()}</h3> <button style={addBtn} onClick={() => activeTab === "users" ? setShowUserModal(true) : activeTab === "franchises" ? setShowFranchiseModal(true) : setShowCollectorModal(true)}><FaPlus/></button></div>
               <div style={tableContainer}>
-                {(activeTab === "users" ? allUsers : activeTab === "franchises" ? franchises : collectors).map(u => (
+                {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).map(u => (
                   <div key={u._id} style={listRow}>
                     <span>{u.name} <br/><small style={muted}>{u.mobile} {u.area && `• ${u.area}`} {u.assignedCity && `• ${u.assignedCity}`} {u.walletBalance !== undefined && `• Wallet: ₹${u.walletBalance}`}</small></span>
                     <div style={{display: "flex", gap: "10px"}}>
@@ -1317,7 +1416,7 @@ const playBellSound = () => {
                 </div>
               )}
 <div style={tableContainer}>
-                {transactions.map(tx => (
+                {filteredTransactions.map(tx => (
                   <div key={tx._id} style={listRow}>
                     <div style={{display:"flex", gap:"15px", alignItems:"center"}}>
                        <div style={{...txIcon, background: tx.status==="paid_in_cash" ? "#fff9e6" : (tx.type==="credit"?"#eef8f1":"#fff5f5")}}>
@@ -1381,7 +1480,7 @@ const playBellSound = () => {
 
               <h4 style={{marginTop: "30px"}}>Live Inventory</h4>
               <div style={{...tableContainer, maxHeight: "250px", marginBottom: "30px"}}>
-                 {inventory.map(inv => (
+                 {filteredInventory.map(inv => (
                    <div key={inv._id} style={listRow}>
                       <div style={{display:"flex", gap:"15px", alignItems:"center"}}>
                          <img src={inv.scrapItem?.image || "https://via.placeholder.com/40"} style={{width:"40px", height:"40px", borderRadius:"8px", objectFit:"cover"}} alt=""/>
@@ -1405,7 +1504,7 @@ const playBellSound = () => {
                 <div>
                   <h4>Recent Purchases (Kharida)</h4>
                   <div style={tableContainer}>
-                     {purchases.map(p => (
+                     {filteredPurchases.map(p => (
                        <div key={p._id} style={{...listRow, cursor: "pointer"}} onClick={() => openPurchaseBillModal(p)}>
                           <div style={{flex: 1}}>
                              <div style={rowTitle}>{p.supplierName} <span style={muted}>({p.supplierContact})</span></div>
@@ -1428,7 +1527,7 @@ const playBellSound = () => {
                 <div>
                   <h4>Sales & Invoices</h4>
                   <div style={tableContainer}>
-                     {sales.map(sale => (
+                     {filteredSales.map(sale => (
                        <div key={sale._id} style={listRow}>
                           <div>
                              <div style={rowTitle}>{sale.buyerName} <span style={muted}>({sale.buyerContact})</span></div>
@@ -1452,7 +1551,7 @@ const playBellSound = () => {
             <div style={box} className="premium-card">
               <h3>PAYOUT REQUESTS</h3>
               <div style={tableContainer}>
-                {withdrawals.map(w => (
+                {filteredWithdrawals.map(w => (
                   <div key={w._id} style={listRow}>
                     <div>
                       <div style={rowTitle}>₹{w.amount}</div>
@@ -1502,7 +1601,7 @@ const playBellSound = () => {
                 <>
                   <h3 style={{ margin: "0 0 20px 0", color: "var(--text-main)", fontSize: "18px", fontWeight: "bold" }}>Global Support Tickets</h3>
                   <div style={tableContainer}>
-                    {tickets.map(t => (
+                    {filteredTickets.map(t => (
                       <div key={t._id} style={{ ...listRow, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div>
                           <div style={{ ...rowTitle, fontSize: "15px", color: "var(--text-main)" }}>{t.subject}</div>
