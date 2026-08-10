@@ -45,7 +45,7 @@ function Wallet() {
 
   const handleRecharge = async (e) => {
     e.preventDefault();
-    if (balance < rechargeForm.amount) return showToast("error", "Insufficient balance");
+    if (balance < Number(rechargeForm.amount)) return showToast("error", "Insufficient balance");
     setSubmitting(true);
     try {
       const { data } = await API.post("/wallet/recharge", rechargeForm);
@@ -64,8 +64,8 @@ function Wallet() {
 
   const handleSendWithdrawalOTP = async (e) => {
     e.preventDefault();
-    if (balance < withdrawForm.amount) return showToast("error", "Insufficient balance");
-    if (withdrawForm.amount < 100) return showToast("error", "Min withdrawal ₹100");
+    if (balance < Number(withdrawForm.amount)) return showToast("error", "Insufficient balance");
+    if (Number(withdrawForm.amount) < 100) return showToast("error", "Min withdrawal ₹100");
     setSubmitting(true);
     try {
       const { data } = await API.post("/wallet/withdraw/otp", {

@@ -26,18 +26,23 @@ const API = axios.create({
 API.interceptors.request.use((req) => {
   // Ensure baseURL stays fresh if CUSTOM_API_URL is updated
   req.baseURL = getBaseURL();
-  let token = localStorage.getItem("token");
-
-  // Fallback to cookies if localStorage was cleared/not loaded
-  if (!token) {
-    token = getCookie("token");
-    if (token) {
-      localStorage.setItem("token", token);
-      const user = getCookie("user");
-      const role = getCookie("role");
-      if (user) localStorage.setItem("user", user);
-      if (role) localStorage.setItem("role", role);
+  let token = null;
+  try {
+    token = localStorage.getItem("token");
+    // Fallback to cookies if localStorage was cleared/not loaded
+    if (!token) {
+      token = getCookie("token");
+      if (token) {
+        localStorage.setItem("token", token);
+        const user = getCookie("user");
+        const role = getCookie("role");
+        if (user) localStorage.setItem("user", user);
+        if (role) localStorage.setItem("role", role);
+      }
     }
+  } catch (e) {
+    // localStorage blocked (strict incognito/storage disabled) — fallback to cookies only
+    token = getCookie("token");
   }
 
   if (token) {

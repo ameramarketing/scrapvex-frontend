@@ -176,7 +176,7 @@ const playBellSound = () => {
     if (!collectorDepositForm.amount || Number(collectorDepositForm.amount) <= 0) {
       return showToast("error", "Please enter a valid deposit amount");
     }
-    if (!collectorDepositForm.upiRefNo || collectorDepositForm.upiRefNo.replace(/D/g, "").length !== 12) {
+    if (!collectorDepositForm.upiRefNo || collectorDepositForm.upiRefNo.replace(/\D/g, "").length !== 12) {
       return showToast("error", "Please enter a valid 12-digit UPI Reference Number / UTR");
     }
     try {
