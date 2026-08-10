@@ -84,11 +84,12 @@ function AdminDashboard() {
   const [editPurchaseData, setEditPurchaseData] = useState(null);
   const [showEditPurchaseModal, setShowEditPurchaseModal] = useState(false);
   // Reports State
-  const [reportType, setReportType] = useState("summary"); // summary | collectors | suppliers | buyers
+  const [reportType, setReportType] = useState("summary"); // summary | collectors | suppliers | buyers | purchases
   const [reportFrom, setReportFrom] = useState(() => { const d = new Date(); d.setDate(1); return d.toISOString().split("T")[0]; });
   const [reportTo, setReportTo] = useState(() => new Date().toISOString().split("T")[0]);
   const [reportGroupBy, setReportGroupBy] = useState("daily");
   const [reportData, setReportData] = useState([]);
+  const [reportInventory, setReportInventory] = useState([]);
   const [reportGrandTotal, setReportGrandTotal] = useState(0);
   const [reportLoading, setReportLoading] = useState(false);
   const [reportCollectorId, setReportCollectorId] = useState("");
@@ -532,6 +533,7 @@ function AdminDashboard() {
   const fetchReport = async () => {
     setReportLoading(true);
     setReportData([]);
+    setReportInventory([]);
     try {
       let url = "";
       let params = `?from=${reportFrom}&to=${reportTo}`;
@@ -543,11 +545,19 @@ function AdminDashboard() {
         url = `/reports/suppliers${params}${reportSupplierName ? `&supplierName=${encodeURIComponent(reportSupplierName)}` : ""}`;
       } else if (reportType === "buyers") {
         url = `/reports/buyers${params}${reportBuyerName ? `&buyerName=${encodeURIComponent(reportBuyerName)}` : ""}`;
+      } else if (reportType === "purchases") {
+        url = `/reports/purchases${params}`;
       }
       const { data } = await API.get(url);
       if (data.success) {
-        setReportData(data.data || []);
-        setReportGrandTotal(data.grandTotal || 0);
+        if (reportType === "purchases") {
+          setReportData(data.purchasesList || []);
+          setReportInventory(data.itemsInventoryBreakdown || []);
+          setReportGrandTotal(data.totalAmount || 0);
+        } else {
+          setReportData(data.data || []);
+          setReportGrandTotal(data.grandTotal || 0);
+        }
       }
     } catch(e) { showToast("error", "Report load failed: " + (e.response?.data?.message || e.message)); }
     finally { setReportLoading(false); }
@@ -575,6 +585,11 @@ function AdminDashboard() {
       csv = "Buyer Name,Contact,Total Sales,Total Amount\n";
       reportData.forEach(r => {
         csv += `${r.buyerName},${r.buyerContact},${r.totalSales},${r.totalAmount}\n`;
+      });
+    } else if (reportType === "purchases") {
+      csv = "Bill No,Date,Supplier Name,Contact,Total Amount,Payment Status,Payment Method,Items Count\n";
+      reportData.forEach(r => {
+        csv += `${r.billNo},${r.date},${r.supplierName},${r.supplierContact},${r.totalAmount},${r.paymentStatus},${r.paymentMethod},${r.itemsCount}\n`;
       });
     }
     const blob = new Blob([csv], { type: "text/csv" });
@@ -1717,6 +1732,7 @@ function AdminDashboard() {
           <div style={{display:"flex", gap:"8px", flexWrap:"wrap", marginBottom:"20px"}}>
             {[
               {key:"summary", label:"📈 Summary"},
+              {key:"purchases", label:"🧾 Purchases & Inventory"},
               {key:"collectors", label:"👷 Collectors"},
               {key:"suppliers", label:"🏪 Suppliers"},
               {key:"buyers", label:"🛒 Buyers"}
@@ -1813,6 +1829,72 @@ function AdminDashboard() {
 
           {!reportLoading && reportData.length > 0 && (
             <div style={{overflowX:"auto"}}>
+
+              {/* PURCHASES & INVENTORY REPORT */}
+              {reportType === "purchases" && (
+                <div>
+                  {/* Summary cards */}
+                  <div style={{ display: "flex", gap: "15px", marginBottom: "20px", flexWrap: "wrap" }}>
+                    <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #0b8f3a, #16a34a)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(11,143,58,0.15)" }}>
+                      <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Value</div>
+                      <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>₹{reportGrandTotal.toFixed(2)}</div>
+                    </div>
+                    <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #333, #555)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(0,0,0,0.05)" }}>
+                      <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Transactions</div>
+                      <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>{reportData.length} Bills</div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+                    {/* Item Wise Inventory Breakdown */}
+                    <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                      <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>📦 Received Inventory (Item Wise)</h4>
+                      {reportInventory.length === 0 ? (
+                        <div style={{ fontStyle: "italic", color: "#94a3b8", textAlign: "center", padding: "20px" }}>No items purchased in this period</div>
+                      ) : (
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                          <thead>
+                            <tr style={{ borderBottom: "2px solid #cbd5e1", textAlign: "left", color: "#475569" }}>
+                              <th style={{ padding: "8px 4px" }}>Item Name</th>
+                              <th style={{ padding: "8px 4px", textAlign: "center" }}>Total Qty</th>
+                              <th style={{ padding: "8px 4px", textAlign: "right" }}>Value</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reportInventory.map((item, idx) => (
+                              <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                                <td style={{ padding: "8px 4px", fontWeight: "600", color: "#1e293b" }}>{item.name}</td>
+                                <td style={{ padding: "8px 4px", textAlign: "center", fontWeight: "bold", color: "#0b8f3a" }}>{item.quantity} {item.unit}</td>
+                                <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{item.amount.toFixed(0)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+
+                    {/* Bills List */}
+                    <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                      <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>🧾 Purchase Bills List</h4>
+                      <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                        {reportData.map((p, idx) => (
+                          <div key={idx} style={{ padding: "10px", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
+                            <div>
+                              <div style={{ fontWeight: "bold", color: "#1e293b" }}>{p.supplierName}</div>
+                              <div style={{ color: "#64748b", marginTop: "2px" }}>Bill No: #{p.billNo} | {p.date}</div>
+                              <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>{p.itemsCount} items • {p.paymentMethod}</div>
+                            </div>
+                            <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
+                              <div style={{ fontWeight: "bold", color: "#dc3545", fontSize: "14px" }}>₹{p.totalAmount.toFixed(0)}</div>
+                              <button onClick={() => openPurchaseBillModal(p)} style={{ border: "none", background: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "10px" }}>📄 View</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* SUMMARY TABLE */}
               {reportType === "summary" && (
@@ -2191,7 +2273,7 @@ function AdminDashboard() {
       )}
 
       {showPurchaseModal && (
-        <Modal title="📦 Record Material Purchase" onClose={() => { setShowPurchaseModal(false); setPurchaseDrafts([emptyDraft(1)]); setActiveDraftId(1); }}>
+        <Modal title="📦 Record Material Purchase" onClose={() => setShowPurchaseModal(false)}>
           <div style={{ maxHeight: "65vh", overflowY: "auto", paddingRight: "4px" }}>
 
             {/* ── DRAFT TABS ── */}

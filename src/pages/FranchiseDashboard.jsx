@@ -89,6 +89,19 @@ function FranchiseDashboard() {
   const [franchiseProfile, setFranchiseProfile] = useState(null);
   const [distSettings, setDistSettings] = useState({});
 
+  // Reports State
+  const [reportType, setReportType] = useState("purchases"); // default to purchases
+  const [reportFrom, setReportFrom] = useState(() => { const d = new Date(); d.setDate(1); return d.toISOString().split("T")[0]; });
+  const [reportTo, setReportTo] = useState(() => new Date().toISOString().split("T")[0]);
+  const [reportGroupBy, setReportGroupBy] = useState("daily");
+  const [reportData, setReportData] = useState([]);
+  const [reportInventory, setReportInventory] = useState([]);
+  const [reportGrandTotal, setReportGrandTotal] = useState(0);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportCollectorId, setReportCollectorId] = useState("");
+  const [reportSupplierName, setReportSupplierName] = useState("");
+  const [reportBuyerName, setReportBuyerName] = useState("");
+
   // NEW ERP MODALS
   const [showTicketModal, setShowTicketModal] = useState(false);
   const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
@@ -182,6 +195,76 @@ function FranchiseDashboard() {
       const { data } = await API.get("/admin/collectors");
       if (data.success) setCollectors(data.collectors);
     } catch (e) { console.error(e); }
+  };
+
+  const fetchReport = async () => {
+    setReportLoading(true);
+    setReportData([]);
+    setReportInventory([]);
+    try {
+      let url = "";
+      let params = `?from=${reportFrom}&to=${reportTo}`;
+      if (reportType === "summary") {
+        url = `/reports/summary${params}&groupBy=${reportGroupBy}`;
+      } else if (reportType === "collectors") {
+        url = `/reports/collectors${params}${reportCollectorId ? `&collectorId=${reportCollectorId}` : ""}`;
+      } else if (reportType === "suppliers") {
+        url = `/reports/suppliers${params}${reportSupplierName ? `&supplierName=${encodeURIComponent(reportSupplierName)}` : ""}`;
+      } else if (reportType === "buyers") {
+        url = `/reports/buyers${params}${reportBuyerName ? `&buyerName=${encodeURIComponent(reportBuyerName)}` : ""}`;
+      } else if (reportType === "purchases") {
+        url = `/reports/purchases${params}`;
+      }
+      const { data } = await API.get(url);
+      if (data.success) {
+        if (reportType === "purchases") {
+          setReportData(data.purchasesList || []);
+          setReportInventory(data.itemsInventoryBreakdown || []);
+          setReportGrandTotal(data.totalAmount || 0);
+        } else {
+          setReportData(data.data || []);
+          setReportGrandTotal(data.grandTotal || 0);
+        }
+      }
+    } catch(e) { showToast("error", "Report load failed: " + (e.response?.data?.message || e.message)); }
+    finally { setReportLoading(false); }
+  };
+
+  const downloadCSV = () => {
+    if (reportData.length === 0) return showToast("error", "Pehle report load karein");
+    let csv = "";
+    if (reportType === "summary") {
+      csv = "Period,Purchases,Purchase Amount,Sales,Sale Amount,Pickups,Pickup Amount,Profit\n";
+      reportData.forEach(r => {
+        csv += `${r.period},${r.purchases},${r.purchaseAmount},${r.sales},${r.saleAmount},${r.pickups},${r.pickupAmount},${r.profit}\n`;
+      });
+    } else if (reportType === "collectors") {
+      csv = "Collector Name,Mobile,Total Pickups,Total Earnings,Total Scrap Value\n";
+      reportData.forEach(r => {
+        csv += `${r.collectorName},${r.collectorMobile},${r.totalPickups},${r.totalEarnings},${r.totalScrapValue}\n`;
+      });
+    } else if (reportType === "suppliers") {
+      csv = "Supplier Name,Contact,Total Purchases,Total Amount,Total Items\n";
+      reportData.forEach(r => {
+        csv += `${r.supplierName},${r.supplierContact},${r.totalPurchases},${r.totalAmount},${r.totalItems}\n`;
+      });
+    } else if (reportType === "buyers") {
+      csv = "Buyer Name,Contact,Total Sales,Total Amount\n";
+      reportData.forEach(r => {
+        csv += `${r.buyerName},${r.buyerContact},${r.totalSales},${r.totalAmount}\n`;
+      });
+    } else if (reportType === "purchases") {
+      csv = "Bill No,Date,Supplier Name,Contact,Total Amount,Payment Status,Payment Method,Items Count\n";
+      reportData.forEach(r => {
+        csv += `${r.billNo},${r.date},${r.supplierName},${r.supplierContact},${r.totalAmount},${r.paymentStatus},${r.paymentMethod},${r.itemsCount}\n`;
+      });
+    }
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `scrapvex_${reportType}_report_${reportFrom}_${reportTo}.csv`;
+    a.click();
   };
 
   const fetchReviews = async () => {
@@ -609,6 +692,7 @@ function FranchiseDashboard() {
       <NavItem active={activeTab === "pickups"} icon={<FaTruck />} text="Pickups" onClick={() => { setActiveTab("pickups"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "accounting"} icon={<FaChartLine />} text="Accounting" onClick={() => { setActiveTab("accounting"); fetchAccountingData(); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "inventory"} icon={<FaClipboardList />} text="Inventory" onClick={() => { setActiveTab("inventory"); fetchAccountingData(); setIsMobileMenuOpen(false); }} />
+      <NavItem active={activeTab === "reports"} icon={<FaChartLine />} text="📊 Reports" onClick={() => { setActiveTab("reports"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "rates"} icon={<FaTag />} text="Scrap Rates" onClick={() => { setActiveTab("rates"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "collectors"} icon={<FaTools />} text="Collectors" onClick={() => { setActiveTab("collectors"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "wallet"} icon={<FaWallet />} text="Wallet" onClick={() => { setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions(); setIsMobileMenuOpen(false); }} />
@@ -1039,6 +1123,341 @@ function FranchiseDashboard() {
             </div>
           )}
 
+          {activeTab === "reports" && (
+            <div style={box} className="premium-card">
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"20px", flexWrap:"wrap", gap:"10px"}}>
+                <h3 style={{margin:0}}>📊 Reports & Analytics</h3>
+                <button style={{...addBtn, background:"#16a34a", display:"flex", alignItems:"center", gap:"6px"}} onClick={downloadCSV}>
+                  ⬇️ Download CSV
+                </button>
+              </div>
+
+              {/* Report Type Tabs */}
+              <div style={{display:"flex", gap:"8px", flexWrap:"wrap", marginBottom:"20px"}}>
+                {[
+                  {key:"purchases", label:"🧾 Purchases & Inventory"},
+                  {key:"summary", label:"📈 Summary"},
+                  {key:"collectors", label:"👷 Collectors"},
+                  {key:"suppliers", label:"🏪 Suppliers"},
+                  {key:"buyers", label:"🛒 Buyers"}
+                ].map(t => (
+                  <button key={t.key}
+                    style={{padding:"8px 16px", borderRadius:"20px", border:"none", cursor:"pointer", fontWeight:"bold", fontSize:"13px",
+                      background: reportType===t.key ? "#0b8f3a" : "#f0f0f0",
+                      color: reportType===t.key ? "#fff" : "#333"}}
+                    onClick={() => { setReportType(t.key); setReportData([]); setReportInventory([]); }}
+                  >{t.label}</button>
+                ))}
+              </div>
+
+              {/* Filters Row */}
+              <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))", gap:"10px", marginBottom:"15px", background:"#f8fffe", padding:"15px", borderRadius:"15px", border:"1px solid #bbf7d0"}}>
+                <div>
+                  <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>📅 From Date</label>
+                  <input type="date" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportFrom} onChange={e => setReportFrom(e.target.value)} />
+                </div>
+                <div>
+                  <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>📅 To Date</label>
+                  <input type="date" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportTo} onChange={e => setReportTo(e.target.value)} />
+                </div>
+                {reportType === "summary" && (
+                  <div>
+                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>📊 Group By</label>
+                    <select style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportGroupBy} onChange={e => setReportGroupBy(e.target.value)}>
+                      <option value="daily">Daily</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                    </select>
+                  </div>
+                )}
+                {reportType === "collectors" && (
+                  <div>
+                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>👷 Collector</label>
+                    <select style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportCollectorId} onChange={e => setReportCollectorId(e.target.value)}>
+                      <option value="">All Collectors</option>
+                      {collectors.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                    </select>
+                  </div>
+                )}
+                {reportType === "suppliers" && (
+                  <div>
+                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>🏪 Supplier Name</label>
+                    <input type="text" placeholder="Search supplier..." style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportSupplierName} onChange={e => setReportSupplierName(e.target.value)} />
+                  </div>
+                )}
+                {reportType === "buyers" && (
+                  <div>
+                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>🛒 Buyer Name</label>
+                    <input type="text" placeholder="Search buyer..." style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportBuyerName} onChange={e => setReportBuyerName(e.target.value)} />
+                  </div>
+                )}
+                <div style={{display:"flex", alignItems:"flex-end"}}>
+                  <button style={{...saveBtnBig, marginTop:0, padding:"12px"}} onClick={fetchReport} disabled={reportLoading}>
+                    {reportLoading ? "Loading..." : "🔍 Load Report"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Shortcut Buttons */}
+              <div style={{display:"flex", gap:"8px", flexWrap:"wrap", marginBottom:"15px"}}>
+                {[
+                  {label:"Aaj", days:0},
+                  {label:"7 Din", days:7},
+                  {label:"Ye Mahina", days:null, thisMonth:true},
+                  {label:"30 Din", days:30},
+                  {label:"3 Mahine", days:90},
+                  {label:"Ye Saal", days:null, thisYear:true}
+                ].map(btn => (
+                  <button key={btn.label} style={{padding:"5px 12px", borderRadius:"12px", border:"1px solid #0b8f3a", background:"#f0fdf4", color:"#0b8f3a", fontSize:"11px", fontWeight:"bold", cursor:"pointer"}}
+                    onClick={() => {
+                      const today = new Date();
+                      let from = new Date();
+                      if (btn.thisMonth) from = new Date(today.getFullYear(), today.getMonth(), 1);
+                      else if (btn.thisYear) from = new Date(today.getFullYear(), 0, 1);
+                      else from.setDate(today.getDate() - (btn.days || 0));
+                      setReportFrom(from.toISOString().split("T")[0]);
+                      setReportTo(today.toISOString().split("T")[0]);
+                    }}
+                  >{btn.label}</button>
+                ))}
+              </div>
+
+              {/* Results */}
+              {reportLoading && <div style={{textAlign:"center", padding:"30px", color:"#0b8f3a", fontWeight:"bold"}}>⏳ Loading report...</div>}
+
+              {!reportLoading && reportData.length === 0 && (
+                <div style={{textAlign:"center", padding:"40px", color:"#999"}}>
+                  📋 Filters select karein aur \"Load Report\" dabayein
+                </div>
+              )}
+
+              {!reportLoading && reportData.length > 0 && (
+                <div style={{overflowX:"auto"}}>
+                  {/* PURCHASES & INVENTORY REPORT */}
+                  {reportType === "purchases" && (
+                    <div>
+                      {/* Summary cards */}
+                      <div style={{ display: "flex", gap: "15px", marginBottom: "20px", flexWrap: "wrap" }}>
+                        <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #0b8f3a, #16a34a)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(11,143,58,0.15)" }}>
+                          <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Value</div>
+                          <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>₹{reportGrandTotal.toFixed(2)}</div>
+                        </div>
+                        <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #333, #555)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(0,0,0,0.05)" }}>
+                          <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Transactions</div>
+                          <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>{reportData.length} Bills</div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
+                        {/* Item Wise Inventory Breakdown */}
+                        <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                          <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>📦 Received Inventory (Item Wise)</h4>
+                          {reportInventory.length === 0 ? (
+                            <div style={{ fontStyle: "italic", color: "#94a3b8", textAlign: "center", padding: "20px" }}>No items purchased in this period</div>
+                          ) : (
+                            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                              <thead>
+                                <tr style={{ borderBottom: "2px solid #cbd5e1", textAlign: "left", color: "#475569" }}>
+                                  <th style={{ padding: "8px 4px" }}>Item Name</th>
+                                  <th style={{ padding: "8px 4px", textAlign: "center" }}>Total Qty</th>
+                                  <th style={{ padding: "8px 4px", textAlign: "right" }}>Value</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {reportInventory.map((item, idx) => (
+                                  <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                                    <td style={{ padding: "8px 4px", fontWeight: "600", color: "#1e293b" }}>{item.name}</td>
+                                    <td style={{ padding: "8px 4px", textAlign: "center", fontWeight: "bold", color: "#0b8f3a" }}>{item.quantity} {item.unit}</td>
+                                    <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{item.amount.toFixed(0)}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+
+                        {/* Bills List */}
+                        <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                          <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>🧾 Purchase Bills List</h4>
+                          <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                            {reportData.map((p, idx) => (
+                              <div key={idx} style={{ padding: "10px", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
+                                <div>
+                                  <div style={{ fontWeight: "bold", color: "#1e293b" }}>{p.supplierName}</div>
+                                  <div style={{ color: "#64748b", marginTop: "2px" }}>Bill No: #{p.billNo} | {p.date}</div>
+                                  <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>{p.itemsCount} items • {p.paymentMethod}</div>
+                                </div>
+                                <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
+                                  <div style={{ fontWeight: "bold", color: "#dc3545", fontSize: "14px" }}>₹{p.totalAmount.toFixed(0)}</div>
+                                  <button onClick={() => openPurchaseBillModal(p)} style={{ border: "none", background: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "10px" }}>📄 View</button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* SUMMARY TABLE */}
+                  {reportType === "summary" && (
+                    <table style={{width:"100%", borderCollapse:"collapse", fontSize:"13px"}}>
+                      <thead>
+                        <tr style={{background:"#0b8f3a", color:"#fff"}}>
+                          <th style={{padding:"10px 8px", textAlign:"left"}}>Period</th>
+                          <th style={{padding:"10px 8px", textAlign:"center"}}>Pickups</th>
+                          <th style={{padding:"10px 8px", textAlign:"right"}}>Pickup Amt</th>
+                          <th style={{padding:"10px 8px", textAlign:"center"}}>Purchases</th>
+                          <th style={{padding:"10px 8px", textAlign:"right"}}>Purchase Amt</th>
+                          <th style={{padding:"10px 8px", textAlign:"center"}}>Sales</th>
+                          <th style={{padding:"10px 8px", textAlign:"right"}}>Sale Amt</th>
+                          <th style={{padding:"10px 8px", textAlign:"right"}}>Profit</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reportData.map((r, i) => (
+                          <tr key={i} style={{background: i%2===0?"#f8fffe":"#fff", borderBottom:"1px solid #eee"}}>
+                            <td style={{padding:"10px 8px", fontWeight:"bold"}}>{r.period}</td>
+                            <td style={{padding:"10px 8px", textAlign:"center"}}>{r.pickups}</td>
+                            <td style={{padding:"10px 8px", textAlign:"right"}}>₹{r.pickupAmount}</td>
+                            <td style={{padding:"10px 8px", textAlign:"center"}}>{r.purchases}</td>
+                            <td style={{padding:"10px 8px", textAlign:"right", color:"#dc3545"}}>₹{r.purchaseAmount}</td>
+                            <td style={{padding:"10px 8px", textAlign:"center"}}>{r.sales}</td>
+                            <td style={{padding:"10px 8px", textAlign:"right", color:"#0b8f3a"}}>₹{r.saleAmount}</td>
+                            <td style={{padding:"10px 8px", textAlign:"right", fontWeight:"bold", color: r.profit>=0?"#0b8f3a":"#dc3545"}}>₹{r.profit}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+
+                  {/* COLLECTORS TABLE */}
+                  {reportType === "collectors" && reportData.map((col, i) => (
+                    <div key={i} style={{border:"1px solid #bbf7d0", borderRadius:"15px", padding:"15px", marginBottom:"15px", background:"#f8fffe"}}>
+                      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"12px"}}>
+                        <div>
+                          <div style={{fontWeight:"bold", fontSize:"15px"}}>👷 {col.collectorName}</div>
+                          <div style={{fontSize:"12px", color:"#666"}}>📞 {col.collectorMobile}</div>
+                        </div>
+                        <div style={{textAlign:"right"}}>
+                          <div style={{fontSize:"20px", fontWeight:"bold", color:"#0b8f3a"}}>{col.totalPickups} Pickups</div>
+                          <div style={{fontSize:"13px", color:"#dc3545"}}>Earned: ₹{col.totalEarnings}</div>
+                          <div style={{fontSize:"12px", color:"#666"}}>Scrap: ₹{col.totalScrapValue}</div>
+                        </div>
+                      </div>
+                      {col.dailyBreakdown?.length > 0 && (
+                        <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px"}}>
+                          <thead><tr style={{background:"#e8f5e9"}}>
+                            <th style={{padding:"6px", textAlign:"left"}}>Date</th>
+                            <th style={{padding:"6px", textAlign:"center"}}>Pickups</th>
+                            <th style={{padding:"6px", textAlign:"right"}}>Earning</th>
+                            <th style={{padding:"6px", textAlign:"right"}}>Scrap Value</th>
+                          </tr></thead>
+                          <tbody>
+                            {col.dailyBreakdown.map((d, j) => (
+                              <tr key={j} style={{borderBottom:"1px solid #eee"}}>
+                                <td style={{padding:"6px"}}>{d.date}</td>
+                                <td style={{padding:"6px", textAlign:"center"}}>{d.pickups}</td>
+                                <td style={{padding:"6px", textAlign:"right", color:"#0b8f3a"}}>₹{Math.round(d.earning)}</td>
+                                <td style={{padding:"6px", textAlign:"right"}}>₹{Math.round(d.scrapValue)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* SUPPLIERS TABLE */}
+                  {reportType === "suppliers" && (
+                    <>
+                      <div style={{textAlign:"right", fontWeight:"bold", color:"#dc3545", marginBottom:"10px", fontSize:"15px"}}>
+                        Grand Total: ₹{reportGrandTotal}
+                      </div>
+                      {reportData.map((s, i) => (
+                        <div key={i} style={{border:"1px solid #fecdd3", borderRadius:"15px", padding:"15px", marginBottom:"15px", background:"#fff5f5"}}>
+                          <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
+                            <div>
+                              <div style={{fontWeight:"bold", fontSize:"15px"}}>🏪 {s.supplierName}</div>
+                              <div style={{fontSize:"12px", color:"#666"}}>📞 {s.supplierContact}</div>
+                            </div>
+                            <div style={{textAlign:"right"}}>
+                              <div style={{fontSize:"18px", fontWeight:"bold", color:"#dc3545"}}>₹{s.totalAmount}</div>
+                              <div style={{fontSize:"12px", color:"#666"}}>{s.totalPurchases} purchases | {s.totalItems} items</div>
+                            </div>
+                          </div>
+                          <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px"}}>
+                            <thead><tr style={{background:"#fee2e2"}}>
+                              <th style={{padding:"6px", textAlign:"left"}}>Bill No</th>
+                              <th style={{padding:"6px", textAlign:"left"}}>Date</th>
+                              <th style={{padding:"6px", textAlign:"center"}}>Items</th>
+                              <th style={{padding:"6px", textAlign:"right"}}>Amount</th>
+                              <th style={{padding:"6px", textAlign:"center"}}>Status</th>
+                            </tr></thead>
+                            <tbody>
+                              {s.records?.map((rec, k) => (
+                                <tr key={k} style={{borderBottom:"1px solid #eee"}}>
+                                  <td style={{padding:"6px", fontWeight:"bold"}}>{rec.billNo}</td>
+                                  <td style={{padding:"6px"}}>{rec.date}</td>
+                                  <td style={{padding:"6px", textAlign:"center"}}>{rec.items?.length || 0}</td>
+                                  <td style={{padding:"6px", textAlign:"right", color:"#dc3545"}}>₹{rec.totalAmount}</td>
+                                  <td style={{padding:"6px", textAlign:"center"}}><span style={{fontSize:"10px", padding:"2px 6px", borderRadius:"6px", background: rec.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: rec.paymentStatus==="Paid"?"#0b8f3a":"#f39c12"}}>{rec.paymentStatus}</span></td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {/* BUYERS TABLE */}
+                  {reportType === "buyers" && (
+                    <>
+                      <div style={{textAlign:"right", fontWeight:"bold", color:"#0b8f3a", marginBottom:"10px", fontSize:"15px"}}>
+                        Grand Total: ₹{reportGrandTotal}
+                      </div>
+                      {reportData.map((b, i) => (
+                        <div key={i} style={{border:"1px solid #fed7aa", borderRadius:"15px", padding:"15px", marginBottom:"15px", background:"#fffaf5"}}>
+                          <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
+                            <div>
+                              <div style={{fontWeight:"bold", fontSize:"15px"}}>🛒 {b.buyerName}</div>
+                              <div style={{fontSize:"12px", color:"#666"}}>📞 {b.buyerContact} {b.buyerGSTIN && `• GSTIN: ${b.buyerGSTIN}`}</div>
+                            </div>
+                            <div style={{textAlign:"right"}}>
+                              <div style={{fontSize:"18px", fontWeight:"bold", color:"#0b8f3a"}}>₹{b.totalAmount}</div>
+                              <div style={{fontSize:"12px", color:"#666"}}>{b.totalSales} sales</div>
+                            </div>
+                          </div>
+                          <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px"}}>
+                            <thead><tr style={{background:"#ffedd5"}}>
+                              <th style={{padding:"6px", textAlign:"left"}}>Invoice No</th>
+                              <th style={{padding:"6px", textAlign:"left"}}>Date</th>
+                              <th style={{padding:"6px", textAlign:"center"}}>Items</th>
+                              <th style={{padding:"6px", textAlign:"right"}}>Amount</th>
+                              <th style={{padding:"6px", textAlign:"center"}}>Status</th>
+                            </tr></thead>
+                            <tbody>
+                              {b.records?.map((rec, k) => (
+                                <tr key={k} style={{borderBottom:"1px solid #eee"}}>
+                                  <td style={{padding:"6px", fontWeight:"bold"}}>{rec.invoiceNo}</td>
+                                  <td style={{padding:"6px"}}>{rec.date}</td>
+                                  <td style={{padding:"6px", textAlign:"center"}}>{rec.items?.length || 0}</td>
+                                  <td style={{padding:"6px", textAlign:"right", color:"#0b8f3a"}}>₹{rec.totalAmount}</td>
+                                  <td style={{padding:"6px", textAlign:"center"}}><span style={{fontSize:"10px", padding:"2px 6px", borderRadius:"6px", background: rec.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: rec.paymentStatus==="Paid"?"#0b8f3a":"#f39c12"}}>{rec.paymentStatus}</span></td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === "support" && (
             <div style={box} className="premium-card">
               <div style={titleBar}>
@@ -1437,7 +1856,7 @@ function FranchiseDashboard() {
       )}
 
       {showPurchaseModal && (
-        <Modal title="📦 Record Purchase" onClose={() => { setShowPurchaseModal(false); setPurchaseDrafts([emptyDraft(1)]); setActiveDraftId(1); }}>
+        <Modal title="📦 Record Purchase" onClose={() => setShowPurchaseModal(false)}>
           <div style={{ maxHeight: "65vh", overflowY: "auto", paddingRight: "4px" }}>
 
             {/* DRAFT TABS */}
