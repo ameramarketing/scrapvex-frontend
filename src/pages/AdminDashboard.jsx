@@ -13,6 +13,73 @@ import { performLogout } from "../utils/auth";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
+function WhatsAppGatewayPanel() {
+  const [waData, setWaData] = useState({ isReady: false, status: 'initializing', qrCodeUrl: null });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchWaData = async (reinit = false) => {
+    try {
+      setLoading(true);
+      const url = reinit ? "/auth/whatsapp-qr?reinit=true" : "/auth/whatsapp-qr";
+      const { data } = await API.get(url);
+      if (data.success) {
+        setWaData({ isReady: data.isReady, status: data.status, qrCodeUrl: data.qrCodeUrl });
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWaData();
+    const interval = setInterval(() => {
+      if (!waData.isReady) fetchWaData();
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [waData.isReady]);
+
+  return (
+    <div style={{ background: "#0f172a", borderRadius: "24px", border: "1px solid var(--glass-border)", padding: "32px", boxShadow: "0 15px 35px rgba(0,0,0,0.15)", minHeight: "560px", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+      <h1 style={{ fontSize: "22px", color: "#10b981", marginBottom: "8px" }}>⚡ ScrapVex WhatsApp Engine</h1>
+      <p style={{ fontSize: "14px", color: "#94a3b8", marginBottom: "24px" }}>Scan the QR Code to enable automatic WhatsApp OTPs & Digital Receipts</p>
+      
+      <div style={{ display: "inline-block", padding: "6px 14px", borderRadius: "999px", fontWeight: "bold", fontSize: "13px", marginBottom: "16px", background: waData.isReady ? '#065f46' : '#854d0e', color: waData.isReady ? '#34d399' : '#fde047' }}>
+        {waData.isReady ? '🟢 CONNECTED & READY' : '⏳ ' + (waData.status || '').toUpperCase()}
+      </div>
+
+      {error && <div style={{ color: "#ef4444", marginBottom: "16px" }}>{error}</div>}
+
+      {waData.isReady ? (
+        <div style={{ padding: "20px", background: "#052e16", borderRadius: "16px", color: "#4ade80", fontWeight: "bold", margin: "20px 0" }}>
+          🎉 WhatsApp Gateway is 100% Active & Connected! Real WhatsApp OTPs will be sent automatically.
+        </div>
+      ) : (
+        <>
+          {waData.qrCodeUrl ? (
+            <img src={waData.qrCodeUrl} alt="WhatsApp QR Code" style={{ width: "260px", height: "260px", borderRadius: "16px", border: "4px solid #10b981", margin: "0 auto 20px", display: "block" }} />
+          ) : (
+            <div style={{ margin: "20px auto" }}>
+              {loading ? <div className="spinner" style={{ margin: "0 auto" }}></div> : <p>Waiting for engine...</p>}
+            </div>
+          )}
+          <div style={{ textAlign: "left", background: "#1e293b", borderRadius: "12px", padding: "14px", fontSize: "12px", color: "#cbd5e1", lineHeight: "1.6" }}>
+            <b>How to connect:</b><br/>
+            1. Open WhatsApp &gt; Linked Devices<br/>
+            2. Tap "Link a Device"<br/>
+            3. Scan the QR Code above
+          </div>
+        </>
+      )}
+      <button onClick={() => fetchWaData(true)} style={{ background: "#3b82f6", color: "#fff", border: "none", padding: "10px 18px", borderRadius: "10px", fontSize: "13px", fontWeight: "bold", marginTop: "24px", cursor: "pointer" }}>
+        🔄 Restart Gateway
+      </button>
+    </div>
+  );
+}
+
 function AdminDashboard() {
 
   const getBackendURL = () => {
@@ -1853,32 +1920,7 @@ const playBellSound = () => {
 
           {activeTab === "whatsapp" && (
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <div>
-                  <h2 style={{ margin: "0 0 5px 0", color: "var(--text-main)", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <FaWhatsapp style={{ color: "#25D366", fontSize: "28px" }} /> WhatsApp Gateway Setup (Admin Only)
-                  </h2>
-                  <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "14px" }}>
-                    Scan QR code below with your WhatsApp app to enable 100% Free OTPs & Pickup Notifications.
-                  </p>
-                </div>
-                <a 
-                  href={`${(import.meta.env.VITE_API_URL || 'https://scrapvex-backend.onrender.com').replace(/\/api\/?$/, '')}/api/auth/whatsapp-qr`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  style={{ background: "#25D366", color: "#fff", padding: "12px 20px", borderRadius: "14px", textDecoration: "none", fontWeight: "bold", fontSize: "14px", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 4px 15px rgba(37,211,102,0.3)" }}
-                >
-                  <FaWhatsapp style={{ fontSize: "18px" }} /> Open Full Scanner Window ↗
-                </a>
-              </div>
-
-              <div style={{ background: "#0f172a", borderRadius: "24px", border: "1px solid var(--glass-border)", padding: "10px", boxShadow: "0 15px 35px rgba(0,0,0,0.15)", minHeight: "560px" }}>
-                <iframe
-                  src={`${(import.meta.env.VITE_API_URL || 'https://scrapvex-backend.onrender.com').replace(/\/api\/?$/, '')}/api/auth/whatsapp-qr`}
-                  title="WhatsApp Gateway QR Code"
-                  style={{ width: "100%", height: "550px", border: "none", borderRadius: "18px", background: "#0f172a" }}
-                />
-              </div>
+              <WhatsAppGatewayPanel />
             </div>
           )}
         </div>
