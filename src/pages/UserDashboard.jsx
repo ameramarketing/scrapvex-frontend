@@ -142,10 +142,10 @@ const playBellSound = () => {
     try {
       if (!isSilent) setLoading(true);
       const [resP, resN, resW, resS] = await Promise.all([
-        API.get("/pickups/my"),
-        API.get("/notifications"),
-        API.get("/wallet/info"),
-        API.get("/settings")
+        API.get("/pickups/my", { hideLoader: isSilent }),
+        API.get("/notifications", { hideLoader: isSilent }),
+        API.get("/wallet/info", { hideLoader: isSilent }),
+        API.get("/settings", { hideLoader: isSilent })
       ]);
       if (resP.data.success) {
         const newPickupsList = resP.data.pickups || [];

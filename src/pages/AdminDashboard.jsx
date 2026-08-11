@@ -22,7 +22,7 @@ function WhatsAppGatewayPanel() {
     try {
       setLoading(true);
       const url = reinit ? "/auth/whatsapp-qr?reinit=true" : "/auth/whatsapp-qr";
-      const { data } = await API.get(url);
+      const { data } = await API.get(url, { hideLoader: true });
       if (data.success) {
         setWaData({ isReady: data.isReady, status: data.status, qrCodeUrl: data.qrCodeUrl });
       }
@@ -241,7 +241,7 @@ const playBellSound = () => {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const resP = await API.get("/admin/pickups");
+        const resP = await API.get("/admin/pickups", { hideLoader: true });
         if (resP.data?.success) {
           const newPickupsList = resP.data.pickups || [];
           setPickups(prev => {

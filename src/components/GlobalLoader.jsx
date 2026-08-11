@@ -22,6 +22,7 @@ function GlobalLoader() {
     let timer = null;
 
     const reqInterceptor = API.interceptors.request.use((config) => {
+      if (config.hideLoader) return config;
       reqCount++;
       if (reqCount === 1) {
         timer = setTimeout(() => {
@@ -34,6 +35,7 @@ function GlobalLoader() {
 
     const resInterceptor = API.interceptors.response.use(
       (response) => {
+        if (response.config?.hideLoader) return response;
         reqCount = Math.max(0, reqCount - 1);
         if (reqCount === 0) {
           clearTimeout(timer);
@@ -42,6 +44,7 @@ function GlobalLoader() {
         return response;
       },
       (error) => {
+        if (error.config?.hideLoader) return Promise.reject(error);
         reqCount = Math.max(0, reqCount - 1);
         if (reqCount === 0) {
           clearTimeout(timer);

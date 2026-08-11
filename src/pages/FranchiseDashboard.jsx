@@ -157,7 +157,7 @@ const playBellSound = () => {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const resP = await API.get("/admin/pickups");
+        const resP = await API.get("/admin/pickups", { hideLoader: true });
         if (resP.data?.success) {
           const newPickupsList = resP.data.pickups || [];
           setPickups(prev => {

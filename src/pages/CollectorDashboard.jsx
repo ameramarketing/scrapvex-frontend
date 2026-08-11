@@ -100,7 +100,7 @@ const playBellSound = () => {
     if (!user?._id) return;
     const interval = setInterval(async () => {
       try {
-        const resP = await API.get("/collector/pickups");
+        const resP = await API.get("/collector/pickups", { hideLoader: true });
         if (resP.data?.success) {
           const newPickupsList = resP.data.pickups || [];
           setPickups(prev => {
