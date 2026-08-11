@@ -7,7 +7,6 @@ import {
   FaPlusCircle
 } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PickupForm from "../components/PickupForm";
 import BannerCarousel from "../components/BannerCarousel";
@@ -40,8 +39,7 @@ function Home() {
   return (
     <div style={{background:"var(--bg-main)"}}>
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
-      <Navbar />
-
+      
       {/* HERO SECTION */}
       <div className="container section-padding grid-2" style={{alignItems:"center"}}>
         <div className="hero-card-mobile fade-up">

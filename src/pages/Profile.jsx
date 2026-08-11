@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaEdit, FaSave, FaTimes, FaSignOutAlt, FaEnvelope, FaLock, FaArrowLeft, FaHome, FaHistory, FaPlusCircle, FaWallet, FaUser, FaCamera, FaRecycle } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Toast from "../components/Toast";
 import API from "../services/api";
@@ -87,8 +86,7 @@ function Profile() {
 
   return (
     <div style={pageContainer}>
-      <Navbar />
-      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
+            <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <style>{`
         .profile-input { transition: 0.3s; width: 100%; box-sizing: border-box; }

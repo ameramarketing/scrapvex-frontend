@@ -16,14 +16,12 @@ import {
   FaStar
 } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 function About() {
   return (
     <div>
-      <Navbar />
-
+      
       <div style={page}>
         {/* HERO */}
         <section style={hero} className="fade-up">

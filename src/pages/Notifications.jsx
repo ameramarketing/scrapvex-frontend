@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaBell, FaArrowLeft, FaGift, FaTruck, FaTag, FaCheckCircle, FaTrashAlt } from "react-icons/fa";
-import Navbar from "../components/Navbar";
 
 const mockNotifications = [
   {
@@ -43,8 +42,7 @@ function Notifications() {
 
   return (
     <div style={{ background: "#f8fafc", minHeight: "100vh" }}>
-      <Navbar />
-
+      
       <div className="container" style={wrapper}>
         <div style={topHeaderRow}>
           <button style={backBtn} onClick={() => navigate(-1)}>

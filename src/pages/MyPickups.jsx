@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaClock, FaCheckCircle, FaArrowLeft, FaTrashAlt, FaTruck, FaMapMarkerAlt, FaCalendarAlt, FaRupeeSign, FaStar, FaTimes, FaPaperPlane, FaRecycle } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Toast from "../components/Toast";
 import API from "../services/api";
@@ -79,8 +78,7 @@ function MyPickups() {
 
   return (
     <div style={{ background: "var(--bg-main)", minHeight: "100vh", color: "var(--text-main)" }}>
-      {!isCollector && <Navbar />}
-      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
+            <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <div className="container" style={{ padding: "40px 20px" }}>
         <div style={header}>

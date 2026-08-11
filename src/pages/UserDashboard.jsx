@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaTruck, FaRecycle, FaRupeeSign, FaClipboardList, FaChartLine, FaSignOutAlt, FaArrowRight, FaClock, FaUser, FaTags, FaPhoneAlt, FaBell, FaTimes, FaStar, FaPaperPlane, FaHome, FaHistory, FaPlusCircle, FaWallet, FaMapMarkerAlt, FaCheckCircle, FaArrowUp, FaArrowDown, FaMobileAlt, FaUniversity, FaExclamationTriangle, FaPlus, FaCamera } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Toast from "../components/Toast";
 import API from "../services/api";
@@ -474,8 +473,7 @@ const playBellSound = () => {
 
   return (
     <div style={pageContainerStyle}>
-      <Navbar />
-      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({...toast, show: false})} />
+            <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({...toast, show: false})} />
 
       <style>{`
         .quick-action { transition: 0.3s ease; cursor: pointer; }

@@ -33,6 +33,7 @@ import Notifications from "./pages/Notifications";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ThemeProvider } from "./context/ThemeContext";
 import FloatingActions from "./components/FloatingActions";
+import Navbar from "./components/Navbar";
 import MobileAppShell from "./components/MobileAppShell";
 import GlobalLoader from "./components/GlobalLoader";
 import NativeOfflineBanner from "./components/NativeOfflineBanner";
@@ -82,6 +83,7 @@ function App() {
       <NativeOfflineBanner />
       <BrowserRouter>
         <GlobalLoader />
+        {!isNativeApp() && <Navbar />}
         <MobileAppShell>
           <Routes>
             {/* PUBLIC ROUTES */}

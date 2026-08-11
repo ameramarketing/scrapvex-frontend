@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 import { saveAuthData } from "../utils/auth";
 
-import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
 import API from "../services/api";
 
@@ -86,8 +85,7 @@ function Register() {
 
   return (
     <div style={{ background: "var(--bg-main)", minHeight: "100vh" }}>
-      <Navbar />
-      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
+            <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <div className="container" style={wrap}>
         <div className="card-premium fade-up" style={card}>

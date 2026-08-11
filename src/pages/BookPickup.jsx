@@ -4,15 +4,13 @@ import {
   FaArrowRight, FaMapMarkerAlt, FaCalendarAlt, FaTrash, FaPlus, FaMinus
 } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PickupForm from "../components/PickupForm";
 
 function BookPickup() {
   return (
     <div style={{background:"var(--bg-main)"}}>
-      <Navbar />
-
+      
       {/* HERO SECTION */}
       <div className="container section-padding grid-2" style={{alignItems:"center"}}>
         <div className="hero-card-mobile fade-up">

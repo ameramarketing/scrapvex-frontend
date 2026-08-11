@@ -52,8 +52,33 @@ API.interceptors.request.use(async (req) => {
 });
 
 API.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // DIAGNOSTIC LOG (Success)
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      const url = response.config.url || "";
+      if (url.includes("login") || url.includes("rates")) {
+        console.log(`[CAPACITOR-API-SUCCESS] ${response.config.method?.toUpperCase()} ${response.config.baseURL}${url}`);
+        console.log(`[CAPACITOR-API-SUCCESS] Status: ${response.status}`);
+        // NEVER log sensitive data for login, but log rates data
+        if (url.includes("rates")) {
+          console.log(`[CAPACITOR-API-SUCCESS] Data:`, response.data);
+        }
+      }
+    }
+    return response;
+  },
   async (error) => {
+    // DIAGNOSTIC LOG (Error)
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      console.log(`[CAPACITOR-API-ERROR] Method: ${error.config?.method?.toUpperCase()}`);
+      console.log(`[CAPACITOR-API-ERROR] URL: ${error.config?.baseURL}${error.config?.url}`);
+      console.log(`[CAPACITOR-API-ERROR] Message: ${error.message}`);
+      console.log(`[CAPACITOR-API-ERROR] Code: ${error.code}`);
+      console.log(`[CAPACITOR-API-ERROR] Status: ${error.response?.status}`);
+      console.log(`[CAPACITOR-API-ERROR] Response Data:`, error.response?.data);
+      console.log(`[CAPACITOR-API-ERROR] Request details:`, error.request);
+    }
+
     if (
       error.response &&
       (error.response.status === 401 || error.response.status === 403)

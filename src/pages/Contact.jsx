@@ -3,7 +3,6 @@ import {
   FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock, 
   FaPaperPlane, FaWhatsapp, FaComments, FaCheckCircle 
 } from "react-icons/fa";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import API from "../services/api";
 
@@ -54,8 +53,7 @@ function Contact() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg-main)", color: "var(--text-main)" }}>
-      <Navbar />
-
+      
       {/* MOBILE RESPONSIVE CSS */}
       <style>{`
         @media (max-width: 768px) {

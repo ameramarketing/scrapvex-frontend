@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { 
   FaShieldAlt, FaDatabase, FaExchangeAlt, FaCookieBite, 
@@ -9,8 +8,7 @@ import {
 function PrivacyPolicy() {
   return (
     <div style={{ background: "var(--bg-main)" }}>
-      <Navbar />
-
+      
       <style>{`
         @media (max-width: 768px) {
           .privacy-card {

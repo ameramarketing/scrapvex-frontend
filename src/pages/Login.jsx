@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { FaPhoneAlt, FaLock, FaArrowRight, FaUserShield, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 import { saveAuthData } from "../utils/auth";
 
-import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
 import API from "../services/api";
 
@@ -15,7 +14,7 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
 
-  React.useEffect(() => {
+  React.useEffect(() => { console.log('LOGIN MOUNTED', new Error().stack);
     const rawUser = localStorage.getItem("user");
     const role = localStorage.getItem("role");
     if (rawUser && role === "user") {
@@ -50,8 +49,7 @@ function Login() {
 
   return (
     <div style={{ background: "var(--bg-main)", minHeight: "100vh" }}>
-      <Navbar />
-      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
+            <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <div className="container" style={wrap}>
         <div className="card-premium fade-up" style={card}>

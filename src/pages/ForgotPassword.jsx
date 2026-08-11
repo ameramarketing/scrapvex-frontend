@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaShieldAlt, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
 import API from "../services/api";
 
@@ -89,8 +88,7 @@ function ForgotPassword() {
 
   return (
     <div style={{ background: "var(--bg-main)", minHeight: "100vh" }}>
-      <Navbar />
-      <Toast
+            <Toast
         show={toast.show}
         type={toast.type}
         message={toast.message}

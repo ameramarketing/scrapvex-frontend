@@ -24,7 +24,6 @@ import {
   FaBox
 } from "react-icons/fa";
 
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import RateCard from "../components/RateCard";
 import API from "../services/api";
@@ -201,8 +200,7 @@ function Rates() {
 
   return (
     <div>
-      <Navbar />
-
+      
       {/* HERO */}
       <div
         className="container"

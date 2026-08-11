@@ -1,13 +1,11 @@
 import React from "react";
-import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { FaFileContract, FaShieldAlt, FaBalanceScale, FaUserLock } from "react-icons/fa";
 
 function TermsConditions() {
   return (
     <div style={{background:"var(--bg-main)"}}>
-      <Navbar />
-
+      
       <div className="container section-padding">
         <div className="card-premium fade-up" style={contentBox}>
           <div style={header}>
