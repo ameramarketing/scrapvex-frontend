@@ -11,15 +11,19 @@ const getBaseURL = () => {
     const customUrl = localStorage.getItem("CUSTOM_API_URL");
     if (customUrl) return `${customUrl.replace(/\/$/, "")}/api`;
 
-    const origin = window.location.origin || "";
-    if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
-      return "http://localhost:5000/api";
-    }
-
-    if (origin.includes("capacitor://")) {
-      return "https://scrapvex-backend.onrender.com/api";
+    // CRITICAL FIX: Capacitor Android uses https://localhost as its origin.
+    // We must NOT route native apps to localhost:5000.
+    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+    
+    // Only route to local backend if it's an actual browser in DEV mode
+    if (!isCapacitor && import.meta.env.DEV) {
+      const origin = window.location.origin || "";
+      if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
+        return "http://localhost:5000/api";
+      }
     }
   }
+  
   const target = envUrl || "https://scrapvex-backend.onrender.com";
   return `${target.replace(/\/$/, "")}/api`;
 };
