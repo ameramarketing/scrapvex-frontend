@@ -72,7 +72,7 @@ function PickupForm() {
   };
 
   const verifyOtp = async () => {
-    if (form.otp.length !== 4) return showToast("error", "Enter 4 digit OTP");
+    if (form.otp.length !== 6) return showToast("error", "Enter 6 digit OTP");
     setLoading(true);
     try {
       const { data } = await API.post("/auth/verify-otp", { mobile: form.phone, otp: form.otp, name: form.name });
@@ -254,9 +254,9 @@ function PickupForm() {
             ) : (
               <div style={{ marginTop: "15px" }}>
                 <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "12px" }}>
-                  {otpChannel === "whatsapp" ? "💬 Secret OTP sent to your WhatsApp inbox" : "📱 Secret OTP sent via SMS"} on <b>+91 {form.phone}</b>.
+                  {otpChannel === "whatsapp" ? "💬 Secret OTP sent to your WhatsApp inbox" : "📩 Secret OTP sent via SMS"} on <b>+91 {form.phone}</b>.
                 </p>
-                <Input icon={<FaLock />} placeholder="Enter 4-Digit Verification Code" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 4))} />
+                <Input icon={<FaLock />} placeholder="Enter 6-Digit Verification Code" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 6))} />
                 <button className="btn-premium full-width-mobile" style={{ marginTop: "10px" }} onClick={verifyOtp} disabled={loading}>Verify OTP & Continue</button>
               </div>
             )}
