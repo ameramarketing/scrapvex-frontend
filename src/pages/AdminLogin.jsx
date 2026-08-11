@@ -68,7 +68,7 @@ function AdminLogin() {
         <form onSubmit={handleLogin}>
           <div style={inputWrap}>
             <FaEnvelope style={icon} />
-            <input type="email" placeholder="Admin Email" value={email} onChange={(e) => setEmail(e.target.value)} style={input} />
+            <input type="text" placeholder="Admin Email or Mobile" value={email} onChange={(e) => setEmail(e.target.value)} style={input} />
           </div>
           <div style={{ ...inputWrap, position: "relative" }}>
             <FaLock style={icon} />
