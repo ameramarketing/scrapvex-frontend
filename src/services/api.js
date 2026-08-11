@@ -70,13 +70,9 @@ API.interceptors.response.use(
   async (error) => {
     // DIAGNOSTIC LOG (Error)
     if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-      console.log(`[CAPACITOR-API-ERROR] Method: ${error.config?.method?.toUpperCase()}`);
-      console.log(`[CAPACITOR-API-ERROR] URL: ${error.config?.baseURL}${error.config?.url}`);
-      console.log(`[CAPACITOR-API-ERROR] Message: ${error.message}`);
-      console.log(`[CAPACITOR-API-ERROR] Code: ${error.code}`);
-      console.log(`[CAPACITOR-API-ERROR] Status: ${error.response?.status}`);
-      console.log(`[CAPACITOR-API-ERROR] Response Data:`, error.response?.data);
-      console.log(`[CAPACITOR-API-ERROR] Request details:`, error.request);
+      const msg = `[API ERROR]\nURL: ${error.config?.baseURL}${error.config?.url}\nMsg: ${error.message}\nStatus: ${error.response?.status}`;
+      console.log(msg);
+      alert(msg);
     }
 
     if (
