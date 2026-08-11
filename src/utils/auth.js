@@ -18,30 +18,21 @@
  */
 
 import { Capacitor } from "@capacitor/core";
+import { SecureStoragePlugin } from "capacitor-secure-storage-plugin";
 import API from "../services/api";
 
 // Determine if running inside a native Capacitor container (Android/iOS)
 const isNativeApp = () =>
   typeof Capacitor !== "undefined" && Capacitor.isNativePlatform();
 
-// Lazy-load the secure storage plugin only when running native
-let _SecureStoragePlugin = null;
-const getSecureStorage = async () => {
-  if (_SecureStoragePlugin) return _SecureStoragePlugin;
-  try {
-    const mod = await import("capacitor-secure-storage-plugin");
-    _SecureStoragePlugin = mod.SecureStoragePlugin || mod.default;
-    return _SecureStoragePlugin;
-  } catch {
-    return null;
-  }
-};
-
+// Use static plugin import directly
+const getSecureStorage = () => {
+  return SecureStoragePlugin;
 /* ─── Write Auth Data ─────────────────────────────────────────── */
 export async function saveAuthData(token, user, role) {
   if (isNativeApp()) {
     try {
-      const ss = await getSecureStorage();
+      const ss = SecureStoragePlugin;
       if (ss) {
         await ss.set({ key: "auth_token", value: token });
         await ss.set({ key: "auth_user", value: JSON.stringify(user) });
@@ -63,7 +54,7 @@ export async function saveAuthData(token, user, role) {
 export async function getAuthToken() {
   if (isNativeApp()) {
     try {
-      const ss = await getSecureStorage();
+      const ss = getSecureStorage();
       if (ss) {
         const result = await ss.get({ key: "auth_token" });
         return result?.value || null;
@@ -79,7 +70,7 @@ export async function getAuthToken() {
 export async function getAuthUser() {
   if (isNativeApp()) {
     try {
-      const ss = await getSecureStorage();
+      const ss = getSecureStorage();
       if (ss) {
         const result = await ss.get({ key: "auth_user" });
         if (result?.value) return JSON.parse(result.value);
@@ -100,7 +91,7 @@ export async function getAuthUser() {
 export async function getAuthRole() {
   if (isNativeApp()) {
     try {
-      const ss = await getSecureStorage();
+      const ss = getSecureStorage();
       if (ss) {
         const result = await ss.get({ key: "auth_role" });
         return result?.value || null;
@@ -116,7 +107,7 @@ export async function getAuthRole() {
 export async function clearAuthData() {
   if (isNativeApp()) {
     try {
-      const ss = await getSecureStorage();
+      const ss = getSecureStorage();
       if (ss) {
         await ss.remove({ key: "auth_token" });
         await ss.remove({ key: "auth_user" });
