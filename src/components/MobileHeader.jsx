@@ -221,12 +221,12 @@ function MobileHeader({ onSelectCity }) {
 
 const headerContainer = {
   background: "#ffffff",
-  padding: "12px 16px",
+  padding: "calc(12px + env(safe-area-inset-top, 0px)) 16px 12px 16px",
   position: "sticky",
   top: 0,
   zIndex: 100,
   borderBottom: "1px solid #f1f5f9",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.03)"
+  boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
 };
 
 const unservicedBannerStyle = {

@@ -2,29 +2,26 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaTruck, FaTags, FaHistory, FaUser, FaPlus } from "react-icons/fa";
 import MobileHeader from "./MobileHeader";
+import NativePageTransition from "./NativePageTransition";
+import { useBackButton } from "../hooks/useBackButton";
+import { isMobileEnvironment } from "../platform/platform";
 
 function MobileAppShell({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [isMobileDevice, setIsMobileDevice] = useState(() => {
-    if (typeof window === "undefined") return false;
-    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
-    const isSmallScreen = window.innerWidth <= 768;
-    const isQueryApp = window.location.search.includes("app=true") || window.location.search.includes("view=mobile");
-    return isCapacitor || isSmallScreen || isQueryApp;
-  });
+  const [isMobileDevice, setIsMobileDevice] = useState(isMobileEnvironment());
 
   useEffect(() => {
     const handleResize = () => {
-      const isCapacitor = typeof window !== "undefined" && window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform();
-      const isSmallScreen = window.innerWidth <= 768;
-      const isQueryApp = window.location.search.includes("app=true") || window.location.search.includes("view=mobile");
-      setIsMobileDevice(isCapacitor || isSmallScreen || isQueryApp);
+      setIsMobileDevice(isMobileEnvironment());
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Initialize back button handler for native apps
+  useBackButton();
 
   // Hide mobile shell on Admin / Collector dashboards
   const hideShellRoutes = [
@@ -66,7 +63,9 @@ function MobileAppShell({ children }) {
   return (
     <div style={nativeAppWrapper}>
       <MobileHeader />
-      <main style={nativeMainContent}>{children}</main>
+      <main style={nativeMainContent}>
+        <NativePageTransition>{children}</NativePageTransition>
+      </main>
 
       {/* Native Bottom Navigation Bar */}
       <nav style={nativeBottomNav}>
@@ -110,7 +109,7 @@ const nativeAppWrapper = {
   background: "#f8fafc",
   display: "flex",
   flexDirection: "column",
-  paddingBottom: "70px"
+  paddingBottom: "calc(70px + env(safe-area-inset-bottom, 0px))"
 };
 
 const nativeMainContent = {

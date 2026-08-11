@@ -33,9 +33,11 @@ import Notifications from "./pages/Notifications";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ThemeProvider } from "./context/ThemeContext";
 import FloatingActions from "./components/FloatingActions";
-import MobileBottomNav from "./components/MobileBottomNav";
 import MobileAppShell from "./components/MobileAppShell";
 import GlobalLoader from "./components/GlobalLoader";
+import NativeOfflineBanner from "./components/NativeOfflineBanner";
+import { StatusBar, Style } from "@capacitor/status-bar";
+import { isNativeApp } from "./platform/platform";
 
 function InitialHomeScreen() {
   const isCapacitor = typeof window !== "undefined" && (
@@ -66,9 +68,18 @@ function App() {
     setShowSplash(false);
   };
 
+  // Initialize Native Features
+  React.useEffect(() => {
+    if (isNativeApp()) {
+      StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+      StatusBar.setBackgroundColor({ color: "#0b8f3a" }).catch(() => {});
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+      <NativeOfflineBanner />
       <BrowserRouter>
         <GlobalLoader />
         <MobileAppShell>

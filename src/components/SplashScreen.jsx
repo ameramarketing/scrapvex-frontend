@@ -10,7 +10,7 @@ function SplashScreen({ onFinish }) {
       innerTimer = setTimeout(() => {
         if (onFinish) onFinish();
       }, 500); // 500ms fade out
-    }, 2800); // 2.8s display
+    }, 1500); // 1.5s display
 
     return () => {
       clearTimeout(timer);
