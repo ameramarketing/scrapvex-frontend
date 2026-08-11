@@ -2379,7 +2379,7 @@ const statIcon = { width: "45px", height: "45px", borderRadius: "12px", display:
 const statVal = { fontSize: "22px", fontWeight: "bold" };
 
 const mainGrid = { display: "flex", gap: "25px", flexWrap: "wrap" };
-const box = { background: "var(--card-bg)", padding: "25px", borderRadius: "25px", boxShadow: "0 4px 15px rgba(0,0,0,0.02)", marginBottom: "25px", width: "100%" };
+const box = { background: "var(--card-bg)", padding: "25px", borderRadius: "25px", boxShadow: "0 4px 15px rgba(0,0,0,0.02)", marginBottom: "25px", width: "100%", overflowX: "auto" };
 const boxTitle = { fontSize: "16px", margin: "0 0 20px 0", color: "var(--text-main)", fontWeight: "bold" };
 const listRow = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 0", borderBottom: "1px solid var(--glass-border)" };
 const rowTitle = { fontWeight: "bold", fontSize: "14px", color: "var(--text-main)" };
