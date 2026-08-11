@@ -28,6 +28,7 @@ const isNativeApp = () =>
 // Use static plugin import directly
 const getSecureStorage = () => {
   return SecureStoragePlugin;
+};
 /* ─── Write Auth Data ─────────────────────────────────────────── */
 export async function saveAuthData(token, user, role) {
   if (isNativeApp()) {
