@@ -107,7 +107,10 @@ function PickupForm() {
 
           const formattedAddress = `${road ? road + ", " : ""}${city} (GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)})`;
           update("address", formattedAddress);
-          if (city) update("city", city.includes("Rajouri") ? "Rajouri Town, J&K" : city);
+          
+          // Clear the city so they are forced to explicitly select from the dropdown
+          update("city", "");
+          
           if (postcode && postcode.length === 6) update("pincode", postcode);
 
           showToast("success", "Live GPS Location Pinned! 📍");
@@ -128,7 +131,10 @@ function PickupForm() {
   };
 
   const nextAddress = () => {
-    if (!form.address.trim() || !form.city.trim() || form.pincode.length !== 6) return showToast("error", "Fill all address details");
+    if (!form.address.trim()) return showToast("error", "Please enter your address");
+    if (!form.city.trim()) return showToast("error", "Please select your city from the dropdown");
+    if (!activeCities.includes(form.city)) return showToast("error", "Please select a valid city from the list");
+    if (form.pincode.length !== 6) return showToast("error", "Enter a valid 6-digit pincode");
     setStep(3);
   };
 
