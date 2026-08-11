@@ -8,6 +8,7 @@ import {
 import Toast from "../components/Toast";
 import API from "../services/api";
 import { setCookie, getCookie } from "../utils/cookies";
+import { saveAuthData } from "../utils/auth";
 
 function CollectorRegister() {
   const navigate = useNavigate();
@@ -86,13 +87,7 @@ function CollectorRegister() {
 
       const { data } = await API.post("/auth/collector-register", registerPayload);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("role", "collector");
-
-      setCookie("token", data.token);
-      setCookie("user", JSON.stringify(data.user));
-      setCookie("role", "collector");
+      await saveAuthData(data.token, data.user, "collector");
 
       showToast("success", "Collector Registration Successful! 🎉");
       setTimeout(() => navigate("/collector-dashboard"), 800);

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaSpinner, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash } from "react-icons/fa";
-import { setCookie } from "../utils/cookies";
+import { saveAuthData } from "../utils/auth";
 
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
@@ -71,13 +71,7 @@ function Register() {
 
       const { data } = await API.post("/auth/register", registerPayload);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("role", "user");
-
-      setCookie("token", data.token);
-      setCookie("user", JSON.stringify(data.user));
-      setCookie("role", "user");
+      await saveAuthData(data.token, data.user, "user");
 
       showToast("success", "Registration Successful! 🎉");
       setTimeout(() => navigate("/dashboard"), 800);

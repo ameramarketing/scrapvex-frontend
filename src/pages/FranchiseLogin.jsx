@@ -5,7 +5,7 @@ import {
 } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
-import { setCookie, getCookie } from "../utils/cookies";
+import { saveAuthData } from "../utils/auth";
 import { triggerOfficialGoogleSignIn } from "../services/googleAuth";
 
 function FranchiseLogin() {
@@ -18,8 +18,8 @@ function FranchiseLogin() {
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
   
   React.useEffect(() => {
-    const rawUser = localStorage.getItem("user") || getCookie("user");
-    const role = localStorage.getItem("role") || getCookie("role");
+    const rawUser = localStorage.getItem("user");
+    const role = localStorage.getItem("role");
     if (rawUser && role === "franchise") {
       navigate("/franchise-dashboard");
     }
@@ -35,13 +35,7 @@ function FranchiseLogin() {
       const loginPayload = email.includes("@") ? { email, password } : { mobile: email, password };
       const { data } = await API.post("/auth/franchise-login", loginPayload);
       
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("role", "franchise");
-
-      setCookie("token", data.token);
-      setCookie("user", JSON.stringify(data.user));
-      setCookie("role", "franchise");
+      await saveAuthData(data.token, data.user, "franchise");
 
       showToast("success", "Franchise Login Successful 🔐");
       setTimeout(() => navigate("/franchise-dashboard"), 700);
@@ -69,13 +63,7 @@ function FranchiseLogin() {
 
       const token = "google_auth_token_" + Date.now();
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(franchiseUserData));
-      localStorage.setItem("role", "franchise");
-
-      setCookie("token", token);
-      setCookie("user", JSON.stringify(franchiseUserData));
-      setCookie("role", "franchise");
+      await saveAuthData(token, franchiseUserData, "franchise");
 
       showToast("success", `Signed in as ${googleUser.name} (${googleUser.email})! 🏢`);
       setTimeout(() => navigate("/franchise-dashboard"), 800);

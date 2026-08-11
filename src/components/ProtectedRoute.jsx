@@ -8,7 +8,7 @@ import {
 import {
   FaRecycle
 } from "react-icons/fa";
-import { getCookie } from "../utils/cookies";
+
 
 function ProtectedRoute({
   children,
@@ -23,28 +23,8 @@ function ProtectedRoute({
   useEffect(() => {
     const timer =
       setTimeout(() => {
-        let user =
-          localStorage.getItem(
-            "user"
-          );
-
-        let currentRole =
-          localStorage.getItem(
-            "role"
-          );
-
-        if (!user) {
-          const cookieUser = getCookie("user");
-          const cookieRole = getCookie("role");
-          const cookieToken = getCookie("token");
-          if (cookieUser && cookieToken) {
-            localStorage.setItem("user", cookieUser);
-            localStorage.setItem("role", cookieRole || "");
-            localStorage.setItem("token", cookieToken);
-            user = cookieUser;
-            currentRole = cookieRole || "";
-          }
-        }
+        let user = localStorage.getItem("user");
+        let currentRole = localStorage.getItem("role");
 
         /* Admin / Collector */
         if (role) {

@@ -13,7 +13,7 @@ import Footer from "../components/Footer";
 import Toast from "../components/Toast";
 import API from "../services/api";
 import PickupForm from "../components/PickupForm";
-import { eraseCookie } from "../utils/cookies";
+import { performLogout } from "../utils/auth";
 
 /* ==========================================================
    SUB-COMPONENTS (Defined first to avoid Hoisting errors)
@@ -218,11 +218,8 @@ const playBellSound = () => {
     finally { setSubmittingTicket(false); }
   };
 
-  const logout = () => {
-    localStorage.clear();
-    eraseCookie("token");
-    eraseCookie("user");
-    eraseCookie("role");
+  const logout = async () => {
+    await performLogout();
     showToast("success", "Logged Out Successfully");
     setTimeout(() => navigate("/login"), 700);
   };

@@ -1,5 +1,6 @@
 import axios from "axios";
-import { getCookie, eraseCookie } from "../utils/cookies";
+import { eraseCookie } from "../utils/cookies";
+import { getAuthToken, clearAuthData } from "../utils/auth";
 
 let envUrl = import.meta.env.VITE_API_URL || "https://scrapvex-backend.onrender.com";
 
@@ -23,26 +24,15 @@ const API = axios.create({
   timeout: 20000,
 });
 
-API.interceptors.request.use((req) => {
-  // Ensure baseURL stays fresh if CUSTOM_API_URL is updated
+API.interceptors.request.use(async (req) => {
   req.baseURL = getBaseURL();
+
+  // Primary: Async retrieval (Secure Keystore on Android, localStorage on Web)
   let token = null;
   try {
-    token = localStorage.getItem("token");
-    // Fallback to cookies if localStorage was cleared/not loaded
-    if (!token) {
-      token = getCookie("token");
-      if (token) {
-        localStorage.setItem("token", token);
-        const user = getCookie("user");
-        const role = getCookie("role");
-        if (user) localStorage.setItem("user", user);
-        if (role) localStorage.setItem("role", role);
-      }
-    }
+    token = await getAuthToken();
   } catch (e) {
-    // localStorage blocked (strict incognito/storage disabled) — fallback to cookies only
-    token = getCookie("token");
+    // Ignore read errors
   }
 
   if (token) {
@@ -54,9 +44,11 @@ API.interceptors.request.use((req) => {
 
 API.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      localStorage.clear();
+      // Clear auth via unified mechanism
+      await clearAuthData();
+      // Clear legacy cookies if still present
       eraseCookie("token");
       eraseCookie("user");
       eraseCookie("role");

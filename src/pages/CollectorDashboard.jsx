@@ -8,7 +8,7 @@ import {
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
-import { eraseCookie } from "../utils/cookies";
+import { performLogout } from "../utils/auth";
 
 function CollectorDashboard() {
 
@@ -493,11 +493,8 @@ const playBellSound = () => {
     }
   };
 
-  const logout = () => { 
-    localStorage.clear(); 
-    eraseCookie("token");
-    eraseCookie("user");
-    eraseCookie("role");
+  const logout = async () => { 
+    await performLogout();
     navigate("/collector-login"); 
   };
 

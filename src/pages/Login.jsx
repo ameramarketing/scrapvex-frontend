@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaPhoneAlt, FaLock, FaArrowRight, FaSpinner, FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
-import { setCookie, getCookie } from "../utils/cookies";
+import { saveAuthData } from "../utils/auth";
 
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
@@ -16,8 +16,8 @@ function Login() {
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
 
   React.useEffect(() => {
-    const rawUser = localStorage.getItem("user") || getCookie("user");
-    const role = localStorage.getItem("role") || getCookie("role");
+    const rawUser = localStorage.getItem("user");
+    const role = localStorage.getItem("role");
     if (rawUser && role === "user") {
       navigate("/dashboard");
     }
@@ -34,15 +34,8 @@ function Login() {
       setLoading(true);
       const { data } = await API.post("/auth/login", { mobile, password });
       
-      // Store in localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("role", "user");
-
-      // Store in Cookies
-      setCookie("token", data.token);
-      setCookie("user", JSON.stringify(data.user));
-      setCookie("role", "user");
+      // Securely store auth data (Keystore on Android, localStorage on web)
+      await saveAuthData(data.token, data.user, "user");
 
       showToast("success", "Welcome back! 🎉");
       setTimeout(() => {

@@ -5,15 +5,15 @@ import {
 } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
-import { setCookie, getCookie } from "../utils/cookies";
+import { saveAuthData } from "../utils/auth";
 import { triggerOfficialGoogleSignIn } from "../services/googleAuth";
 
 function CollectorLogin() {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const rawUser = localStorage.getItem("user") || getCookie("user");
-    const role = localStorage.getItem("role") || getCookie("role");
+    const rawUser = localStorage.getItem("user");
+    const role = localStorage.getItem("role");
     if (rawUser && role === "collector") {
       navigate("/collector-dashboard");
     }
@@ -36,13 +36,7 @@ function CollectorLogin() {
     try {
       const { data } = await API.post("/auth/collector-login", { mobile, password });
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("role", "collector");
-
-      setCookie("token", data.token);
-      setCookie("user", JSON.stringify(data.user));
-      setCookie("role", "collector");
+      await saveAuthData(data.token, data.user, "collector");
 
       showToast("success", "Collector Login Successful 🎉");
       setTimeout(() => navigate("/collector-dashboard"), 700);
@@ -70,13 +64,7 @@ function CollectorLogin() {
 
       const token = "google_auth_token_" + Date.now();
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(collectorUserData));
-      localStorage.setItem("role", "collector");
-
-      setCookie("token", token);
-      setCookie("user", JSON.stringify(collectorUserData));
-      setCookie("role", "collector");
+      await saveAuthData(token, collectorUserData, "collector");
 
       showToast("success", `Signed in as ${googleUser.name} (${googleUser.email})! 🚚`);
       setTimeout(() => navigate("/collector-dashboard"), 800);

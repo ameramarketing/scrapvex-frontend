@@ -10,7 +10,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Toast from "../components/Toast";
 import API from "../services/api";
-import { eraseCookie } from "../utils/cookies";
+import { performLogout } from "../utils/auth";
 
 function Profile() {
   const navigate = useNavigate();
@@ -83,11 +83,8 @@ function Profile() {
     }
   };
 
-  const logout = () => {
-    localStorage.clear();
-    eraseCookie("token");
-    eraseCookie("user");
-    eraseCookie("role");
+  const logout = async () => {
+    await performLogout();
     showToast("success", "Logged Out Successfully");
     setTimeout(() => navigate("/login"), 700);
   };

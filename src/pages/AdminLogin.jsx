@@ -5,7 +5,7 @@ import {
 } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
-import { setCookie, getCookie } from "../utils/cookies";
+import { saveAuthData } from "../utils/auth";
 
 function AdminLogin() {
   const navigate = useNavigate();
@@ -17,8 +17,8 @@ function AdminLogin() {
   
   React.useEffect(() => {
     try {
-      const rawUser = localStorage.getItem("user") || getCookie("user");
-      const role = localStorage.getItem("role") || getCookie("role");
+      const rawUser = localStorage.getItem("user");
+      const role = localStorage.getItem("role");
       if (rawUser && rawUser !== "undefined" && rawUser !== "null" && role === "admin") {
         navigate("/admin-dashboard");
       }
@@ -37,15 +37,8 @@ function AdminLogin() {
     try {
       const { data } = await API.post("/auth/admin-login", { email, password });
       
-      // Store in localStorage
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("role", "admin");
-
-      // Store in Cookies
-      setCookie("token", data.token);
-      setCookie("user", JSON.stringify(data.user));
-      setCookie("role", "admin");
+      // Securely store auth data (Keystore on Android, localStorage on web)
+      await saveAuthData(data.token, data.user, "admin");
 
       showToast("success", "Admin Login Successful 🔐");
       setTimeout(() => navigate("/admin-dashboard"), 700);

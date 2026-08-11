@@ -7,6 +7,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import API from "../services/api";
 import { getCookie, eraseCookie } from "../utils/cookies";
+import { performLogout } from "../utils/auth";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
@@ -192,11 +193,8 @@ function Navbar() {
               </>
             ) : (
               <button 
-                onClick={() => { 
-                  localStorage.clear(); 
-                  eraseCookie("token");
-                  eraseCookie("user");
-                  eraseCookie("role");
+                onClick={async () => { 
+                  await performLogout();
                   window.location.href = "/login"; 
                 }} 
                 style={{...mobileNavLink, background:"none", border:"none", width:"100%", textAlign:"left", color:"#e74c3c"}}

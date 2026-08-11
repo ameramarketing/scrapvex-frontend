@@ -6,6 +6,7 @@ import {
 } from "react-icons/fa";
 import Toast from "./Toast";
 import API from "../services/api";
+import { saveAuthData } from "../utils/auth";
 
 function PickupForm() {
   const navigate = useNavigate();
@@ -177,8 +178,7 @@ function PickupForm() {
       const { data } = await API.post("/pickups/create", pickupData);
       if (data.success) {
         if (data.token && data.user) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
+          await saveAuthData(data.token, data.user, "user");
         }
         showToast("success", "Success! Pickup Booked 🎉");
         setStep(5);

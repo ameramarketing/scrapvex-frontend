@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
-import { eraseCookie } from "../utils/cookies";
+import { performLogout } from "../utils/auth";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -781,11 +781,8 @@ const playBellSound = () => {
     } catch (e) { showToast("error", e.response?.data?.message || "Failed to raise ticket"); }
   };
 
-  const logout = () => { 
-    localStorage.clear(); 
-    eraseCookie("token");
-    eraseCookie("user");
-    eraseCookie("role");
+  const logout = async () => { 
+    await performLogout();
     navigate("/franchise-login"); 
   };
 
