@@ -297,8 +297,8 @@ const playBellSound = () => {
 
   const handleRequestWithdrawal = async () => {
     const { amount, upiId, name } = withdrawalForm;
-    if (!withdrawalOtp) {
-      return showToast("error", "Please enter the security OTP");
+    if (!withdrawalOtp || withdrawalOtp.length !== 6) {
+      return showToast("error", "Please enter the 6-digit security OTP");
     }
     try {
       const { data } = await API.post("/wallet/withdraw", {
@@ -1149,14 +1149,14 @@ const playBellSound = () => {
                 </div>
 
                 <div>
-                  <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "6px", display: "block" }}>Enter 4-Digit Security OTP</label>
+                  <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "6px", display: "block" }}>Enter 6-Digit Security OTP</label>
                   <input 
                     type="text"
-                    maxLength={4}
+                    maxLength={6}
                     style={{ width: "100%", padding: "12px 15px", borderRadius: "12px", border: "1px solid var(--primary)", background: "var(--bg-main)", color: "var(--text-main)", fontSize: "20px", fontWeight: "bold", textAlign: "center", letterSpacing: "8px", outline: "none", boxSizing: "border-box" }} 
-                    placeholder="••••" 
+                    placeholder="••••••" 
                     value={withdrawalOtp} 
-                    onChange={e => setWithdrawalOtp(e.target.value.replace(/\D/g, ""))} 
+                    onChange={e => setWithdrawalOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} 
                   />
                 </div>
 

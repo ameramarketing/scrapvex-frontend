@@ -69,9 +69,9 @@ function CollectorRegister() {
   const handleFinalRegister = async (e) => {
     e.preventDefault();
     setModalError("");
-    if (otp.length !== 4) {
-      setModalError("Please enter 4-digit OTP code");
-      return showToast("error", "Please enter 4-digit OTP code");
+    if (otp.length !== 6) {
+      setModalError("Please enter 6-Digit OTP code");
+      return showToast("error", "Please enter 6-Digit OTP code");
     }
 
     try {
@@ -198,7 +198,7 @@ function CollectorRegister() {
             <div style={modalHeaderIcon}><FaKey /></div>
             <h3 style={{ fontSize: "22px", margin: "10px 0 6px 0", color: "#0f172a" }}>Enter Collector OTP</h3>
             <p style={{ fontSize: "14px", color: "#475569", margin: "10px 0 20px 0", lineHeight: "1.5" }}>
-              {otpChannel === "whatsapp" ? "💬 We have sent a 4-Digit secret OTP to your WhatsApp inbox" : "📱 We have sent a 4-Digit secret OTP via SMS"} on <b>+91 {form.mobile}</b>. Please enter the code below:
+              {otpChannel === "whatsapp" ? "💬 We have sent a 6-Digit secret OTP to your WhatsApp inbox" : "📱 We have sent a 6-Digit secret OTP via SMS"} on <b>+91 {form.mobile}</b>. Please enter the code below:
             </p>
 
             {modalError && (
@@ -216,7 +216,7 @@ function CollectorRegister() {
                   value={otp}
                   onChange={(e) => {
                     setModalError("");
-                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 4));
+                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
                   }}
                   style={otpInput}
                   autoFocus
@@ -262,3 +262,4 @@ const otpInputGroup = { background: "#f8fafc", borderRadius: "16px", padding: "1
 const otpInput = { width: "100%", border: "none", outline: "none", background: "transparent", textAlign: "center", fontSize: "28px", fontWeight: "800", letterSpacing: "12px", color: "#0f172a" };
 
 export default CollectorRegister;
+

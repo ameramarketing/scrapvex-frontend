@@ -63,7 +63,7 @@ function ForgotPassword() {
 
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
-    if (otp.length !== 4) return showToast("error", "Enter 4 digit OTP");
+    if (otp.length !== 6) return showToast("error", "Enter 6 digit OTP");
     setLoading(true);
     try {
       const { data } = await API.post("/auth/verify-otp", { mobile, otp });
@@ -165,9 +165,9 @@ function ForgotPassword() {
                 <FaShieldAlt style={{...icon, color: "var(--primary)"}} />
                 <input 
                   type="text" 
-                  placeholder="Enter 4-digit OTP *" 
+                  placeholder="Enter 6-Digit OTP *" 
                   value={otp} 
-                  onChange={(e) => setOtp(e.target.value.slice(0, 4))} 
+                  onChange={(e) => setOtp(e.target.value.slice(0, 6))} 
                   style={{...input, color: "var(--text-main)"}} 
                   required 
                 />
@@ -251,3 +251,4 @@ const input = { border: "none", background: "transparent", outline: "none", font
 const btn = { width: "100%", background: "#0b8f3a", color: "#fff", border: "none", padding: "15px", borderRadius: "14px", fontWeight: "bold", fontSize: "16px", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", transition: "0.3s" };
 
 export default ForgotPassword;
+

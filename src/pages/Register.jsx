@@ -54,9 +54,9 @@ function Register() {
   const handleFinalRegister = async (e) => {
     e.preventDefault();
     setModalError("");
-    if (otp.length !== 4) {
-      setModalError("Please enter 4-digit OTP code");
-      return showToast("error", "Please enter 4-digit OTP code");
+    if (otp.length !== 6) {
+      setModalError("Please enter 6-Digit OTP code");
+      return showToast("error", "Please enter 6-Digit OTP code");
     }
 
     try {
@@ -209,9 +209,9 @@ function Register() {
             <div style={modalHeaderIcon}>
               <FaKey />
             </div>
-            <h3 style={{ fontSize: "22px", margin: "10px 0 6px 0", color: "#0f172a" }}>Enter 4-Digit OTP</h3>
+            <h3 style={{ fontSize: "22px", margin: "10px 0 6px 0", color: "#0f172a" }}>Enter 6-Digit OTP</h3>
             <p style={{ fontSize: "14px", color: "#475569", margin: "10px 0 20px 0", lineHeight: "1.5" }}>
-              {otpChannel === "whatsapp" ? "💬 We have sent a 4-Digit secret OTP to your WhatsApp inbox" : "📱 We have sent a 4-Digit secret OTP via SMS"} on <b>+91 {form.mobile}</b>. Please enter the code below:
+              {otpChannel === "whatsapp" ? "💬 We have sent a 6-Digit secret OTP to your WhatsApp inbox" : "📱 We have sent a 6-Digit secret OTP via SMS"} on <b>+91 {form.mobile}</b>. Please enter the code below:
             </p>
 
             {modalError && (
@@ -229,7 +229,7 @@ function Register() {
                   value={otp}
                   onChange={(e) => {
                     setModalError("");
-                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 4));
+                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
                   }}
                   style={otpInput}
                   autoFocus
