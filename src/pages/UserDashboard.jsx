@@ -291,7 +291,7 @@ const playBellSound = () => {
 
   const handleWithdraw = async (e) => {
     e.preventDefault();
-    if (!withdrawOtp) return showToast("error", "Please enter the security OTP");
+    if (!withdrawOtp || withdrawOtp.length !== 6) return showToast("error", "Please enter the 6-digit security OTP");
     setSubmitting(true);
     try {
       const { data } = await API.post("/wallet/withdraw", {
@@ -876,15 +876,15 @@ const playBellSound = () => {
                                   <div style={{ color: "var(--text-main)", marginTop: "3px" }}><strong>Holder:</strong> {withdrawForm.name}</div>
                                 </div>
 
-                                <div style={{display:"flex", alignItems:"center", gap:"12px", background:"var(--bg-main)", padding:"12px 15px", borderRadius:"12px", border:"1px solid var(--primary)"}}>
-                                  <span style={{color:"var(--primary)", fontWeight:"bold"}}>🔑</span>
+                                <div style={{display:"flex", alignItems:"center", gap:"12px", background:"var(--bg-main)", padding:"12px 15px", borderRadius:"12px", border:"2px solid var(--primary)"}}>
+                                  <FaLock color="var(--primary)" />
                                   <input 
                                     type="text" 
-                                    maxLength={4}
-                                    placeholder="Enter 4-Digit OTP" 
+                                    maxLength={6}
+                                    placeholder="Enter 6-Digit OTP" 
                                     required 
                                     value={withdrawOtp} 
-                                    onChange={e=>setWithdrawOtp(e.target.value.replace(/\D/g,""))} 
+                                    onChange={e=>setWithdrawOtp(e.target.value.replace(/\D/g,"").slice(0, 6))} 
                                     style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)", fontWeight: "bold", textAlign: "center", letterSpacing: "4px"}} 
                                   />
                                 </div>

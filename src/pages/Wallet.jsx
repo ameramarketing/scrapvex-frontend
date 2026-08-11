@@ -86,7 +86,7 @@ function Wallet() {
 
   const handleWithdraw = async (e) => {
     e.preventDefault();
-    if (!withdrawOtp) return showToast("error", "Please enter the security OTP");
+    if (!withdrawOtp || withdrawOtp.length !== 6) return showToast("error", "Please enter the 6-digit security OTP");
     setSubmitting(true);
     try {
       const { data } = await API.post("/wallet/withdraw", {
@@ -287,15 +287,15 @@ function Wallet() {
                    <div style={{ color: "var(--text-main)", marginTop: "3px" }}><strong>Holder:</strong> {withdrawForm.name}</div>
                  </div>
 
-                 <div style={{...inputGroup, background: "var(--bg-main)", border: "1px solid var(--primary)"}}>
-                   <span style={{...inputIcon, color: "var(--primary)"}}>🔑</span>
+                 <div style={{...inputGroup, background: "var(--bg-main)", border: "2px solid var(--primary)"}}>
+                   <FaLock style={{...inputIcon, color: "var(--primary)"}} />
                    <input 
                      type="text" 
-                     maxLength={4}
-                     placeholder="Enter 4-Digit OTP" 
+                     maxLength={6}
+                     placeholder="Enter 6-Digit OTP" 
                      required 
                      value={withdrawOtp} 
-                     onChange={e=>setWithdrawOtp(e.target.value.replace(/\D/g,""))} 
+                     onChange={e=>setWithdrawOtp(e.target.value.replace(/\D/g,"").slice(0, 6))} 
                      style={{...input, color: "var(--text-main)", fontWeight: "bold", textAlign: "center", letterSpacing: "4px"}} 
                    />
                  </div>

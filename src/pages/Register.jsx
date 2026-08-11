@@ -224,8 +224,8 @@ function Register() {
               <div style={otpInputGroup}>
                 <input
                   type="text"
-                  maxLength="4"
-                  placeholder="0 0 0 0"
+                  maxLength="6"
+                  placeholder="0 0 0 0 0 0"
                   value={otp}
                   onChange={(e) => {
                     setModalError("");
