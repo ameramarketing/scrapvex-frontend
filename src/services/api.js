@@ -1,6 +1,7 @@
 import axios from "axios";
 import { eraseCookie } from "../utils/cookies";
 import { getAuthToken, clearAuthData } from "../utils/auth";
+import { isNativeApp } from "../platform/platform";
 
 let envUrl =
   import.meta.env.VITE_API_URL || "https://scrapvex-backend.onrender.com";
@@ -13,10 +14,10 @@ const getBaseURL = () => {
 
     // CRITICAL FIX: Capacitor Android uses https://localhost as its origin.
     // We must NOT route native apps to localhost:5000.
-    const isCapacitor = window.Capacitor && window.Capacitor.isNativePlatform();
+    const isCap = isNativeApp();
     
     // Only route to local backend if it's an actual browser in DEV mode
-    if (!isCapacitor && import.meta.env.DEV) {
+    if (!isCap && import.meta.env.DEV) {
       const origin = window.location.origin || "";
       if (origin.includes("localhost") || origin.includes("127.0.0.1")) {
         return "http://localhost:5000/api";
@@ -54,7 +55,8 @@ API.interceptors.request.use(async (req) => {
 API.interceptors.response.use(
   (response) => {
     // DIAGNOSTIC LOG (Success)
-    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+    const isCap = isNativeApp();
+    if (isCap) {
       const url = response.config.url || "";
       if (url.includes("login") || url.includes("rates")) {
         console.log(`[CAPACITOR-API-SUCCESS] ${response.config.method?.toUpperCase()} ${response.config.baseURL}${url}`);
@@ -69,8 +71,9 @@ API.interceptors.response.use(
   },
   async (error) => {
     // DIAGNOSTIC LOG (Error)
-    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-      const msg = `[API ERROR]\nURL: ${error.config?.baseURL}${error.config?.url}\nMsg: ${error.message}\nStatus: ${error.response?.status}`;
+    const isCap = isNativeApp();
+    if (isCap || window.location.search.includes("app=true")) {
+      const msg = `[API ERROR]\nMethod: ${error.config?.method?.toUpperCase()}\nURL: ${error.config?.baseURL}${error.config?.url}\nMsg: ${error.message}\nStatus: ${error.response?.status}`;
       console.log(msg);
       alert(msg);
     }
