@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaGoogle, FaEye, FaEyeSlash, FaHome
-} from "react-icons/fa";
+import { FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaGoogle, FaEye, FaEyeSlash, FaHome, FaRecycle } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
 import { saveAuthData } from "../utils/auth";
@@ -131,7 +129,7 @@ function CollectorLogin() {
         </div>
 
         <button style={btn} className="btn pulse-btn" onClick={handleLogin} disabled={loading}>
-          {loading ? <><FaSpinner className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}
+          {loading ? <><FaRecycle className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}
         </button>
 
         <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginTop: "20px", fontSize: "14px" }}>

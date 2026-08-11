@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaUserCircle, FaTruck, FaRecycle, FaRupeeSign, FaClipboardList,
-  FaChartLine, FaSignOutAlt, FaArrowRight, FaClock, FaUser,
-  FaTags, FaPhoneAlt, FaBell, FaTimes, FaStar, FaPaperPlane,
-  FaHome, FaHistory, FaPlusCircle, FaWallet, FaMapMarkerAlt, FaCheckCircle,
-  FaArrowUp, FaArrowDown, FaMobileAlt, FaUniversity, FaExclamationTriangle, FaSpinner, FaPlus, FaCamera
-} from "react-icons/fa";
+import { FaUserCircle, FaTruck, FaRecycle, FaRupeeSign, FaClipboardList, FaChartLine, FaSignOutAlt, FaArrowRight, FaClock, FaUser, FaTags, FaPhoneAlt, FaBell, FaTimes, FaStar, FaPaperPlane, FaHome, FaHistory, FaPlusCircle, FaWallet, FaMapMarkerAlt, FaCheckCircle, FaArrowUp, FaArrowDown, FaMobileAlt, FaUniversity, FaExclamationTriangle, FaPlus, FaCamera } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -476,7 +470,7 @@ const playBellSound = () => {
   }, [pickups]);
 
 
-  if (loading) return <div style={loaderStyle}><div className="premium-spinner"></div></div>;
+  if (loading) return <div style={loaderStyle}><FaRecycle className="spin" style={{fontSize: "45px", color: "var(--primary)"}} /></div>;
 
   return (
     <div style={pageContainerStyle}>
@@ -837,7 +831,7 @@ const playBellSound = () => {
                                <input type="number" placeholder="Amount" required value={rechargeForm.amount} onChange={e=>setRechargeForm({...rechargeForm, amount: e.target.value})} style={{border:"none", background:"transparent", outline:"none", width:"100%", color:"var(--text-main)"}} />
                             </div>
                             <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                               {submitting ? <FaSpinner className="spin" /> : "Recharge Now"}
+                               {submitting ? <FaRecycle className="spin" /> : "Recharge Now"}
                             </button>
                          </form>
                       )}
@@ -864,7 +858,7 @@ const playBellSound = () => {
                                 </div>
 
                                 <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                                   {submitting ? <FaSpinner className="spin" /> : "Verify & Send Security OTP"}
+                                   {submitting ? <FaRecycle className="spin" /> : "Verify & Send Security OTP"}
                                 </button>
                               </>
                             ) : (
@@ -890,7 +884,7 @@ const playBellSound = () => {
                                 </div>
 
                                 <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                                  {submitting ? <FaSpinner className="spin" /> : "Confirm & Withdraw Funds"}
+                                  {submitting ? <FaRecycle className="spin" /> : "Confirm & Withdraw Funds"}
                                 </button>
 
                                 <button 
@@ -940,7 +934,7 @@ const playBellSound = () => {
                    </div>
 
                    {loadingRates ? (
-                      <div style={{textAlign:"center", padding:"40px"}}><FaSpinner className="spin" size={30} color="var(--primary)" /></div>
+                      <div style={{textAlign:"center", padding:"40px"}}><FaRecycle className="spin" size={30} color="var(--primary)" /></div>
                    ) : (
                       <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(140px, 1fr))", gap:"15px"}}>
                          {ratesData.map(item => (
@@ -1070,7 +1064,7 @@ const playBellSound = () => {
                          ) : (
                             <>
                                <button className="btn-premium" style={{flex:2}} onClick={handleSaveProfileClick} disabled={submitting}>
-                                  {submitting ? <FaSpinner className="spin" /> : "Save Changes"}
+                                  {submitting ? <FaRecycle className="spin" /> : "Save Changes"}
                                </button>
                                <button style={{flex:1, background:"var(--bg-main)", border:"1px solid var(--glass-border)", borderRadius:"15px", color:"var(--text-muted)", fontWeight:"bold"}} onClick={() => { setEditMode(false); setProfileForm({ name: user?.name, email: user?.email, address: user?.address, area: user?.area || user?.assignedCity, oldPassword: "", newPassword: "", confirmPassword: "" }); }}>Cancel</button>
                             </>
@@ -1154,7 +1148,7 @@ const playBellSound = () => {
                 <textarea style={{ width: "100%", padding: "12px 15px", borderRadius: "12px", border: "1px solid var(--glass-border)", background: "var(--bg-main)", color: "var(--text-main)", fontSize: "14px", outline: "none", boxSizing: "border-box", height: "100px", resize: "vertical" }} placeholder="Explain your issue clearly..." value={newTicketForm.message} onChange={e => setNewTicketForm({ ...newTicketForm, message: e.target.value })} />
               </div>
               <button className="btn-premium" style={{ width: "100%" }} onClick={handleCreateTicket} disabled={submittingTicket}>
-                {submittingTicket ? <FaSpinner className="spin" /> : "Submit Ticket"}
+                {submittingTicket ? <FaRecycle className="spin" /> : "Submit Ticket"}
               </button>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaSpinner, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 import { saveAuthData } from "../utils/auth";
 
 import Navbar from "../components/Navbar";
@@ -181,7 +181,7 @@ function Register() {
                 disabled={loading}
                 onClick={(e) => handleRequestOtp(e, "whatsapp")}
               >
-                {loading ? <FaSpinner className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
+                {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
               </button>
 
               <button
@@ -191,7 +191,7 @@ function Register() {
                 disabled={loading}
                 onClick={(e) => handleRequestOtp(e, "sms")}
               >
-                {loading ? <FaSpinner className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
+                {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
               </button>
             </div>
           </form>
@@ -237,7 +237,7 @@ function Register() {
               </div>
 
               <button type="submit" className="btn-premium" style={{ width: "100%", marginTop: "18px", padding: "14px" }} disabled={loading}>
-                {loading ? <FaSpinner className="spin" /> : <>Verify & Complete Registration <FaCheckCircle /></>}
+                {loading ? <FaRecycle className="spin" /> : <>Verify & Complete Registration <FaCheckCircle /></>}
               </button>
             </form>
 

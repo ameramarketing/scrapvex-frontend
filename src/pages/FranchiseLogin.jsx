@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaSpinner, FaGoogle, FaEye, FaEyeSlash, FaHome
-} from "react-icons/fa";
+import { FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaGoogle, FaEye, FaEyeSlash, FaHome, FaRecycle } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
 import { saveAuthData } from "../utils/auth";
@@ -108,7 +106,7 @@ function FranchiseLogin() {
           </button>
         </div>
         <button style={btn} className="btn pulse-btn" onClick={handleLogin} disabled={loading}>
-          {loading ? <><FaSpinner className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}
+          {loading ? <><FaRecycle className="spin" /> Logging...</> : <>Login <FaArrowRight style={{ marginLeft: "8px" }} /></>}
         </button>
       </div>
     </div>

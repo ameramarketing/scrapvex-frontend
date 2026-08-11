@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaUser, FaPhoneAlt, FaLock, FaMapMarkerAlt, FaCalendarAlt,
-  FaClock, FaRecycle, FaGift, FaCheckCircle, FaSpinner, FaChevronRight, FaInfoCircle, FaPlus, FaMinus, FaCrosshairs
-} from "react-icons/fa";
+import { FaUser, FaPhoneAlt, FaLock, FaMapMarkerAlt, FaCalendarAlt, FaClock, FaRecycle, FaGift, FaCheckCircle, FaChevronRight, FaInfoCircle, FaPlus, FaMinus, FaCrosshairs } from "react-icons/fa";
 import Toast from "./Toast";
 import API from "../services/api";
 import { saveAuthData } from "../utils/auth";
@@ -245,7 +242,7 @@ function PickupForm() {
                   onClick={() => sendOtp("whatsapp")}
                   disabled={loading}
                 >
-                  {loading ? <FaSpinner className="spin" /> : <> Get OTP on WhatsApp</>}
+                  {loading ? <FaRecycle className="spin" /> : <> Get OTP on WhatsApp</>}
                 </button>
                 <button
                   type="button"
@@ -254,7 +251,7 @@ function PickupForm() {
                   onClick={() => sendOtp("sms")}
                   disabled={loading}
                 >
-                  {loading ? <FaSpinner className="spin" /> : <> Get OTP via SMS</>}
+                  {loading ? <FaRecycle className="spin" /> : <> Get OTP via SMS</>}
                 </button>
               </div>
             ) : (
@@ -294,13 +291,13 @@ function PickupForm() {
                 marginBottom: "14px"
               }}
             >
-              {locationLoading ? <FaSpinner className="spin" /> : <FaCrosshairs style={{ color: "#0b8f3a" }} />}
+              {locationLoading ? <FaRecycle className="spin" /> : <FaCrosshairs style={{ color: "#0b8f3a" }} />}
               <span>{locationLoading ? "Detecting Live GPS Location..." : "📍 Detect My Live GPS Location (For Collector Navigation)"}</span>
             </button>
 
             <div style={{ position: "relative" }}>
               <Input icon={<FaMapMarkerAlt />} placeholder="House / Street / Area / Landmark" value={form.address} onChange={v => update("address", v)} />
-              <button onClick={getLiveLocation} style={locBtn} title="Pin Live GPS">{locationLoading ? <FaSpinner className="spin" /> : <FaCrosshairs />}</button>
+              <button onClick={getLiveLocation} style={locBtn} title="Pin Live GPS">{locationLoading ? <FaRecycle className="spin" /> : <FaCrosshairs />}</button>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <div style={customInputWrap}>
@@ -387,7 +384,7 @@ function PickupForm() {
             </div>
 
             <button className="btn-premium full-width-mobile" onClick={submit} disabled={loading}>
-              {loading ? <FaSpinner className="spin" /> : "Confirm & Book Pickup"}
+              {loading ? <FaRecycle className="spin" /> : "Confirm & Book Pickup"}
             </button>
           </div>
         )}

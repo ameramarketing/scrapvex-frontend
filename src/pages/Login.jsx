@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaPhoneAlt, FaLock, FaArrowRight, FaSpinner, FaUserShield, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaPhoneAlt, FaLock, FaArrowRight, FaUserShield, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 import { saveAuthData } from "../utils/auth";
 
 import Navbar from "../components/Navbar";
@@ -97,7 +97,7 @@ function Login() {
             </div>
 
             <button type="submit" className="btn-premium" style={{ marginTop: "10px" }} disabled={loading}>
-              {loading ? <FaSpinner className="spin" /> : <>Login <FaArrowRight /></>}
+              {loading ? <FaRecycle className="spin" /> : <>Login <FaArrowRight /></>}
             </button>
           </form>
 

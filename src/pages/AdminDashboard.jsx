@@ -1033,7 +1033,7 @@ const playBellSound = () => {
     navigate("/admin-login"); 
   };
 
-  if (loading) return <div style={loaderStyle}><div className="spinner"></div></div>;
+  if (loading) return <div style={loaderStyle}><FaRecycle className="spin" style={{fontSize: "45px", color: "var(--primary)"}} /></div>;
 
   const NavContent = () => (
     <>

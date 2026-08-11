@@ -1,11 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaTruck, FaClock, FaCheckCircle, FaPhoneAlt, FaMapMarkerAlt,
-  FaSignOutAlt, FaRupeeSign, FaSpinner, FaInfoCircle, FaTimes,
-  FaPlus, FaTrash, FaUserAlt, FaWallet,
-  FaBars, FaRecycle, FaHistory, FaCalculator, FaBell, FaStar, FaToggleOn, FaToggleOff
-} from "react-icons/fa";
+import { FaTruck, FaClock, FaCheckCircle, FaPhoneAlt, FaMapMarkerAlt, FaSignOutAlt, FaRupeeSign, FaInfoCircle, FaTimes, FaPlus, FaTrash, FaUserAlt, FaWallet, FaBars, FaRecycle, FaHistory, FaCalculator, FaBell, FaStar, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
 import { performLogout } from "../utils/auth";
@@ -500,7 +495,7 @@ const playBellSound = () => {
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  if (loading) return <div style={loaderStyle}><div className="spinner"></div></div>;
+  if (loading) return <div style={loaderStyle}><FaRecycle className="spin" style={{fontSize: "45px", color: "var(--primary)"}} /></div>;
 
   const NavContent = () => (
     <>
@@ -833,7 +828,7 @@ const playBellSound = () => {
 
                   <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
                     <button style={{ ...addBtn, width: "100%", padding: "12px" }} onClick={handleSaveProfile} disabled={loading}>
-                      {loading ? <FaSpinner className="spin" /> : "Save Changes"}
+                      {loading ? <FaRecycle className="spin" /> : "Save Changes"}
                     </button>
                     <button style={{ ...viewBtn, width: "100%", padding: "12px", background: "var(--bg-main)", color: "var(--text-main)", border: "1px solid var(--glass-border)" }} onClick={() => { setEditProfileMode(false); setProfileForm(prev => ({ ...prev, name: user?.name, address: user?.address, area: user?.area || user?.assignedCity, oldPassword: "", newPassword: "", confirmPassword: "" })); }}>
                       Cancel
@@ -1034,7 +1029,7 @@ const playBellSound = () => {
                    <div style={{marginTop: "20px", background: "var(--primary-light)", padding: "15px", borderRadius: "15px"}}>
                       {!otpSent ? (
                         <button style={otpBtn} onClick={handleGenerateOTP} disabled={otpLoading || billItems.length === 0}>
-                           {otpLoading ? <FaSpinner className="spin"/> : "Generate OTP & Send Bill"}
+                           {otpLoading ? <FaRecycle className="spin"/> : "Generate OTP & Send Bill"}
                         </button>
                       ) : (
                         <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
@@ -1059,7 +1054,7 @@ const playBellSound = () => {
                       disabled={billItems.length === 0 || !otpSent || otp.length < 4} 
                       onClick={()=>handleAction(selectedPickup._id, "Completed")}
                    >
-                      {loadingId ? <FaSpinner className="spin"/> : "Finalize & Mark Complete"}
+                      {loadingId ? <FaRecycle className="spin"/> : "Finalize & Mark Complete"}
                     </button>
                   )}
                </div>
@@ -1088,7 +1083,7 @@ const playBellSound = () => {
               <textarea style={{ width: "100%", padding: "12px 15px", borderRadius: "12px", border: "1px solid var(--glass-border)", background: "var(--bg-main)", color: "var(--text-main)", fontSize: "14px", outline: "none", boxSizing: "border-box", height: "100px", resize: "vertical" }} placeholder="Explain your issue clearly..." value={newTicketForm.message} onChange={e => setNewTicketForm({ ...newTicketForm, message: e.target.value })} />
             </div>
             <button style={{ ...viewBtn, width: "100%", padding: "15px", justifyContent: "center", display: "flex" }} onClick={handleCreateTicket} disabled={submittingTicket}>
-              {submittingTicket ? <FaSpinner className="spin" /> : "Submit Ticket"}
+              {submittingTicket ? <FaRecycle className="spin" /> : "Submit Ticket"}
             </button>
           </div>
         </Modal>

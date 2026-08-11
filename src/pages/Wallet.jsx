@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { 
-  FaWallet, FaArrowUp, FaArrowDown, FaMobileAlt, FaUniversity, 
-  FaHistory, FaCheckCircle, FaClock, FaExclamationTriangle, FaSpinner 
-} from "react-icons/fa";
+import { FaWallet, FaArrowUp, FaArrowDown, FaMobileAlt, FaUniversity, FaHistory, FaCheckCircle, FaClock, FaExclamationTriangle, FaRecycle } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
 
@@ -131,7 +128,7 @@ function Wallet() {
 
   if (loading) return (
     <div style={{display:"flex", justifyContent:"center", alignItems:"center", height:"80vh"}}>
-      <FaSpinner className="spin" size={40} color="#0b8f3a" />
+      <FaRecycle className="spin" size={40} color="#0b8f3a" />
     </div>
   );
 
@@ -247,7 +244,7 @@ function Wallet() {
                <input type="number" placeholder="Amount" required value={rechargeForm.amount} onChange={e=>setRechargeForm({...rechargeForm, amount: e.target.value})} style={{...input, color: "var(--text-main)"}} />
              </div>
             <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-              {submitting ? <FaSpinner className="spin" /> : `Recharge Now`}
+              {submitting ? <FaRecycle className="spin" /> : `Recharge Now`}
             </button>
           </form>
         )}
@@ -275,7 +272,7 @@ function Wallet() {
                  </div>
 
                  <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                   {submitting ? <FaSpinner className="spin" /> : "Verify & Send Security OTP"}
+                   {submitting ? <FaRecycle className="spin" /> : "Verify & Send Security OTP"}
                  </button>
                </>
              ) : (
@@ -301,7 +298,7 @@ function Wallet() {
                  </div>
 
                  <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                   {submitting ? <FaSpinner className="spin" /> : "Confirm & Withdraw Funds"}
+                   {submitting ? <FaRecycle className="spin" /> : "Confirm & Withdraw Funds"}
                  </button>
 
                  <button 

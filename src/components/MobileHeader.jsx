@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaMapMarkerAlt, FaChevronDown, FaCrosshairs, FaSpinner, FaExclamationTriangle, FaVoteYea, FaCheckCircle } from "react-icons/fa";
+import { FaMapMarkerAlt, FaChevronDown, FaCrosshairs, FaExclamationTriangle, FaVoteYea, FaCheckCircle, FaRecycle } from "react-icons/fa";
 import API from "../services/api";
 
 function MobileHeader({ onSelectCity }) {
@@ -167,7 +167,7 @@ function MobileHeader({ onSelectCity }) {
             onClick={handleVoteArea}
             disabled={voting || isVoted}
           >
-            {voting ? <FaSpinner className="spin" /> : isVoted ? <FaCheckCircle /> : <FaVoteYea />}
+            {voting ? <FaRecycle className="spin" /> : isVoted ? <FaCheckCircle /> : <FaVoteYea />}
             <span>{isVoted ? `Vote Recorded for ${selectedLocation}! 🎉` : `Vote to Start Service in ${selectedLocation}`}</span>
           </button>
           {toastMsg && <div style={toastBannerStyle}>{toastMsg}</div>}
@@ -187,7 +187,7 @@ function MobileHeader({ onSelectCity }) {
               onClick={detectLiveLocation}
               disabled={geoLoading}
             >
-              {geoLoading ? <FaSpinner className="spin" /> : <FaCrosshairs style={{ color: "#0b8f3a" }} />}
+              {geoLoading ? <FaRecycle className="spin" /> : <FaCrosshairs style={{ color: "#0b8f3a" }} />}
               <span>{geoLoading ? "Detecting Live Location..." : "Use Current Live GPS Location"}</span>
             </button>
 

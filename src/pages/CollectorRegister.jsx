@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  FaTruck, FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaMapMarkerAlt,
-  FaArrowRight, FaSpinner, FaCheckCircle, FaUserPlus, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash
-} from "react-icons/fa";
+import { FaTruck, FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaMapMarkerAlt, FaArrowRight, FaCheckCircle, FaUserPlus, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 
 import Toast from "../components/Toast";
 import API from "../services/api";
@@ -170,7 +167,7 @@ function CollectorRegister() {
               disabled={loading}
               onClick={(e) => handleRequestOtp(e, "whatsapp")}
             >
-              {loading ? <FaSpinner className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
+              {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
             </button>
 
             <button
@@ -180,7 +177,7 @@ function CollectorRegister() {
               disabled={loading}
               onClick={(e) => handleRequestOtp(e, "sms")}
             >
-              {loading ? <FaSpinner className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
+              {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
             </button>
           </div>
         </form>
@@ -224,7 +221,7 @@ function CollectorRegister() {
               </div>
 
               <button type="submit" className="btn pulse-btn" style={{ width: "100%", marginTop: "18px", padding: "14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: "14px", fontWeight: "bold" }} disabled={loading}>
-                {loading ? <FaSpinner className="spin" /> : <>Verify & Complete Registration <FaCheckCircle /></>}
+                {loading ? <FaRecycle className="spin" /> : <>Verify & Complete Registration <FaCheckCircle /></>}
               </button>
             </form>
 

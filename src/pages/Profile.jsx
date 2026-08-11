@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaEdit, FaSave, FaTimes,
-  FaSignOutAlt, FaEnvelope, FaSpinner, FaLock, FaArrowLeft,
-  FaHome, FaHistory, FaPlusCircle, FaWallet, FaUser, FaCamera
-} from "react-icons/fa";
+import { FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaEdit, FaSave, FaTimes, FaSignOutAlt, FaEnvelope, FaLock, FaArrowLeft, FaHome, FaHistory, FaPlusCircle, FaWallet, FaUser, FaCamera, FaRecycle } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -249,7 +245,7 @@ function Profile() {
                 {editMode && (
                    <div style={actionRow} className="action-row">
                       <button style={saveBtn} onClick={saveProfile}>
-                         {loading ? <FaSpinner className="spin" /> : <><FaSave /> Save Changes</>}
+                         {loading ? <FaRecycle className="spin" /> : <><FaSave /> Save Changes</>}
                       </button>
                       <button style={cancelBtn} onClick={() => { setEditMode(false); setUser(storedUser); }}>
                          <FaTimes /> Cancel

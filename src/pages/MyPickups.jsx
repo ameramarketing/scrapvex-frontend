@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaClock, FaCheckCircle, FaArrowLeft, FaTrashAlt, FaSpinner,
-  FaTruck, FaMapMarkerAlt, FaCalendarAlt, FaRupeeSign, FaStar, FaTimes, FaPaperPlane
-} from "react-icons/fa";
+import { FaClock, FaCheckCircle, FaArrowLeft, FaTrashAlt, FaTruck, FaMapMarkerAlt, FaCalendarAlt, FaRupeeSign, FaStar, FaTimes, FaPaperPlane, FaRecycle } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -76,7 +73,7 @@ function MyPickups() {
     else navigate("/dashboard");
   };
 
-  if (loading) return <div style={loaderStyle}><FaSpinner className="spin" size={40} color="#0b8f3a" /></div>;
+  if (loading) return <div style={loaderStyle}><FaRecycle className="spin" size={40} color="#0b8f3a" /></div>;
 
   const isCollector = JSON.parse(localStorage.getItem("user") || "{}").role === "collector";
 

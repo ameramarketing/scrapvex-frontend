@@ -1,18 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  FaPhoneAlt,
-  FaLock,
-  FaArrowRight,
-  FaSpinner,
-  FaCheckCircle,
-  FaShieldAlt,
-  FaKey,
-  FaWhatsapp,
-  FaSms,
-  FaEye,
-  FaEyeSlash
-} from "react-icons/fa";
+import { FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaShieldAlt, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
 import Toast from "../components/Toast";
@@ -144,7 +132,7 @@ function ForgotPassword() {
                   disabled={loading}
                   onClick={(e) => handleSendOTP(e, "whatsapp")}
                 >
-                  {loading ? <FaSpinner className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
+                  {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
                 </button>
 
                 <button
@@ -153,7 +141,7 @@ function ForgotPassword() {
                   disabled={loading}
                   onClick={(e) => handleSendOTP(e, "sms")}
                 >
-                  {loading ? <FaSpinner className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
+                  {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
                 </button>
               </div>
             </form>
@@ -176,7 +164,7 @@ function ForgotPassword() {
                 {otpChannel === "whatsapp" ? "💬 OTP sent to your WhatsApp" : "📱 OTP sent via SMS"}
               </p>
               <button type="submit" style={{...btn, background: "var(--primary)", marginTop: "12px"}} disabled={loading}>
-                {loading ? <FaSpinner className="spin" /> : <>Verify & Continue <FaArrowRight /></>}
+                {loading ? <FaRecycle className="spin" /> : <>Verify & Continue <FaArrowRight /></>}
               </button>
             </form>
           )}
@@ -227,7 +215,7 @@ function ForgotPassword() {
                 <p style={{ color: '#0b8f3a', fontSize: '12px', marginTop: '-12px', marginBottom: '12px', textAlign: 'left' }}>✓ Passwords match</p>
               )}
               <button type="submit" style={{...btn, background: "var(--primary)"}} disabled={loading}>
-                {loading ? <FaSpinner className="spin" /> : <>Reset Password <FaCheckCircle /></>}
+                {loading ? <FaRecycle className="spin" /> : <>Reset Password <FaCheckCircle /></>}
               </button>
             </form>
           )}
