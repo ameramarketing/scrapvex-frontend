@@ -4,8 +4,8 @@
   "webDir": "dist",
   "bundledWebRuntime": false,
   "server": {
-    "androidScheme": "http",
-    "cleartext": true
+    "androidScheme": "https",
+    "hostname": "scrapvex.in"
   },
   "exclude": [
     "ScrapVex.apk",
