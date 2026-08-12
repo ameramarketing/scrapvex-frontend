@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   FaTruck,
   FaHome,
@@ -62,7 +62,21 @@ function CollectorDashboard() {
   };
 
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlTab = searchParams.get("tab") || "overview";
+  const [activeTabState, setActiveTabState] = useState(urlTab);
+
+  useEffect(() => {
+    if (urlTab && urlTab !== activeTabState) {
+      setActiveTabState(urlTab);
+    }
+  }, [urlTab]);
+
+  const activeTab = urlTab || activeTabState;
+  const setActiveTab = (tab) => {
+    setActiveTabState(tab);
+    setSearchParams({ tab });
+  };
   const [pickups, setPickups] = useState([]);
   const [scrapItems, setScrapItems] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -806,8 +820,21 @@ function CollectorDashboard() {
 
       <div style={main} className="dashboard-main">
         {/* HEADER */}
-        <header style={header}>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+        <header style={{
+          background: "var(--card-bg)",
+          padding: "10px 14px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid var(--glass-border)",
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          maxWidth: "100%",
+          boxSizing: "border-box",
+          overflow: "hidden"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", overflow: "hidden" }}>
             <button
               style={menuBtn}
               className="mobile-only"
@@ -815,79 +842,78 @@ function CollectorDashboard() {
             >
               <FaBars />
             </button>
-            <h2 className="native-header-title" style={headerTitle}>COLLECTOR PORTAL</h2>
+            <span style={{ fontSize: "14px", fontWeight: "900", color: "var(--text-main)", whiteSpace: "nowrap" }}>
+              Collector Portal
+            </span>
           </div>
-          <div style={userInfo}>
-            <div style={{ textAlign: "right" }} className="desktop-only">
-              <div style={{ fontWeight: "bold", color: "var(--text-main)" }}>
-                {user?.name}
-              </div>
-              <small
-                style={{
-                  color: user?.isOnline ? "var(--primary)" : "var(--text-muted)",
-                  fontWeight: "bold",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  justifyContent: "flex-end",
-                }}
-              >
-                <span
-                  style={{
-                    width: "8px",
-                    height: "8px",
-                    borderRadius: "50%",
-                    background: user?.isOnline ? "var(--primary)" : "var(--text-muted)",
-                    display: "inline-block",
-                  }}
-                ></span>
-                {user?.isOnline ? "Online" : "Offline"}
-              </small>
-            </div>
-            <button
-              onClick={() => {
-                setActiveTab("notifications");
-                markAllNotificationsRead();
-              }}
-              style={bellBtn}
-              title="Notifications"
-            >
-              <FaBell size={20} />
-              {unreadCount > 0 && (
-                <span style={notificationBadge}>{unreadCount}</span>
-              )}
-            </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
             <button
               onClick={toggleStatus}
               style={{
                 background: user?.isOnline ? "#f0fdf4" : "#f8fafc",
                 border: `1px solid ${user?.isOnline ? "#bbf7d0" : "#e2e8f0"}`,
                 color: user?.isOnline ? "#16a34a" : "#64748b",
-                padding: "5px 12px",
-                borderRadius: "20px",
-                fontSize: "11px",
+                padding: "4px 8px",
+                borderRadius: "16px",
+                fontSize: "10px",
                 fontWeight: "700",
                 display: "flex",
                 alignItems: "center",
-                gap: "6px",
-                cursor: "pointer"
+                gap: "4px",
+                cursor: "pointer",
+                whiteSpace: "nowrap"
               }}
             >
               <span
                 style={{
-                  width: "8px",
-                  height: "8px",
+                  width: "6px",
+                  height: "6px",
                   borderRadius: "50%",
                   background: user?.isOnline ? "#16a34a" : "#94a3b8"
                 }}
               />
               {user?.isOnline ? "ONLINE" : "OFFLINE"}
             </button>
+            <button
+              onClick={() => {
+                setActiveTab("notifications");
+                markAllNotificationsRead();
+              }}
+              style={{
+                position: "relative",
+                width: "32px",
+                height: "32px",
+                borderRadius: "10px",
+                border: "none",
+                background: "rgba(245,245,245,0.95)",
+                color: "var(--text-main)",
+                display: "inline-flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer"
+              }}
+              title="Notifications"
+            >
+              <FaBell size={15} />
+              {unreadCount > 0 && (
+                <span style={notificationBadge}>{unreadCount}</span>
+              )}
+            </button>
             <div
-              style={{ ...avatar, cursor: "pointer" }}
+              style={{
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                background: "var(--primary-light)",
+                color: "var(--primary)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                cursor: "pointer"
+              }}
               onClick={() => setActiveTab("profile")}
             >
-              <FaUserAlt />
+              <FaUserAlt size={13} />
             </div>
           </div>
         </header>
@@ -4078,42 +4104,7 @@ function CollectorDashboard() {
         </Modal>
       )}
 
-      {/* MOBILE BOTTOM NAV */}
-      <div style={bottomNavStyle} className="mobile-only">
-        <BottomLink
-          icon={<FaHome />}
-          text="Home"
-          active={activeTab === "overview"}
-          onClick={() => setActiveTab("overview")}
-        />
-        <BottomLink
-          icon={<FaTruck />}
-          text="Pickups"
-          active={activeTab === "mypickups"}
-          onClick={() => setActiveTab("mypickups")}
-        />
-        <BottomLink
-          icon={<FaWallet />}
-          text="Wallet"
-          active={activeTab === "wallet"}
-          onClick={() => {
-            setActiveTab("wallet");
-            fetchWalletInfo();
-          }}
-        />
-        <BottomLink
-          icon={<FaHistory />}
-          text="History"
-          active={activeTab === "history"}
-          onClick={() => setActiveTab("history")}
-        />
-        <BottomLink
-          icon={<FaUser />}
-          text="Account"
-          active={activeTab === "profile"}
-          onClick={() => setActiveTab("profile")}
-        />
-      </div>
+{/* Mobile bottom nav rendered by MobileAppShell */}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaTruck, FaTags, FaHistory, FaUser, FaPlus } from "react-icons/fa";
+import { FaTruck, FaTags, FaHistory, FaUser, FaPlus, FaWallet, FaRecycle } from "react-icons/fa";
 import MobileHeader from "./MobileHeader";
 import NativePageTransition from "./NativePageTransition";
 import { useBackButton } from "../hooks/useBackButton";
@@ -26,7 +26,7 @@ function MobileAppShell({ children }) {
   // Hide mobile shell on Admin / Collector dashboards
   const hideShellRoutes = [
     "/admin-dashboard",
-    "/collector-dashboard",
+    
     "/franchise-dashboard",
     "/admin-login",
     "/collector-login",
@@ -46,13 +46,25 @@ function MobileAppShell({ children }) {
     }
   })();
 
-  const bottomNavItems = [
+  const isCollector = user?.role === "collector" || location.pathname.startsWith("/collector-dashboard");
+
+  const collectorNavItems = [
+    { label: "Overview", icon: <FaRecycle />, tab: "overview", path: "/collector-dashboard?tab=overview" },
+    { label: "Pickups", icon: <FaTruck />, tab: "mypickups", path: "/collector-dashboard?tab=mypickups" },
+    { label: "Wallet", icon: <FaWallet />, tab: "wallet", path: "/collector-dashboard?tab=wallet" },
+    { label: "History", icon: <FaHistory />, tab: "history", path: "/collector-dashboard?tab=history" },
+    { label: "Account", icon: <FaUser />, tab: "profile", path: "/collector-dashboard?tab=profile" }
+  ];
+
+  const userNavItems = [
     { label: "Home", icon: <FaTruck />, path: "/" },
     { label: "Rates", icon: <FaTags />, path: "/rates" },
     { label: "Book", icon: <FaPlus />, path: "/book", isCenterBtn: true },
     { label: "My Pickups", icon: <FaHistory />, path: user ? "/my-pickups" : "/login" },
     { label: "Account", icon: <FaUser />, path: user ? "/profile" : "/login" }
   ];
+
+  const bottomNavItems = isCollector ? collectorNavItems : userNavItems;
 
   // If viewing on Desktop Website, return children directly (100% original website layout, no preview bar)
   if (!isMobileDevice) {
@@ -62,7 +74,7 @@ function MobileAppShell({ children }) {
   // Mobile Device Layout / Native APK Layout
   return (
     <div style={nativeAppWrapper}>
-      <MobileHeader />
+      {!location.pathname.startsWith("/collector-dashboard") && <MobileHeader />}
       <main style={nativeMainContent}>
         <NativePageTransition>{children}</NativePageTransition>
       </main>
@@ -70,7 +82,8 @@ function MobileAppShell({ children }) {
       {/* Native Bottom Navigation Bar */}
       <nav style={nativeBottomNav}>
         {bottomNavItems.map((item, idx) => {
-          const isActive = location.pathname === item.path;
+          const currentTab = new URLSearchParams(location.search).get("tab") || "overview";
+          const isActive = isCollector ? (currentTab === item.tab) : (location.pathname === item.path);
           if (item.isCenterBtn) {
             return (
               <button
