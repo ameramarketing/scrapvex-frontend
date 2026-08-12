@@ -832,7 +832,7 @@ function CollectorDashboard() {
         {/* HEADER */}
         <header style={{
           background: "var(--card-bg, #ffffff)",
-          padding: "calc(8px + env(safe-area-inset-top, 0px)) 14px 8px 14px",
+          padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 10px 16px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -848,30 +848,30 @@ function CollectorDashboard() {
           <div style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
             <FaRecycle style={{ color: "#0b8f3a", fontSize: "18px" }} />
             <span style={{ fontSize: "15px", fontWeight: "900", color: "var(--text-main, #0f172a)", letterSpacing: "-0.5px" }}>ScrapVex</span>
-            <span style={{ background: "rgba(11,143,58,0.1)", color: "#0b8f3a", padding: "2px 6px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", textTransform: "uppercase" }}>Collector</span>
+            <span style={{ background: "rgba(11,143,58,0.1)", color: "#0b8f3a", padding: "2px 5px", borderRadius: "6px", fontSize: "9px", fontWeight: "800", textTransform: "uppercase" }}>Collector</span>
           </div>
 
           {/* Right Action Icons & Controls */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            {/* Online/Offline Status Pill */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            {/* Ultra-compact Online/Offline Status Pill */}
             <button
               onClick={toggleStatus}
               style={{
                 background: user?.isOnline ? "#f0fdf4" : "#f8fafc",
                 border: `1px solid ${user?.isOnline ? "#bbf7d0" : "#e2e8f0"}`,
                 color: user?.isOnline ? "#16a34a" : "#64748b",
-                padding: "3px 8px",
-                borderRadius: "14px",
-                fontSize: "10px",
+                padding: "2px 7px",
+                borderRadius: "10px",
+                fontSize: "9px",
                 fontWeight: "800",
                 display: "flex",
                 alignItems: "center",
-                gap: "4px",
+                gap: "3px",
                 cursor: "pointer"
               }}
             >
-              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
-              {user?.isOnline ? "Online" : "Offline"}
+              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
+              {user?.isOnline ? "ONLINE" : "OFFLINE"}
             </button>
 
             {/* Notification Bell */}
@@ -884,7 +884,7 @@ function CollectorDashboard() {
                 background: "none",
                 border: "none",
                 color: "var(--text-main, #0f172a)",
-                padding: "6px",
+                padding: "4px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -893,18 +893,18 @@ function CollectorDashboard() {
               }}
               title="Notifications"
             >
-              <FaBell size={17} color="var(--text-main, #0f172a)" />
+              <FaBell size={16} color="var(--text-main, #0f172a)" />
               {unreadCount > 0 && (
                 <span style={{
                   position: "absolute",
-                  top: "1px",
-                  right: "1px",
-                  width: "14px",
-                  height: "14px",
+                  top: "0px",
+                  right: "0px",
+                  width: "13px",
+                  height: "13px",
                   borderRadius: "50%",
                   background: "#dc2626",
                   color: "#ffffff",
-                  fontSize: "9px",
+                  fontSize: "8px",
                   fontWeight: "800",
                   display: "flex",
                   alignItems: "center",
@@ -923,7 +923,7 @@ function CollectorDashboard() {
                 fontSize: "15px",
                 color: isDarkMode ? "#f1c40f" : "#64748b",
                 cursor: "pointer",
-                padding: "6px",
+                padding: "4px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
@@ -942,9 +942,10 @@ function CollectorDashboard() {
                 color: "var(--text-main, #0f172a)",
                 fontSize: "16px",
                 cursor: "pointer",
-                padding: "6px",
+                padding: "4px",
                 display: "flex",
-                alignItems: "center"
+                alignItems: "center",
+                marginRight: "2px"
               }}
               onClick={() => setIsMobileMenuOpen(true)}
             >
