@@ -2,12 +2,17 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaTruck,
-  FaClock,
+  FaHome,
   FaCheckCircle,
-  FaPhoneAlt,
-  FaMapMarkerAlt,
-  FaSignOutAlt,
+  FaUser,
+  FaHeadset,
   FaRupeeSign,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaClipboardList,
+  FaClock,
+  FaPhoneAlt,
+  FaSignOutAlt,
   FaInfoCircle,
   FaTimes,
   FaPlus,
@@ -849,19 +854,28 @@ function CollectorDashboard() {
             <button
               onClick={toggleStatus}
               style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
+                background: user?.isOnline ? "#f0fdf4" : "#f8fafc",
+                border: `1px solid ${user?.isOnline ? "#bbf7d0" : "#e2e8f0"}`,
+                color: user?.isOnline ? "#16a34a" : "#64748b",
+                padding: "5px 12px",
+                borderRadius: "20px",
+                fontSize: "11px",
+                fontWeight: "700",
                 display: "flex",
                 alignItems: "center",
+                gap: "6px",
+                cursor: "pointer"
               }}
             >
-              {user?.isOnline ? (
-                <FaToggleOn size={28} color="var(--primary)" />
-              ) : (
-                <FaToggleOff size={28} color="var(--text-muted)" />
-              )}
+              <span
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  background: user?.isOnline ? "#16a34a" : "#94a3b8"
+                }}
+              />
+              {user?.isOnline ? "ONLINE" : "OFFLINE"}
             </button>
             <div
               style={{ ...avatar, cursor: "pointer" }}
@@ -938,166 +952,154 @@ function CollectorDashboard() {
                 }}
               >
                 <div
-                  className="grid-3"
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                    gap: "16px",
+                    gridTemplateColumns: "repeat(2, 1fr)",
+                    gap: "12px",
+                    marginBottom: "16px",
                   }}
+                  className="stat-grid-container"
                 >
                   <div
-                    className="kpi-card premium-card"
                     style={{
-                      background: "var(--card-bg)",
-                      padding: "20px",
-                      borderRadius: "var(--radius-xl)",
-                      border: "1px solid var(--card-border)",
+                      background: "linear-gradient(135deg, #0b8f3a 0%, #20b050 100%)",
+                      padding: "16px",
+                      borderRadius: "18px",
+                      color: "#ffffff",
                       display: "flex",
-                      gap: "16px",
                       alignItems: "center",
+                      gap: "12px",
+                      boxShadow: "0 6px 18px rgba(11,143,58,0.2)"
                     }}
                   >
                     <div
-                      className="kpi-icon"
                       style={{
-                        background: "rgba(52, 152, 219, 0.1)",
-                        color: "#3498db",
-                        width: "52px",
-                        height: "52px",
-                        borderRadius: "var(--radius-md)",
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "12px",
+                        background: "rgba(255,255,255,0.22)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "22px",
+                        fontSize: "20px"
                       }}
                     >
                       <FaTruck />
                     </div>
                     <div>
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--text-muted)",
-                          textTransform: "uppercase",
-                          fontWeight: "600",
-                          letterSpacing: "0.5px",
-                        }}
-                      >
-                        My Tasks
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "28px",
-                          fontWeight: "900",
-                          color: "var(--text-main)",
-                          letterSpacing: "-1px",
-                        }}
-                      >
+                      <div style={{ fontSize: "22px", fontWeight: "800", lineHeight: 1.1 }}>
                         {activePickups.length}
+                      </div>
+                      <div style={{ fontSize: "11px", opacity: 0.9, marginTop: "2px", fontWeight: "600" }}>
+                        Active Tasks
                       </div>
                     </div>
                   </div>
+
                   <div
-                    className="kpi-card premium-card"
                     style={{
-                      background: "var(--card-bg)",
-                      padding: "20px",
-                      borderRadius: "var(--radius-xl)",
-                      border: "1px solid var(--card-border)",
+                      background: "linear-gradient(135deg, #3498db 0%, #2980b9 100%)",
+                      padding: "16px",
+                      borderRadius: "18px",
+                      color: "#ffffff",
                       display: "flex",
-                      gap: "16px",
                       alignItems: "center",
+                      gap: "12px",
+                      boxShadow: "0 6px 18px rgba(52,152,219,0.2)"
                     }}
                   >
                     <div
-                      className="kpi-icon"
                       style={{
-                        background: "rgba(46, 204, 113, 0.1)",
-                        color: "#2ecc71",
-                        width: "52px",
-                        height: "52px",
-                        borderRadius: "var(--radius-md)",
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "12px",
+                        background: "rgba(255,255,255,0.22)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "22px",
+                        fontSize: "20px"
                       }}
                     >
                       <FaCheckCircle />
                     </div>
                     <div>
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--text-muted)",
-                          textTransform: "uppercase",
-                          fontWeight: "600",
-                          letterSpacing: "0.5px",
-                        }}
-                      >
-                        Jobs Done
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "28px",
-                          fontWeight: "900",
-                          color: "var(--text-main)",
-                          letterSpacing: "-1px",
-                        }}
-                      >
+                      <div style={{ fontSize: "22px", fontWeight: "800", lineHeight: 1.1 }}>
                         {history.length}
+                      </div>
+                      <div style={{ fontSize: "11px", opacity: 0.9, marginTop: "2px", fontWeight: "600" }}>
+                        Jobs Done
                       </div>
                     </div>
                   </div>
+
                   <div
-                    className="kpi-card premium-card"
                     style={{
-                      background: "var(--card-bg)",
-                      padding: "20px",
-                      borderRadius: "var(--radius-xl)",
-                      border: "1px solid var(--card-border)",
+                      background: "linear-gradient(135deg, #f39c12 0%, #e67e22 100%)",
+                      padding: "16px",
+                      borderRadius: "18px",
+                      color: "#ffffff",
                       display: "flex",
-                      gap: "16px",
                       alignItems: "center",
+                      gap: "12px",
+                      boxShadow: "0 6px 18px rgba(243,156,18,0.2)"
                     }}
                   >
                     <div
-                      className="kpi-icon"
                       style={{
-                        background: "rgba(155, 89, 182, 0.1)",
-                        color: "#9b59b6",
-                        width: "52px",
-                        height: "52px",
-                        borderRadius: "var(--radius-md)",
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "12px",
+                        background: "rgba(255,255,255,0.22)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "22px",
+                        fontSize: "20px"
+                      }}
+                    >
+                      <FaWallet />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "20px", fontWeight: "800", lineHeight: 1.1 }}>
+                        ₹{user?.walletBalance || 0}
+                      </div>
+                      <div style={{ fontSize: "11px", opacity: 0.9, marginTop: "2px", fontWeight: "600" }}>
+                        Wallet Balance
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      background: "linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%)",
+                      padding: "16px",
+                      borderRadius: "18px",
+                      color: "#ffffff",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      boxShadow: "0 6px 18px rgba(142,68,173,0.2)"
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "42px",
+                        height: "42px",
+                        borderRadius: "12px",
+                        background: "rgba(255,255,255,0.22)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "20px"
                       }}
                     >
                       <FaRupeeSign />
                     </div>
                     <div>
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--text-muted)",
-                          textTransform: "uppercase",
-                          fontWeight: "600",
-                          letterSpacing: "0.5px",
-                        }}
-                      >
-                        Wallet Balance
+                      <div style={{ fontSize: "20px", fontWeight: "800", lineHeight: 1.1 }}>
+                        ₹{earnings}
                       </div>
-                      <div
-                        style={{
-                          fontSize: "28px",
-                          fontWeight: "900",
-                          color: "var(--text-main)",
-                          letterSpacing: "-1px",
-                        }}
-                      >
-                        Γé╣{user?.walletBalance || 0}
+                      <div style={{ fontSize: "11px", opacity: 0.9, marginTop: "2px", fontWeight: "600" }}>
+                        Total Earnings
                       </div>
                     </div>
                   </div>
@@ -1203,7 +1205,7 @@ function CollectorDashboard() {
                       ))}
                       {activePickups.length === 0 && (
                         <div className="empty-state">
-                          <div className="empty-state-icon">≡ƒÜÜ</div>
+                          <div className="empty-state-icon"><FaTruck size={32} color="#0b8f3a" /></div>
                           <h3 style={{ margin: "10px 0 5px 0" }}>
                             No active tasks
                           </h3>
@@ -1386,7 +1388,7 @@ function CollectorDashboard() {
                             marginTop: "6px",
                           }}
                         >
-                          ≡ƒôì {p.address}
+                          <FaMapMarkerAlt color="#0b8f3a" /> {p.address}
                         </div>
                         <div
                           style={{
@@ -1452,7 +1454,7 @@ function CollectorDashboard() {
                           fontWeight: "600",
                         }}
                       >
-                        ≡ƒùô {new Date(p.createdAt).toLocaleDateString()}
+                        <FaCalendarAlt color="#94a3b8" /> {new Date(p.createdAt).toLocaleDateString()}
                       </span>
                       <div style={{ display: "flex", gap: "10px" }}>
                         <button
@@ -1509,7 +1511,7 @@ function CollectorDashboard() {
                       padding: "50px 20px",
                     }}
                   >
-                    <div className="empty-state-icon">≡ƒô¡</div>
+                    <div className="empty-state-icon"><FaClipboardList size={32} color="#0b8f3a" /></div>
                     <h3>No Assigned Pickups</h3>
                     <p>
                       You don't have any pending or accepted pickups right now.
@@ -1637,7 +1639,7 @@ function CollectorDashboard() {
                       letterSpacing: "-0.03em",
                     }}
                   >
-                    Γé╣{user?.walletBalance || 0}
+                    ₹{user?.walletBalance || 0}
                   </div>
                 </div>
 
@@ -1741,7 +1743,7 @@ function CollectorDashboard() {
                                 tx.type === "credit" ? "#2ecc71" : "#e74c3c",
                             }}
                           >
-                            {tx.type === "credit" ? "+" : "-"}Γé╣{tx.amount}
+                            {tx.type === "credit" ? "+" : "-"}₹{tx.amount}
                           </div>
                           <div
                             style={{
@@ -1789,7 +1791,7 @@ function CollectorDashboard() {
                           padding: "50px 20px",
                         }}
                       >
-                        <div className="empty-state-icon">≡ƒÆ│</div>
+                        <div className="empty-state-icon"><FaWallet size={32} color="#0b8f3a" /></div>
                         <h3>No Transactions</h3>
                         <p>Your wallet transaction history will appear here.</p>
                       </div>
@@ -1916,7 +1918,7 @@ function CollectorDashboard() {
                           color: "var(--success, #2ecc71)",
                         }}
                       >
-                        Γé╣{p.amount || 0}
+                        ₹{p.amount || 0}
                       </div>
                       <div style={{ marginTop: "6px" }}>
                         <span className="badge-status badge-completed">
@@ -1936,7 +1938,7 @@ function CollectorDashboard() {
                       padding: "50px 20px",
                     }}
                   >
-                    <div className="empty-state-icon">≡ƒôï</div>
+                    <div className="empty-state-icon"><FaBell size={32} color="#0b8f3a" /></div>
                     <h3>No Completed Jobs</h3>
                     <p>You haven't completed any pickups yet.</p>
                   </div>
@@ -2075,7 +2077,7 @@ function CollectorDashboard() {
                       padding: "50px 20px",
                     }}
                   >
-                    <div className="empty-state-icon">≡ƒöö</div>
+                    <div className="empty-state-icon"><FaStar size={32} color="#0b8f3a" /></div>
                     <h3>All Caught Up!</h3>
                     <p>No new alerts available at the moment.</p>
                   </div>
@@ -2449,7 +2451,7 @@ function CollectorDashboard() {
                       padding: "50px 20px",
                     }}
                   >
-                    <div className="empty-state-icon">≡ƒÄº</div>
+                    <div className="empty-state-icon"><FaHeadset size={32} color="#0b8f3a" /></div>
                     <h3>No Support Tickets</h3>
                     <p>You haven't raised any support requests yet.</p>
                   </div>
@@ -4073,19 +4075,19 @@ function CollectorDashboard() {
       {/* MOBILE BOTTOM NAV */}
       <div style={bottomNavStyle} className="mobile-only">
         <BottomLink
-          icon={<FaRecycle size={22} />}
+          icon={<FaHome />}
           text="Home"
           active={activeTab === "overview"}
           onClick={() => setActiveTab("overview")}
         />
         <BottomLink
-          icon={<FaTruck size={22} />}
+          icon={<FaTruck />}
           text="Pickups"
           active={activeTab === "mypickups"}
           onClick={() => setActiveTab("mypickups")}
         />
         <BottomLink
-          icon={<FaWallet size={22} />}
+          icon={<FaWallet />}
           text="Wallet"
           active={activeTab === "wallet"}
           onClick={() => {
@@ -4094,16 +4096,16 @@ function CollectorDashboard() {
           }}
         />
         <BottomLink
-          icon={<FaHistory size={22} />}
+          icon={<FaHistory />}
           text="History"
           active={activeTab === "history"}
           onClick={() => setActiveTab("history")}
         />
         <BottomLink
-          icon={<FaBars size={22} />}
-          text="Menu"
-          active={false}
-          onClick={() => setIsMobileMenuOpen(true)}
+          icon={<FaUser />}
+          text="Account"
+          active={activeTab === "profile"}
+          onClick={() => setActiveTab("profile")}
         />
       </div>
     </div>
@@ -4169,12 +4171,32 @@ const Modal = ({ title, children, onClose }) => (
 );
 
 const BottomLink = ({ icon, text, onClick, active }) => (
-  <div
-    style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "var(--text-muted)" }}
+  <button
+    type="button"
     onClick={onClick}
+    style={{
+      background: "none",
+      border: "none",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      flex: 1,
+      height: "100%",
+      padding: "4px 0",
+      transition: "transform 0.15s ease",
+      outline: "none",
+      color: active ? "#0b8f3a" : "#94a3b8"
+    }}
   >
-    {icon} <span style={{ fontSize: "10px", marginTop: "2px" }}>{text}</span>
-  </div>
+    <div style={{ fontSize: "19px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {icon}
+    </div>
+    <span style={{ fontSize: "10px", fontWeight: active ? "700" : "500", marginTop: "2px", letterSpacing: "0.01em" }}>
+      {text}
+    </span>
+  </button>
 );
 
 const InfoItem = ({ label, value }) => (
@@ -4632,8 +4654,8 @@ const bottomNavStyle = {
   left: 0,
   right: 0,
   height: "64px",
-  background: "var(--card-bg, #ffffff)",
-  borderTop: "1.5px solid var(--card-border, #e2e8f0)",
+  background: "#ffffff",
+  borderTop: "1.5px solid #e2e8f0",
   boxShadow: "0 -6px 20px rgba(15,23,42,0.06)",
   display: "flex",
   alignItems: "center",
