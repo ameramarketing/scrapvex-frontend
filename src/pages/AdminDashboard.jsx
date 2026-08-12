@@ -2246,7 +2246,7 @@ const playBellSound = () => {
                   <div style={{ display: "flex", gap: "15px", marginBottom: "20px", flexWrap: "wrap" }}>
                     <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #0b8f3a, #16a34a)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(11,143,58,0.15)" }}>
                       <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Value</div>
-                      <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>₹{reportGrandTotal.toFixed(2)}</div>
+                      <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>₹{(reportGrandTotal || 0).toFixed(2)}</div>
                     </div>
                     <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #333, #555)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(0,0,0,0.05)" }}>
                       <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Transactions</div>
@@ -2274,7 +2274,7 @@ const playBellSound = () => {
                               <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0" }}>
                                 <td style={{ padding: "8px 4px", fontWeight: "600", color: "#1e293b" }}>{item.name}</td>
                                 <td style={{ padding: "8px 4px", textAlign: "center", fontWeight: "bold", color: "#0b8f3a" }}>{item.quantity} {item.unit}</td>
-                                <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{item.amount.toFixed(0)}</td>
+                                <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{(item.amount || 0).toFixed(0)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -2294,7 +2294,7 @@ const playBellSound = () => {
                               <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>{p.itemsCount} items • {p.paymentMethod}</div>
                             </div>
                             <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
-                              <div style={{ fontWeight: "bold", color: "#dc3545", fontSize: "14px" }}>₹{p.totalAmount.toFixed(0)}</div>
+                              <div style={{ fontWeight: "bold", color: "#dc3545", fontSize: "14px" }}>₹{(p.totalAmount || 0).toFixed(0)}</div>
                               <button onClick={() => openPurchaseBillModal(p)} style={{ border: "none", background: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "10px" }}>📄 View</button>
                             </div>
                           </div>
@@ -3227,7 +3227,7 @@ const playBellSound = () => {
       )}
 
       {/* MOBILE BOTTOM NAV */}
-      <div style={{...bottomNavStyle, height: "60px", padding: "0 10px", alignItems: "center", paddingBottom: "env(safe-area-inset-bottom, 10px)"}} className="mobile-only">
+      <div style={{...bottomNavStyle, minHeight: "65px", padding: "8px 10px", alignItems: "center", paddingBottom: "max(10px, env(safe-area-inset-bottom))"}} className="mobile-only">
         <BottomLink icon={<FaInfoCircle size={20}/>} text="Overview" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
         <BottomLink icon={<FaTruck size={20}/>} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
         <BottomLink icon={<FaWallet size={20}/>} text="Wallet" active={activeTab === "wallet"} onClick={() => {setActiveTab("wallet"); fetchAllTransactions();}} />

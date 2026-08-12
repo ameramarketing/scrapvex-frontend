@@ -1288,7 +1288,7 @@ const playBellSound = () => {
                   <div><div className="kpi-label">TOTAL SALES</div><div className="kpi-value">₹{accountingStats.totalSaleAmount?.toFixed(2)}</div></div>
                 </div>
                 <div className="kpi-card">
-                  <div><div className="kpi-label">TODAY'S PROFIT</div><div className="kpi-value">₹{accountingStats.todayProfit?.toFixed(2) || 0}</div></div>
+                  <div><div className="kpi-label">TODAY'S PROFIT</div><div className="kpi-value">₹{accountingStats.(accountingStats.todayProfit || 0).toFixed(2) || 0}</div></div>
                 </div>
               </div>
 
@@ -1499,7 +1499,7 @@ const playBellSound = () => {
                       <div style={{ display: "flex", gap: "15px", marginBottom: "20px", flexWrap: "wrap" }}>
                         <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #0b8f3a, #16a34a)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(11,143,58,0.15)" }}>
                           <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Value</div>
-                          <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>₹{reportGrandTotal.toFixed(2)}</div>
+                          <div style={{ fontSize: "28px", fontWeight: "bold", marginTop: "5px" }}>₹{(reportGrandTotal || 0).toFixed(2)}</div>
                         </div>
                         <div style={{ flex: 1, minWidth: "200px", background: "linear-gradient(135deg, #333, #555)", color: "#fff", padding: "20px", borderRadius: "15px", textAlign: "center", boxShadow: "0 10px 20px rgba(0,0,0,0.05)" }}>
                           <div style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>Total Purchase Transactions</div>
@@ -1527,7 +1527,7 @@ const playBellSound = () => {
                                   <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0" }}>
                                     <td style={{ padding: "8px 4px", fontWeight: "600", color: "#1e293b" }}>{item.name}</td>
                                     <td style={{ padding: "8px 4px", textAlign: "center", fontWeight: "bold", color: "#0b8f3a" }}>{item.quantity} {item.unit}</td>
-                                    <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{item.amount.toFixed(0)}</td>
+                                    <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{(item.amount || 0).toFixed(0)}</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -1547,7 +1547,7 @@ const playBellSound = () => {
                                   <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>{p.itemsCount} items • {p.paymentMethod}</div>
                                 </div>
                                 <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
-                                  <div style={{ fontWeight: "bold", color: "#dc3545", fontSize: "14px" }}>₹{p.totalAmount.toFixed(0)}</div>
+                                  <div style={{ fontWeight: "bold", color: "#dc3545", fontSize: "14px" }}>₹{(p.totalAmount || 0).toFixed(0)}</div>
                                   <button onClick={() => openPurchaseBillModal(p)} style={{ border: "none", background: "#f0fdf4", color: "#0369a1", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "10px" }}>📄 View</button>
                                 </div>
                               </div>
@@ -2434,6 +2434,78 @@ const playBellSound = () => {
         </Modal>
       )}
       
+            {showPurchaseBillModal && selectedPurchaseBill && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(5px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000, padding: "20px" }} onClick={() => setShowPurchaseBillModal(false)}>
+          <div style={{ background: "var(--card-bg)", borderRadius: "var(--radius-xl)", padding: "24px", width: "100%", maxWidth: "520px", maxHeight: "90vh", overflowY: "auto", boxShadow: "var(--card-hover-shadow)", border: "1px solid var(--card-border)" }} onClick={e => e.stopPropagation()}>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"18px"}}>
+              <h3 style={{margin:0, color:"var(--primary)"}}>?? Purchase Bill Details</h3>
+              <button onClick={() => setShowPurchaseBillModal(false)} style={{background:"none", border:"none", fontSize:"20px", cursor:"pointer", color:"var(--text-muted)"}}>?</button>
+            </div>
+
+            {/* Current Bill */}
+            <div style={{background:"var(--bg-subtle)", border:"1px solid var(--card-border)", borderRadius:"15px", padding:"15px", marginBottom:"15px"}}>
+              <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
+                <div>
+                  <div style={{fontWeight:"bold", fontSize:"16px"}}>{selectedPurchaseBill.supplierName}</div>
+                  <div style={{fontSize:"12px", color: "var(--text-muted)"}}>?? {selectedPurchaseBill.supplierContact || "N/A"}</div>
+                  <div style={{fontSize:"11px", color:"var(--text-muted)"}}>{new Date(selectedPurchaseBill.createdAt).toLocaleString()}</div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:"22px", fontWeight:"bold", color:"#dc3545"}}>?{selectedPurchaseBill.totalAmount}</div>
+                  <span style={{background: selectedPurchaseBill.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: selectedPurchaseBill.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", padding:"3px 10px", borderRadius:"8px", fontSize:"11px", fontWeight:"bold"}}>{selectedPurchaseBill.paymentStatus}</span>
+                </div>
+              </div>
+              {/* Items */}
+              <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px", marginTop:"10px"}}>
+                <thead>
+                  <tr style={{background:"#0b8f3a", color: "#fff"}}>
+                    <th style={{padding:"6px 8px", textAlign:"left"}}>Item</th>
+                    <th style={{padding:"6px 8px", textAlign:"center"}}>Qty (kg)</th>
+                    <th style={{padding:"6px 8px", textAlign:"center"}}>Rate</th>
+                    <th style={{padding:"6px 8px", textAlign:"right"}}>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedPurchaseBill.items.map((item, idx) => (
+                    <tr key={idx} style={{borderBottom:"1px solid var(--card-border)"}}>
+                      <td style={{padding:"6px 8px"}}>{item.name}</td>
+                      <td style={{padding:"6px 8px", textAlign:"center"}}>{item.quantity}</td>
+                      <td style={{padding:"6px 8px", textAlign:"center"}}>?{item.rate}</td>
+                      <td style={{padding:"6px 8px", textAlign:"right", fontWeight:"bold"}}>?{item.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {selectedPurchaseBill.notes && <div style={{marginTop:"8px", fontSize:"11px", color: "var(--text-muted)"}}>?? {selectedPurchaseBill.notes}</div>}
+            </div>
+
+            {/* All Purchases from same Supplier */}
+            <div style={{marginBottom:"10px"}}>
+              <div style={{fontWeight:"bold", fontSize:"13px", color:"var(--text-main)", marginBottom:"10px"}}>
+                ?? {selectedPurchaseBill.supplierName} Se Sab Purchases ({supplierPurchaseHistory.length} records)
+                <span style={{float:"right", color:"#dc3545", fontWeight:"bold"}}>Total: ?{supplierTotalAmount}</span>
+              </div>
+              <div style={{maxHeight:"200px", overflowY:"auto"}}>
+                {supplierPurchaseHistory.map((p, idx) => (
+                  <div key={p._id} style={{display:"flex", justifyContent:"space-between", padding:"8px 10px", background: idx%2===0?"var(--bg-subtle)":"", borderRadius:"8px", marginBottom:"4px", fontSize:"12px"}}>
+                    <div>
+                      <div style={{fontWeight:"bold"}}>#{p._id.slice(-6).toUpperCase()} � {p.items.length} item(s)</div>
+                      <div style={{color:"var(--text-muted)"}}>{new Date(p.createdAt).toLocaleDateString()} | {p.paymentMethod}</div>
+                    </div>
+                    <div style={{textAlign:"right"}}>
+                      <div style={{fontWeight:"bold", color:"#dc3545"}}>?{p.totalAmount}</div>
+                      <span style={{color: p.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", fontSize:"10px"}}>{p.paymentStatus}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{display:"flex", gap:"10px", marginTop:"15px"}}>
+              <button className="native-btn" style={{ padding: "12px", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold", flex:1, margin:0, background:"#0b8f3a", color: "#fff"}} onClick={() => { setShowPurchaseBillModal(false); setLastCreatedPurchase(selectedPurchaseBill); setShowPurchasePrintModal(true); }}>??? Print / WhatsApp</button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* MOBILE BOTTOM NAV */}
       <div style={bottomNavStyle} className="mobile-only">
         <BottomLink icon={<FaInfoCircle size={20}/>} text="Home" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
@@ -2633,3 +2705,4 @@ const numberToWords = (num) => {
 };
 
 export default FranchiseDashboard;
+
