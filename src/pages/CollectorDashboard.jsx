@@ -345,11 +345,17 @@ function CollectorDashboard() {
         API.get(`/reviews/collector/${uid}`),
         API.get("/wallet/info"),
       ]);
-      setPickups(resP.data?.pickups || []);
-      setScrapItems(resI.data?.data || []);
-      setNotifications(resN.data?.data || []);
-      setReviews(resR.data?.data || []);
-      setWalletTransactions(resW.data?.transactions || []);
+      const rawPickups = resP.data?.pickups || resP.data?.data || [];
+      const rawScrapItems = resI.data?.data || resI.data?.items || [];
+      const rawNotifications = resN.data?.data || resN.data?.notifications || [];
+      const rawReviews = resR.data?.data || resR.data?.reviews || [];
+      const rawTx = resW.data?.transactions || [];
+
+      setPickups(Array.isArray(rawPickups) ? rawPickups : []);
+      setScrapItems(Array.isArray(rawScrapItems) ? rawScrapItems : []);
+      setNotifications(Array.isArray(rawNotifications) ? rawNotifications : []);
+      setReviews(Array.isArray(rawReviews) ? rawReviews : []);
+      setWalletTransactions(Array.isArray(rawTx) ? rawTx : []);
 
       if (resProf.data) {
         const profileData = {
@@ -476,7 +482,7 @@ function CollectorDashboard() {
   };
 
   const markAllNotificationsRead = async () => {
-    const unreadCount = notifications.filter((n) => !n.isRead).length;
+    const unreadCount = Array.isArray(notifications) ? notifications.filter((n) => n && !n.isRead).length : 0;
     if (unreadCount === 0) return;
     try {
       await API.put("/notifications/mark-all-read");
