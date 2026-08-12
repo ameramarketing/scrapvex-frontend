@@ -815,7 +815,20 @@ const playBellSound = () => {
         .premium-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; }
         .spinner { width: 40px; height: 40px; border: 4px solid #eef8f1; border-top: 4px solid #0b8f3a; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @media (max-width: 768px) { .desktop-only { display: none !important; } }
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .responsive-flex {
+            flex-direction: column !important;
+            gap: 15px !important;
+          }
+          .responsive-flex > div {
+            width: 100% !important;
+            flex: unset !important;
+          }
+          .mobile-pad-bottom {
+            padding-bottom: 120px !important;
+          }
+        }
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>
 
@@ -886,7 +899,7 @@ const playBellSound = () => {
             <div style={{ position: "relative", marginBottom: "15px" }}>
               <input
                 type="text"
-                placeholder={`🔍 Search in ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}...`}
+                placeholder={`Search in ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
