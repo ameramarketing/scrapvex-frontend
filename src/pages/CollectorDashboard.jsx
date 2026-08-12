@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 import {
   FaTruck,
   FaHome,
@@ -26,7 +27,7 @@ import {
   FaBell,
   FaStar,
   FaToggleOn,
-  FaToggleOff,
+  FaToggleOff, FaSun, FaMoon,
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
@@ -62,6 +63,7 @@ function CollectorDashboard() {
   };
 
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
   const urlTab = searchParams.get("tab") || "overview";
   const [activeTabState, setActiveTabState] = useState(urlTab);
@@ -821,100 +823,125 @@ function CollectorDashboard() {
       <div style={main} className="dashboard-main">
         {/* HEADER */}
         <header style={{
-          background: "var(--card-bg)",
-          padding: "10px 14px",
+          background: "var(--card-bg, #ffffff)",
+          padding: "calc(8px + env(safe-area-inset-top, 0px)) 14px 8px 14px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderBottom: "1px solid var(--glass-border)",
+          borderBottom: "1px solid var(--card-border, #e2e8f0)",
           position: "sticky",
           top: 0,
           zIndex: 100,
-          maxWidth: "100%",
-          boxSizing: "border-box",
-          overflow: "hidden"
+          boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
+          width: "100%",
+          boxSizing: "border-box"
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", overflow: "hidden" }}>
-            <button
-              style={menuBtn}
-              className="mobile-only"
-              onClick={() => setIsMobileMenuOpen(true)}
-            >
-              <FaBars />
-            </button>
-            <span style={{ fontSize: "14px", fontWeight: "900", color: "var(--text-main)", whiteSpace: "nowrap" }}>
-              Collector Portal
-            </span>
+          {/* Left Branding */}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
+            <FaRecycle style={{ color: "#0b8f3a", fontSize: "18px" }} />
+            <span style={{ fontSize: "15px", fontWeight: "900", color: "var(--text-main, #0f172a)", letterSpacing: "-0.5px" }}>ScrapVex</span>
+            <span style={{ background: "rgba(11,143,58,0.1)", color: "#0b8f3a", padding: "2px 6px", borderRadius: "6px", fontSize: "10px", fontWeight: "800", textTransform: "uppercase" }}>Collector</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+
+          {/* Right Action Icons & Controls */}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            {/* Online/Offline Status Pill */}
             <button
               onClick={toggleStatus}
               style={{
                 background: user?.isOnline ? "#f0fdf4" : "#f8fafc",
                 border: `1px solid ${user?.isOnline ? "#bbf7d0" : "#e2e8f0"}`,
                 color: user?.isOnline ? "#16a34a" : "#64748b",
-                padding: "4px 8px",
-                borderRadius: "16px",
+                padding: "3px 8px",
+                borderRadius: "14px",
                 fontSize: "10px",
-                fontWeight: "700",
+                fontWeight: "800",
                 display: "flex",
                 alignItems: "center",
                 gap: "4px",
-                cursor: "pointer",
-                whiteSpace: "nowrap"
+                cursor: "pointer"
               }}
             >
-              <span
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  borderRadius: "50%",
-                  background: user?.isOnline ? "#16a34a" : "#94a3b8"
-                }}
-              />
-              {user?.isOnline ? "ONLINE" : "OFFLINE"}
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
+              {user?.isOnline ? "Online" : "Offline"}
             </button>
+
+            {/* Notification Bell */}
             <button
               onClick={() => {
                 setActiveTab("notifications");
                 markAllNotificationsRead();
               }}
               style={{
-                position: "relative",
-                width: "32px",
-                height: "32px",
-                borderRadius: "10px",
+                background: "none",
                 border: "none",
-                background: "rgba(245,245,245,0.95)",
-                color: "var(--text-main)",
-                display: "inline-flex",
-                justifyContent: "center",
+                color: "var(--text-main, #0f172a)",
+                padding: "6px",
+                display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
                 cursor: "pointer"
               }}
               title="Notifications"
             >
-              <FaBell size={15} />
+              <FaBell size={17} color="var(--text-main, #0f172a)" />
               {unreadCount > 0 && (
-                <span style={notificationBadge}>{unreadCount}</span>
+                <span style={{
+                  position: "absolute",
+                  top: "1px",
+                  right: "1px",
+                  width: "14px",
+                  height: "14px",
+                  borderRadius: "50%",
+                  background: "#dc2626",
+                  color: "#ffffff",
+                  fontSize: "9px",
+                  fontWeight: "800",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}>
+                  {unreadCount}
+                </span>
               )}
             </button>
-            <div
+
+            {/* Dark Mode Toggle */}
+            <button
               style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                background: "var(--primary-light)",
-                color: "var(--primary)",
+                background: "none",
+                border: "none",
+                fontSize: "15px",
+                color: isDarkMode ? "#f1c40f" : "#64748b",
+                cursor: "pointer",
+                padding: "6px",
                 display: "flex",
-                justifyContent: "center",
                 alignItems: "center",
-                cursor: "pointer"
+                justifyContent: "center"
               }}
-              onClick={() => setActiveTab("profile")}
+              onClick={toggleDarkMode}
+              title={isDarkMode ? "Switch to Light" : "Switch to Dark"}
             >
-              <FaUserAlt size={13} />
-            </div>
+              {isDarkMode ? <FaSun /> : <FaMoon />}
+            </button>
+
+            {/* Hamburger Drawer Menu Trigger */}
+            <button
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--text-main, #0f172a)",
+                fontSize: "16px",
+                cursor: "pointer",
+                padding: "6px",
+                display: "flex",
+                alignItems: "center"
+              }}
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <FaBars />
+            </button>
           </div>
         </header>
 
