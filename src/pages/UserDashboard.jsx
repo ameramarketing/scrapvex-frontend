@@ -7,6 +7,7 @@ import Toast from "../components/Toast";
 import API from "../services/api";
 import PickupForm from "../components/PickupForm";
 import { performLogout } from "../utils/auth";
+import { isMobileEnvironment } from "../platform/platform";
 
 /* ==========================================================
    SUB-COMPONENTS (Defined first to avoid Hoisting errors)
@@ -125,6 +126,10 @@ const playBellSound = () => {
   const showToast = (type, message) => setToast({ show: true, type, message });
 
   useEffect(() => {
+    if (isMobileEnvironment()) {
+      navigate("/book");
+      return;
+    }
     fetchData();
     const stored = JSON.parse(localStorage.getItem("user") || "{}");
     setProfileForm({ name: stored.name || "", email: stored.email || "", address: stored.address || "", area: stored.area || stored.assignedCity || "", oldPassword: "", newPassword: "", confirmPassword: "" });

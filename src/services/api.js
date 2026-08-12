@@ -49,19 +49,30 @@ API.interceptors.request.use(async (req) => {
     req.headers.Authorization = `Bearer ${token}`;
   }
 
+  // Safe development log for login requests
+  const url = req.url || "";
+  if (url.includes("login")) {
+    const payloadFields = req.data ? Object.keys(req.data).filter(k => k !== "password") : [];
+    console.log(`[LOGIN REQUEST] Method: ${req.method?.toUpperCase()} | URL: ${req.baseURL || ""}${url} | Fields: ${payloadFields.join(", ")}`);
+  }
+
   return req;
 });
 
 API.interceptors.response.use(
   (response) => {
-    // DIAGNOSTIC LOG (Success)
     const isCap = isNativeApp();
+    const url = response.config.url || "";
+    
+    // Log login success
+    if (url.includes("login")) {
+      console.log(`[LOGIN RESPONSE] Status: ${response.status} | Data:`, response.data);
+    }
+    
     if (isCap) {
-      const url = response.config.url || "";
       if (url.includes("login") || url.includes("rates")) {
         console.log(`[CAPACITOR-API-SUCCESS] ${response.config.method?.toUpperCase()} ${response.config.baseURL}${url}`);
         console.log(`[CAPACITOR-API-SUCCESS] Status: ${response.status}`);
-        // NEVER log sensitive data for login, but log rates data
         if (url.includes("rates")) {
           console.log(`[CAPACITOR-API-SUCCESS] Data:`, response.data);
         }
@@ -70,33 +81,53 @@ API.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // DIAGNOSTIC LOG (Error)
     const isCap = isNativeApp();
-    if (isCap || window.location.search.includes("app=true")) {
-      const msg = `[API ERROR]\nMethod: ${error.config?.method?.toUpperCase()}\nURL: ${error.config?.baseURL}${error.config?.url}\nMsg: ${error.message}\nStatus: ${error.response?.status}`;
-      console.log(msg);
-      alert(msg);
+    const url = error.config?.url || "";
+
+    // Log login failure
+    if (url.includes("login")) {
+      console.log(`[LOGIN RESPONSE] Status: ${error.response?.status} | Data:`, error.response?.data);
     }
 
+    if (isCap || window.location.search.includes("app=true")) {
+      const msg = `[API ERROR] Method: ${error.config?.method?.toUpperCase()} | URL: ${error.config?.baseURL}${error.config?.url} | Msg: ${error.message} | Status: ${error.response?.status}`;
+      console.log(msg);
+      // Removed alert(msg) per production rules
+    }
+
+    // Auto-logout on 401/403 for non-login endpoints
     if (
       error.response &&
-      (error.response.status === 401 || error.response.status === 403)
+      (error.response.status === 401 || error.response.status === 403) &&
+      !url.includes("login")
     ) {
-      // Clear auth via unified mechanism
       await clearAuthData();
-      // Clear legacy cookies if still present
       eraseCookie("token");
       eraseCookie("user");
       eraseCookie("role");
       window.location.href = "/";
     }
-    if (
-      !error.response &&
-      (error.message === "Network Error" || error.code === "ERR_NETWORK")
-    ) {
-      error.customMessage =
-        "Server unreachable. Ensure mobile device can connect to backend server IP!";
+
+    // Map custom messages to propagate to UI Toast components
+    if (error.response) {
+      const status = error.response.status;
+      const backendMessage = error.response.data?.message;
+
+      if (status === 400) {
+        error.customMessage = backendMessage || "Invalid request parameters.";
+      } else if (status === 401) {
+        error.customMessage = "Invalid mobile number or password.";
+      } else if (status === 403) {
+        error.customMessage = "Access denied. You do not have permission for this action.";
+      } else if (status >= 500) {
+        error.customMessage = "Server is temporarily unavailable. Please try again later.";
+      } else {
+        error.customMessage = backendMessage || `Request failed: HTTP ${status}`;
+      }
+    } else if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
+      error.customMessage = "Unable to connect to server. Please check your internet connection.";
     }
+
     return Promise.reject(error);
   },
 );

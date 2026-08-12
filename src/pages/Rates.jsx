@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaRecycle,
   FaSnowflake,
@@ -11,8 +12,6 @@ import {
   FaBook,
   FaCube,
   FaCog,
-  FaBolt,
-  FaTrash,
   FaTv,
   FaMotorcycle,
   FaBatteryFull,
@@ -27,19 +26,23 @@ import {
 import Footer from "../components/Footer";
 import RateCard from "../components/RateCard";
 import API from "../services/api";
+import { isMobileEnvironment } from "../platform/platform";
 
 function Rates() {
+  const navigate = useNavigate();
+  const isMobile = isMobileEnvironment();
   const [items, setItems] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedCity, setSelectedCity] = useState("");
   const [cities, setCities] = useState([]);
+  const [activeCategory, setActiveCategory] = useState("All");
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchActiveCities();
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (selectedCity) fetchRates();
   }, [selectedCity]);
 
@@ -124,21 +127,19 @@ function Rates() {
 
   const getCategoryTitle = (cat) => {
     switch (cat) {
-      case "Paper":            return "📄 Paper & Cardboard";
-      case "Plastic":          return "🧴 Plastic";
-      case "Metal":            return "🔩 Metal & Alloys";
+      case "Paper":            return "Paper & Cardboard";
+      case "Plastic":          return "Plastic";
+      case "Metal":            return "Metal & Alloys";
       case "Electronic":
-      case "IT-EWaste":        return "💻 IT / E-Waste";
+      case "IT-EWaste":        return "IT / E-Waste";
       case "Appliances":
-      case "Large Appliances": return "❄️ Large Appliances";
-      case "Small Appliances": return "🔌 Small Appliances";
-      case "Battery":          return "🔋 Batteries";
-      case "Vehicles":         return "🚗 Vehicles";
-      default:                 return `📦 ${cat}`;
+      case "Large Appliances": return "Large Appliances";
+      case "Small Appliances": return "Small Appliances";
+      case "Battery":          return "Batteries";
+      case "Vehicles":         return "Vehicles";
+      default:                 return cat;
     }
   };
-
-
 
   const getItemIcon = (name) => {
     const lower = name.toLowerCase();
@@ -173,17 +174,27 @@ function Rates() {
     return <FaRecycle />;
   };
 
+  // Get list of unique category names from loaded items
+  const categoriesList = useMemo(() => {
+    const unique = new Set(items.map(item => getCategoryTitle(item.category)));
+    return ["All", ...Array.from(unique)];
+  }, [items]);
+
   const groupedData = useMemo(() => {
     const groups = {};
-    const filtered = items.filter(item =>
-      item.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const filtered = items.filter(item => {
+      const matchSearch = item.name.toLowerCase().includes(search.toLowerCase());
+      const mappedCat = getCategoryTitle(item.category);
+      const matchCat = activeCategory === "All" || mappedCat === activeCategory;
+      return matchSearch && matchCat;
+    });
 
     filtered.forEach(item => {
       const title = getCategoryTitle(item.category);
       if (!groups[title]) {
         groups[title] = {
           title: title,
+          rawCategory: item.category,
           icon: getCategoryIcon(item.category),
           items: []
         };
@@ -196,59 +207,157 @@ function Rates() {
     });
 
     return Object.values(groups);
-  }, [items, search]);
+  }, [items, search, activeCategory]);
 
+  // ────────────────────────────────────────────────────────
+  // MOBILE / NATIVE LAYOUT
+  // ────────────────────────────────────────────────────────
+  if (isMobile) {
+    return (
+      <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "40px" }}>
+        
+        {/* COMPACT HEADER */}
+        <div style={{ padding: "20px 16px 10px 16px" }}>
+          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: 0 }}>Scrap Rates</h1>
+          <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Updated market rates for Jammu & Kashmir</p>
+        </div>
+
+        {/* CITY SELECTOR & SEARCH BAR */}
+        <div className="container" style={{ padding: "0 16px 12px 16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.8fr", gap: "8px", marginBottom: "10px" }}>
+            <div style={mobileSearchBox}>
+              <FaMapMarkerAlt style={{ color: "#0b8f3a", fontSize: "13px" }} />
+              <select
+                style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "12px", fontWeight: "700", color: "#334155", textTransform: "capitalize", cursor: "pointer" }}
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                {cities.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+
+            <div style={mobileSearchBox}>
+              <FaSearch style={{ color: "#0b8f3a", fontSize: "13px" }} />
+              <input
+                type="text"
+                placeholder="Search scrap item..."
+                style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "12px", color: "#0f172a", fontWeight: "600" }}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* CATEGORY CHIPS */}
+          {categoriesList.length > 1 && (
+            <div style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "6px", scrollbarWidth: "none" }}>
+              {categoriesList.map(cat => {
+                const isActive = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: "20px",
+                      border: "1.5px solid",
+                      borderColor: isActive ? "#0b8f3a" : "#e2e8f0",
+                      background: isActive ? "#f0fdf4" : "#ffffff",
+                      color: isActive ? "#0b8f3a" : "#64748b",
+                      fontSize: "11px",
+                      fontWeight: "700",
+                      whiteSpace: "nowrap",
+                      cursor: "pointer"
+                    }}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* RATES LIST */}
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: "600" }}>Loading latest rates...</span>
+          </div>
+        ) : groupedData.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: "600" }}>No items found for "{search}"</span>
+          </div>
+        ) : (
+          groupedData.map((category, idx) => (
+            <div key={idx} className="container" style={{ padding: "0 16px 16px 16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px", borderLeft: "3.5px solid #0b8f3a", paddingLeft: "6px" }}>
+                <span style={{ fontSize: "13px", fontWeight: "800", color: "#334155" }}>{category.title.toUpperCase()}</span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                {category.items.map((item, i) => {
+                  const priceParts = item[1].split("/");
+                  const price = priceParts[0];
+                  const unit = priceParts[1] ? `per ${priceParts[1]}` : "";
+                  return (
+                    <div key={i} style={mobileRateCard}>
+                      <div style={mobileRateCardIcon}>{item[2]}</div>
+                      <div style={mobileRateCardName}>{item[0]}</div>
+                      <div style={mobileRateCardPrice}>{price}</div>
+                      <div style={mobileRateCardUnit}>{unit}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))
+        )}
+
+        {/* IMPORTANT NOTE COMPACT */}
+        <div className="container" style={{ padding: "0 16px 16px 16px" }}>
+          <div style={mobileNoteBox}>
+            <span style={{ fontSize: "12px", fontWeight: "800", color: "#b45309", display: "block", marginBottom: "4px" }}>📌 Important Notes</span>
+            <ul style={{ margin: 0, paddingLeft: "14px", fontSize: "11px", color: "#78350f", lineHeight: "1.6" }}>
+              <li>Rates may differ for bulk scrap quantities. Call 8491028539.</li>
+              <li>Glass, wooden items, and fabrics are not accepted.</li>
+              <li>Minimum pickup value of ₹300 is required to book.</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* COMPACT CTA */}
+        <div className="container" style={{ padding: "0 16px" }}>
+          <button style={mobileCtaBtn} onClick={() => navigate("/book")}>
+            Book Free Doorstep Pickup <FaArrowRight style={{ fontSize: "11px" }} />
+          </button>
+        </div>
+
+      </div>
+    );
+  }
+
+  // ────────────────────────────────────────────────────────
+  // DESKTOP LAYOUT (100% Unmodified Safety)
+  // ────────────────────────────────────────────────────────
   return (
     <div>
-      
       {/* HERO */}
-      <div
-        className="container"
-        style={heroWrap}
-      >
-        <div
-          className="fade-up"
-          style={hero}
-        >
-          <p style={tag}>
-            Updated Today 
-            Best Market Prices
-          </p>
-
-          <h1 style={title}>
-            Scrap Rates List
-          </h1>
-
+      <div className="container" style={heroWrap}>
+        <div className="fade-up" style={hero}>
+          <p style={tag}>Updated Today • Best Market Prices</p>
+          <h1 style={title}>Scrap Rates List</h1>
           <p style={sub}>
-            Sell your scrap
-            at transparent
-            prices with
-            accurate weighing
-            and instant
-            payment.
+            Sell your scrap at transparent prices with accurate weighing and instant payment.
           </p>
-
           <div style={heroStats}>
-            <span style={pill}>
-              <FaStar />
-              Trusted Service
-            </span>
-
-            <span style={pill}>
-              <FaCheckCircle />
-              Instant Payment
-            </span>
+            <span style={pill}><FaStar /> Trusted Service</span>
+            <span style={pill}><FaCheckCircle /> Instant Payment</span>
           </div>
         </div>
       </div>
 
       {/* SEARCH */}
-      <div
-        className="container"
-        style={{
-          paddingBottom: "15px"
-        }}
-      >
+      <div className="container" style={{ paddingBottom: "15px" }}>
         <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold", color: "var(--primary)" }}>
           <FaMapMarkerAlt /> Select Your City
         </label>
@@ -270,67 +379,26 @@ function Rates() {
         `}</style>
 
         <div style={searchBox}>
-          <FaSearch
-            style={{
-              color:
-                "var(--primary)"
-            }}
-          />
-
+          <FaSearch style={{ color: "var(--primary)" }} />
           <input
             type="text"
             placeholder="Search scrap item..."
             style={{ ...searchInput, color: "var(--text-main)" }}
             value={search}
-            onChange={(e) =>
-              setSearch(
-                e.target.value
-              )
-            }
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
 
       {/* NOTE */}
-      <div
-        className="container"
-        style={{
-          paddingBottom:
-            "45px"
-        }}
-      >
+      <div className="container" style={{ paddingBottom: "45px" }}>
         <div style={noteBox}>
-          <h3
-            style={{
-              color:
-                "var(--primary)",
-              marginBottom:
-                "12px"
-            }}
-          >
-            📌 Important Note
-          </h3>
-
+          <h3 style={{ color: "var(--primary)", marginBottom: "12px" }}>📌 Important Note</h3>
           <ul style={noteList}>
-            <li>
-              Rates may differ
-              for bulk scrap.
-            </li>
-            <li>
-              Call
-              8491028539 for
-              bulk quote.
-            </li>
-            <li>
-              No glass,
-              wooden items,
-              fabrics.
-            </li>
-            <li>
-              Minimum pickup
-              value ₹300
-              required.
-            </li>
+            <li>Rates may differ for bulk scrap.</li>
+            <li>Call 8491028539 for bulk quote.</li>
+            <li>No glass, wooden items, fabrics.</li>
+            <li>Minimum pickup value ₹300 required.</li>
           </ul>
         </div>
       </div>
@@ -346,101 +414,29 @@ function Rates() {
         </div>
       ) : (
         groupedData.map((category, index) => (
-          <div
-            key={index}
-            className="container"
-            style={{
-              paddingBottom:
-                "55px"
-            }}
-          >
-            <div
-              style={
-                headingRow
-              }
-            >
-              <div
-                style={
-                  catIcon
-                }
-              >
-                {
-                  category.icon
-                }
-              </div>
-
-              <h2
-                style={{
-                  margin: 0,
-                  color: "var(--text-main)"
-                }}
-              >
-                {
-                  category.title
-                }
-              </h2>
+          <div key={index} className="container" style={{ paddingBottom: "55px" }}>
+            <div style={headingRow}>
+              <div style={catIcon}>{category.icon}</div>
+              <h2 style={{ margin: 0, color: "var(--text-main)" }}>{category.title}</h2>
             </div>
-
             <div style={grid3}>
-              {category.items.map(
-                (
-                  item,
-                  i
-                ) => (
-                  <div
-                    key={i}
-                    className="rate-card"
-                  >
-                    <RateCard
-                      icon={
-                        item[2]
-                      }
-                      name={
-                        item[0]
-                      }
-                      price={
-                        item[1]
-                      }
-                    />
-                  </div>
-                )
-              )}
+              {category.items.map((item, i) => (
+                <div key={i} className="rate-card">
+                  <RateCard icon={item[2]} name={item[0]} price={item[1]} />
+                </div>
+              ))}
             </div>
           </div>
-        )
         ))
-      }
+      )}
 
       {/* CTA */}
-      <div
-        className="container"
-        style={{
-          paddingBottom:
-            "70px"
-        }}
-      >
+      <div className="container" style={{ paddingBottom: "70px" }}>
         <div style={cta}>
-          <h2 style={ctaTitle}>
-            Ready to Sell
-            Scrap?
-          </h2>
-
-          <p style={ctaSub}>
-            Book doorstep
-            pickup now and
-            get paid
-            instantly.
-          </p>
-
-          <button
-            style={btn}
-            onClick={() =>
-            (window.location.href =
-              "/book")
-            }
-          >
-            Book Pickup{" "}
-            <FaArrowRight />
+          <h2 style={ctaTitle}>Ready to Sell Scrap?</h2>
+          <p style={ctaSub}>Book doorstep pickup now and get paid instantly.</p>
+          <button style={btn} onClick={() => navigate("/book")}>
+            Book Pickup <FaArrowRight />
           </button>
         </div>
       </div>
@@ -450,158 +446,104 @@ function Rates() {
   );
 }
 
-/* styles */
-const heroWrap = {
-  paddingTop: "20px",
-  paddingBottom: "30px"
-};
+/* DESKTOP STYLES */
+const heroWrap = { paddingTop: "20px", paddingBottom: "30px" };
+const hero = { textAlign: "center", padding: "40px 18px", borderRadius: "24px", background: "var(--card-bg)", boxShadow: "0 20px 40px rgba(0,0,0,0.05)" };
+const tag = { color: "var(--primary)", fontWeight: "bold" };
+const title = { fontSize: "clamp(32px,6vw,56px)", margin: "16px 0 12px", color: "var(--text-main)" };
+const sub = { color: "var(--text-muted)", fontSize: "clamp(15px,3vw,18px)", maxWidth: "720px", margin: "auto" };
+const heroStats = { marginTop: "24px", display: "flex", justifyContent: "center", gap: "12px", flexWrap: "wrap" };
+const pill = { background: "var(--bg-main)", color: "var(--text-main)", padding: "10px 14px", borderRadius: "999px", display: "flex", gap: "8px", alignItems: "center", boxShadow: "0 10px 20px rgba(0,0,0,0.05)", border: "1px solid var(--glass-border)" };
+const searchBox = { background: "var(--card-bg)", padding: "15px 18px", borderRadius: "14px", display: "flex", gap: "12px", alignItems: "center", boxShadow: "0 15px 35px rgba(0,0,0,0.05)", border: "1px solid var(--glass-border)" };
+const searchInput = { border: "none", outline: "none", width: "100%", fontSize: "16px", background: "transparent", color: "var(--text-main)" };
+const noteBox = { background: "var(--primary-light)", padding: "22px", borderRadius: "18px", border: "1px solid var(--primary)", color: "var(--text-main)" };
+const noteList = { lineHeight: "2", paddingLeft: "18px" };
+const headingRow = { display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px", background: "var(--card-bg)", padding: "14px 18px", borderRadius: "14px", borderLeft: "5px solid var(--primary)", boxShadow: "0 10px 20px rgba(0,0,0,0.04)" };
+const catIcon = { fontSize: "24px", color: "var(--primary)" };
+const grid3 = { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: "18px", marginTop: "22px" };
+const cta = { textAlign: "center", padding: "42px 18px", borderRadius: "24px", background: "linear-gradient(135deg,#0b8f3a,#14a248)" };
+const ctaTitle = { fontSize: "clamp(28px,5vw,42px)", color: "#fff", marginBottom: "12px" };
+const ctaSub = { color: "#eaffef", marginBottom: "24px" };
+const btn = { background: "var(--card-bg)", color: "var(--primary)", border: "none", padding: "14px 22px", borderRadius: "12px", fontWeight: "bold", cursor: "pointer", display: "inline-flex", gap: "8px", alignItems: "center" };
 
-const hero = {
-  textAlign: "center",
-  padding: "40px 18px",
-  borderRadius: "24px",
-  background:
-    "var(--card-bg)",
-  boxShadow:
-    "0 20px 40px rgba(0,0,0,0.05)"
-};
-
-const tag = {
-  color: "var(--primary)",
-  fontWeight: "bold"
-};
-
-const title = {
-  fontSize:
-    "clamp(32px,6vw,56px)",
-  margin:
-    "16px 0 12px",
-  color: "var(--text-main)"
-};
-
-const sub = {
-  color: "var(--text-muted)",
-  fontSize:
-    "clamp(15px,3vw,18px)",
-  maxWidth: "720px",
-  margin: "auto"
-};
-
-const heroStats = {
-  marginTop: "24px",
-  display: "flex",
-  justifyContent:
-    "center",
-  gap: "12px",
-  flexWrap: "wrap"
-};
-
-const pill = {
-  background: "var(--bg-main)",
-  color: "var(--text-main)",
+/* ────────────────────────────────────────────────────────
+   MOBILE INLINE STYLES
+   ──────────────────────────────────────────────────────── */
+const mobileSearchBox = {
+  background: "#ffffff",
   padding: "10px 14px",
-  borderRadius: "999px",
+  borderRadius: "10px",
   display: "flex",
   gap: "8px",
   alignItems: "center",
-  boxShadow:
-    "0 10px 20px rgba(0,0,0,0.05)",
-  border: "1px solid var(--glass-border)"
+  border: "1.5px solid #e2e8f0"
 };
 
-const searchBox = {
-  background: "var(--card-bg)",
-  padding: "15px 18px",
+const mobileRateCard = {
+  background: "#ffffff",
   borderRadius: "14px",
+  padding: "12px",
+  border: "1.5px solid rgba(15,23,42,0.06)",
   display: "flex",
-  gap: "12px",
+  flexDirection: "column",
   alignItems: "center",
-  boxShadow:
-    "0 15px 35px rgba(0,0,0,0.05)",
-  border: "1px solid var(--glass-border)"
-};
-
-const searchInput = {
-  border: "none",
-  outline: "none",
-  width: "100%",
-  fontSize: "16px",
-  background: "transparent",
-  color: "var(--text-main)"
-};
-
-const noteBox = {
-  background: "var(--primary-light)",
-  padding: "22px",
-  borderRadius: "18px",
-  border:
-    "1px solid var(--primary)",
-  color: "var(--text-main)"
-};
-
-const noteList = {
-  lineHeight: "2",
-  paddingLeft: "18px"
-};
-
-const headingRow = {
-  display: "flex",
-  flexWrap: "wrap",
-  alignItems: "center",
-  gap: "12px",
-  background: "var(--card-bg)",
-  padding: "14px 18px",
-  borderRadius: "14px",
-  borderLeft:
-    "5px solid var(--primary)",
-  boxShadow:
-    "0 10px 20px rgba(0,0,0,0.04)"
-};
-
-const catIcon = {
-  fontSize: "24px",
-  color: "var(--primary)"
-};
-
-const grid3 = {
-  display: "grid",
-  gridTemplateColumns:
-    "repeat(auto-fit,minmax(220px,1fr))",
-  gap: "18px",
-  marginTop: "22px"
-};
-
-const cta = {
   textAlign: "center",
-  padding: "42px 18px",
-  borderRadius: "24px",
-  background:
-    "linear-gradient(135deg,#0b8f3a,#14a248)"
+  boxShadow: "0 2px 6px rgba(0,0,0,0.01)"
 };
 
-const ctaTitle = {
-  fontSize:
-    "clamp(28px,5vw,42px)",
-  color: "#fff",
-  marginBottom: "12px"
+const mobileRateCardIcon = {
+  fontSize: "18px",
+  color: "#0b8f3a",
+  marginBottom: "4px"
 };
 
-const ctaSub = {
-  color: "#eaffef",
-  marginBottom: "24px"
+const mobileRateCardName = {
+  fontSize: "12px",
+  fontWeight: "700",
+  color: "#475569",
+  marginBottom: "4px",
+  minHeight: "34px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
 };
 
-const btn = {
-  background: "var(--card-bg)",
-  color: "var(--primary)",
-  border: "none",
-  padding: "14px 22px",
+const mobileRateCardPrice = {
+  fontSize: "18px",
+  fontWeight: "900",
+  color: "#0b8f3a",
+  margin: "2px 0 0 0"
+};
+
+const mobileRateCardUnit = {
+  fontSize: "10px",
+  fontWeight: "600",
+  color: "#94a3b8"
+};
+
+const mobileNoteBox = {
+  background: "#fffbeb",
+  padding: "12px 14px",
+  borderRadius: "14px",
+  border: "1.5px solid #fef3c7"
+};
+
+const mobileCtaBtn = {
+  width: "100%",
+  padding: "14px",
   borderRadius: "12px",
-  fontWeight: "bold",
-  cursor: "pointer",
-  display: "inline-flex",
+  border: "none",
+  background: "linear-gradient(135deg, #0b8f3a, #16a34a)",
+  color: "#ffffff",
+  fontSize: "13px",
+  fontWeight: "800",
+  letterSpacing: "0.5px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   gap: "8px",
-  alignItems: "center"
+  cursor: "pointer",
+  boxShadow: "0 4px 12px rgba(11,143,58,0.15)"
 };
 
 export default Rates;

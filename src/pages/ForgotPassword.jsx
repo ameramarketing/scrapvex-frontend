@@ -15,7 +15,6 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
-  const [debugOtp, setDebugOtp] = useState("");
   const [otpChannel, setOtpChannel] = useState("whatsapp");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -87,154 +86,221 @@ function ForgotPassword() {
   };
 
   return (
-    <div style={{ background: "var(--bg-main)", minHeight: "100vh" }}>
-            <Toast
+    <div style={{ background: "#f8fafc", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+      <Toast
         show={toast.show}
         type={toast.type}
         message={toast.message}
         onClose={() => setToast({ ...toast, show: false })}
       />
 
-      <div style={wrap}>
-        <div style={card} className="rate-card">
-          <div style={{ textAlign: "center", marginBottom: "30px" }}>
-            <div style={{...iconCircle, background: "var(--primary-light)", color: "var(--primary)"}}>
-              {step === 1 && <FaPhoneAlt style={mainIcon} />}
-              {step === 2 && <FaShieldAlt style={mainIcon} />}
-              {step === 3 && <FaKey style={mainIcon} />}
-            </div>
-            <h2 style={{color: "var(--text-main)"}}>{step === 1 ? "Forgot Password" : (step === 2 ? "Verify OTP" : "Reset Password")}</h2>
-            <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>
-              {step === 1 ? `Recover your ${role} account` : (step === 2 ? `Enter OTP sent to ${mobile}` : "Create a strong new password")}
-            </p>
+      <style>{`
+        .forgot-card {
+          width: 100%;
+          max-width: 400px;
+          background: #ffffff;
+          padding: 30px 24px;
+          border-radius: 20px;
+          border: 1px solid rgba(15,23,42,0.06);
+          box-shadow: 0 10px 25px -5px rgba(0,0,0,0.02), 0 8px 10px -6px rgba(0,0,0,0.02);
+        }
+        .forgot-logo-circle {
+          width: 54px;
+          height: 54px;
+          border-radius: 14px;
+          background: #f0fdf4;
+          color: #0b8f3a;
+          font-size: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 12px;
+          border: 1.5px solid #dcfce7;
+        }
+        .forgot-input-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: #f8fafc;
+          padding: 12px 16px;
+          border-radius: 12px;
+          margin-bottom: 14px;
+          border: 1.5px solid #e2e8f0;
+          transition: all 0.2s ease;
+          position: relative;
+        }
+        .forgot-input-row:focus-within {
+          border-color: #0b8f3a;
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.15);
+        }
+        .forgot-input-field {
+          border: none;
+          outline: none;
+          background: transparent;
+          width: 100%;
+          font-size: 14px;
+          color: #0f172a;
+          font-weight: 500;
+        }
+        .forgot-eye-btn {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: #64748b;
+          cursor: pointer;
+          font-size: 16px;
+          display: flex;
+          align-items: center;
+          padding: 4px;
+        }
+      `}</style>
+
+      <div className="forgot-card fade-up">
+        {/* LOGO AREA */}
+        <div style={{ textAlign: "center", marginBottom: "24px" }}>
+          <div className="forgot-logo-circle">
+            {step === 1 && <FaPhoneAlt />}
+            {step === 2 && <FaShieldAlt />}
+            {step === 3 && <FaKey />}
           </div>
-
-          {step === 1 && (
-            <form onSubmit={(e) => handleSendOTP(e, "whatsapp")}>
-              <div style={{...inputWrap, background: "var(--bg-main)", border: "1px solid var(--glass-border)"}}>
-                <FaPhoneAlt style={{...icon, color: "var(--primary)"}} />
-                <input 
-                  type="text" 
-                  placeholder="Mobile Number *" 
-                  value={mobile} 
-                  onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} 
-                  style={{...input, color: "var(--text-main)"}} 
-                  required 
-                />
-              </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "15px" }}>
-                <button
-                  type="button"
-                  style={{ ...btn, background: "#25D366" }}
-                  disabled={loading}
-                  onClick={(e) => handleSendOTP(e, "whatsapp")}
-                >
-                  {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
-                </button>
-
-                <button
-                  type="button"
-                  style={{ ...btn, background: "var(--primary)" }}
-                  disabled={loading}
-                  onClick={(e) => handleSendOTP(e, "sms")}
-                >
-                  {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {step === 2 && (
-            <form onSubmit={handleVerifyOTP}>
-              <div style={{...inputWrap, background: "var(--bg-main)", border: "1px solid var(--glass-border)"}}>
-                <FaShieldAlt style={{...icon, color: "var(--primary)"}} />
-                <input 
-                  type="text" 
-                  placeholder="Enter 6-Digit OTP *" 
-                  value={otp} 
-                  onChange={(e) => setOtp(e.target.value.slice(0, 6))} 
-                  style={{...input, color: "var(--text-main)"}} 
-                  required 
-                />
-              </div>
-              <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", marginTop: "10px" }}>
-                {otpChannel === "whatsapp" ? "💬 OTP sent to your WhatsApp" : "📱 OTP sent via SMS"}
-              </p>
-              <button type="submit" style={{...btn, background: "var(--primary)", marginTop: "12px"}} disabled={loading}>
-                {loading ? <FaRecycle className="spin" /> : <>Verify & Continue <FaArrowRight /></>}
-              </button>
-            </form>
-          )}
-
-          {step === 3 && (
-            <form onSubmit={handleResetPassword}>
-              <div style={{ ...inputWrap, background: "var(--bg-main)", border: "1px solid var(--glass-border)", position: "relative" }}>
-                <FaLock style={{ ...icon, color: "var(--primary)" }} />
-                <input 
-                  type={showNewPassword ? "text" : "password"} 
-                  placeholder="New Password" 
-                  value={newPassword} 
-                  onChange={(e) => setNewPassword(e.target.value)} 
-                  style={{ ...input, color: "var(--text-main)", paddingRight: "45px" }} 
-                  required 
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
-                >
-                  {showNewPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-
-              <div style={{ ...inputWrap, background: "var(--bg-main)", border: `1px solid ${confirmPassword && newPassword !== confirmPassword ? '#e74c3c' : 'var(--glass-border)'}`, position: "relative" }}>
-                <FaCheckCircle style={{ ...icon, color: confirmPassword && newPassword === confirmPassword ? '#0b8f3a' : 'var(--primary)' }} />
-                <input 
-                  type={showConfirmPassword ? "text" : "password"} 
-                  placeholder="Confirm Password" 
-                  value={confirmPassword} 
-                  onChange={(e) => setConfirmPassword(e.target.value)} 
-                  style={{ ...input, color: "var(--text-main)", paddingRight: "45px" }} 
-                  required 
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
-                >
-                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-              {confirmPassword && newPassword !== confirmPassword && (
-                <p style={{ color: '#e74c3c', fontSize: '12px', marginTop: '-12px', marginBottom: '12px', textAlign: 'left' }}>⚠ Passwords do not match</p>
-              )}
-              {confirmPassword && newPassword === confirmPassword && (
-                <p style={{ color: '#0b8f3a', fontSize: '12px', marginTop: '-12px', marginBottom: '12px', textAlign: 'left' }}>✓ Passwords match</p>
-              )}
-              <button type="submit" style={{...btn, background: "var(--primary)"}} disabled={loading}>
-                {loading ? <FaRecycle className="spin" /> : <>Reset Password <FaCheckCircle /></>}
-              </button>
-            </form>
-          )}
-
-          <p style={{ textAlign: "center", marginTop: "20px", fontSize: "14px", color: "var(--text-main)" }}>
-            Remembered? <span style={{ color: "var(--primary)", cursor: "pointer", fontWeight: "bold" }} onClick={() => navigate(-1)}>Go Back</span>
+          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: "0 0 4px 0" }}>
+            {step === 1 ? "Forgot Password" : (step === 2 ? "Verify OTP" : "Reset Password")}
+          </h1>
+          <p style={{ color: "#64748b", fontSize: "12px", margin: 0 }}>
+            {step === 1 ? `Recover your ${role} account` : (step === 2 ? `Enter OTP sent to ${mobile}` : "Create a strong new password")}
           </p>
+        </div>
+
+        {/* STEP 1: ENTER MOBILE & REQUEST OTP */}
+        {step === 1 && (
+          <form onSubmit={(e) => handleSendOTP(e, "whatsapp")} style={{ display: "flex", flexDirection: "column" }}>
+            <div className="forgot-input-row">
+              <FaPhoneAlt style={{ color: "#0b8f3a", fontSize: "14px" }} />
+              <input 
+                type="text" 
+                placeholder="Mobile Number *" 
+                value={mobile} 
+                onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))} 
+                className="forgot-input-field"
+                required 
+              />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+              <button
+                type="button"
+                className="btn-premium"
+                style={{ background: "#25D366", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", border: "none", height: "46px" }}
+                disabled={loading}
+                onClick={(e) => handleSendOTP(e, "whatsapp")}
+              >
+                {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "16px" }} /> Get OTP on WhatsApp</>}
+              </button>
+
+              <button
+                type="button"
+                className="btn-premium"
+                style={{ background: "#0b8f3a", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", border: "none", height: "46px" }}
+                disabled={loading}
+                onClick={(e) => handleSendOTP(e, "sms")}
+              >
+                {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "16px" }} /> Get OTP via SMS</>}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* STEP 2: VERIFY OTP */}
+        {step === 2 && (
+          <form onSubmit={handleVerifyOTP} style={{ display: "flex", flexDirection: "column" }}>
+            <div className="forgot-input-row">
+              <FaShieldAlt style={{ color: "#0b8f3a", fontSize: "14px" }} />
+              <input 
+                type="text" 
+                placeholder="Enter 6-Digit OTP *" 
+                value={otp} 
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} 
+                className="forgot-input-field"
+                required 
+              />
+            </div>
+            <p style={{ textAlign: "center", fontSize: "12px", color: "#64748b", margin: "0 0 16px 0" }}>
+              {otpChannel === "whatsapp" ? "💬 OTP sent to your WhatsApp" : "📱 OTP sent via SMS"}
+            </p>
+            <button type="submit" className="btn-premium" style={{ height: "46px", border: "none", fontSize: "14px", fontWeight: "800" }} disabled={loading}>
+              {loading ? <FaRecycle className="spin" /> : <>Verify & Continue <FaArrowRight style={{ fontSize: "11px" }} /></>}
+            </button>
+          </form>
+        )}
+
+        {/* STEP 3: RESET PASSWORD */}
+        {step === 3 && (
+          <form onSubmit={handleResetPassword} style={{ display: "flex", flexDirection: "column" }}>
+            <div className="forgot-input-row">
+              <FaLock style={{ color: "#0b8f3a", fontSize: "14px" }} />
+              <input 
+                type={showNewPassword ? "text" : "password"} 
+                placeholder="New Password" 
+                value={newPassword} 
+                onChange={(e) => setNewPassword(e.target.value)} 
+                className="forgot-input-field"
+                style={{ paddingRight: "40px" }}
+                required 
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="forgot-eye-btn"
+              >
+                {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
+            <div className="forgot-input-row" style={{ border: `1.5px solid ${confirmPassword && newPassword !== confirmPassword ? '#ef4444' : '#e2e8f0'}` }}>
+              <FaCheckCircle style={{ color: confirmPassword && newPassword === confirmPassword ? '#0b8f3a' : '#0b8f3a', fontSize: "14px" }} />
+              <input 
+                type={showConfirmPassword ? "text" : "password"} 
+                placeholder="Confirm Password" 
+                value={confirmPassword} 
+                onChange={(e) => setConfirmPassword(e.target.value)} 
+                className="forgot-input-field"
+                style={{ paddingRight: "40px" }}
+                required 
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="forgot-eye-btn"
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
+            {confirmPassword && newPassword !== confirmPassword && (
+              <p style={{ color: '#ef4444', fontSize: '11px', marginTop: '-8px', marginBottom: '14px', textAlign: 'left', fontWeight: "600" }}>⚠ Passwords do not match</p>
+            )}
+            {confirmPassword && newPassword === confirmPassword && (
+              <p style={{ color: '#0b8f3a', fontSize: '11px', marginTop: '-8px', marginBottom: '14px', textAlign: 'left', fontWeight: "600" }}>✓ Passwords match</p>
+            )}
+
+            <button type="submit" className="btn-premium" style={{ height: "46px", border: "none", fontSize: "14px", fontWeight: "800" }} disabled={loading}>
+              {loading ? <FaRecycle className="spin" /> : <>Reset Password <FaCheckCircle style={{ fontSize: "12px" }} /></>}
+            </button>
+          </form>
+        )}
+
+        <div style={{ textAlign: "center", marginTop: "20px", fontSize: "13px" }}>
+          <span style={{ color: "#0b8f3a", cursor: "pointer", fontWeight: "800" }} onClick={() => navigate(-1)}>
+            ← Go Back
+          </span>
         </div>
       </div>
     </div>
   );
 }
 
-const wrap = { minHeight: "80vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "40px 20px" };
-const card = { width: "100%", maxWidth: "450px", background: "var(--card-bg)", padding: "40px", borderRadius: "28px", boxShadow: "0 20px 50px rgba(0,0,0,0.06)", border: "1px solid var(--glass-border)" };
-const iconCircle = { width: "70px", height: "70px", background: "#eef8f1", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center", margin: "0 auto 15px", color: "#0b8f3a" };
-const mainIcon = { fontSize: "30px" };
-const inputWrap = { display: "flex", alignItems: "center", background: "#f8f9fa", padding: "15px 20px", borderRadius: "14px", marginBottom: "20px", border: "1px solid #eee" };
-const icon = { color: "#0b8f3a", marginRight: "15px" };
-const input = { border: "none", background: "transparent", outline: "none", fontSize: "16px", width: "100%" };
-const btn = { width: "100%", background: "#0b8f3a", color: "#fff", border: "none", padding: "15px", borderRadius: "14px", fontWeight: "bold", fontSize: "16px", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", transition: "0.3s" };
-
 export default ForgotPassword;
-

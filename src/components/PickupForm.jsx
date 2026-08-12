@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaPhoneAlt, FaLock, FaMapMarkerAlt, FaCalendarAlt, FaClock, FaRecycle, FaGift, FaCheckCircle, FaChevronRight, FaInfoCircle, FaPlus, FaMinus, FaCrosshairs } from "react-icons/fa";
+import { 
+  FaUser, FaPhoneAlt, FaLock, FaMapMarkerAlt, FaCalendarAlt, FaClock, 
+  FaRecycle, FaGift, FaCheckCircle, FaChevronRight, FaInfoCircle, 
+  FaPlus, FaMinus, FaCrosshairs, FaCheck 
+} from "react-icons/fa";
 import Toast from "./Toast";
 import API from "../services/api";
 import { saveAuthData } from "../utils/auth";
@@ -212,10 +216,160 @@ function PickupForm() {
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <style>{`
-        .step-circle { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 14px; margin: 0 auto 5px; background: var(--card-bg); transition: 0.3s; }
-        .step-active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); box-shadow: 0 0 10px rgba(11,143,58,0.2); }
-        .item-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px; max-height: 250px; overflow-y: auto; padding: 5px; }
-        select option { background: var(--card-bg) !important; color: var(--text-main) !important; }
+        .step-circle { 
+          width: 32px; 
+          height: 32px; 
+          border-radius: 50%; 
+          border: 1.5px solid #e2e8f0; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          font-size: 12px; 
+          margin: 0 auto 6px; 
+          background: #ffffff; 
+          color: #94a3b8;
+          transition: all 0.3s ease; 
+        }
+        .step-active { 
+          border-color: #0b8f3a; 
+          color: #0b8f3a; 
+          background: #f0fdf4; 
+          box-shadow: 0 0 0 3px rgba(11,143,58,0.15); 
+          font-weight: bold;
+        }
+        .step-text {
+          font-size: 10px;
+          font-weight: 700;
+          color: #94a3b8;
+          transition: 0.3s;
+        }
+        .step-text.active {
+          color: #0f172a;
+        }
+        .modern-input-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: #f8fafc;
+          padding: 12px 16px;
+          border-radius: 12px;
+          margin-bottom: 14px;
+          border: 1.5px solid #e2e8f0;
+          transition: all 0.2s ease;
+        }
+        .modern-input-row:focus-within {
+          border-color: #0b8f3a;
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.1);
+        }
+        .modern-input-field {
+          border: none;
+          outline: none;
+          background: transparent;
+          width: 100%;
+          font-size: 14px;
+          color: #0f172a;
+          font-weight: 500;
+        }
+        .modern-select-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: #f8fafc;
+          padding: 12px 16px;
+          border-radius: 12px;
+          margin-bottom: 14px;
+          border: 1.5px solid #e2e8f0;
+          position: relative;
+        }
+        .modern-select {
+          border: none;
+          outline: none;
+          background: transparent;
+          width: 100%;
+          font-size: 14px;
+          font-weight: 600;
+          color: #334155;
+          cursor: pointer;
+          appearance: auto;
+          WebkitAppearance: auto;
+        }
+        .item-grid { 
+          display: grid; 
+          grid-template-columns: repeat(1, 1fr); 
+          gap: 10px; 
+          max-height: 280px; 
+          overflow-y: auto; 
+          padding: 4px; 
+        }
+        .mode-tab-btn {
+          padding: 10px;
+          border-radius: 10px;
+          border: 1.5px solid #e2e8f0;
+          font-weight: 700;
+          font-size: 13px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          cursor: pointer;
+          background: #ffffff;
+          color: #64748b;
+          transition: all 0.2s ease;
+        }
+        .mode-tab-btn.active {
+          border-color: #0b8f3a;
+          background: #f0fdf4;
+          color: #0b8f3a;
+        }
+        .scrap-item-card {
+          padding: 10px 12px;
+          border-radius: 12px;
+          border: 1.5px solid #e2e8f0;
+          background: #ffffff;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          transition: all 0.2s ease;
+        }
+        .scrap-item-card.selected {
+          border-color: #0b8f3a;
+          background: #f0fdf4;
+        }
+        .qty-counter-wrap {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          background: #ffffff;
+          padding: 4px 8px;
+          border-radius: 8px;
+          border: 1px solid #e2e8f0;
+        }
+        .qty-counter-btn {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          border: none;
+          background: #f0fdf4;
+          color: #0b8f3a;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 10px;
+        }
+        .qty-value {
+          font-weight: 800;
+          font-size: 13px;
+          min-width: 16px;
+          text-align: center;
+          color: #0f172a;
+        }
+        select option { 
+          background: #ffffff !important; 
+          color: #0f172a !important; 
+        }
       `}</style>
 
       {/* STEPS INDICATOR */}
@@ -229,38 +383,40 @@ function PickupForm() {
       <div style={stepContent}>
         {step === 1 && (
           <div className="fade-up">
-            <h3 style={stepTitle}>Identity & Verification Check</h3>
+            <h3 style={stepTitle}>Identity & Verification</h3>
             <Input icon={<FaUser />} placeholder="Full Name *" value={form.name} onChange={v => update("name", v)} />
             <Input icon={<FaPhoneAlt />} placeholder="10-Digit Mobile *" value={form.phone} onChange={v => update("phone", v.replace(/\D/g, "").slice(0, 10))} />
             
             {!otpSent ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "14px" }}>
                 <button
                   type="button"
-                  className="btn-premium full-width-mobile pulse-btn"
-                  style={{ background: "#25D366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  className="btn-premium full-width-mobile"
+                  style={{ background: "#25D366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", border: "none", height: "46px" }}
                   onClick={() => sendOtp("whatsapp")}
                   disabled={loading}
                 >
-                  {loading ? <FaRecycle className="spin" /> : <> Get OTP on WhatsApp</>}
+                  {loading ? <FaRecycle className="spin" /> : <>Get OTP on WhatsApp</>}
                 </button>
                 <button
                   type="button"
                   className="btn-premium full-width-mobile"
-                  style={{ background: "var(--primary)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+                  style={{ background: "#0b8f3a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", border: "none", height: "46px" }}
                   onClick={() => sendOtp("sms")}
                   disabled={loading}
                 >
-                  {loading ? <FaRecycle className="spin" /> : <> Get OTP via SMS</>}
+                  {loading ? <FaRecycle className="spin" /> : <>Get OTP via SMS</>}
                 </button>
               </div>
             ) : (
               <div style={{ marginTop: "15px" }}>
-                <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "12px" }}>
-                  {otpChannel === "whatsapp" ? "💬 Secret OTP sent to your WhatsApp inbox" : "📩 Secret OTP sent via SMS"} on <b>+91 {form.phone}</b>.
+                <p style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px" }}>
+                  {otpChannel === "whatsapp" ? "💬 OTP code sent to your WhatsApp inbox" : "📩 OTP code sent via SMS"} on <b>+91 {form.phone}</b>.
                 </p>
-                <Input icon={<FaLock />} placeholder="Enter 6-Digit Verification Code" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 6))} />
-                <button className="btn-premium full-width-mobile" style={{ marginTop: "10px" }} onClick={verifyOtp} disabled={loading}>Verify OTP & Continue</button>
+                <Input icon={<FaLock />} placeholder="Enter 6-Digit Code" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 6))} />
+                <button className="btn-premium full-width-mobile" style={{ marginTop: "10px", height: "46px", border: "none" }} onClick={verifyOtp} disabled={loading}>
+                  {loading ? <FaRecycle className="spin" /> : "Verify & Continue"}
+                </button>
               </div>
             )}
           </div>
@@ -274,42 +430,29 @@ function PickupForm() {
               type="button"
               onClick={getLiveLocation}
               disabled={locationLoading}
-              style={{
-                width: "100%",
-                padding: "12px 14px",
-                borderRadius: "12px",
-                border: "1px solid #bbf7d0",
-                background: "#f0fdf4",
-                color: "#15803d",
-                fontWeight: "700",
-                fontSize: "13px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-                cursor: "pointer",
-                marginBottom: "14px"
-              }}
+              style={gpsDetectBar}
             >
               {locationLoading ? <FaRecycle className="spin" /> : <FaCrosshairs style={{ color: "#0b8f3a" }} />}
-              <span>{locationLoading ? "Detecting Live GPS Location..." : "📍 Detect My Live GPS Location (For Collector Navigation)"}</span>
+              <span>{locationLoading ? "Detecting Live GPS..." : "📍 Detect Live GPS Location"}</span>
             </button>
 
             <div style={{ position: "relative" }}>
-              <Input icon={<FaMapMarkerAlt />} placeholder="House / Street / Area / Landmark" value={form.address} onChange={v => update("address", v)} />
+              <Input icon={<FaMapMarkerAlt />} placeholder="House / Street / Landmark" value={form.address} onChange={v => update("address", v)} />
               <button onClick={getLiveLocation} style={locBtn} title="Pin Live GPS">{locationLoading ? <FaRecycle className="spin" /> : <FaCrosshairs />}</button>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div style={customInputWrap}>
-                <FaMapMarkerAlt color="var(--primary)" />
-                <select style={selectStyle} value={form.city} onChange={e => update("city", e.target.value)}>
+            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: "10px" }}>
+              <div className="modern-select-row">
+                <FaMapMarkerAlt color="#0b8f3a" />
+                <select className="modern-select" value={form.city} onChange={e => update("city", e.target.value)}>
                   <option value="">Select City</option>
                   {activeCities.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <Input icon={<FaMapMarkerAlt />} placeholder="Pincode" value={form.pincode} onChange={v => update("pincode", v.replace(/\D/g, "").slice(0, 6))} />
             </div>
-            <button className="btn-premium full-width-mobile" onClick={nextAddress}>Continue <FaChevronRight /></button>
+            <button className="btn-premium full-width-mobile" style={{ height: "46px", border: "none" }} onClick={nextAddress}>
+              Continue <FaChevronRight style={{ fontSize: "11px" }} />
+            </button>
           </div>
         )}
 
@@ -317,9 +460,9 @@ function PickupForm() {
           <div className="fade-up">
             <h3 style={stepTitle}>Select Slot</h3>
             <Input type="date" icon={<FaCalendarAlt />} value={form.date} min={new Date().toISOString().split("T")[0]} onChange={v => update("date", v)} />
-            <div style={customInputWrap}>
-              <FaClock color="var(--primary)" />
-              <select style={selectStyle} value={form.time} onChange={e => update("time", e.target.value)}>
+            <div className="modern-select-row">
+              <FaClock color="#0b8f3a" />
+              <select className="modern-select" value={form.time} onChange={e => update("time", e.target.value)}>
                 <option value="">Choose Time Slot</option>
                 {[
                   { label: "10AM - 12PM", hour: 10 },
@@ -333,35 +476,48 @@ function PickupForm() {
                 })}
               </select>
             </div>
-            <button className="btn-premium full-width-mobile" onClick={nextSchedule}>Choose Items <FaChevronRight /></button>
+            <button className="btn-premium full-width-mobile" style={{ height: "46px", border: "none" }} onClick={nextSchedule}>
+              Choose Items <FaChevronRight style={{ fontSize: "11px" }} />
+            </button>
           </div>
         )}
 
         {step === 4 && (
           <div className="fade-up">
-            <h3 style={stepTitle}>Choose Items & Weight</h3>
+            <h3 style={stepTitle}>Items & Weight</h3>
             <div style={modeTabs}>
-              <button style={{ ...modeBtn, background: form.mode === "sell" ? "var(--primary)" : "var(--bg-main)", color: form.mode === "sell" ? "#fff" : "var(--text-main)" }} onClick={() => update("mode", "sell")}><FaRecycle /> Sell</button>
-              <button style={{ ...modeBtn, background: form.mode === "donate" ? "var(--primary)" : "var(--bg-main)", color: form.mode === "donate" ? "#fff" : "var(--text-main)" }} onClick={() => update("mode", "donate")}><FaGift /> Donate</button>
+              <button type="button" className={`mode-tab-btn ${form.mode === "sell" ? "active" : ""}`} onClick={() => update("mode", "sell")}><FaRecycle /> Sell</button>
+              <button type="button" className={`mode-tab-btn ${form.mode === "donate" ? "active" : ""}`} onClick={() => update("mode", "donate")}><FaGift /> Donate</button>
             </div>
             <div className="item-grid">
               {items.map(item => {
                 const isSelected = form.selectedItems[item.name] !== undefined;
                 return (
-                  <div key={item._id} style={{ ...itemCard, borderColor: isSelected ? "var(--primary)" : "var(--glass-border)", background: isSelected ? "var(--primary-light)" : "var(--card-bg)" }}>
+                  <div key={item._id} className={`scrap-item-card ${isSelected ? "selected" : ""}`}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, cursor: "pointer" }} onClick={() => toggleItem(item.name)}>
-                      <FaCheckCircle color={isSelected ? "var(--primary)" : "var(--glass-border)"} size={16} />
+                      <div style={{
+                        width: "18px",
+                        height: "18px",
+                        borderRadius: "4px",
+                        border: "2px solid #0b8f3a",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: isSelected ? "#0b8f3a" : "transparent"
+                      }}>
+                        {isSelected && <FaCheck size={9} color="#fff" />}
+                      </div>
                       <div style={{ display: "flex", flexDirection: "column" }}>
-                        <span style={{ fontSize: "14px", fontWeight: "600" }}>{item.name}</span>
-                        <span style={{ fontSize: "12px", color: "var(--primary)", fontWeight: "bold" }}>₹{item.price}/{item.unit}</span>
+                        <span style={{ fontSize: "13px", fontWeight: "600", color: "#334155" }}>{item.name}</span>
+                        <span style={{ fontSize: "11px", color: "#0b8f3a", fontWeight: "bold" }}>₹{item.price}/{item.unit}</span>
                       </div>
                     </div>
 
                     {isSelected && (
-                      <div style={{ ...qtyWrap, background: "var(--bg-main)", border: "1px solid var(--glass-border)" }}>
-                        <button style={{ ...qtyBtn, background: "var(--primary-light)", color: "var(--primary)" }} onClick={(e) => { e.stopPropagation(); updateQty(item.name, -1) }}><FaMinus size={10} /></button>
-                        <span style={qtyText}>{form.selectedItems[item.name]}</span>
-                        <button style={{ ...qtyBtn, background: "var(--primary-light)", color: "var(--primary)" }} onClick={(e) => { e.stopPropagation(); updateQty(item.name, 1) }}><FaPlus size={10} /></button>
+                      <div className="qty-counter-wrap">
+                        <button type="button" className="qty-counter-btn" onClick={(e) => { e.stopPropagation(); updateQty(item.name, -1) }}><FaMinus size={8} /></button>
+                        <span className="qty-value">{form.selectedItems[item.name]}</span>
+                        <button type="button" className="qty-counter-btn" onClick={(e) => { e.stopPropagation(); updateQty(item.name, 1) }}><FaPlus size={8} /></button>
                       </div>
                     )}
                   </div>
@@ -371,19 +527,19 @@ function PickupForm() {
 
             <div style={totalBox}>
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Estimated Total:</span>
-                <strong style={{ fontSize: "18px", color: "var(--primary)" }}>₹{calculateTotal().toFixed(0)}</strong>
+                <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "600" }}>Estimated Earnings</span>
+                <strong style={{ fontSize: "18px", color: "#0b8f3a" }}>₹{calculateTotal().toFixed(0)}</strong>
               </div>
               {form.mode === "sell" && (
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "10px", color: calculateTotal() >= settings.minAmount ? "var(--primary)" : "var(--error)", fontWeight: "bold", display: "flex", alignItems: "center", gap: "4px" }}>
-                    {calculateTotal() >= settings.minAmount ? <><FaCheckCircle /> Minimum Met</> : <><FaInfoCircle /> Min. ₹{settings.minAmount}</>}
+                  <div style={{ fontSize: "10px", color: calculateTotal() >= settings.minAmount ? "#0b8f3a" : "#dc2626", fontWeight: "bold", display: "flex", alignItems: "center", gap: "4px" }}>
+                    {calculateTotal() >= settings.minAmount ? <><FaCheckCircle /> Min Met</> : <><FaInfoCircle /> Min. ₹{settings.minAmount}</>}
                   </div>
                 </div>
               )}
             </div>
 
-            <button className="btn-premium full-width-mobile" onClick={submit} disabled={loading}>
+            <button className="btn-premium full-width-mobile" style={{ height: "46px", border: "none" }} onClick={submit} disabled={loading}>
               {loading ? <FaRecycle className="spin" /> : "Confirm & Book Pickup"}
             </button>
           </div>
@@ -391,10 +547,10 @@ function PickupForm() {
 
         {step === 5 && (
           <div style={{ textAlign: "center", padding: "30px 10px" }}>
-            <FaCheckCircle size={60} color="var(--primary)" />
-            <h2 style={{ margin: "20px 0 10px 0" }}>Booking Confirmed!</h2>
-            <p style={{ color: "var(--text-muted)" }}>Our collector will reach you as per your scheduled time. You can track this in your dashboard.</p>
-            <button className="btn-premium" style={{ marginTop: "30px" }} onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
+            <FaCheckCircle size={55} color="#0b8f3a" />
+            <h2 style={{ margin: "16px 0 8px 0", fontSize: "18px", fontWeight: "800", color: "#0f172a" }}>Booking Confirmed!</h2>
+            <p style={{ color: "#64748b", fontSize: "12px", margin: 0, lineHeight: "1.5" }}>Our verified collector will arrive as per your slot. Track request status in your dashboard.</p>
+            <button className="btn-premium" style={{ marginTop: "24px", height: "44px", width: "100%", maxWidth: "200px", border: "none" }} onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
           </div>
         )}
       </div>
@@ -402,35 +558,45 @@ function PickupForm() {
   );
 }
 
+/* COMPACT COMPONENTS */
 const Step = ({ icon, title, active }) => (
   <div style={{ flex: 1, textAlign: "center" }}>
     <div className={`step-circle ${active ? "step-active" : ""}`}>{icon}</div>
-    <span className="step-text" style={{ fontSize: "11px", fontWeight: "700", opacity: active ? 1 : 0.4 }}>{title}</span>
+    <span className={`step-text ${active ? "active" : ""}`}>{title}</span>
   </div>
 );
 
 const Input = ({ icon, placeholder, value, onChange, type = "text", min = "" }) => (
-  <div style={inputRow}>
-    <div style={{ color: "var(--primary)" }}>{icon}</div>
-    <input type={type} placeholder={placeholder} value={value} min={min} onChange={e => onChange(e.target.value)} style={{ ...inputField, color: "var(--text-main)" }} />
+  <div className="modern-input-row">
+    <div style={{ color: "#0b8f3a", display: "flex", alignItems: "center" }}>{icon}</div>
+    <input type={type} placeholder={placeholder} value={value} min={min} onChange={e => onChange(e.target.value)} className="modern-input-field" />
   </div>
 );
 
-const formBox = { padding: "25px", background: "var(--card-bg)", borderRadius: "25px", width: "100%", maxWidth: "450px", margin: "0 auto" };
-const stepHeader = { display: "flex", justifyContent: "space-between", marginBottom: "30px" };
-const stepContent = { minHeight: "280px", position: "relative", color: "var(--text-main)" };
-const stepTitle = { fontSize: "18px", marginBottom: "20px", color: "var(--text-main)", borderLeft: "4px solid var(--primary)", paddingLeft: "12px" };
-const inputRow = { display: "flex", alignItems: "center", gap: "12px", background: "var(--bg-main)", padding: "14px 18px", borderRadius: "14px", marginBottom: "15px", border: "1px solid var(--glass-border)" };
-const inputField = { border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "15px" };
-const locBtn = { position: "absolute", right: "10px", top: "12px", background: "var(--primary-light)", border: "none", color: "var(--primary)", width: "35px", height: "35px", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" };
-const customInputWrap = { display: "flex", alignItems: "center", gap: "12px", background: "var(--bg-main)", padding: "14px 18px", borderRadius: "14px", marginBottom: "20px", border: "1px solid var(--glass-border)" };
-const selectStyle = { border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "15px", fontWeight: "600", color: "var(--text-main)", appearance: "auto", WebkitAppearance: "auto", cursor: "pointer" };
-const modeTabs = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" };
-const modeBtn = { padding: "12px", borderRadius: "12px", border: "none", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", cursor: "pointer", transition: "0.3s" };
-const itemCard = { padding: "15px", borderRadius: "15px", border: "1.5px solid #eee", transition: "0.2s", display: "flex", justifyContent: "space-between", alignItems: "center" };
-const qtyWrap = { display: "flex", alignItems: "center", gap: "10px", background: "#fff", padding: "5px 10px", borderRadius: "10px", border: "1px solid #eee" };
-const qtyBtn = { width: "25px", height: "25px", borderRadius: "50%", border: "none", background: "#eef8f1", color: "#0b8f3a", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" };
-const qtyText = { fontWeight: "bold", fontSize: "14px", minWidth: "20px", textAlign: "center" };
-const totalBox = { margin: "20px 0", padding: "18px", background: "var(--primary-light)", borderRadius: "15px", border: "1px dashed var(--primary)", display: "flex", justifyContent: "space-between", alignItems: "center" };
+/* INLINE STYLES */
+const formBox = { padding: "16px", background: "#ffffff", borderRadius: "18px", width: "100%", boxSizing: "border-box" };
+const stepHeader = { display: "flex", justifyContent: "space-between", marginBottom: "20px" };
+const stepContent = { minHeight: "280px", position: "relative" };
+const stepTitle = { fontSize: "15px", fontWeight: "800", marginBottom: "16px", color: "#0f172a", borderLeft: "3.5px solid #0b8f3a", paddingLeft: "8px" };
+const locBtn = { position: "absolute", right: "8px", top: "8px", background: "#f0fdf4", border: "none", color: "#0b8f3a", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" };
+const modeTabs = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" };
+const totalBox = { margin: "16px 0", padding: "12px 14px", background: "#f0fdf4", borderRadius: "12px", border: "1.5px dashed #0b8f3a", display: "flex", justifyContent: "space-between", alignItems: "center" };
+
+const gpsDetectBar = {
+  width: "100%",
+  padding: "10px 12px",
+  borderRadius: "10px",
+  border: "1.5px solid #bbf7d0",
+  background: "#f0fdf4",
+  color: "#15803d",
+  fontWeight: "700",
+  fontSize: "12px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "8px",
+  cursor: "pointer",
+  marginBottom: "12px"
+};
 
 export default PickupForm;

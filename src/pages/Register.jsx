@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaArrowRight, FaUserPlus, FaCheckCircle, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
 import { saveAuthData } from "../utils/auth";
-
 import Toast from "../components/Toast";
 import API from "../services/api";
 
@@ -27,7 +26,6 @@ function Register() {
     setForm({ ...form, [e.target.name]: value });
   };
 
-  // Step 1: Request OTP via WhatsApp or SMS
   const handleRequestOtp = async (e, selectedChannel = "whatsapp") => {
     if (e) e.preventDefault();
     if (!form.name.trim()) return showToast("error", "Enter your full name");
@@ -49,7 +47,6 @@ function Register() {
     }
   };
 
-  // Step 2: Verify OTP & Complete Registration
   const handleFinalRegister = async (e) => {
     e.preventDefault();
     setModalError("");
@@ -84,132 +81,199 @@ function Register() {
   };
 
   return (
-    <div style={{ background: "var(--bg-main)", minHeight: "100vh" }}>
-            <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
+    <div style={{ background: "#f8fafc", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 16px" }}>
+      <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
-      <div className="container" style={wrap}>
-        <div className="card-premium fade-up" style={card}>
-          <div style={{ textAlign: "center", marginBottom: "30px" }}>
-            <div style={iconCircle}><FaUserPlus /></div>
-            <h1 style={{ fontSize: "28px", margin: "10px 0", color: "var(--text-main)" }}>Create Account</h1>
-            <p style={{ color: "var(--text-muted)", fontSize: "14px" }}>Start recycling smarter with ScrapVex</p>
+      <style>{`
+        .register-card {
+          width: 100%;
+          max-width: 420px;
+          background: #ffffff;
+          padding: 30px 24px;
+          border-radius: 20px;
+          border: 1px solid rgba(15,23,42,0.06);
+          box-shadow: 0 10px 25px -5px rgba(0,0,0,0.02), 0 8px 10px -6px rgba(0,0,0,0.02);
+        }
+        .register-logo-circle {
+          width: 54px;
+          height: 54px;
+          border-radius: 14px;
+          background: #f0fdf4;
+          color: #0b8f3a;
+          font-size: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 12px;
+          border: 1.5px solid #dcfce7;
+        }
+        .register-input-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: #f8fafc;
+          padding: 12px 16px;
+          border-radius: 12px;
+          margin-bottom: 14px;
+          border: 1.5px solid #e2e8f0;
+          transition: all 0.2s ease;
+          position: relative;
+        }
+        .register-input-row:focus-within {
+          border-color: #0b8f3a;
+          background: #ffffff;
+          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.15);
+        }
+        .register-input-field {
+          border: none;
+          outline: none;
+          background: transparent;
+          width: 100%;
+          font-size: 14px;
+          color: #0f172a;
+          font-weight: 500;
+        }
+        .register-eye-btn {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: #64748b;
+          cursor: pointer;
+          font-size: 16px;
+          display: flex;
+          align-items: center;
+          padding: 4px;
+        }
+      `}</style>
+
+      <div className="register-card fade-up">
+        {/* HEADER AREA */}
+        <div style={{ textAlign: "center", marginBottom: "24px" }}>
+          <div className="register-logo-circle"><FaUserPlus /></div>
+          <h1 style={{ fontSize: "22px", fontWeight: "900", color: "#0f172a", margin: "0 0 4px 0" }}>Create Account</h1>
+          <p style={{ color: "#64748b", fontSize: "12px", margin: 0 }}>Join ScrapVex to recycle smarter</p>
+        </div>
+
+        {/* REGISTRATION FORM */}
+        <form onSubmit={(e) => handleRequestOtp(e, "whatsapp")} style={{ display: "flex", flexDirection: "column" }}>
+          <div className="register-input-row">
+            <FaUser style={{ color: "#0b8f3a", fontSize: "14px" }} />
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name *"
+              value={form.name}
+              onChange={handleChange}
+              className="register-input-field"
+            />
           </div>
 
-          <form onSubmit={(e) => handleRequestOtp(e, "whatsapp")} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-            <div style={inputGroup}>
-              <FaUser style={icon} />
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name *"
-                value={form.name}
-                onChange={handleChange}
-                style={input}
-              />
-            </div>
-
-            <div style={inputGroup}>
-              <FaPhoneAlt style={icon} />
-              <input
-                type="text"
-                name="mobile"
-                placeholder="Mobile Number *"
-                value={form.mobile}
-                onChange={handleChange}
-                style={input}
-              />
-            </div>
-
-            <div style={inputGroup}>
-              <FaEnvelope style={icon} />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email (Optional)"
-                value={form.email}
-                onChange={handleChange}
-                style={input}
-              />
-            </div>
-
-            <div style={{ ...inputGroup, position: "relative" }}>
-              <FaLock style={icon} />
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password (Min 6 chars) *"
-                value={form.password}
-                onChange={handleChange}
-                style={{ ...input, paddingRight: "45px" }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
-
-            <div style={{ ...inputGroup, position: "relative" }}>
-              <FaCheckCircle style={icon} />
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password *"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                style={{ ...input, paddingRight: "45px" }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
-              >
-                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
-
-            {/* DUAL OTP CHANNEL SELECTION BUTTONS */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "15px" }}>
-              <button
-                type="button"
-                className="btn-premium"
-                style={{ background: "#25D366", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
-                disabled={loading}
-                onClick={(e) => handleRequestOtp(e, "whatsapp")}
-              >
-                {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
-              </button>
-
-              <button
-                type="button"
-                className="btn-premium"
-                style={{ background: "var(--primary)", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px" }}
-                disabled={loading}
-                onClick={(e) => handleRequestOtp(e, "sms")}
-              >
-                {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
-              </button>
-            </div>
-          </form>
-
-          <div style={{ ...footerText, color: "var(--text-muted)" }}>
-            <p>Already have an account? <Link to="/login" style={{ ...authLink, color: "var(--primary)" }}>Login Here</Link></p>
+          <div className="register-input-row">
+            <FaPhoneAlt style={{ color: "#0b8f3a", fontSize: "14px" }} />
+            <input
+              type="text"
+              name="mobile"
+              placeholder="Mobile Number *"
+              value={form.mobile}
+              onChange={handleChange}
+              className="register-input-field"
+            />
           </div>
+
+          <div className="register-input-row">
+            <FaEnvelope style={{ color: "#0b8f3a", fontSize: "14px" }} />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email (Optional)"
+              value={form.email}
+              onChange={handleChange}
+              className="register-input-field"
+            />
+          </div>
+
+          <div className="register-input-row">
+            <FaLock style={{ color: "#0b8f3a", fontSize: "14px" }} />
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password (Min 6 chars) *"
+              value={form.password}
+              onChange={handleChange}
+              className="register-input-field"
+              style={{ paddingRight: "40px" }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="register-eye-btn"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+
+          <div className="register-input-row">
+            <FaCheckCircle style={{ color: "#0b8f3a", fontSize: "14px" }} />
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Confirm Password *"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              className="register-input-field"
+              style={{ paddingRight: "40px" }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="register-eye-btn"
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+
+          {/* DUAL OTP SEND BUTTONS */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
+            <button
+              type="button"
+              className="btn-premium"
+              style={{ background: "#25D366", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", border: "none", height: "46px" }}
+              disabled={loading}
+              onClick={(e) => handleRequestOtp(e, "whatsapp")}
+            >
+              {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "16px" }} /> Get OTP on WhatsApp</>}
+            </button>
+
+            <button
+              type="button"
+              className="btn-premium"
+              style={{ background: "#0b8f3a", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", border: "none", height: "46px" }}
+              disabled={loading}
+              onClick={(e) => handleRequestOtp(e, "sms")}
+            >
+              {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "16px" }} /> Get OTP via SMS</>}
+            </button>
+          </div>
+        </form>
+
+        <div style={{ marginTop: "24px", textAlign: "center", fontSize: "13px", color: "#64748b" }}>
+          <p style={{ margin: 0 }}>Already have an account? <Link to="/login" style={{ color: "#0b8f3a", fontWeight: "700", textDecoration: "none" }}>Login Here</Link></p>
         </div>
       </div>
 
-      {/* OTP VERIFICATION MODAL */}
+      {/* OTP VERIFICATION MODAL SHEET */}
       {showOtpModal && (
         <div style={modalBackdrop}>
           <div style={modalCard} className="fade-up">
             <div style={modalHeaderIcon}>
               <FaKey />
             </div>
-            <h3 style={{ fontSize: "22px", margin: "10px 0 6px 0", color: "#0f172a" }}>Enter 6-Digit OTP</h3>
-            <p style={{ fontSize: "14px", color: "#475569", margin: "10px 0 20px 0", lineHeight: "1.5" }}>
-              {otpChannel === "whatsapp" ? "💬 We have sent a 6-Digit secret OTP to your WhatsApp inbox" : "📱 We have sent a 6-Digit secret OTP via SMS"} on <b>+91 {form.mobile}</b>. Please enter the code below:
+            <h3 style={{ fontSize: "18px", fontWeight: "800", margin: "12px 0 6px 0", color: "#0f172a" }}>Enter 6-Digit OTP</h3>
+            <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px 0", lineHeight: "1.5" }}>
+              {otpChannel === "whatsapp" ? "💬 Secret OTP sent to your WhatsApp inbox" : "📩 Secret OTP sent via SMS"} on <b>+91 {form.mobile}</b>.
             </p>
 
             {modalError && (
@@ -223,7 +287,7 @@ function Register() {
                 <input
                   type="text"
                   maxLength="6"
-                  placeholder="0 0 0 0 0 0"
+                  placeholder="000000"
                   value={otp}
                   onChange={(e) => {
                     setModalError("");
@@ -234,8 +298,8 @@ function Register() {
                 />
               </div>
 
-              <button type="submit" className="btn-premium" style={{ width: "100%", marginTop: "18px", padding: "14px" }} disabled={loading}>
-                {loading ? <FaRecycle className="spin" /> : <>Verify & Complete Registration <FaCheckCircle /></>}
+              <button type="submit" className="btn-premium" style={{ width: "100%", marginTop: "16px", padding: "12px", height: "46px", border: "none" }} disabled={loading}>
+                {loading ? <FaRecycle className="spin" /> : <>Verify & Complete <FaCheckCircle /></>}
               </button>
             </form>
 
@@ -243,14 +307,14 @@ function Register() {
               <button
                 type="button"
                 onClick={(e) => handleRequestOtp(e, otpChannel)}
-                style={{ background: "none", border: "none", color: "#0b8f3a", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#0b8f3a", fontSize: "12px", fontWeight: "700", cursor: "pointer" }}
               >
                 Resend OTP
               </button>
               <button
                 type="button"
                 onClick={() => setShowOtpModal(false)}
-                style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}
               >
                 Cancel
               </button>
@@ -262,59 +326,40 @@ function Register() {
   );
 }
 
-/* STYLES */
-const wrap = { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "calc(100vh - 200px)", padding: "40px 20px" };
-const card = { width: "100%", maxWidth: "440px", padding: "40px" };
-const iconCircle = { width: "80px", height: "80px", background: "var(--primary-light)", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "35px", color: "var(--primary)", margin: "0 auto" };
-const inputGroup = { display: "flex", alignItems: "center", gap: "12px", background: "var(--bg-main)", padding: "14px 18px", borderRadius: "12px", border: "1px solid var(--glass-border)" };
-const icon = { color: "#0b8f3a", fontSize: "14px" };
-const input = { border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "15px", color: "var(--text-main)" };
-const footerText = { marginTop: "30px", textAlign: "center", fontSize: "14px", color: "#666" };
-const authLink = { color: "#0b8f3a", fontWeight: "700", textDecoration: "none" };
-
+/* MODAL STYLES */
 const modalBackdrop = {
   position: "fixed",
   top: 0, left: 0, right: 0, bottom: 0,
-  background: "rgba(15, 23, 42, 0.75)",
-  backdropFilter: "blur(6px)",
+  background: "rgba(15, 23, 42, 0.6)",
+  backdropFilter: "blur(4px)",
   zIndex: 99999,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: "20px"
+  padding: "16px"
 };
 
 const modalCard = {
   background: "#ffffff",
   width: "100%",
-  maxWidth: "400px",
-  borderRadius: "24px",
-  padding: "30px 26px",
+  maxWidth: "360px",
+  borderRadius: "20px",
+  padding: "24px",
   textAlign: "center",
-  boxShadow: "0 20px 50px rgba(0,0,0,0.25)"
+  boxShadow: "0 20px 40px rgba(0,0,0,0.15)"
 };
 
 const modalHeaderIcon = {
-  width: "60px",
-  height: "60px",
+  width: "50px",
+  height: "50px",
   borderRadius: "50%",
   background: "#f0fdf4",
   color: "#0b8f3a",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  fontSize: "26px",
+  fontSize: "20px",
   margin: "0 auto"
-};
-
-const otpHintBox = {
-  background: "#f0fdf4",
-  border: "1px solid #bbf7d0",
-  color: "#15803d",
-  padding: "8px 12px",
-  borderRadius: "10px",
-  fontSize: "13px",
-  marginBottom: "14px"
 };
 
 const modalErrorBox = {
@@ -322,16 +367,16 @@ const modalErrorBox = {
   border: "1px solid #fecaca",
   color: "#dc2626",
   padding: "8px 12px",
-  borderRadius: "10px",
-  fontSize: "13px",
+  borderRadius: "8px",
+  fontSize: "12px",
   fontWeight: "600",
   marginBottom: "14px"
 };
 
 const otpInputGroup = {
   background: "#f8fafc",
-  borderRadius: "16px",
-  padding: "12px",
+  borderRadius: "12px",
+  padding: "10px",
   border: "2px solid #0b8f3a"
 };
 
@@ -341,9 +386,9 @@ const otpInput = {
   outline: "none",
   background: "transparent",
   textAlign: "center",
-  fontSize: "28px",
+  fontSize: "24px",
   fontWeight: "800",
-  letterSpacing: "12px",
+  letterSpacing: "8px",
   color: "#0f172a"
 };
 

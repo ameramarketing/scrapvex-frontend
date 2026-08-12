@@ -109,7 +109,7 @@ const nativeAppWrapper = {
   background: "#f8fafc",
   display: "flex",
   flexDirection: "column",
-  paddingBottom: "calc(70px + env(safe-area-inset-bottom, 0px))"
+  paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))"
 };
 
 const nativeMainContent = {
@@ -121,10 +121,10 @@ const nativeBottomNav = {
   bottom: 0,
   left: 0,
   right: 0,
-  height: "64px",
+  height: "68px",
   background: "#ffffff",
-  borderTop: "1px solid #f1f5f9",
-  boxShadow: "0 -4px 20px rgba(0,0,0,0.06)",
+  borderTop: "1.5px solid #f1f5f9",
+  boxShadow: "0 -6px 24px rgba(15,23,42,0.04)",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-around",
@@ -141,23 +141,28 @@ const navTabBtn = {
   justifyContent: "center",
   cursor: "pointer",
   flex: 1,
-  padding: "6px 0"
+  height: "100%",
+  padding: "4px 0",
+  transition: "transform 0.15s ease",
+  outline: "none"
 };
 
 const centerFabBtn = {
-  width: "48px",
-  height: "48px",
+  width: "52px",
+  height: "52px",
   borderRadius: "50%",
-  background: "linear-gradient(135deg, #0b8f3a, #27ae60)",
+  background: "linear-gradient(135deg, #0b8f3a 0%, #16a34a 100%)",
   color: "#ffffff",
-  border: "none",
+  border: "2.5px solid #ffffff",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  fontSize: "20px",
-  boxShadow: "0 6px 16px rgba(11,143,58,0.35)",
+  fontSize: "22px",
+  boxShadow: "0 8px 20px rgba(11,143,58,0.3)",
   cursor: "pointer",
-  transform: "translateY(-12px)"
+  transform: "translateY(-14px)",
+  transition: "transform 0.15s ease",
+  outline: "none"
 };
 
 export default MobileAppShell;

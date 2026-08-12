@@ -38,17 +38,18 @@ export async function saveAuthData(token, user, role) {
         await ss.set({ key: "auth_token", value: token });
         await ss.set({ key: "auth_user", value: JSON.stringify(user) });
         await ss.set({ key: "auth_role", value: role });
-        return; // stored natively — do NOT write to localStorage
       }
     } catch (e) {
       console.warn("[Auth] Native secure storage write failed:", e);
     }
   } else {
-    // Web browser
+    // Web browser — write token to localStorage as fallback
     localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("role", role);
   }
+
+  // Always write user and role metadata to localStorage for fast synchronous UI/route resolution
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("role", role);
 }
 
 /* ─── Read Token ──────────────────────────────────────────────── */
