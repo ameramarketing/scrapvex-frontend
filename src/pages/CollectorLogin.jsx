@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaGoogle, FaEye, FaEyeSlash, FaHome, FaRecycle } from "react-icons/fa";
+import { FaTruck, FaPhoneAlt, FaLock, FaArrowRight, FaCheckCircle, FaEye, FaEyeSlash, FaHome, FaRecycle } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
 import { saveAuthData, getAuthUser, getAuthRole } from "../utils/auth";
-import { triggerOfficialGoogleSignIn } from "../services/googleAuth";
 
 function CollectorLogin() {
   const navigate = useNavigate();
@@ -24,7 +23,6 @@ function CollectorLogin() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
 
   const showToast = (type, message) => setToast({ show: true, type, message });
@@ -49,33 +47,7 @@ function CollectorLogin() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    try {
-      // Trigger Official Google Account Picker
-      const googleUser = await triggerOfficialGoogleSignIn({ role: "collector" });
 
-      const collectorUserData = {
-        _id: googleUser.googleId || "g_collector_" + Date.now(),
-        name: googleUser.name,
-        email: googleUser.email,
-        picture: googleUser.picture,
-        role: "collector",
-        assignedCity: "Rajouri Town, J&K"
-      };
-
-      const token = "google_auth_token_" + Date.now();
-
-      await saveAuthData(token, collectorUserData, "collector");
-
-      showToast("success", `Signed in as ${googleUser.name}! 🚚`);
-      setTimeout(() => navigate("/collector-dashboard"), 800);
-    } catch (err) {
-      showToast("error", err.message || "Google Sign-In failed");
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
 
   return (
     <div style={wrap}>
@@ -238,15 +210,7 @@ function CollectorLogin() {
           </button>
         </form>
 
-        <div className="divider-row">
-          <div className="divider-line"></div>
-          <span style={{ fontSize: "11px", color: "var(--text-light)", fontWeight: "700" }}>OR</span>
-          <div className="divider-line"></div>
-        </div>
 
-        <button onClick={handleGoogleLogin} className="google-btn" disabled={googleLoading}>
-          {googleLoading ? <FaRecycle className="spin" /> : <><FaGoogle /> Sign in with Google</>}
-        </button>
 
         <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginTop: "20px", fontSize: "13px" }}>
           <span style={{ color: "var(--text-muted)" }}>New Collector?</span>

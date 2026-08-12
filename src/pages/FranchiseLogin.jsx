@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaGoogle, FaEye, FaEyeSlash, FaHome, FaRecycle } from "react-icons/fa";
+import { FaUserShield, FaEnvelope, FaLock, FaArrowRight, FaCheckCircle, FaEye, FaEyeSlash, FaHome, FaRecycle } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
 import { saveAuthData, getAuthUser, getAuthRole } from "../utils/auth";
-import { triggerOfficialGoogleSignIn } from "../services/googleAuth";
 
 function FranchiseLogin() {
   const navigate = useNavigate();
@@ -24,7 +23,6 @@ function FranchiseLogin() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
 
   const showToast = (type, message) => setToast({ show: true, type, message });
@@ -49,33 +47,7 @@ function FranchiseLogin() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    try {
-      // Trigger Official Google Account Picker
-      const googleUser = await triggerOfficialGoogleSignIn({ role: "franchise" });
 
-      const franchiseUserData = {
-        _id: googleUser.googleId || "g_franchise_" + Date.now(),
-        name: googleUser.name,
-        email: googleUser.email,
-        picture: googleUser.picture,
-        role: "franchise",
-        assignedCity: "Rajouri District"
-      };
-
-      const token = "google_auth_token_" + Date.now();
-
-      await saveAuthData(token, franchiseUserData, "franchise");
-
-      showToast("success", `Signed in as ${googleUser.name}! 🏢`);
-      setTimeout(() => navigate("/franchise-dashboard"), 800);
-    } catch (err) {
-      showToast("error", err.message || "Google Sign-In failed");
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
 
   return (
     <div style={wrap}>
@@ -233,15 +205,7 @@ function FranchiseLogin() {
           </button>
         </form>
 
-        <div className="divider-row">
-          <div className="divider-line"></div>
-          <span style={{ fontSize: "11px", color: "var(--text-light)", fontWeight: "700" }}>OR</span>
-          <div className="divider-line"></div>
-        </div>
 
-        <button onClick={handleGoogleLogin} className="google-btn" disabled={googleLoading}>
-          {googleLoading ? <FaRecycle className="spin" /> : <><FaGoogle /> Sign in with Google</>}
-        </button>
       </div>
     </div>
   );
