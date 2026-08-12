@@ -27,7 +27,7 @@ import {
   FaBell,
   FaStar,
   FaToggleOn,
-  FaToggleOff, FaSun, FaMoon,
+  FaToggleOff, FaSave, FaUserShield, FaChevronRight, FaSun, FaMoon,
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
@@ -793,6 +793,12 @@ function CollectorDashboard() {
         .dashboard-root { min-height: 100vh !important; background: var(--bg-main); overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; box-sizing: border-box !important; }
         .dashboard-main { flex: 1; display: flex; flex-direction: column; width: 100%; min-width: 0; }
         .native-content { overflow-x: hidden !important; max-width: 100% !important; box-sizing: border-box !important; }
+        .mobile-settings-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--card-bg, #ffffff); border-bottom: 1px solid var(--card-border, #f1f5f9); cursor: pointer; transition: background 0.2s; }
+        .mobile-settings-row:last-child { border-bottom: none; }
+        .mobile-settings-row:active { background: var(--bg-main, #f8fafc); }
+        .settings-icon-box { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .settings-input { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1.5px solid #e2e8f0; outline: none; background: var(--bg-main, #f8fafc); font-size: 14px; color: var(--text-main, #0f172a); font-weight: 500; box-sizing: border-box; }
+        .settings-input:focus { border-color: #0b8f3a; background: var(--card-bg, #ffffff); box-shadow: 0 0 0 3px rgba(11,143,58,0.1); }
         @media (max-width: 768px) { 
           .desktop-only { display: none !important; } 
           .mobile-only { display: flex !important; }
@@ -2520,641 +2526,262 @@ function CollectorDashboard() {
           )}
 
           {activeTab === "profile" && (
-            <div className="fade-up">
-              <div
-                style={{
-                  padding: "0 0 20px 0",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <h2
-                  style={{
-                    fontSize: "24px",
-                    fontWeight: "900",
-                    color: "var(--text-main)",
-                    letterSpacing: "-0.03em",
-                    margin: 0,
-                  }}
-                >
-                  My Profile
-                </h2>
+            <div className="fade-up" style={{ paddingBottom: "40px" }}>
+              {/* HEADER */}
+              <div style={{ padding: "0 0 16px 0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h2 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>
+                    {editProfileMode ? "Edit Profile" : "Account"}
+                  </h2>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "2px 0 0 0" }}>
+                    {editProfileMode ? "Update details & security" : "Manage settings & details"}
+                  </p>
+                </div>
                 {!editProfileMode && (
                   <button
-                    className="btn-secondary"
+                    style={{
+                      background: "#f0fdf4",
+                      border: "1px solid #bbf7d0",
+                      color: "#0b8f3a",
+                      padding: "6px 14px",
+                      borderRadius: "10px",
+                      fontSize: "12px",
+                      fontWeight: "800",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}
                     onClick={() => setEditProfileMode(true)}
                   >
-                    Edit Profile
+                    <FaEdit /> Edit Profile
                   </button>
                 )}
               </div>
 
-              <div
-                className="premium-card"
-                style={{
-                  background: "var(--card-bg)",
-                  padding: "30px",
-                  borderRadius: "var(--radius-xl)",
-                  border: "1px solid var(--card-border)",
-                  marginBottom: "20px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "24px",
-                    marginBottom: editProfileMode ? "30px" : "0",
-                  }}
-                >
-                  <div style={{ position: "relative" }}>
-                    {profilePhotoPreview ? (
-                      <img
-                        src={profilePhotoPreview}
-                        alt="Profile"
-                        style={{
-                          width: "90px",
-                          height: "90px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                          border: "3px solid var(--primary)",
-                          padding: "3px",
-                        }}
-                      />
-                    ) : (
+              {editProfileMode ? (
+                /* EDIT PROFILE FORM */
+                <div style={{ background: "var(--card-bg)", borderRadius: "18px", padding: "20px", border: "1px solid var(--card-border)", boxShadow: "0 4px 12px rgba(0,0,0,0.01)" }}>
+                  {/* Photo Upload */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" }}>
+                    <div style={{ position: "relative", width: "80px", height: "80px" }}>
+                      {profilePhotoPreview ? (
+                        <img src={profilePhotoPreview} alt="Avatar" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover", border: "2px solid #0b8f3a" }} />
+                      ) : (
+                        <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "#f0fdf4", display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid #0b8f3a" }}>
+                          <FaUserAlt size={36} color="#0b8f3a" />
+                        </div>
+                      )}
                       <div
-                        style={{
-                          width: "90px",
-                          height: "90px",
-                          borderRadius: "50%",
-                          background: "var(--primary-light)",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          border: "3px solid var(--primary)",
-                          padding: "3px",
-                        }}
-                      >
-                        <FaUserAlt size={40} color="var(--primary)" />
-                      </div>
-                    )}
-                    {editProfileMode && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          bottom: "0",
-                          right: "0",
-                          width: "32px",
-                          height: "32px",
-                          background: "var(--primary)",
-                          color: "#fff",
-                          borderRadius: "50%",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          border: "3px solid var(--card-bg)",
-                          cursor: "pointer",
-                          boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-                        }}
+                        style={{ position: "absolute", bottom: 0, right: 0, background: "#0b8f3a", border: "2px solid #ffffff", color: "#ffffff", width: "26px", height: "26px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "10px" }}
                         onClick={() => profileFileInputRef.current.click()}
                       >
-                        <FaPlus size={14} />
+                        <FaPlus />
                       </div>
-                    )}
-                    <input
-                      type="file"
-                      ref={profileFileInputRef}
-                      style={{ display: "none" }}
-                      accept="image/*"
-                      onChange={handleProfilePhotoChange}
-                    />
-                  </div>
-                  <div>
-                    <h2
-                      style={{
-                        margin: "0 0 6px 0",
-                        color: "var(--text-main)",
-                        fontSize: "24px",
-                        fontWeight: "900",
-                        letterSpacing: "-0.02em",
-                      }}
-                    >
-                      {user?.name}
-                    </h2>
-                    <div
-                      style={{
-                        background: "var(--primary-light)",
-                        color: "var(--primary)",
-                        padding: "4px 10px",
-                        borderRadius: "6px",
-                        fontSize: "12px",
-                        fontWeight: "800",
-                        display: "inline-block",
-                        textTransform: "uppercase",
-                        letterSpacing: "1px",
-                      }}
-                    >
-                      {user?.role || "collector"}
+                      <input type="file" ref={profileFileInputRef} style={{ display: "none" }} accept="image/*" onChange={handleProfilePhotoChange} />
                     </div>
+                  </div>
+
+                  {/* Form Inputs */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>FULL NAME</label>
+                      <input className="settings-input" name="name" value={profileForm.name} onChange={handleProfileFormChange} style={settingsInputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>MOBILE NUMBER</label>
+                      <input className="settings-input" value={user?.mobile || ""} disabled style={{ ...settingsInputStyle, color: "#94a3b8", cursor: "not-allowed" }} />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>EMAIL ADDRESS</label>
+                      <input className="settings-input" value={user?.email || "-"} disabled style={{ ...settingsInputStyle, color: "#94a3b8", cursor: "not-allowed" }} />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>ADDRESS</label>
+                      <textarea className="settings-input" name="address" value={profileForm.address} onChange={handleProfileFormChange} style={{ ...settingsInputStyle, height: "70px", resize: "none" }} />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>ASSIGNED AREA</label>
+                      <input className="settings-input" name="area" value={profileForm.area} onChange={handleProfileFormChange} style={settingsInputStyle} />
+                    </div>
+
+                    <div style={{ height: "1px", background: "#f1f5f9", margin: "8px 0" }} />
+                    <span style={{ fontSize: "12px", fontWeight: "800", color: "var(--text-main)" }}>Change Password (Optional)</span>
+
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>OLD PASSWORD</label>
+                      <input type="password" className="settings-input" name="oldPassword" value={profileForm.oldPassword} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>NEW PASSWORD</label>
+                      <input type="password" className="settings-input" name="newPassword" value={profileForm.newPassword} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>CONFIRM NEW PASSWORD</label>
+                      <input type="password" className="settings-input" name="confirmPassword" value={profileForm.confirmPassword} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
+                    </div>
+                  </div>
+
+                  {/* Form Action Buttons */}
+                  <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                    <button
+                      className="btn-premium"
+                      style={{ flex: 1.2, height: "44px", border: "none", fontSize: "13px", fontWeight: "800" }}
+                      onClick={handleSaveProfile}
+                      disabled={loading}
+                    >
+                      {loading ? <FaRecycle className="spin" /> : <><FaSave /> Save Changes</>}
+                    </button>
+                    <button
+                      style={{ flex: 0.8, height: "44px", border: "1.5px solid #e2e8f0", background: "var(--card-bg)", color: "var(--text-main)", borderRadius: "10px", fontWeight: "700", fontSize: "13px", cursor: "pointer" }}
+                      onClick={() => setEditProfileMode(false)}
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </div>
+              ) : (
+                /* NON-EDIT SETTINGS MENU LIST (MATCHING USER PROFILE.JSX 100%) */
+                <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+                  
+                  {/* TOP PROFILE CARD */}
+                  <div style={{ background: "var(--card-bg)", borderRadius: "18px", padding: "16px", border: "1px solid var(--card-border)", boxShadow: "0 4px 12px rgba(0,0,0,0.01)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "60px", height: "60px", borderRadius: "50%", overflow: "hidden", background: "#f0fdf4", border: "2px solid #0b8f3a", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {profilePhotoPreview ? (
+                        <img src={profilePhotoPreview} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <FaUserAlt size={28} color="#0b8f3a" />
+                      )}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <h2 style={{ fontSize: "16px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>{user?.name}</h2>
+                        <span style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#0b8f3a", padding: "2px 6px", borderRadius: "6px", fontSize: "9px", fontWeight: "800", textTransform: "uppercase" }}>COLLECTOR</span>
+                      </div>
+                      <span style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "3px" }}>{user?.mobile || "-"}</span>
+                      <span style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "1px" }}>Area: {user?.area || user?.assignedCity || "Rajouri"}</span>
+                    </div>
+                  </div>
 
-                {editProfileMode ? (
-                  <div
+                  {/* ACCOUNT SECTION */}
+                  <div>
+                    <span style={{ fontSize: "10px", fontWeight: "800", color: "#94a3b8", display: "block", marginBottom: "6px", paddingLeft: "4px", letterSpacing: "0.5px" }}>ACCOUNT</span>
+                    <div style={{ borderRadius: "14px", overflow: "hidden", border: "1.5px solid #e2e8f0" }}>
+                      <div className="mobile-settings-row" onClick={() => setEditProfileMode(true)}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaEdit /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Edit Profile Details</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
+
+                      <div className="mobile-settings-row" onClick={() => setEditProfileMode(true)}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#eff6ff", color: "#2563eb" }}><FaUserShield /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Collector Status: Verified</span>
+                        </div>
+                        <span style={{ fontSize: "10px", fontWeight: "800", color: "#16a34a", background: "#f0fdf4", padding: "2px 8px", borderRadius: "10px" }}>Verified ✓</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* WORK & ACTIVITY SECTION */}
+                  <div>
+                    <span style={{ fontSize: "10px", fontWeight: "800", color: "#94a3b8", display: "block", marginBottom: "6px", paddingLeft: "4px", letterSpacing: "0.5px" }}>WORK & ACTIVITY</span>
+                    <div style={{ borderRadius: "14px", overflow: "hidden", border: "1.5px solid #e2e8f0" }}>
+                      <div className="mobile-settings-row" onClick={() => setActiveTab("mypickups")}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaTruck /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>My Assigned Pickups</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
+
+                      <div className="mobile-settings-row" onClick={() => setActiveTab("history")}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#eff6ff", color: "#2563eb" }}><FaHistory /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Completed Pickup History</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
+
+                      <div className="mobile-settings-row" onClick={() => { setActiveTab("wallet"); fetchWalletInfo(); }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#fef3c7", color: "#d97706" }}><FaWallet /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>My Wallet & Earnings</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* APP & HELP SECTION */}
+                  <div>
+                    <span style={{ fontSize: "10px", fontWeight: "800", color: "#94a3b8", display: "block", marginBottom: "6px", paddingLeft: "4px", letterSpacing: "0.5px" }}>APP & HELP</span>
+                    <div style={{ borderRadius: "14px", overflow: "hidden", border: "1.5px solid #e2e8f0" }}>
+                      <div className="mobile-settings-row" onClick={() => { setActiveTab("notifications"); markAllNotificationsRead(); }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaBell /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Notifications</span>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          {unreadCount > 0 && <span style={{ background: "#dc2626", color: "#fff", padding: "2px 6px", borderRadius: "10px", fontSize: "10px", fontWeight: "800" }}>{unreadCount} new</span>}
+                          <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                        </div>
+                      </div>
+
+                      <div className="mobile-settings-row" onClick={() => navigate("/contact")}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#eff6ff", color: "#2563eb" }}><FaPhone /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Help & Support</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
+
+                      <div className="mobile-settings-row" onClick={() => navigate("/about")}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#f8fafc", color: "#64748b" }}><FaInfoCircle /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>About ScrapVex</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* LOGOUT BUTTON */}
+                  <button
+                    onClick={logout}
                     style={{
+                      width: "100%",
+                      border: "none",
+                      padding: "14px",
+                      borderRadius: "14px",
+                      background: "#fef2f2",
+                      color: "#dc2626",
+                      fontWeight: "800",
+                      fontSize: "13px",
                       display: "flex",
-                      flexDirection: "column",
-                      gap: "20px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "8px",
+                      cursor: "pointer",
+                      marginTop: "10px"
                     }}
                   >
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                          "repeat(auto-fit, minmax(250px, 1fr))",
-                        gap: "20px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Name
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          value={profileForm.name}
-                          onChange={handleProfileFormChange}
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-main)",
-                            color: "var(--text-main)",
-                            fontSize: "15px",
-                            transition: "0.2s",
-                          }}
-                          onFocus={(e) =>
-                            (e.target.style.borderColor = "var(--primary)")
-                          }
-                          onBlur={(e) =>
-                            (e.target.style.borderColor = "var(--glass-border)")
-                          }
-                        />
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Mobile Number
-                        </label>
-                        <input
-                          type="text"
-                          value={user?.mobile || ""}
-                          disabled
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-subtle)",
-                            color: "var(--text-muted)",
-                            fontSize: "15px",
-                            opacity: 0.8,
-                          }}
-                        />
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Email
-                        </label>
-                        <input
-                          type="text"
-                          value={user?.email || ""}
-                          disabled
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-subtle)",
-                            color: "var(--text-muted)",
-                            fontSize: "15px",
-                            opacity: 0.8,
-                          }}
-                        />
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Address
-                        </label>
-                        <input
-                          type="text"
-                          name="address"
-                          value={profileForm.address}
-                          onChange={handleProfileFormChange}
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-main)",
-                            color: "var(--text-main)",
-                            fontSize: "15px",
-                          }}
-                        />
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Area (City)
-                        </label>
-                        <input
-                          type="text"
-                          name="area"
-                          value={profileForm.area}
-                          onChange={handleProfileFormChange}
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-main)",
-                            color: "var(--text-main)",
-                            fontSize: "15px",
-                          }}
-                        />
-                      </div>
-                    </div>
+                    <FaSignOutAlt /> Log Out Account
+                  </button>
 
-                    <h4
-                      style={{
-                        margin: "10px 0 0 0",
-                        color: "var(--text-main)",
-                        fontSize: "16px",
-                        borderBottom: "1px solid var(--glass-border)",
-                        paddingBottom: "10px",
-                      }}
-                    >
-                      Change Password
-                    </h4>
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                          "repeat(auto-fit, minmax(200px, 1fr))",
-                        gap: "20px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Old Password
-                        </label>
-                        <input
-                          type="password"
-                          name="oldPassword"
-                          value={profileForm.oldPassword}
-                          onChange={handleProfileFormChange}
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-main)",
-                            color: "var(--text-main)",
-                            fontSize: "15px",
-                          }}
-                        />
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          New Password
-                        </label>
-                        <input
-                          type="password"
-                          name="newPassword"
-                          value={profileForm.newPassword}
-                          onChange={handleProfileFormChange}
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-main)",
-                            color: "var(--text-main)",
-                            fontSize: "15px",
-                          }}
-                        />
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "8px",
-                        }}
-                      >
-                        <label
-                          style={{
-                            fontSize: "13px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          Confirm Password
-                        </label>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          value={profileForm.confirmPassword}
-                          onChange={handleProfileFormChange}
-                          style={{
-                            padding: "14px 16px",
-                            borderRadius: "12px",
-                            border: "1px solid var(--glass-border)",
-                            outline: "none",
-                            background: "var(--bg-main)",
-                            color: "var(--text-main)",
-                            fontSize: "15px",
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "12px",
-                        marginTop: "20px",
-                      }}
-                    >
-                      <button
-                        className="btn-premium"
-                        style={{ flex: 1, padding: "16px", fontSize: "15px" }}
-                        onClick={handleSaveProfile}
-                        disabled={loading}
-                      >
-                        {loading ? (
-                          <FaRecycle className="spin" />
-                        ) : (
-                          "Save Changes"
-                        )}
-                      </button>
-                      <button
-                        className="btn-secondary"
-                        style={{ flex: 1, padding: "16px", fontSize: "15px" }}
-                        onClick={() => {
-                          setEditProfileMode(false);
-                          setProfileForm((prev) => ({
-                            ...prev,
-                            name: user?.name,
-                            address: user?.address,
-                            area: user?.area || user?.assignedCity,
-                            oldPassword: "",
-                            newPassword: "",
-                            confirmPassword: "",
-                          }));
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      marginTop: "30px",
-                      borderTop: "1px solid var(--glass-border)",
-                      paddingTop: "30px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        gap: "24px",
-                        marginBottom: "30px",
-                      }}
-                      className="grid-responsive"
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "6px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                            textTransform: "uppercase",
-                            letterSpacing: "1px",
-                          }}
-                        >
-                          Mobile
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            color: "var(--text-main)",
-                          }}
-                        >
-                          {user?.mobile || "-"}
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "6px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                            textTransform: "uppercase",
-                            letterSpacing: "1px",
-                          }}
-                        >
-                          Email
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            color: "var(--text-main)",
-                          }}
-                        >
-                          {user?.email || "-"}
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "6px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                            textTransform: "uppercase",
-                            letterSpacing: "1px",
-                          }}
-                        >
-                          Address
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            color: "var(--text-main)",
-                          }}
-                        >
-                          {user?.address || "-"}
-                        </span>
-                      </div>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "6px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "700",
-                            color: "var(--text-muted)",
-                            textTransform: "uppercase",
-                            letterSpacing: "1px",
-                          }}
-                        >
-                          Area
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            color: "var(--text-main)",
-                          }}
-                        >
-                          {user?.area || user?.assignedCity || "-"}
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "16px",
-                        flexWrap: "wrap",
-                        borderTop: "1px solid var(--glass-border)",
-                        paddingTop: "24px",
-                      }}
-                    >
-                      <button
-                        className="btn-secondary"
-                        onClick={() => setActiveTab("overview")}
-                      >
-                        Back to Dashboard
-                      </button>
-                      <button className="btn-danger" onClick={logout}>
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
+
         </div>
       </div>
 
@@ -4262,6 +3889,7 @@ const Empty = ({ text }) => (
 );
 
 /* STYLES */
+const settingsInputStyle = { width: "100%", padding: "12px 14px", borderRadius: "10px", border: "1.5px solid #e2e8f0", outline: "none", background: "var(--bg-main, #f8fafc)", fontSize: "14px", color: "var(--text-main, #0f172a)", fontWeight: "500", boxSizing: "border-box" };
 const container = {
   display: "flex",
   minHeight: "100vh",
