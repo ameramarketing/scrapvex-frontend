@@ -34,7 +34,7 @@ function AdminLogin() {
 
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/admin-login", { emailOrMobile: email, password });
+      const { data } = await API.post("/auth/admin-login", { email: email, password });
 
       await saveAuthData(data.token, data.user, "admin");
 

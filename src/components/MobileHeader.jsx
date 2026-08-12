@@ -506,7 +506,7 @@ const modalBackdrop = {
 };
 
 const modalSheet = {
-  background: "#ffffff",
+  background: "var(--card-bg)",
   width: "100%",
   maxWidth: "500px",
   margin: "0 auto",

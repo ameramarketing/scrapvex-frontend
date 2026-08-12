@@ -66,12 +66,7 @@ function Home() {
         </div>
       </div>
 
-      {/* MOBILE FORM CTA */}
-      <div className="container show-on-mobile" style={{paddingBottom:"40px"}}>
-         <button className="btn-premium full-width-mobile" style={{height:"60px", fontSize:"18px"}} onClick={() => navigate("/book")}>
-            <FaPlusCircle /> Start Booking Now
-         </button>
-      </div>
+
 
       <div className="container">
         <BannerCarousel />

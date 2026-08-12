@@ -106,7 +106,7 @@ function MobileAppShell({ children }) {
 /* Inline Styles */
 const nativeAppWrapper = {
   minHeight: "100vh",
-  background: "#f8fafc",
+  background: "var(--bg-main)",
   display: "flex",
   flexDirection: "column",
   paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))",
@@ -124,8 +124,8 @@ const nativeBottomNav = {
   left: 0,
   right: 0,
   height: "68px",
-  background: "#ffffff",
-  borderTop: "1.5px solid #f1f5f9",
+  background: "var(--card-bg)",
+  borderTop: "1.5px solid var(--card-border)",
   boxShadow: "0 -6px 24px rgba(15,23,42,0.04)",
   display: "flex",
   alignItems: "center",
