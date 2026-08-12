@@ -838,7 +838,7 @@ function CollectorDashboard() {
         {/* HEADER */}
         <header style={{
           background: "var(--card-bg, #ffffff)",
-          padding: "calc(8px + env(safe-area-inset-top, 0px)) 16px 8px 16px",
+          padding: "calc(8px + env(safe-area-inset-top, 0px)) 14px 8px 14px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -850,7 +850,7 @@ function CollectorDashboard() {
           width: "100%",
           boxSizing: "border-box"
         }}>
-          {/* Left Branding with COLLECTOR subtext underneath ScrapVex */}
+          {/* Left Branding: ScrapVex with COLLECTOR subtext underneath */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
               <FaRecycle />
@@ -865,104 +865,102 @@ function CollectorDashboard() {
             </div>
           </div>
 
-          {/* Right Action Icons & Controls */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            {/* Compact Online/Offline Status Pill */}
+          {/* Right Action Controls: [Online Pill] -> [Bell] -> [Moon] -> [Three Lines] */}
+          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            {/* Micro Online/Offline Status Pill */}
             <button
               onClick={toggleStatus}
               style={{
                 background: user?.isOnline ? "#f0fdf4" : "#f8fafc",
                 border: `1px solid ${user?.isOnline ? "#bbf7d0" : "#e2e8f0"}`,
                 color: user?.isOnline ? "#16a34a" : "#64748b",
-                padding: "2px 6px",
-                borderRadius: "8px",
-                fontSize: "9px",
+                padding: "2px 5px",
+                borderRadius: "6px",
+                fontSize: "8.5px",
                 fontWeight: "800",
                 display: "flex",
                 alignItems: "center",
                 gap: "3px",
-                cursor: "pointer"
+                cursor: "pointer",
+                lineHeight: 1,
+                marginRight: "2px"
               }}
             >
-              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
+              <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
               {user?.isOnline ? "Online" : "Offline"}
             </button>
 
-            {/* Bell & Dark Mode Icons Grouped Side-by-Side */}
-            <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-              {/* Notification Bell */}
-              <button
-                onClick={() => {
-                  setActiveTab("notifications");
-                  markAllNotificationsRead();
-                }}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "var(--text-main, #0f172a)",
-                  padding: "5px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
-                  cursor: "pointer"
-                }}
-                title="Notifications"
-              >
-                <FaBell size={15} color="var(--text-main, #0f172a)" />
-                {unreadCount > 0 && (
-                  <span style={{
-                    position: "absolute",
-                    top: "1px",
-                    right: "1px",
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    background: "#dc2626",
-                    color: "#ffffff",
-                    fontSize: "8px",
-                    fontWeight: "800",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}>
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-
-              {/* Dark Mode Toggle (Side-by-side with Bell) */}
-              <button
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "15px",
-                  color: isDarkMode ? "#f1c40f" : "#64748b",
-                  cursor: "pointer",
-                  padding: "5px",
+            {/* Notification Bell */}
+            <button
+              onClick={() => {
+                setActiveTab("notifications");
+                markAllNotificationsRead();
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "var(--text-main, #0f172a)",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                cursor: "pointer"
+              }}
+              title="Notifications"
+            >
+              <FaBell size={14} color="var(--text-main, #0f172a)" />
+              {unreadCount > 0 && (
+                <span style={{
+                  position: "absolute",
+                  top: "0px",
+                  right: "0px",
+                  width: "11px",
+                  height: "11px",
+                  borderRadius: "50%",
+                  background: "#dc2626",
+                  color: "#ffffff",
+                  fontSize: "7.5px",
+                  fontWeight: "800",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center"
-                }}
-                onClick={toggleDarkMode}
-                title={isDarkMode ? "Switch to Light" : "Switch to Dark"}
-              >
-                {isDarkMode ? <FaSun /> : <FaMoon />}
-              </button>
-            </div>
+                }}>
+                  {unreadCount}
+                </span>
+              )}
+            </button>
 
-            {/* Hamburger Drawer Menu Trigger */}
+            {/* Dark Mode Moon/Sun Toggle (Next to Three Lines) */}
+            <button
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: "14px",
+                color: isDarkMode ? "#f1c40f" : "#64748b",
+                cursor: "pointer",
+                padding: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              onClick={toggleDarkMode}
+              title={isDarkMode ? "Switch to Light" : "Switch to Dark"}
+            >
+              {isDarkMode ? <FaSun /> : <FaMoon />}
+            </button>
+
+            {/* Three Lines Hamburger Menu */}
             <button
               style={{
                 background: "none",
                 border: "none",
                 color: "var(--text-main, #0f172a)",
-                fontSize: "16px",
+                fontSize: "15px",
                 cursor: "pointer",
-                padding: "5px",
+                padding: "4px",
                 display: "flex",
-                alignItems: "center",
-                marginRight: "2px"
+                alignItems: "center"
               }}
               onClick={() => setIsMobileMenuOpen(true)}
             >
