@@ -1,185 +1,158 @@
 import React from "react";
-import {
-  FaRecycle,
-  FaLeaf,
-  FaUsers,
-  FaCalendarAlt,
-  FaShieldAlt,
-  FaRupeeSign,
-  FaTruck,
-  FaGlobeAsia,
-  FaHandshake,
-  FaBolt,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaStar
+import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
+import { 
+  FaRecycle, FaLeaf, FaUsers, FaCalendarAlt, FaShieldAlt, 
+  FaRupeeSign, FaTruck, FaGlobeAsia, FaHandshake, FaBolt, 
+  FaStar, FaArrowLeft
 } from "react-icons/fa";
 
-import Footer from "../components/Footer";
-
 function About() {
+  const navigate = useNavigate();
+
   return (
-    <div>
+    <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", color: "var(--text-main, #0f172a)" }}>
       
-      <div style={page}>
-        {/* HERO */}
-        <section style={hero} className="fade-up">
-          <div style={heroIcon}>
+      {/* NATIVE MOBILE HEADER WITH BACK BUTTON */}
+      <header style={{
+        background: "var(--card-bg, #ffffff)",
+        padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 12px 16px",
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        borderBottom: "1px solid var(--card-border, #e2e8f0)",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+      }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            background: "var(--bg-main, #f1f5f9)",
+            border: "none",
+            width: "36px",
+            height: "36px",
+            borderRadius: "10px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--text-main, #0f172a)",
+            cursor: "pointer",
+            fontSize: "15px",
+            flexShrink: 0
+          }}
+          title="Go Back"
+        >
+          <FaArrowLeft />
+        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ background: "#f0fdf4", color: "#0b8f3a", padding: "6px", borderRadius: "8px", display: "flex", alignItems: "center" }}>
+            <FaRecycle size={16} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: "16px", fontWeight: "900", margin: 0, lineHeight: 1.2 }}>About ScrapVex</h1>
+            <span style={{ fontSize: "11px", color: "var(--text-muted, #64748b)" }}>J&K's #1 Digital Recycling Platform</span>
+          </div>
+        </div>
+      </header>
+
+      {/* CONTENT CONTAINER */}
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "16px 14px 40px 14px" }}>
+        
+        {/* HERO BADGE CARD */}
+        <div style={{
+          background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)",
+          borderRadius: "18px",
+          padding: "24px 20px",
+          color: "#ffffff",
+          boxShadow: "0 8px 24px rgba(11,143,58,0.25)",
+          marginBottom: "16px",
+          textAlign: "center"
+        }}>
+          <div style={{
+            width: "56px",
+            height: "56px",
+            borderRadius: "16px",
+            background: "rgba(255,255,255,0.2)",
+            color: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "26px",
+            margin: "0 auto 12px auto"
+          }}>
             <FaRecycle />
           </div>
-
-          <h1 style={heroTitle}>
-            About Scrapvex ♻️
-          </h1>
-
-          <p style={heroText}>
-            Your trusted partner for hassle-free scrap
-            collection and sustainable recycling solutions.
-          </p>
-        </section>
-
-        {/* WHO WE ARE */}
-        <SectionTitle
-          icon={<FaUsers />}
-          title="Who We Are "
-        />
-
-        <div style={box}>
-          <p style={para}>
-            Scrapvex is a technology-driven waste
-            management platform that connects
-            individuals and businesses with verified
-            scrap collectors.
-          </p>
-
-          <p style={para}>
-            Whether it's newspapers 📰, electronics 💻,
-            metals ⚙️ or plastics 🥤 — we ensure
-            responsible recycling so waste never ends
-            up in landfills.
+          <h2 style={{ fontSize: "22px", fontWeight: "900", margin: "0 0 8px 0", color: "#ffffff" }}>
+            Revolutionizing Scrap Recycling ♻️
+          </h2>
+          <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.95)", margin: 0, lineHeight: 1.5 }}>
+            Your trusted tech partner for hassle-free doorstep scrap collection, transparent pricing, and instant wallet payouts.
           </p>
         </div>
 
-        {/* MISSION */}
-        <SectionTitle
-          icon={<FaLeaf />}
-          title="Our Mission "
-        />
-
-        <div style={box}>
-          <p style={para}>
-            To simplify waste disposal through
-            innovation, ensuring fair returns and a
-            greener planet 🌱 for future generations.
-          </p>
-
-          <div style={quote}>
-            <FaStar /> Recycling made simple.
-            Rewards made fair.
-          </div>
-        </div>
-
-        {/* SERVICES */}
-        <SectionTitle
-          icon={<FaTruck />}
-          title="What We Do "
-        />
-
-        <div style={grid}>
-          <Card
-            icon={<FaCalendarAlt />}
-            title="Convenient Scheduling"
-            text="Book pickups at your preferred time."
-          />
-
-          <Card
-            icon={<FaShieldAlt />}
-            title="Verified Collectors"
-            text="Trusted, trained and professional staff."
-          />
-
-          <Card
-            icon={<FaRupeeSign />}
-            title="Transparent Pricing"
-            text="Live rates based on type & weight."
-          />
-
-          <Card
-            icon={<FaRecycle />}
-            title="Sustainable Recycling"
-            text="Reduce waste through proper recycling."
-          />
-
-          <Card
-            icon={<FaTruck />}
-            title="Doorstep Pickup"
-            text="We collect directly from your home."
-          />
-        </div>
-
-        {/* VALUES */}
-        <SectionTitle
-          icon={<FaGlobeAsia />}
-          title="Our Core Values "
-        />
-
-        <div style={grid}>
-          <Card
-            icon={<FaGlobeAsia />}
-            title="Environmental Responsibility"
-            text="Building a circular economy."
-          />
-
-          <Card
-            icon={<FaHandshake />}
-            title="Trust & Reliability"
-            text="Transparency in every interaction."
-          />
-
-          <Card
-            icon={<FaRupeeSign />}
-            title="Fair Pricing"
-            text="Competitive real-time scrap rates."
-          />
-
-          <Card
-            icon={<FaBolt />}
-            title="Innovation"
-            text="Modern tools for better service."
-          />
-        </div>
-
-        {/* CONTACT */}
-        <SectionTitle
-          icon={<FaPhoneAlt />}
-          title="Get In Touch "
-        />
-
-        <div style={contactBox}>
-          <Row
-            icon={<FaEnvelope />}
-            text="team@scrapvex.com"
-          />
-
-          <Row
-            icon={<FaPhoneAlt />}
-            text="+91-8491028539"
-          />
-
-          <Row
-            icon={<FaMapMarkerAlt />}
-            text="Rajouri, Jammu & Kashmir, India"
-          />
-        </div>
-
-        {/* FOOT NOTE */}
-        <div style={footerNote}>
-          Scrapvex ♻️ – Making waste management
-          simple, rewarding and planet-friendly.
-          Join us in building a cleaner tomorrow —
-          one pickup at a time 
+        {/* SECTION CARDS */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           
+          {/* Who We Are */}
+          <div style={cardStyle}>
+            <div style={cardHeaderStyle}>
+              <div style={{ ...iconStyle, background: "#eff6ff", color: "#2563eb" }}><FaUsers /></div>
+              <h3 style={titleStyle}>Who We Are</h3>
+            </div>
+            <p style={textStyle}>
+              ScrapVex is a technology-driven waste management platform connecting households, shops, and corporate offices with verified scrap collectors across Rajouri and Jammu & Kashmir.
+            </p>
+            <p style={{ ...textStyle, marginTop: "8px" }}>
+              Whether it's newspapers 📰, electronics 💻, metals ⚙️, or plastics 🥤 — we guarantee responsible recycling so scrap never ends up in landfills.
+            </p>
+          </div>
+
+          {/* Our Mission */}
+          <div style={cardStyle}>
+            <div style={cardHeaderStyle}>
+              <div style={{ ...iconStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaLeaf /></div>
+              <h3 style={titleStyle}>Our Mission & Vision</h3>
+            </div>
+            <p style={textStyle}>
+              To simplify waste disposal through digital innovation, ensuring fair real-time returns for customers and a cleaner, greener planet 🌱 for future generations.
+            </p>
+            <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "10px 12px", borderRadius: "10px", marginTop: "10px", fontSize: "12px", fontWeight: "800", color: "#0b8f3a", display: "flex", alignItems: "center", gap: "6px" }}>
+              <FaStar color="#eab308" /> Recycling made simple. Rewards made fair.
+            </div>
+          </div>
+
+          {/* What We Offer */}
+          <div style={cardStyle}>
+            <div style={cardHeaderStyle}>
+              <div style={{ ...iconStyle, background: "#fef3c7", color: "#d97706" }}><FaTruck /></div>
+              <h3 style={titleStyle}>What We Offer</h3>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
+              <FeatureRow icon={<FaCalendarAlt color="#2563eb" />} title="Doorstep Pickup" desc="Schedule scrap pickups at your convenient time slot." />
+              <FeatureRow icon={<FaShieldAlt color="#0b8f3a" />} title="Verified Collectors" desc="Background-checked, uniform-clad professional staff." />
+              <FeatureRow icon={<FaRupeeSign color="#ca8a04" />} title="Live Rates & Instant Payouts" desc="Real-time scrap prices with instant wallet or cash payments." />
+              <FeatureRow icon={<FaRecycle color="#0b8f3a" />} title="Zero Landfill Commitment" desc="100% material sent to certified industrial recyclers." />
+            </div>
+          </div>
+
+          {/* Core Values */}
+          <div style={cardStyle}>
+            <div style={cardHeaderStyle}>
+              <div style={{ ...iconStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaGlobeAsia /></div>
+              <h3 style={titleStyle}>Our Core Values</h3>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "6px" }}>
+              <ValueBadge icon={<FaHandshake color="#2563eb" />} title="Trust & Reliability" />
+              <ValueBadge icon={<FaRupeeSign color="#0b8f3a" />} title="Fair Transparent Rates" />
+              <ValueBadge icon={<FaBolt color="#eab308" />} title="Digital Innovation" />
+              <ValueBadge icon={<FaLeaf color="#0b8f3a" />} title="Green Eco-Impact" />
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -188,155 +161,61 @@ function About() {
   );
 }
 
-/* reusable */
-function SectionTitle({ icon, title }) {
-  return (
-    <h2 style={{...sectionTitle, color: "var(--text-main)"}}>
-      <span style={{ color: "var(--primary)" }}>{icon}</span>
-      {title}
-    </h2>
-  );
-}
-
-function Card({ icon, title, text }) {
-  return (
-    <div style={card} className="rate-card">
-      <div style={cardIcon}>{icon}</div>
-
-      <h3 style={{ marginBottom: "10px", color: "var(--text-main)" }}>
-        {title}
-      </h3>
-
-      <p style={{...muted, color: "var(--text-muted)"}}>{text}</p>
+const FeatureRow = ({ icon, title, desc }) => (
+  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", background: "var(--bg-main, #f8fafc)", padding: "10px", borderRadius: "10px", border: "1px solid var(--card-border, #e2e8f0)" }}>
+    <div style={{ fontSize: "16px", marginTop: "2px" }}>{icon}</div>
+    <div>
+      <div style={{ fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>{title}</div>
+      <div style={{ fontSize: "11px", color: "var(--text-muted, #64748b)", marginTop: "2px" }}>{desc}</div>
     </div>
-  );
-}
+  </div>
+);
 
-function Row({ icon, text }) {
-  return (
-    <div style={{...row, borderBottom: "1px solid var(--glass-border)", color: "var(--text-main)"}}>
-      <span style={{ color: "var(--primary)" }}>{icon}</span>
-      <span>{text}</span>
-    </div>
-  );
-}
+const ValueBadge = ({ icon, title }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "var(--bg-main, #f8fafc)", padding: "10px", borderRadius: "10px", border: "1px solid var(--card-border, #e2e8f0)" }}>
+    <div style={{ fontSize: "14px" }}>{icon}</div>
+    <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>{title}</span>
+  </div>
+);
 
-/* styles */
-const page = {
-  padding: "40px 20px 90px",
-  maxWidth: "1250px",
-  margin: "auto"
+const cardStyle = {
+  background: "var(--card-bg, #ffffff)",
+  borderRadius: "16px",
+  padding: "16px",
+  border: "1px solid var(--card-border, #e2e8f0)",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.01)"
 };
 
-const hero = {
-  background: "var(--card-bg)",
-  padding: "55px",
-  borderRadius: "28px",
-  textAlign: "center",
-  marginBottom: "35px",
-  border: "1px solid var(--glass-border)"
-};
-
-const heroIcon = {
-  fontSize: "72px",
-  color: "var(--primary)",
-  marginBottom: "14px"
-};
-
-const heroTitle = {
-  fontSize: "52px",
-  marginBottom: "14px",
-  color: "var(--text-main)"
-};
-
-const heroText = {
-  color: "var(--text-muted)",
-  fontSize: "18px",
-  maxWidth: "700px",
-  margin: "auto"
-};
-
-const sectionTitle = {
+const cardHeaderStyle = {
   display: "flex",
-  gap: "12px",
   alignItems: "center",
-  margin: "28px 0 18px"
+  gap: "10px",
+  marginBottom: "10px"
 };
 
-const box = {
-  background: "var(--card-bg)",
-  padding: "28px",
-  borderRadius: "22px",
-  boxShadow: "0 15px 30px rgba(0,0,0,.05)",
-  border: "1px solid var(--glass-border)"
-};
-
-const para = {
-  color: "var(--text-muted)",
-  lineHeight: "1.8",
-  marginBottom: "14px"
-};
-
-const quote = {
-  background: "var(--primary-light)",
-  color: "var(--primary)",
-  padding: "14px",
-  borderRadius: "14px",
-  fontWeight: "bold",
-  display: "inline-flex",
-  gap: "8px",
-  alignItems: "center"
-};
-
-const grid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
-  gap: "18px"
-};
-
-const card = {
-  background: "var(--card-bg)",
-  padding: "24px",
-  borderRadius: "22px",
-  boxShadow: "0 15px 30px rgba(0,0,0,.05)",
-  border: "1px solid var(--glass-border)"
-};
-
-const cardIcon = {
-  fontSize: "28px",
-  color: "var(--primary)",
-  marginBottom: "14px"
-};
-
-const muted = {
-  color: "var(--text-muted)",
-  lineHeight: "1.7"
-};
-
-const contactBox = {
-  background: "var(--card-bg)",
-  padding: "26px",
-  borderRadius: "22px",
-  boxShadow: "0 15px 30px rgba(0,0,0,.05)",
-  border: "1px solid var(--glass-border)"
-};
-
-const row = {
+const iconStyle = {
+  width: "32px",
+  height: "32px",
+  borderRadius: "10px",
   display: "flex",
-  gap: "12px",
   alignItems: "center",
-  padding: "12px 0"
+  justifyContent: "center",
+  fontSize: "15px",
+  flexShrink: 0
 };
 
-const footerNote = {
-  marginTop: "35px",
-  background: "var(--primary)",
-  color: "#fff",
-  padding: "24px",
-  borderRadius: "22px",
-  textAlign: "center",
-  fontSize: "17px",
-  lineHeight: "1.8"
+const titleStyle = {
+  fontSize: "14px",
+  fontWeight: "800",
+  color: "var(--text-main, #0f172a)",
+  margin: 0
+};
+
+const textStyle = {
+  fontSize: "12px",
+  color: "var(--text-muted, #64748b)",
+  margin: 0,
+  lineHeight: 1.6
 };
 
 export default About;

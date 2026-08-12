@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { 
   FaUserCircle, FaPhoneAlt, FaMapMarkerAlt, FaEdit, FaSave, FaTimes, 
   FaSignOutAlt, FaEnvelope, FaLock, FaArrowLeft, FaHome, FaHistory, 
-  FaWallet, FaUser, FaCamera, FaRecycle, FaBell, FaInfoCircle, FaPhone, FaChevronRight 
+  FaWallet, FaUser, FaCamera, FaRecycle, FaBell, FaInfoCircle, FaPhone, FaChevronRight, FaShieldAlt 
 } from "react-icons/fa";
 
 import Footer from "../components/Footer";
@@ -326,6 +326,14 @@ function Profile() {
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#f8fafc", color: "#64748b" }}><FaInfoCircle /></div>
                       <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>About ScrapVex</span>
+                    </div>
+                    <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                  </div>
+
+                  <div className="mobile-settings-row" onClick={() => navigate("/privacy")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaShieldAlt /></div>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>Privacy Policy</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>

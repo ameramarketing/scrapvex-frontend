@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaClock, 
-  FaPaperPlane, FaWhatsapp, FaComments, FaCheckCircle 
+  FaPaperPlane, FaWhatsapp, FaComments, FaCheckCircle, FaArrowLeft, FaHeadset
 } from "react-icons/fa";
 import Footer from "../components/Footer";
 import API from "../services/api";
 
 function Contact() {
+  const navigate = useNavigate();
   const [settings, setSettings] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -52,194 +54,278 @@ function Contact() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-main)", color: "var(--text-main)" }}>
+    <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", color: "var(--text-main, #0f172a)" }}>
       
-      {/* MOBILE RESPONSIVE CSS */}
-      <style>{`
-        @media (max-width: 768px) {
-          .contact-grid-wrap {
-            grid-template-columns: 1fr !important;
-            gap: 20px !important;
-          }
-          .contact-row-group {
-            flex-direction: column !important;
-          }
-          .contact-hero-box {
-            padding: 30px 16px !important;
-            border-radius: 16px !important;
-          }
-          .contact-hero-title {
-            font-size: 24px !important;
-          }
-          .contact-form-card {
-            padding: 20px !important;
-            border-radius: 16px !important;
-          }
-        }
-      `}</style>
+      {/* NATIVE MOBILE HEADER WITH BACK BUTTON */}
+      <header style={{
+        background: "var(--card-bg, #ffffff)",
+        padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 12px 16px",
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        borderBottom: "1px solid var(--card-border, #e2e8f0)",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+      }}>
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            background: "var(--bg-main, #f1f5f9)",
+            border: "none",
+            width: "36px",
+            height: "36px",
+            borderRadius: "10px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--text-main, #0f172a)",
+            cursor: "pointer",
+            fontSize: "15px",
+            flexShrink: 0
+          }}
+          title="Go Back"
+        >
+          <FaArrowLeft />
+        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ background: "#eff6ff", color: "#2563eb", padding: "6px", borderRadius: "8px", display: "flex", alignItems: "center" }}>
+            <FaHeadset size={16} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: "16px", fontWeight: "900", margin: 0, lineHeight: 1.2 }}>Help & Support</h1>
+            <span style={{ fontSize: "11px", color: "var(--text-muted, #64748b)" }}>ScrapVex Customer Care</span>
+          </div>
+        </div>
+      </header>
 
-      {/* TOAST */}
+      {/* TOAST NOTIFICATION */}
       {toast.show && (
         <div style={{
           position: "fixed",
-          top: "20px",
-          right: "20px",
+          top: "60px",
+          left: "50%",
+          transform: "translateX(-50%)",
           zIndex: 9999,
-          padding: "14px 24px",
+          padding: "12px 20px",
           borderRadius: "12px",
           background: toast.type === "success" ? "#0b8f3a" : "#e11d48",
           color: "#fff",
-          fontWeight: "bold",
+          fontWeight: "800",
+          fontSize: "13px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
           display: "flex",
           alignItems: "center",
-          gap: "10px"
+          gap: "8px",
+          maxWidth: "90%",
+          boxSizing: "border-box"
         }}>
           <FaCheckCircle /> {toast.text}
         </div>
       )}
 
-      {/* HERO SECTION */}
-      <div style={heroWrap} className="container">
-        <div style={heroBox} className="fade-up contact-hero-box">
-          <p style={heroTag}><FaComments /> WE ARE HERE TO HELP</p>
-          <h1 style={heroTitle} className="contact-hero-title">Contact ScrapVex Support</h1>
-          <p style={heroSub}>
-            Have questions about doorstep scrap pickup, rates, wallet payouts, or franchise opportunities? 
-            Reach out to our team in Rajouri & Jammu & Kashmir!
+      {/* CONTENT CONTAINER */}
+      <div style={{ maxWidth: "800px", margin: "0 auto", padding: "16px 14px 40px 14px" }}>
+        
+        {/* HERO BADGE CARD (HIGH CONTRAST WHITE TEXT) */}
+        <div style={{
+          background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)",
+          borderRadius: "18px",
+          padding: "24px 20px",
+          color: "#ffffff",
+          boxShadow: "0 8px 24px rgba(11,143,58,0.25)",
+          marginBottom: "16px",
+          textAlign: "center"
+        }}>
+          <div style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+            background: "rgba(255,255,255,0.2)",
+            padding: "4px 14px",
+            borderRadius: "20px",
+            fontSize: "11px",
+            fontWeight: "800",
+            color: "#ffffff",
+            marginBottom: "10px",
+            textTransform: "uppercase",
+            letterSpacing: "0.5px"
+          }}>
+            <FaComments /> We Are Here To Help
+          </div>
+          <h2 style={{ fontSize: "22px", fontWeight: "900", margin: "0 0 8px 0", color: "#ffffff" }}>
+            Contact ScrapVex Support
+          </h2>
+          <p style={{ fontSize: "13px", color: "#ffffff", margin: 0, lineHeight: 1.5, opacity: 0.95, fontWeight: "500" }}>
+            Have questions about doorstep scrap pickup, rates, wallet payouts, or franchise opportunities? Reach out to our team in Rajouri & Jammu & Kashmir!
           </p>
         </div>
-      </div>
 
-      {/* MAIN CONTENT */}
-      <div className="container section-padding">
-        <div style={gridWrap} className="contact-grid-wrap">
+        {/* CONTACT CARDS GRID */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
           
-          {/* LEFT: INFO CARDS */}
-          <div style={infoCol}>
-            <div style={cardStyle}>
-              <div style={iconBadge}><FaPhoneAlt /></div>
-              <div>
-                <h4 style={cardHeading}>Call Us Directly</h4>
-                <p style={cardText}>{settings?.contactPhone || "+91 8491028539"}</p>
-                <small style={cardMuted}>Mon - Sat (9:00 AM - 7:00 PM)</small>
-              </div>
+          {/* Call Us Directly */}
+          <div style={contactCardStyle}>
+            <div style={{ ...iconPillStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaPhoneAlt /></div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Call Us Directly</div>
+              <a href={`tel:${settings?.contactPhone || "+918491028539"}`} style={{ fontSize: "14px", fontWeight: "900", color: "#0b8f3a", textDecoration: "none", display: "block", marginTop: "2px" }}>
+                {settings?.contactPhone || "+91 8491028539"}
+              </a>
+              <span style={{ fontSize: "11px", color: "var(--text-muted, #64748b)" }}>Mon - Sat (9:00 AM - 7:00 PM)</span>
             </div>
-
-            <div style={cardStyle}>
-              <div style={iconBadge}><FaEnvelope /></div>
-              <div>
-                <h4 style={cardHeading}>Email Support</h4>
-                <p style={cardText}>{settings?.contactEmail || "support@scrapvex.com"}</p>
-                <small style={cardMuted}>Quick response within 24 hours</small>
-              </div>
-            </div>
-
-            <div style={cardStyle}>
-              <div style={iconBadge}><FaMapMarkerAlt /></div>
-              <div>
-                <h4 style={cardHeading}>Head Office Address</h4>
-                <p style={cardText}>{settings?.officeAddress || "ScrapVex HQ, Rajouri, Jammu & Kashmir, 185131"}</p>
-                <small style={cardMuted}>J&K's 1st Digital Kabadiwala Platform</small>
-              </div>
-            </div>
-
-            <div style={cardStyle}>
-              <div style={iconBadge}><FaClock /></div>
-              <div>
-                <h4 style={cardHeading}>Working Hours</h4>
-                <p style={cardText}>{settings?.workingHours || "9:00 AM - 7:00 PM (Monday to Saturday)"}</p>
-                <small style={cardMuted}>Sunday: Emergency Pickups Only</small>
-              </div>
-            </div>
-
-            {/* WHATSAPP QUICK CHAT CARD */}
-            <a 
-              href={`https://wa.me/91${(settings?.contactPhone || "8491028539").replace(/\D/g, "")}`} 
-              target="_blank" 
-              rel="noreferrer"
-              style={whatsappCard}
-            >
-              <FaWhatsapp style={{ fontSize: "28px" }} />
-              <div>
-                <strong style={{ display: "block", fontSize: "16px" }}>Chat on WhatsApp</strong>
-                <span style={{ fontSize: "13px", opacity: 0.9 }}>Get instant help & rate inquiries on WhatsApp</span>
-              </div>
-            </a>
           </div>
 
-          {/* RIGHT: INQUIRY FORM */}
-          <div style={formCard} className="contact-form-card">
-            <h3 style={formTitle}>Send Us a Message</h3>
-            <p style={formSub}>Fill out the form below and our team will reach out to you immediately.</p>
+          {/* Email Support */}
+          <div style={contactCardStyle}>
+            <div style={{ ...iconPillStyle, background: "#eff6ff", color: "#2563eb" }}><FaEnvelope /></div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Email Support</div>
+              <a href={`mailto:${settings?.contactEmail || "support@scrapvex.com"}`} style={{ fontSize: "13px", fontWeight: "800", color: "#2563eb", textDecoration: "none", display: "block", marginTop: "2px" }}>
+                {settings?.contactEmail || "support@scrapvex.com"}
+              </a>
+              <span style={{ fontSize: "11px", color: "var(--text-muted, #64748b)" }}>Quick response within 24 hours</span>
+            </div>
+          </div>
 
-            <form onSubmit={handleSubmit} style={formStyle}>
-              <div style={inputGroup}>
-                <label style={labelStyle}>Your Full Name *</label>
-                <input 
-                  type="text" 
-                  placeholder="Enter your name" 
-                  style={inputStyle}
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
+          {/* WhatsApp Direct Chat */}
+          <a
+            href={`https://wa.me/${(settings?.whatsappNumber || "8491028539").replace(/[^0-9]/g, "")}?text=Hi%20ScrapVex%20Team,%20I%20need%20help%20with%20my%20scrap%20pickup.`}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
+              color: "#ffffff",
+              padding: "14px 16px",
+              borderRadius: "14px",
+              textDecoration: "none",
+              boxShadow: "0 4px 16px rgba(37, 211, 102, 0.25)"
+            }}
+          >
+            <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>
+              <FaWhatsapp />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: "900", color: "#ffffff" }}>Instant WhatsApp Chat</div>
+              <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.9)" }}>Click to open chat with support team</div>
+            </div>
+          </a>
+
+          {/* Office Address & Hours */}
+          <div style={contactCardStyle}>
+            <div style={{ ...iconPillStyle, background: "#fef3c7", color: "#d97706" }}><FaMapMarkerAlt /></div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Head Office Address</div>
+              <div style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", marginTop: "2px" }}>
+                {settings?.officeAddress || "ScrapVex HQ, Rajouri, Jammu & Kashmir, 185131"}
               </div>
-
-              <div style={rowGroup} className="contact-row-group">
-                <div style={inputGroup}>
-                  <label style={labelStyle}>Mobile Number *</label>
-                  <input 
-                    type="tel" 
-                    placeholder="10-digit mobile number" 
-                    style={inputStyle}
-                    value={formData.mobile}
-                    onChange={e => setFormData({ ...formData, mobile: e.target.value })}
-                    required
-                  />
-                </div>
-                <div style={inputGroup}>
-                  <label style={labelStyle}>Email Address (Optional)</label>
-                  <input 
-                    type="email" 
-                    placeholder="name@example.com" 
-                    style={inputStyle}
-                    value={formData.email}
-                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div style={inputGroup}>
-                <label style={labelStyle}>Subject / Topic</label>
-                <input 
-                  type="text" 
-                  placeholder="e.g. Pickup Inquiry, Rate Question, Franchise Opportunity" 
-                  style={inputStyle}
-                  value={formData.subject}
-                  onChange={e => setFormData({ ...formData, subject: e.target.value })}
-                />
-              </div>
-
-              <div style={inputGroup}>
-                <label style={labelStyle}>Message *</label>
-                <textarea 
-                  rows="4" 
-                  placeholder="Write your query or message here..." 
-                  style={{ ...inputStyle, resize: "vertical" }}
-                  value={formData.message}
-                  onChange={e => setFormData({ ...formData, message: e.target.value })}
-                  required
-                ></textarea>
-              </div>
-
-              <button type="submit" style={submitBtn} disabled={loading}>
-                {loading ? "Sending Message..." : <>Send Message <FaPaperPlane /></>}
-              </button>
-            </form>
+              <span style={{ fontSize: "10px", fontWeight: "800", color: "#0b8f3a", background: "#f0fdf4", padding: "2px 6px", borderRadius: "6px", display: "inline-block", marginTop: "4px" }}>
+                J&K's #1 Digital Scrap Recycling Platform
+              </span>
+            </div>
           </div>
 
         </div>
+
+        {/* SEND US A MESSAGE FORM */}
+        <div style={{
+          background: "var(--card-bg, #ffffff)",
+          borderRadius: "18px",
+          padding: "20px 16px",
+          border: "1px solid var(--card-border, #e2e8f0)",
+          boxShadow: "0 4px 16px rgba(0,0,0,0.02)"
+        }}>
+          <h3 style={{ fontSize: "16px", fontWeight: "900", color: "var(--text-main, #0f172a)", margin: "0 0 4px 0" }}>
+            Send Us a Message
+          </h3>
+          <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "0 0 16px 0" }}>
+            Fill out the details below and our team will call you back.
+          </p>
+
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div>
+              <label style={labelStyle}>YOUR FULL NAME *</label>
+              <input
+                type="text"
+                placeholder="e.g. Rahul Sharma"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>MOBILE NUMBER *</label>
+              <input
+                type="tel"
+                placeholder="e.g. 9876543210"
+                value={formData.mobile}
+                onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>EMAIL ADDRESS (OPTIONAL)</label>
+              <input
+                type="email"
+                placeholder="e.g. rahul@gmail.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>SUBJECT</label>
+              <input
+                type="text"
+                placeholder="e.g. Scrap Rates Inquiry / Franchise"
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                style={inputStyle}
+              />
+            </div>
+
+            <div>
+              <label style={labelStyle}>MESSAGE *</label>
+              <textarea
+                rows={4}
+                placeholder="Describe your inquiry or question..."
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                style={{ ...inputStyle, resize: "none", height: "80px" }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                background: "var(--primary, #0b8f3a)",
+                color: "#ffffff",
+                border: "none",
+                padding: "12px",
+                borderRadius: "12px",
+                fontWeight: "800",
+                fontSize: "14px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                marginTop: "4px"
+              }}
+            >
+              <FaPaperPlane /> {loading ? "Sending..." : "Send Message"}
+            </button>
+          </form>
+        </div>
+
       </div>
 
       <Footer />
@@ -247,101 +333,48 @@ function Contact() {
   );
 }
 
-/* STYLES */
-const heroWrap = { padding: "40px 0 20px 0" };
-const heroBox = { 
-  background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)", 
-  color: "#fff", 
-  padding: "50px 30px", 
-  borderRadius: "24px", 
-  textAlign: "center",
-  boxShadow: "0 20px 40px rgba(11, 143, 58, 0.2)"
-};
-const heroTag = { display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(255,255,255,0.2)", padding: "6px 16px", borderRadius: "30px", fontSize: "13px", fontWeight: "bold", textTransform: "uppercase" };
-const heroTitle = { fontSize: "36px", fontWeight: "800", margin: "15px 0 10px 0" };
-const heroSub = { fontSize: "16px", opacity: 0.9, maxWidth: "650px", margin: "0 auto", lineHeight: "1.6" };
-
-const gridWrap = { display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "30px", alignItems: "start" };
-const infoCol = { display: "flex", flexDirection: "column", gap: "16px" };
-
-const cardStyle = { 
-  display: "flex", 
-  alignItems: "center", 
-  gap: "16px", 
-  background: "var(--card-bg)", 
-  padding: "20px", 
-  borderRadius: "16px", 
-  boxShadow: "0 4px 15px rgba(0,0,0,0.04)", 
-  border: "1px solid var(--glass-border)" 
-};
-const iconBadge = { 
-  width: "50px", 
-  height: "50px", 
-  borderRadius: "12px", 
-  background: "var(--primary-light)", 
-  color: "var(--primary)", 
-  display: "flex", 
-  alignItems: "center", 
-  justifyContent: "center", 
-  fontSize: "20px",
-  flexShrink: 0
-};
-const cardHeading = { fontSize: "15px", fontWeight: "bold", margin: "0 0 4px 0", color: "var(--text-main)" };
-const cardText = { fontSize: "15px", fontWeight: "600", margin: 0, color: "var(--primary)" };
-const cardMuted = { fontSize: "12px", color: "var(--text-muted)", display: "block", marginTop: "2px" };
-
-const whatsappCard = {
+const contactCardStyle = {
+  background: "var(--card-bg, #ffffff)",
+  borderRadius: "16px",
+  padding: "14px 16px",
+  border: "1px solid var(--card-border, #e2e8f0)",
   display: "flex",
   alignItems: "center",
-  gap: "15px",
-  background: "#25D366",
-  color: "#fff",
-  padding: "20px",
-  borderRadius: "16px",
-  textDecoration: "none",
-  boxShadow: "0 10px 25px rgba(37, 211, 102, 0.3)",
-  transition: "0.3s"
+  gap: "12px",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.01)"
 };
 
-const formCard = {
-  background: "var(--card-bg)",
-  padding: "35px",
-  borderRadius: "24px",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-  border: "1px solid var(--glass-border)"
-};
-const formTitle = { fontSize: "22px", fontWeight: "bold", margin: "0 0 6px 0", color: "var(--text-main)" };
-const formSub = { fontSize: "14px", color: "var(--text-muted)", margin: "0 0 25px 0" };
-const formStyle = { display: "flex", flexDirection: "column", gap: "18px" };
-const inputGroup = { display: "flex", flexDirection: "column", gap: "6px", flex: 1 };
-const rowGroup = { display: "flex", gap: "15px" };
-const labelStyle = { fontSize: "13px", fontWeight: "bold", color: "var(--text-main)" };
-const inputStyle = {
-  padding: "12px 16px",
-  borderRadius: "12px",
-  border: "1px solid #cbd5e1",
-  background: "var(--bg-main)",
-  color: "var(--text-main)",
-  fontSize: "14px",
-  outline: "none",
-  width: "100%",
-  boxSizing: "border-box"
-};
-const submitBtn = {
-  background: "linear-gradient(135deg, #0b8f3a 0%, #086d2c 100%)",
-  color: "#fff",
-  border: "none",
-  padding: "14px 24px",
-  borderRadius: "12px",
-  fontWeight: "bold",
-  fontSize: "15px",
-  cursor: "pointer",
-  display: "inline-flex",
+const iconPillStyle = {
+  width: "36px",
+  height: "36px",
+  borderRadius: "10px",
+  display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: "10px",
-  boxShadow: "0 10px 25px rgba(11, 143, 58, 0.25)",
-  marginTop: "10px"
+  fontSize: "16px",
+  flexShrink: 0
+};
+
+const labelStyle = {
+  fontSize: "11px",
+  fontWeight: "800",
+  color: "var(--text-muted, #64748b)",
+  display: "block",
+  marginBottom: "4px",
+  letterSpacing: "0.5px"
+};
+
+const inputStyle = {
+  width: "100%",
+  padding: "10px 12px",
+  borderRadius: "10px",
+  border: "1.5px solid var(--card-border, #cbd5e1)",
+  background: "var(--bg-main, #f8fafc)",
+  color: "var(--text-main, #0f172a)",
+  fontSize: "13px",
+  outline: "none",
+  boxSizing: "border-box",
+  fontWeight: "500"
 };
 
 export default Contact;

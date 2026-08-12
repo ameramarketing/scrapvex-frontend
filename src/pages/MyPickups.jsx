@@ -167,7 +167,29 @@ function MyPickups() {
                       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.address}</span>
                     </div>
 
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
+                    
+                    {/* LIVE TRACKING PROGRESS STEPPER */}
+                    {item.status !== "Cancelled" && (
+                      <div style={{ background: "var(--bg-main, #f8fafc)", borderRadius: "10px", padding: "8px 10px", marginTop: "4px", border: "1px solid var(--card-border, #e2e8f0)" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                          <span style={{ fontSize: "10px", fontWeight: "800", color: "#0b8f3a", textTransform: "uppercase", letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: "4px" }}>
+                            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b8f3a", display: "inline-block" }} />
+                            Live Tracking Status
+                          </span>
+                          <span style={{ fontSize: "10px", fontWeight: "800", color: statusStyle.text }}>
+                            {getStatusDisplay(item.status)}
+                          </span>
+                        </div>
+
+                        {/* Stepper Bar */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                          <div style={{ flex: 1, height: "4px", borderRadius: "4px", background: "#0b8f3a" }} title="Booked" />
+                          <div style={{ flex: 1, height: "4px", borderRadius: "4px", background: ["Accepted", "Assigned", "Completed"].includes(item.status) ? "#0b8f3a" : "#cbd5e1" }} title="Collector Assigned" />
+                          <div style={{ flex: 1, height: "4px", borderRadius: "4px", background: item.status === "Completed" ? "#0b8f3a" : "#cbd5e1" }} title="Completed" />
+                        </div>
+                      </div>
+                    )}
+<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
                       <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>
                         Est. Value: <strong style={{ color: "#0b8f3a", fontSize: "14px" }}>₹{item.amount}</strong>
                       </span>
@@ -175,7 +197,7 @@ function MyPickups() {
                         style={mobileDetailsBtn} 
                         onClick={() => setExpandedCard(isExpanded ? null : item._id)}
                       >
-                        {isExpanded ? "Hide Details" : "View Details"} <FaChevronRight style={{ fontSize: "9px", transform: isExpanded ? "rotate(90deg)" : "none", transition: "0.2s" }} />
+                        {isExpanded ? "Hide Details" : "📍 Track Pickup"} <FaChevronRight style={{ fontSize: "9px", transform: isExpanded ? "rotate(90deg)" : "none", transition: "0.2s" }} />
                       </button>
                     </div>
                   </div>
