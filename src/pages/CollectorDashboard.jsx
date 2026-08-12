@@ -27,7 +27,7 @@ import {
   FaBell,
   FaStar,
   FaToggleOn,
-  FaToggleOff, FaSave, FaUserShield, FaChevronRight, FaSun, FaMoon,
+  FaToggleOff, FaSave, FaUserShield, FaChevronRight, FaSun, FaMoon, FaEdit, FaPhone,
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
