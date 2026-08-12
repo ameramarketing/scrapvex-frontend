@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaTruck, FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaMapMarkerAlt, FaArrowRight, FaCheckCircle, FaUserPlus, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
-
+import { FaTruck, FaUser, FaPhoneAlt, FaEnvelope, FaLock, FaMapMarkerAlt, FaArrowRight, FaCheckCircle, FaUserPlus, FaKey, FaWhatsapp, FaSms, FaEye, FaEyeSlash, FaRecycle, FaHome } from "react-icons/fa";
 import Toast from "../components/Toast";
 import API from "../services/api";
 import { setCookie, getCookie } from "../utils/cookies";
-import { saveAuthData } from "../utils/auth";
+import { saveAuthData, getAuthUser, getAuthRole } from "../utils/auth";
 
 function CollectorRegister() {
   const navigate = useNavigate();
@@ -13,18 +12,20 @@ function CollectorRegister() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   React.useEffect(() => {
-    const rawUser = localStorage.getItem("user") || getCookie("user");
-    const role = localStorage.getItem("role") || getCookie("role");
-    if (rawUser && role === "collector") {
-      navigate("/collector-dashboard");
-    }
+    const checkLogged = async () => {
+      const rawUser = await getAuthUser();
+      const role = await getAuthRole();
+      if (rawUser && role === "collector") {
+        navigate("/collector-dashboard");
+      }
+    };
+    checkLogged();
   }, [navigate]);
 
   const [form, setForm] = useState({
     name: "", mobile: "", email: "", area: "", password: "", confirmPassword: ""
   });
   const [otp, setOtp] = useState("");
-  const [sentOtpCode, setSentOtpCode] = useState("");
   const [otpChannel, setOtpChannel] = useState("whatsapp");
   const [modalError, setModalError] = useState("");
   const [showOtpModal, setShowOtpModal] = useState(false);
@@ -39,7 +40,6 @@ function CollectorRegister() {
     setForm({ ...form, [e.target.name]: value });
   };
 
-  // Step 1: Request OTP via WhatsApp or SMS
   const handleRequestOtp = async (e, selectedChannel = "whatsapp") => {
     if (e) e.preventDefault();
     if (!form.name.trim()) return showToast("error", "Enter your full name");
@@ -62,7 +62,6 @@ function CollectorRegister() {
     }
   };
 
-  // Step 2: Verify OTP & Complete Collector Registration
   const handleFinalRegister = async (e) => {
     e.preventDefault();
     setModalError("");
@@ -101,101 +100,152 @@ function CollectorRegister() {
     <div style={wrap}>
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
-      <div style={card} className="rate-card">
-        <div style={topIcon}><FaTruck /></div>
-        <p style={tag}><FaUserPlus style={{ marginRight: "6px" }} /> Join Our Team 🚚</p>
-        <h1 style={title}>Collector Registration</h1>
-        <p style={sub}>Register as a pickup collector and start earning.</p>
+      <style>{`
+        .auth-card {
+          width: 100%;
+          max-width: 440px;
+          background: var(--card-bg);
+          padding: 30px 24px;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--card-border);
+          box-shadow: var(--card-shadow);
+        }
+        .auth-logo-circle {
+          width: 54px;
+          height: 54px;
+          border-radius: 14px;
+          background: #f0fdf4;
+          color: var(--primary);
+          font-size: 22px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 12px;
+          border: 1.5px solid #dcfce7;
+        }
+        .auth-input-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          background: #f8fafc;
+          padding: 12px 16px;
+          border-radius: 12px;
+          margin-bottom: 14px;
+          border: 1.5px solid #e2e8f0;
+          transition: all 0.2s ease;
+          position: relative;
+        }
+        .auth-input-row:focus-within {
+          border-color: var(--primary);
+          background: #ffffff;
+          box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .auth-input-field {
+          border: none;
+          outline: none;
+          background: transparent;
+          width: 100%;
+          font-size: 14px;
+          color: var(--text-main);
+          font-weight: 500;
+          text-align: left !important;
+        }
+        .auth-eye-btn {
+          position: absolute;
+          right: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: var(--text-muted);
+          cursor: pointer;
+          font-size: 16px;
+          display: flex;
+          align-items: center;
+          padding: 4px;
+        }
+      `}</style>
 
-        <div style={pillWrap}>
-          <span style={pill}><FaCheckCircle /> Secure</span>
-          <span style={pill}><FaCheckCircle /> Fast</span>
-          <span style={pill}><FaCheckCircle /> Easy</span>
+      <div className="auth-card fade-up" style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "left", marginBottom: "16px" }}>
+          <Link to="/collector-login" style={{ display: "inline-flex", alignItems: "center", gap: "6px", color: "var(--primary)", fontWeight: "600", fontSize: "13px", textDecoration: "none", background: "var(--primary-light)", padding: "6px 12px", borderRadius: "8px" }}>
+            <FaHome /> Back to Login
+          </Link>
         </div>
 
-        <form onSubmit={(e) => handleRequestOtp(e, "whatsapp")} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <div style={inputWrap}>
-            <FaUser style={icon} />
-            <input type="text" name="name" placeholder="Full Name *" value={form.name} onChange={handleChange} style={input} />
+        <div className="auth-logo-circle"><FaTruck /></div>
+        <p style={{ color: "var(--primary)", fontWeight: "700", fontSize: "12px", margin: 0, textTransform: "uppercase", letterSpacing: "0.5px" }}>Join Our Team 🚚</p>
+        <h1 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main)", margin: "4px 0" }}>Collector Registration</h1>
+        <p style={{ color: "var(--text-muted)", fontSize: "12px", margin: "0 0 16px 0" }}>Register as a pickup collector and start earning.</p>
+
+        <form onSubmit={(e) => handleRequestOtp(e, "whatsapp")} style={{ display: "flex", flexDirection: "column" }}>
+          <label htmlFor="col-reg-name">Full Name *</label>
+          <div className="auth-input-row">
+            <FaUser style={{ color: "var(--primary)", fontSize: "14px" }} />
+            <input id="col-reg-name" type="text" name="name" placeholder="Enter full name" value={form.name} onChange={handleChange} className="auth-input-field" required />
           </div>
 
-          <div style={inputWrap}>
-            <FaPhoneAlt style={icon} />
-            <input type="text" name="mobile" placeholder="Mobile Number *" value={form.mobile} onChange={handleChange} style={input} />
+          <label htmlFor="col-reg-mobile">Mobile Number *</label>
+          <div className="auth-input-row">
+            <FaPhoneAlt style={{ color: "var(--primary)", fontSize: "14px" }} />
+            <input id="col-reg-mobile" type="text" name="mobile" placeholder="Enter 10-digit mobile" value={form.mobile} onChange={handleChange} className="auth-input-field" required />
           </div>
 
-          <div style={inputWrap}>
-            <FaEnvelope style={icon} />
-            <input type="email" name="email" placeholder="Email (Optional)" value={form.email} onChange={handleChange} style={input} />
+          <label htmlFor="col-reg-email">Email (Optional)</label>
+          <div className="auth-input-row">
+            <FaEnvelope style={{ color: "var(--primary)", fontSize: "14px" }} />
+            <input id="col-reg-email" type="email" name="email" placeholder="Enter email address" value={form.email} onChange={handleChange} className="auth-input-field" />
           </div>
 
-          <div style={inputWrap}>
-            <FaMapMarkerAlt style={icon} />
-            <input type="text" name="area" placeholder="Area / Locality *" value={form.area} onChange={handleChange} style={input} />
+          <label htmlFor="col-reg-area">Operating Area / Locality *</label>
+          <div className="auth-input-row">
+            <FaMapMarkerAlt style={{ color: "var(--primary)", fontSize: "14px" }} />
+            <input id="col-reg-area" type="text" name="area" placeholder="e.g. Rajouri Main Market" value={form.area} onChange={handleChange} className="auth-input-field" required />
           </div>
 
-          <div style={{ ...inputWrap, position: "relative" }}>
-            <FaLock style={icon} />
-            <input type={showPassword ? "text" : "password"} name="password" placeholder="Password (Min 6 chars) *" value={form.password} onChange={handleChange} style={{ ...input, paddingRight: "45px" }} />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
-            >
+          <label htmlFor="col-reg-password">Password *</label>
+          <div className="auth-input-row">
+            <FaLock style={{ color: "var(--primary)", fontSize: "14px" }} />
+            <input id="col-reg-password" type={showPassword ? "text" : "password"} name="password" placeholder="Min 6 characters" value={form.password} onChange={handleChange} className="auth-input-field" style={{ paddingRight: "40px" }} required />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="auth-eye-btn">
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
 
-          <div style={{ ...inputWrap, position: "relative" }}>
-            <FaCheckCircle style={icon} />
-            <input type={showConfirmPassword ? "text" : "password"} name="confirmPassword" placeholder="Confirm Password *" value={form.confirmPassword} onChange={handleChange} style={{ ...input, paddingRight: "45px" }} />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "18px", display: "flex", alignItems: "center", padding: "4px" }}
-            >
+          <label htmlFor="col-reg-confirm">Confirm Password *</label>
+          <div className="auth-input-row">
+            <FaCheckCircle style={{ color: "var(--primary)", fontSize: "14px" }} />
+            <input id="col-reg-confirm" type={showConfirmPassword ? "text" : "password"} name="confirmPassword" placeholder="Verify password" value={form.confirmPassword} onChange={handleChange} className="auth-input-field" style={{ paddingRight: "40px" }} required />
+            <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="auth-eye-btn">
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
 
-          {/* DUAL OTP CHANNEL BUTTONS */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
-            <button
-              type="button"
-              style={{ ...btn, background: "#25D366" }}
-              className="btn pulse-btn"
-              disabled={loading}
-              onClick={(e) => handleRequestOtp(e, "whatsapp")}
-            >
-              {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "18px" }} /> Get OTP on WhatsApp 💬</>}
+            <button type="button" style={{ background: "#25D366", color: "#fff", border: "none" }} className="btn-premium" disabled={loading} onClick={(e) => handleRequestOtp(e, "whatsapp")}>
+              {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "16px" }} /> Get OTP on WhatsApp</>}
             </button>
 
-            <button
-              type="button"
-              style={{ ...btn, background: "var(--primary)" }}
-              className="btn pulse-btn"
-              disabled={loading}
-              onClick={(e) => handleRequestOtp(e, "sms")}
-            >
-              {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "18px" }} /> Get OTP via SMS 📱</>}
+            <button type="button" style={{ background: "var(--primary)", color: "#fff", border: "none" }} className="btn-premium" disabled={loading} onClick={(e) => handleRequestOtp(e, "sms")}>
+              {loading ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "16px" }} /> Get OTP via SMS</>}
             </button>
           </div>
         </form>
 
-        <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginTop: "20px", fontSize: "14px" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginTop: "20px", fontSize: "13px" }}>
           <span style={{ color: "var(--text-muted)" }}>Already registered?</span>
           <Link to="/collector-login" style={{ color: "var(--primary)", fontWeight: "700", textDecoration: "none" }}>Login Here</Link>
         </div>
       </div>
 
-      {/* OTP VERIFICATION MODAL */}
+      {/* OTP MODAL */}
       {showOtpModal && (
         <div style={modalBackdrop}>
           <div style={modalCard} className="fade-up">
             <div style={modalHeaderIcon}><FaKey /></div>
-            <h3 style={{ fontSize: "22px", margin: "10px 0 6px 0", color: "#0f172a" }}>Enter Collector OTP</h3>
-            <p style={{ fontSize: "14px", color: "#475569", margin: "10px 0 20px 0", lineHeight: "1.5" }}>
-              {otpChannel === "whatsapp" ? "💬 We have sent a 6-Digit secret OTP to your WhatsApp inbox" : "📱 We have sent a 6-Digit secret OTP via SMS"} on <b>+91 {form.mobile}</b>. Please enter the code below:
+            <h3 style={{ fontSize: "18px", fontWeight: "800", margin: "12px 0 6px 0", color: "#0f172a" }}>Enter Collector OTP</h3>
+            <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "0 0 16px 0", lineHeight: "1.5" }}>
+              {otpChannel === "whatsapp" ? "💬 Secret OTP sent to WhatsApp inbox" : "📱 Secret OTP sent via SMS"} on <b>+91 {form.mobile}</b>.
             </p>
 
             {modalError && (
@@ -209,7 +259,7 @@ function CollectorRegister() {
                 <input
                   type="text"
                   maxLength="6"
-                  placeholder="0 0 0 0 0 0"
+                  placeholder="000000"
                   value={otp}
                   onChange={(e) => {
                     setModalError("");
@@ -220,14 +270,14 @@ function CollectorRegister() {
                 />
               </div>
 
-              <button type="submit" className="btn pulse-btn" style={{ width: "100%", marginTop: "18px", padding: "14px", background: "var(--primary)", color: "#fff", border: "none", borderRadius: "14px", fontWeight: "bold" }} disabled={loading}>
-                {loading ? <FaRecycle className="spin" /> : <>Verify & Complete Registration <FaCheckCircle /></>}
+              <button type="submit" className="btn-premium" style={{ width: "100%", marginTop: "16px", border: "none" }} disabled={loading}>
+                {loading ? <FaRecycle className="spin" /> : <>Verify & Register <FaCheckCircle /></>}
               </button>
             </form>
 
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "16px" }}>
-              <button type="button" onClick={(e) => handleRequestOtp(e, otpChannel)} style={{ background: "none", border: "none", color: "#0b8f3a", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>Resend OTP</button>
-              <button type="button" onClick={() => setShowOtpModal(false)} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}>Cancel</button>
+              <button type="button" onClick={(e) => handleRequestOtp(e, otpChannel)} style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "12px", fontWeight: "700", cursor: "pointer" }}>Resend OTP</button>
+              <button type="button" onClick={() => setShowOtpModal(false)} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>Cancel</button>
             </div>
           </div>
         </div>
@@ -236,27 +286,12 @@ function CollectorRegister() {
   );
 }
 
-/* styles */
-const wrap = { minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "30px", background: "var(--bg-main)" };
-const card = { width: "460px", background: "var(--card-bg)", padding: "36px", borderRadius: "28px", boxShadow: "0 25px 55px rgba(0,0,0,.08)", textAlign: "center", border: "1px solid var(--glass-border)" };
-const topIcon = { fontSize: "70px", color: "var(--primary)", marginBottom: "10px" };
-const tag = { color: "var(--primary)", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center" };
-const title = { margin: "12px 0", color: "var(--text-main)" };
-const sub = { color: "var(--text-muted)", marginBottom: "18px" };
-const pillWrap = { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "22px" };
-const pill = { background: "var(--primary-light)", color: "var(--primary)", padding: "8px 12px", borderRadius: "999px", fontSize: "13px", display: "flex", gap: "6px", alignItems: "center" };
-const inputWrap = { display: "flex", gap: "12px", alignItems: "center", background: "var(--bg-main)", padding: "14px 16px", borderRadius: "14px", border: "1px solid var(--glass-border)" };
-const icon = { color: "var(--primary)" };
-const input = { border: "none", outline: "none", background: "transparent", width: "100%", color: "var(--text-main)" };
-const btn = { width: "100%", border: "none", padding: "14px", borderRadius: "14px", background: "var(--primary)", color: "#fff", fontWeight: "bold", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", marginTop: "8px" };
-
-const modalBackdrop = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15, 23, 42, 0.75)", backdropFilter: "blur(6px)", zIndex: 99999, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" };
-const modalCard = { background: "#ffffff", width: "100%", maxWidth: "400px", borderRadius: "24px", padding: "30px 26px", textAlign: "center", boxShadow: "0 20px 50px rgba(0,0,0,0.25)" };
-const modalHeaderIcon = { width: "60px", height: "60px", borderRadius: "50%", background: "#f0fdf4", color: "#0b8f3a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "26px", margin: "0 auto" };
-const otpHintBox = { background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#15803d", padding: "8px 12px", borderRadius: "10px", fontSize: "13px", marginBottom: "14px" };
-const modalErrorBox = { background: "#fef2f2", border: "1px solid #fecaca", color: "#dc2626", padding: "8px 12px", borderRadius: "10px", fontSize: "13px", fontWeight: "600", marginBottom: "14px" };
-const otpInputGroup = { background: "#f8fafc", borderRadius: "16px", padding: "12px", border: "2px solid #0b8f3a" };
-const otpInput = { width: "100%", border: "none", outline: "none", background: "transparent", textAlign: "center", fontSize: "28px", fontWeight: "800", letterSpacing: "12px", color: "#0f172a" };
+const wrap = { minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "16px", background: "var(--bg-main)" };
+const modalBackdrop = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)", zIndex: 99999, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" };
+const modalCard = { background: "#ffffff", width: "100%", maxWidth: "360px", borderRadius: "20px", padding: "24px", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.15)" };
+const modalHeaderIcon = { width: "50px", height: "50px", borderRadius: "50%", background: "#f0fdf4", color: "#0b8f3a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", margin: "0 auto" };
+const modalErrorBox = { background: "#fef2f2", border: "1px solid #fecaca", color: "#dc2626", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", marginBottom: "14px" };
+const otpInputGroup = { background: "#f8fafc", borderRadius: "12px", padding: "10px", border: "2px solid #0b8f3a" };
+const otpInput = { width: "100%", border: "none", outline: "none", background: "transparent", textAlign: "center", fontSize: "24px", fontWeight: "800", letterSpacing: "8px", color: "#0f172a" };
 
 export default CollectorRegister;
-

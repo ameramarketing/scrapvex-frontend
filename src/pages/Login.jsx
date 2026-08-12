@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaPhoneAlt, FaLock, FaArrowRight, FaEye, FaEyeSlash, FaRecycle } from "react-icons/fa";
-import { saveAuthData } from "../utils/auth";
+import { FaPhoneAlt, FaLock, FaArrowRight, FaEye, FaEyeSlash, FaRecycle, FaHome } from "react-icons/fa";
+import { saveAuthData, getAuthUser, getAuthRole } from "../utils/auth";
 import Toast from "../components/Toast";
 import API from "../services/api";
 
@@ -14,11 +14,14 @@ function Login() {
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
 
   React.useEffect(() => {
-    const rawUser = localStorage.getItem("user");
-    const role = localStorage.getItem("role");
-    if (rawUser && role === "user") {
-      navigate("/dashboard");
-    }
+    const checkLogged = async () => {
+      const rawUser = await getAuthUser();
+      const role = await getAuthRole();
+      if (rawUser && role === "user") {
+        navigate("/dashboard");
+      }
+    };
+    checkLogged();
   }, [navigate]);
 
   const showToast = (type, message) => setToast({ show: true, type, message });
@@ -98,6 +101,7 @@ function Login() {
           font-size: 14px;
           color: #0f172a;
           font-weight: 500;
+          text-align: left !important;
         }
         .login-eye-btn {
           position: absolute;
@@ -115,14 +119,14 @@ function Login() {
         }
         .login-role-btn {
           display: block;
-          padding: 10px;
+          padding: 11px;
           border-radius: 10px;
           background: #f8fafc;
           color: #475569;
           text-decoration: none;
           font-size: 12px;
-          fontWeight: 700;
-          textAlign: center;
+          font-weight: 700;
+          text-align: center;
           border: 1.5px solid #e2e8f0;
           transition: all 0.2s ease;
         }
@@ -140,28 +144,34 @@ function Login() {
           <p style={{ color: "#64748b", fontSize: "12px", margin: 0 }}>Login to schedule & track scrap pickups</p>
         </div>
 
-        {/* ONE LOGIN FORM */}
+        {/* LOGIN FORM */}
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column" }}>
+          <label htmlFor="login-mobile">Registered Mobile</label>
           <div className="login-input-row">
             <FaPhoneAlt style={{ color: "#0b8f3a", fontSize: "14px" }} />
             <input
+              id="login-mobile"
               type="text"
-              placeholder="Mobile Number"
+              placeholder="Enter 10-digit mobile number"
               value={mobile}
               onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
               className="login-input-field"
+              required
             />
           </div>
 
+          <label htmlFor="login-password">Password</label>
           <div className="login-input-row">
             <FaLock style={{ color: "#0b8f3a", fontSize: "14px" }} />
             <input
+              id="login-password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="login-input-field"
               style={{ paddingRight: "40px" }}
+              required
             />
             <button
               type="button"
@@ -179,7 +189,7 @@ function Login() {
             </Link>
           </div>
 
-          <button type="submit" className="btn-premium" style={{ height: "46px", border: "none", fontSize: "14px", fontWeight: "800", letterSpacing: "0.5px" }} disabled={loading}>
+          <button type="submit" className="btn-premium" style={{ border: "none" }} disabled={loading}>
             {loading ? <FaRecycle className="spin" /> : <>Login <FaArrowRight style={{ fontSize: "11px" }} /></>}
           </button>
         </form>

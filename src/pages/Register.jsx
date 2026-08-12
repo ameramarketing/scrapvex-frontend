@@ -11,7 +11,6 @@ function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [otp, setOtp] = useState("");
-  const [sentOtpCode, setSentOtpCode] = useState("");
   const [otpChannel, setOtpChannel] = useState("whatsapp");
   const [modalError, setModalError] = useState("");
   const [showOtpModal, setShowOtpModal] = useState(false);
@@ -132,6 +131,7 @@ function Register() {
           font-size: 14px;
           color: #0f172a;
           font-weight: 500;
+          text-align: left !important;
         }
         .register-eye-btn {
           position: absolute;
@@ -159,52 +159,63 @@ function Register() {
 
         {/* REGISTRATION FORM */}
         <form onSubmit={(e) => handleRequestOtp(e, "whatsapp")} style={{ display: "flex", flexDirection: "column" }}>
+          <label htmlFor="reg-name">Full Name *</label>
           <div className="register-input-row">
             <FaUser style={{ color: "#0b8f3a", fontSize: "14px" }} />
             <input
+              id="reg-name"
               type="text"
               name="name"
-              placeholder="Full Name *"
+              placeholder="Enter your full name"
               value={form.name}
               onChange={handleChange}
               className="register-input-field"
+              required
             />
           </div>
 
+          <label htmlFor="reg-mobile">Mobile Number *</label>
           <div className="register-input-row">
             <FaPhoneAlt style={{ color: "#0b8f3a", fontSize: "14px" }} />
             <input
+              id="reg-mobile"
               type="text"
               name="mobile"
-              placeholder="Mobile Number *"
+              placeholder="Enter 10-digit mobile number"
               value={form.mobile}
               onChange={handleChange}
               className="register-input-field"
+              required
             />
           </div>
 
+          <label htmlFor="reg-email">Email (Optional)</label>
           <div className="register-input-row">
             <FaEnvelope style={{ color: "#0b8f3a", fontSize: "14px" }} />
             <input
+              id="reg-email"
               type="email"
               name="email"
-              placeholder="Email (Optional)"
+              placeholder="Enter email address"
               value={form.email}
               onChange={handleChange}
               className="register-input-field"
             />
           </div>
 
+          <label htmlFor="reg-password">Password *</label>
           <div className="register-input-row">
             <FaLock style={{ color: "#0b8f3a", fontSize: "14px" }} />
             <input
+              id="reg-password"
               type={showPassword ? "text" : "password"}
               name="password"
-              placeholder="Password (Min 6 chars) *"
+              placeholder="Min 6 characters"
               value={form.password}
               onChange={handleChange}
               className="register-input-field"
               style={{ paddingRight: "40px" }}
+              required
             />
             <button
               type="button"
@@ -215,16 +226,19 @@ function Register() {
             </button>
           </div>
 
-          <div className="register-input-row">
-            <FaCheckCircle style={{ color: "#0b8f3a", fontSize: "14px" }} />
+          <label htmlFor="reg-confirmPassword">Confirm Password *</label>
+          <div className="register-input-row" style={{ border: `1.5px solid ${form.confirmPassword && form.password !== form.confirmPassword ? '#ef4444' : '#e2e8f0'}` }}>
+            <FaCheckCircle style={{ color: form.confirmPassword && form.password === form.confirmPassword ? '#0b8f3a' : '#cbd5e1', fontSize: "14px" }} />
             <input
+              id="reg-confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
-              placeholder="Confirm Password *"
+              placeholder="Verify password"
               value={form.confirmPassword}
               onChange={handleChange}
               className="register-input-field"
               style={{ paddingRight: "40px" }}
+              required
             />
             <button
               type="button"
@@ -234,6 +248,10 @@ function Register() {
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
+
+          {form.confirmPassword && form.password !== form.confirmPassword && (
+            <p style={{ color: '#ef4444', fontSize: '11px', marginTop: '-8px', marginBottom: '14px', textAlign: 'left', fontWeight: '600' }}>⚠ Passwords do not match</p>
+          )}
 
           {/* DUAL OTP SEND BUTTONS */}
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" }}>
