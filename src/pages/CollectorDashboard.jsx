@@ -4126,27 +4126,33 @@ const modalOverlay = {
   left: 0,
   right: 0,
   bottom: 0,
-  background: "rgba(0,0,0,0.3)",
+  background: "rgba(0,0,0,0.65)",
   backdropFilter: "blur(5px)",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   zIndex: 2000,
-  padding: "20px",
+  padding: "10px",
+  boxSizing: "border-box",
 };
 const modalBox = {
   background: "var(--card-bg)",
-  padding: "30px",
-  borderRadius: "30px",
+  padding: "16px",
+  borderRadius: "20px",
   width: "100%",
-  maxWidth: "450px",
+  maxWidth: "420px",
+  maxHeight: "calc(100vh - 90px)",
+  display: "flex",
+  flexDirection: "column",
+  boxSizing: "border-box",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.15)"
 };
-const modalScroll = { maxHeight: "80vh", overflowY: "auto" };
+const modalScroll = { maxHeight: "calc(100vh - 160px)", overflowY: "auto", paddingRight: "2px" };
 const infoGrid = {
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
-  gap: "15px",
-  marginBottom: "20px",
+  gap: "8px",
+  marginBottom: "10px",
 };
 const callBtn = {
   background: "var(--primary)",
@@ -4161,19 +4167,20 @@ const navLink = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  gap: "10px",
+  gap: "8px",
   background: "#4285F4",
   color: "#fff",
-  padding: "15px",
-  borderRadius: "15px",
+  padding: "9px 12px",
+  borderRadius: "10px",
   textDecoration: "none",
   fontWeight: "bold",
-  marginBottom: "20px",
+  fontSize: "12px",
+  marginBottom: "10px",
 };
 const calcBox = {
   background: "var(--bg-main)",
-  padding: "15px",
-  borderRadius: "15px",
+  padding: "10px 12px",
+  borderRadius: "12px",
   border: "1px solid var(--glass-border)",
 };
 const select = {
@@ -4230,32 +4237,35 @@ const totalRow = {
 };
 const acceptBtn = {
   flex: 2,
-  padding: "15px",
+  padding: "11px",
   background: "var(--primary)",
   color: "#fff",
   border: "none",
-  borderRadius: "15px",
+  borderRadius: "12px",
   fontWeight: "bold",
+  fontSize: "13px",
   cursor: "pointer",
 };
 const rejectBtn = {
   flex: 1,
-  padding: "15px",
+  padding: "11px",
   background: "var(--card-bg)",
   border: "1px solid var(--glass-border)",
-  borderRadius: "15px",
+  borderRadius: "12px",
   color: "var(--text-muted)",
   fontWeight: "bold",
+  fontSize: "13px",
   cursor: "pointer",
 };
 const completeBtn = {
   flex: 1,
-  padding: "15px",
+  padding: "11px",
   background: "var(--primary)",
   color: "#fff",
   border: "none",
-  borderRadius: "15px",
+  borderRadius: "12px",
   fontWeight: "bold",
+  fontSize: "13px",
   cursor: "pointer",
   opacity: 1,
 };
