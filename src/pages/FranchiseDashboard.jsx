@@ -1288,7 +1288,7 @@ const playBellSound = () => {
                   <div><div className="kpi-label">TOTAL SALES</div><div className="kpi-value">₹{accountingStats.totalSaleAmount?.toFixed(2)}</div></div>
                 </div>
                 <div className="kpi-card">
-                  <div><div className="kpi-label">TODAY'S PROFIT</div><div className="kpi-value">₹{accountingStats.(accountingStats.todayProfit || 0).toFixed(2) || 0}</div></div>
+                  <div><div className="kpi-label">TODAY'S PROFIT</div><div className="kpi-value">₹{(accountingStats.todayProfit || 0).toFixed(2) || 0}</div></div>
                 </div>
               </div>
 
@@ -2489,7 +2489,7 @@ const playBellSound = () => {
                 {supplierPurchaseHistory.map((p, idx) => (
                   <div key={p._id} style={{display:"flex", justifyContent:"space-between", padding:"8px 10px", background: idx%2===0?"var(--bg-subtle)":"", borderRadius:"8px", marginBottom:"4px", fontSize:"12px"}}>
                     <div>
-                      <div style={{fontWeight:"bold"}}>#{p._id.slice(-6).toUpperCase()} � {p.items.length} item(s)</div>
+                      <div style={{fontWeight:"bold"}}>#{p._id.slice(-6).toUpperCase()} � {p.items.length} item(s)</div>
                       <div style={{color:"var(--text-muted)"}}>{new Date(p.createdAt).toLocaleDateString()} | {p.paymentMethod}</div>
                     </div>
                     <div style={{textAlign:"right"}}>

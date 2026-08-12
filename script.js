@@ -1,20 +1,10 @@
-const puppeteer = require('puppeteer');
 const fs = require('fs');
+const lines = fs.readFileSync('src/pages/CollectorDashboard.jsx', 'utf-8').split('\n');
 
-(async () => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  
-  page.on('console', msg => console.log('PAGE LOG:', msg.text()));
-  
-  await page.goto('http://localhost:5174/login?app=true', { waitUntil: 'networkidle0' });
-  
-  // Wait a bit for React to mount and render completely
-  await new Promise(r => setTimeout(r, 2000));
-  
-  const html = await page.content();
-  fs.writeFileSync('dom_dump.html', html);
-  
-  await browser.close();
-  console.log('DOM dumped to dom_dump.html');
-})();
+let start = lines.findIndex(l => l.includes('{activeTab === "profile" && ('));
+let end = lines.findIndex((l, i) => i > start && l.includes('{/* DETAIL & BILLING MODAL */}'));
+
+console.log('Start:', start, 'End:', end);
+console.log(lines.slice(start, start + 5).join('\n'));
+console.log('...');
+console.log(lines.slice(end - 5, end + 2).join('\n'));

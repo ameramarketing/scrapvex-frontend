@@ -174,10 +174,18 @@ function CollectorDashboard() {
     return () => clearInterval(interval);
   }, [user?._id]);
 
+  const activePickups = useMemo(
+    () =>
+      (pickups || []).filter((p) =>
+        ["pending", "assigned", "accepted", "arrived", "in progress"].includes(
+          (p.status || "").toLowerCase()
+        )
+      ),
+    [pickups]
+  );
+
   const filteredActivePickups = useMemo(() => {
-    const list = pickups.filter((p) =>
-      ["Pending", "Assigned", "Arrived", "In Progress"].includes(p.status),
-    );
+    const list = activePickups;
     if (!searchQuery) return list;
     const q = searchQuery.toLowerCase();
     return list.filter(
@@ -186,9 +194,9 @@ function CollectorDashboard() {
         p.name?.toLowerCase().includes(q) ||
         p.mobile?.includes(q) ||
         p.address?.toLowerCase().includes(q) ||
-        p.scrapType?.toLowerCase().includes(q),
+        p.scrapType?.toLowerCase().includes(q)
     );
-  }, [pickups, searchQuery]);
+  }, [activePickups, searchQuery]);
 
   const filteredHistory = useMemo(() => {
     const list = pickups.filter((p) =>
@@ -546,15 +554,7 @@ function CollectorDashboard() {
     }
   };
 
-  const activePickups = useMemo(
-    () =>
-      (pickups || []).filter((p) =>
-        ["pending", "assigned", "accepted", "rejected"].includes(
-          p.status?.toLowerCase(),
-        ),
-      ),
-    [pickups],
-  );
+// activePickups defined above
   const history = useMemo(
     () =>
       (pickups || []).filter((p) => p.status?.toLowerCase() === "completed"),
@@ -769,7 +769,14 @@ function CollectorDashboard() {
         .premium-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @media (max-width: 768px) { .desktop-only { display: none !important; } }
+        .dashboard-root { overflow-x: hidden !important; max-width: 100vw !important; box-sizing: border-box !important; }
+        .native-content { overflow-x: hidden !important; max-width: 100% !important; box-sizing: border-box !important; }
+        @media (max-width: 768px) { 
+          .desktop-only { display: none !important; } 
+          .mobile-only { display: flex !important; }
+          .native-content { padding: 16px 12px 90px 12px !important; }
+          .stat-grid-container { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+        }
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>
 
@@ -1455,7 +1462,7 @@ function CollectorDashboard() {
                         >
                           View Details
                         </button>
-                        {p.status?.toLowerCase() === "pending" && (
+                        {p.status?.toLowerCase() === "pending" ? (
                           <button
                             className="btn-premium"
                             style={{
@@ -1463,10 +1470,29 @@ function CollectorDashboard() {
                               color: "#fff",
                               border: "none",
                               padding: "10px 16px",
+                              borderRadius: "10px",
+                              fontWeight: "bold",
+                              cursor: "pointer"
                             }}
                             onClick={() => handleAction(p._id, "Accepted")}
                           >
                             Accept Request
+                          </button>
+                        ) : (
+                          <button
+                            className="btn-premium"
+                            style={{
+                              background: "#0b8f3a",
+                              color: "#fff",
+                              border: "none",
+                              padding: "10px 16px",
+                              borderRadius: "10px",
+                              fontWeight: "bold",
+                              cursor: "pointer"
+                            }}
+                            onClick={() => setSelectedPickup(p)}
+                          >
+                            Complete Pickup
                           </button>
                         )}
                       </div>
@@ -3129,7 +3155,7 @@ function CollectorDashboard() {
               </div>
             </div>
 
-            {selectedPickup.status === "Accepted" ? (
+            {["accepted", "assigned", "arrived", "in progress"].includes((selectedPickup.status || "").toLowerCase()) ? (
               <div style={calcBox}>
                 <h4 style={{ margin: "0 0 10px 0" }}>
                   <FaCalculator /> Bill Calculator
@@ -4605,19 +4631,31 @@ const bottomNavStyle = {
   bottom: 0,
   left: 0,
   right: 0,
-  background: "var(--card-bg)",
+  height: "64px",
+  background: "var(--card-bg, #ffffff)",
+  borderTop: "1.5px solid var(--card-border, #e2e8f0)",
+  boxShadow: "0 -6px 20px rgba(15,23,42,0.06)",
   display: "flex",
+  alignItems: "center",
   justifyContent: "space-around",
-  padding: "12px 10px 25px 10px",
-  boxShadow: "0 -5px 25px rgba(0,0,0,0.05)",
-  zIndex: 1500,
-  borderTop: "1px solid var(--glass-border)",
+  zIndex: 9999,
+  paddingBottom: "env(safe-area-inset-bottom, 0px)",
+  maxWidth: "100vw",
+  boxSizing: "border-box"
 };
 const bottomLinkStyle = {
+  background: "none",
+  border: "none",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  justifyContent: "center",
   cursor: "pointer",
+  flex: 1,
+  height: "100%",
+  padding: "4px 0",
+  transition: "transform 0.15s ease",
+  outline: "none"
 };
 
 export default CollectorDashboard;
