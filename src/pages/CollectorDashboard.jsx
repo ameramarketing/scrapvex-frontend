@@ -838,7 +838,7 @@ function CollectorDashboard() {
         {/* HEADER */}
         <header style={{
           background: "var(--card-bg, #ffffff)",
-          padding: "calc(8px + env(safe-area-inset-top, 0px)) 14px 8px 14px",
+          padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 10px 16px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
@@ -851,7 +851,7 @@ function CollectorDashboard() {
           boxSizing: "border-box"
         }}>
           {/* Left Branding: ScrapVex with COLLECTOR subtext underneath */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", flexShrink: 0 }} onClick={() => setActiveTab("overview")}>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
               <FaRecycle />
             </div>
@@ -865,8 +865,8 @@ function CollectorDashboard() {
             </div>
           </div>
 
-          {/* Right Action Controls: [Online Pill] -> [Bell] -> [Moon] -> [Three Lines] */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          {/* Right Action Controls: [Online Pill] -> [Bell] -> [Moon] */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
             {/* Micro Online/Offline Status Pill */}
             <button
               onClick={toggleStatus}
@@ -874,19 +874,18 @@ function CollectorDashboard() {
                 background: user?.isOnline ? "#f0fdf4" : "#f8fafc",
                 border: `1px solid ${user?.isOnline ? "#bbf7d0" : "#e2e8f0"}`,
                 color: user?.isOnline ? "#16a34a" : "#64748b",
-                padding: "2px 5px",
-                borderRadius: "6px",
-                fontSize: "8.5px",
+                padding: "3px 8px",
+                borderRadius: "8px",
+                fontSize: "10px",
                 fontWeight: "800",
                 display: "flex",
                 alignItems: "center",
-                gap: "3px",
+                gap: "4px",
                 cursor: "pointer",
-                lineHeight: 1,
-                marginRight: "2px"
+                lineHeight: 1
               }}
             >
-              <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
+              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
               {user?.isOnline ? "Online" : "Offline"}
             </button>
 
@@ -900,7 +899,7 @@ function CollectorDashboard() {
                 background: "none",
                 border: "none",
                 color: "var(--text-main, #0f172a)",
-                padding: "4px",
+                padding: "5px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -909,18 +908,18 @@ function CollectorDashboard() {
               }}
               title="Notifications"
             >
-              <FaBell size={14} color="var(--text-main, #0f172a)" />
+              <FaBell size={16} color="var(--text-main, #0f172a)" />
               {unreadCount > 0 && (
                 <span style={{
                   position: "absolute",
-                  top: "0px",
-                  right: "0px",
-                  width: "11px",
-                  height: "11px",
+                  top: "1px",
+                  right: "1px",
+                  width: "12px",
+                  height: "12px",
                   borderRadius: "50%",
                   background: "#dc2626",
                   color: "#ffffff",
-                  fontSize: "7.5px",
+                  fontSize: "8px",
                   fontWeight: "800",
                   display: "flex",
                   alignItems: "center",
@@ -931,15 +930,15 @@ function CollectorDashboard() {
               )}
             </button>
 
-            {/* Dark Mode Moon/Sun Toggle (Next to Three Lines) */}
+            {/* Dark Mode Moon/Sun Toggle (Far Right) */}
             <button
               style={{
                 background: "none",
                 border: "none",
-                fontSize: "14px",
+                fontSize: "15px",
                 color: isDarkMode ? "#f1c40f" : "#64748b",
                 cursor: "pointer",
-                padding: "4px",
+                padding: "5px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
@@ -948,23 +947,6 @@ function CollectorDashboard() {
               title={isDarkMode ? "Switch to Light" : "Switch to Dark"}
             >
               {isDarkMode ? <FaSun /> : <FaMoon />}
-            </button>
-
-            {/* Three Lines Hamburger Menu */}
-            <button
-              style={{
-                background: "none",
-                border: "none",
-                color: "var(--text-main, #0f172a)",
-                fontSize: "15px",
-                cursor: "pointer",
-                padding: "4px",
-                display: "flex",
-                alignItems: "center"
-              }}
-              onClick={() => setIsMobileMenuOpen(true)}
-            >
-              <FaBars />
             </button>
           </div>
         </header>
@@ -2736,6 +2718,14 @@ function CollectorDashboard() {
                         </div>
                         <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                       </div>
+
+                      <div className="mobile-settings-row" onClick={() => setActiveTab("reviews")}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#fef9c3", color: "#ca8a04" }}><FaStar /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Customer Reviews & Ratings</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
                     </div>
                   </div>
 
@@ -2743,6 +2733,14 @@ function CollectorDashboard() {
                   <div>
                     <span style={{ fontSize: "10px", fontWeight: "800", color: "#94a3b8", display: "block", marginBottom: "6px", paddingLeft: "4px", letterSpacing: "0.5px" }}>APP & HELP</span>
                     <div style={{ borderRadius: "14px", overflow: "hidden", border: "1.5px solid #e2e8f0" }}>
+                      <div className="mobile-settings-row" onClick={() => { setActiveTab("support"); fetchTickets(); }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="settings-icon-box" style={{ background: "#ecfdf5", color: "#059669" }}><FaHeadset /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Support & Raise Ticket</span>
+                        </div>
+                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
+                      </div>
+
                       <div className="mobile-settings-row" onClick={() => { setActiveTab("notifications"); markAllNotificationsRead(); }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                           <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaBell /></div>
