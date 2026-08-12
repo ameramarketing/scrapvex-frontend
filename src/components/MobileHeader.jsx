@@ -360,12 +360,12 @@ function MobileHeader({ onSelectCity }) {
    STYLING DEFINITIONS
    ──────────────────────────────────────────────────────── */
 const headerContainer = {
-  background: "#ffffff",
+  background: "var(--card-bg)",
   padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 10px 16px",
   position: "sticky",
   top: 0,
   zIndex: 100,
-  borderBottom: "1px solid #f1f5f9",
+  borderBottom: "1px solid var(--card-border)",
   boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
 };
 
@@ -386,7 +386,7 @@ const logoBranding = {
 const logoText = {
   fontSize: "15px",
   fontWeight: "900",
-  color: "#0f172a",
+  color: "var(--text-main)",
   letterSpacing: "-0.5px"
 };
 
@@ -397,8 +397,8 @@ const locationPicker = {
   cursor: "pointer",
   padding: "4px 8px",
   borderRadius: "8px",
-  background: "#f8fafc",
-  border: "1px solid #e2e8f0"
+  background: "var(--bg-main)",
+  border: "1px solid var(--card-border)"
 };
 
 const locationIconBox = {
@@ -411,7 +411,7 @@ const locationIconBox = {
 const locationTitleText = {
   fontSize: "11px",
   fontWeight: "700",
-  color: "#334155",
+  color: "var(--text-main)",
   maxWidth: "90px",
   overflow: "hidden",
   textOverflow: "ellipsis",
@@ -421,7 +421,7 @@ const locationTitleText = {
 const menuTriggerBtn = {
   background: "none",
   border: "none",
-  color: "#0f172a",
+  color: "var(--text-main)",
   fontSize: "16px",
   cursor: "pointer",
   padding: "4px",
@@ -566,7 +566,7 @@ const drawerBackdrop = {
 };
 
 const drawerSheet = {
-  background: "#ffffff",
+  background: "var(--card-bg)",
   width: "80%",
   maxWidth: "300px",
   height: "100%",
@@ -581,26 +581,26 @@ const drawerHeader = {
   justifyContent: "space-between",
   alignItems: "center",
   paddingBottom: "16px",
-  borderBottom: "1px solid #f1f5f9"
+  borderBottom: "1px solid var(--card-border)"
 };
 
 const logoIconSquare = {
   width: "36px",
   height: "36px",
   borderRadius: "8px",
-  background: "#f0fdf4",
+  background: "var(--primary-light)",
   color: "#0b8f3a",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   fontSize: "18px",
-  border: "1px solid #dcfce7"
+  border: "1px solid var(--card-border)"
 };
 
 const drawerCloseBtn = {
   background: "none",
   border: "none",
-  color: "#64748b",
+  color: "var(--text-muted)",
   fontSize: "16px",
   cursor: "pointer",
   padding: "4px"
@@ -612,16 +612,16 @@ const drawerUserBanner = {
   gap: "12px",
   margin: "16px 0",
   padding: "12px",
-  background: "#f8fafc",
+  background: "var(--bg-main)",
   borderRadius: "12px",
-  border: "1px solid #f1f5f9"
+  border: "1px solid var(--card-border)"
 };
 
 const drawerUserAvatar = {
   width: "38px",
   height: "38px",
   borderRadius: "50%",
-  background: "#ffffff",
+  background: "var(--card-bg)",
   border: "1.5px solid #0b8f3a",
   display: "flex",
   alignItems: "center",
@@ -644,7 +644,7 @@ const drawerLinkStyle = {
   padding: "12px 10px",
   borderRadius: "10px",
   textDecoration: "none",
-  color: "#475569",
+  color: "var(--text-muted)",
   fontSize: "13px",
   fontWeight: "700",
   transition: "background 0.2s"
@@ -668,13 +668,13 @@ const drawerLogoutBtn = {
 
 const drawerDivider = {
   height: "1px",
-  background: "#f1f5f9",
+  background: "var(--card-border)",
   margin: "6px 0"
 };
 
 const drawerFooter = {
   paddingTop: "16px",
-  borderTop: "1px solid #f1f5f9",
+  borderTop: "1px solid var(--card-border)",
   display: "flex",
   flexDirection: "column",
   textAlign: "center"

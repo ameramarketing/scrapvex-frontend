@@ -47,7 +47,7 @@ function MobileAppShell({ children }) {
   })();
 
   const bottomNavItems = [
-    { label: "Home", icon: <FaTruck />, path: "/book" },
+    { label: "Home", icon: <FaTruck />, path: "/" },
     { label: "Rates", icon: <FaTags />, path: "/rates" },
     { label: "Book", icon: <FaPlus />, path: "/book", isCenterBtn: true },
     { label: "My Pickups", icon: <FaHistory />, path: user ? "/my-pickups" : "/login" },
