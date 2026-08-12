@@ -1,0 +1,312 @@
+<!DOCTYPE html><html lang="en"><head>
+  <script type="module" src="/@vite/client"></script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="theme-color" content="#0b8f3a">
+
+  <!-- PRIMARY SEO META TAGS -->
+  <title>ScrapVex | J&amp;K's #1 Doorstep Scrap Pickup &amp; Digital Kabadiwala</title>
+  <meta name="title" content="ScrapVex | J&amp;K's #1 Doorstep Scrap Pickup &amp; Digital Kabadiwala">
+  <meta name="description" content="ScrapVex is Jammu &amp; Kashmir's first digital scrap recycling platform. Book instant doorstep scrap pickup for paper, plastic, iron, e-waste &amp; vehicles. Get instant UPI/cash payment!">
+  <meta name="keywords" content="ScrapVex, Scrap Vex, scrapvex.in, scrapvex app, online kabadiwala jammu, scrap pickup rajouri, scrap pickup poonch, scrap pickup reasi, scrap collector JK, sell scrap online jammu kashmir, digital kabadiwala jk, scrap rate list jammu, scrapvex app download, sell kabad online, ghar baithe kabad bechein, raddi wala online, e-waste pickup jk, iron scrap price rajouri, plastic scrap pickup">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="ScrapVex India">
+  <link rel="canonical" href="https://scrapvex.in">
+
+  <!-- OPEN GRAPH / FACEBOOK / WHATSAPP LINK PREVIEW -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://scrapvex.in/">
+  <meta property="og:title" content="ScrapVex | J&amp;K's #1 Doorstep Scrap Pickup &amp; Digital Kabadiwala">
+  <meta property="og:description" content="Sell your household &amp; commercial scrap online with ScrapVex. Instant pickup, accurate digital weight &amp; direct wallet/cash payment in J&amp;K!">
+  <meta property="og:image" content="https://scrapvex.in/brand_logo.png">
+
+  <!-- TWITTER CARDS -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://scrapvex.in/">
+  <meta property="twitter:title" content="ScrapVex | J&amp;K's #1 Doorstep Scrap Pickup &amp; Digital Kabadiwala">
+  <meta property="twitter:description" content="Sell your scrap online at best rates across Jammu, Rajouri, Poonch, Reasi &amp; J&amp;K.">
+  <meta property="twitter:image" content="https://scrapvex.in/brand_logo.png">
+
+  <!-- FAVICON & APP ICONS -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/app_icon.png">
+
+  <!-- GOOGLE SEARCH ENGINE STRUCTURED DATA (JSON-LD SCHEMA) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "ScrapVex",
+    "url": "https://scrapvex.in",
+    "logo": "https://scrapvex.in/brand_logo.png",
+    "image": "https://scrapvex.in/brand_logo.png",
+    "description": "ScrapVex is Jammu & Kashmir's leading digital scrap pickup and recycling service platform.",
+    "telephone": "+918491028539",
+    "email": "support@scrapvex.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Rajouri",
+      "addressRegion": "Jammu & Kashmir",
+      "addressCountry": "IN"
+    },
+    "sameAs": [
+      "https://facebook.com/scrapvex",
+      "https://instagram.com/scrapvex",
+      "https://wa.me/918491028539"
+    ],
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+      "opens": "09:00",
+      "closes": "18:00"
+    },
+    "priceRange": "₹",
+    "currenciesAccepted": "INR",
+    "paymentAccepted": "Cash, UPI"
+  }
+  </script>
+<style type="text/css" data-vite-dev-id="C:/Users/dell/scrapvex/scrapvex-frontend/src/styles/global.css">/* ==========================================================
+   GLOBAL DESIGN SYSTEM & RESPONSIVE UTILITIES
+   ========================================================== */
+
+:root {
+  --primary: #0b8f3a;
+  --primary-dark: #086d2c;
+  --primary-light: #eef8f1;
+  --primary-glow: rgba(11, 143, 58, 0.4);
+  --glass: rgba(255, 255, 255, 1);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --text-main: #111;
+  --text-muted: #666;
+  --bg-main: #f8fcf9;
+  --card-bg: #ffffff;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.dark-mode {
+  --glass: rgba(30, 30, 30, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f0f0f0;
+  --text-muted: #aaa;
+  --bg-main: #121212;
+  --card-bg: #1e1e1e;
+  --primary-light: #1a2e1f;
+}
+
+body {
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* Restore Glow & Zoom Effects */
+.logo-zoom {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+.logo-zoom:hover {
+  transform: scale(1.08) !important;
+  filter: drop-shadow(0 0 10px var(--primary-glow));
+}
+
+.social-glow {
+  transition: all 0.3s ease !important;
+}
+.social-glow:hover {
+  background: var(--primary) !important;
+  color: #fff !important;
+  box-shadow: 0 0 20px var(--primary-glow);
+  transform: translateY(-5px);
+}
+
+.form-glow-premium {
+  transition: all 0.4s ease !important;
+}
+.form-glow-premium:hover {
+  box-shadow: 0 20px 50px rgba(11, 143, 58, 0.15) !important;
+  border-color: var(--primary) !important;
+}
+
+.nav-link-glow {
+  position: relative;
+  transition: 0.3s;
+}
+.nav-link-glow:hover {
+  color: var(--primary) !important;
+  text-shadow: 0 0 8px var(--primary-glow);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ==========================================================
+   GRID SYSTEM (Responsive by Default)
+   ========================================================== */
+
+.grid-2, .grid-3, .grid-4 {
+  display: grid;
+  gap: 25px;
+}
+
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+}
+
+/* ==========================================================
+   TYPOGRAPHY
+   ========================================================== */
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+h1 { font-size: clamp(32px, 8vw, 56px); }
+h2 { font-size: clamp(24px, 6vw, 36px); }
+h3 { font-size: clamp(20px, 4vw, 24px); }
+
+/* ==========================================================
+   PREMIUM COMPONENTS
+   ========================================================== */
+
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.btn-premium {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 20px var(--primary-glow);
+}
+
+.btn-premium:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px var(--primary-glow);
+}
+
+.card-premium {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+  border: 1px solid var(--glass-border);
+}
+
+.card-premium:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 50px rgba(11, 143, 58, 0.1);
+}
+
+body.dark-mode .card-premium {
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+/* ==========================================================
+   MOBILE UTILITIES
+   ========================================================== */
+
+@media (max-width: 768px) {
+  .section-padding { padding: 50px 0; }
+  .hide-on-mobile, .desktop-only { display: none !important; }
+  .show-on-mobile, .mobile-only { display: flex !important; }
+  .text-center-mobile { text-align: center !important; }
+  .full-width-mobile { width: 100% !important; }
+  .mobile-pad-bottom { padding-bottom: 90px !important; }
+}
+
+@media (min-width: 769px) {
+  .section-padding { padding: 80px 0; }
+  .show-on-mobile, .mobile-only { display: none !important; }
+}
+
+/* ==========================================================
+   ANIMATIONS
+   ========================================================== */
+
+.fade-up {
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+
+/* Loader Animations */
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes loadingLine {
+  0% { transform: translateX(-100%); width: 30%; }
+  50% { width: 60%; }
+  100% { transform: translateX(300%); width: 30%; }
+}
+
+/* Premium Card Hover Lift Effects */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: 0 20px 35px rgba(11, 143, 58, 0.15) !important;
+  border-color: var(--primary) !important;
+}</style></head>
+<body style="overflow: auto;">
+  <div id="root"><div style="min-height: 100vh; background: rgb(248, 250, 252); display: flex; flex-direction: column; padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));"><header style="background: rgb(255, 255, 255); padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px 16px; position: sticky; top: 0px; z-index: 100; border-bottom: 1px solid rgb(241, 245, 249); box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 12px;"><div style="display: flex; justify-content: space-between; align-items: center;"><div style="display: flex; align-items: center; gap: 10px; cursor: pointer;"><div style="width: 36px; height: 36px; border-radius: 10px; background: rgb(240, 253, 244); color: rgb(11, 143, 58); display: flex; align-items: center; justify-content: center; font-size: 16px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"></path></svg></div><div style="display: flex; flex-direction: column;"><span style="font-size: 10px; font-weight: 700; color: rgb(11, 143, 58); letter-spacing: 0.5px;">SERVICING IN</span><div style="font-size: 14px; font-weight: 700; color: rgb(15, 23, 42); display: flex; align-items: center; gap: 4px;"><span>Rajouri Town, J&amp;K</span><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="color: rgb(11, 143, 58); font-size: 10px;"><path d="M207.029 381.476L12.686 187.132c-9.373-9.373-9.373-24.569 0-33.941l22.667-22.667c9.357-9.357 24.522-9.375 33.901-.04L224 284.505l154.745-154.021c9.379-9.335 24.544-9.317 33.901.04l22.667 22.667c9.373 9.373 9.373 24.569 0 33.941L240.971 381.476c-9.373 9.372-24.569 9.372-33.942 0z"></path></svg></div></div></div></div></header><main style="flex: 1 1 0%;"><div style="background: var(--bg-main); min-height: 100vh;"><header style="position: sticky; top: 0px; left: 0px; right: 0px; z-index: 1000; transition: 0.3s; background: var(--card-bg); border-bottom-width: medium; border-bottom-style: none; border-bottom-color: currentcolor; box-shadow: none;"><div class="container" style="display: flex; justify-content: space-between; align-items: center; height: 75px;"><a class="logo-zoom" href="/" data-discover="true" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-main);"><img src="/04_Square_Logo.png" alt="ScrapVex" style="width: 42px; height: 42px; border-radius: 12px; object-fit: cover; border: 1.5px solid var(--primary);"><span style="font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">Scrapvex</span></a><nav class="hide-on-mobile" style="display: flex; gap: 30px; align-items: center;"><a class="nav-link-glow" href="/" data-discover="true" style="text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.2s; color: var(--text-main);">Home</a><a class="nav-link-glow" href="/rates" data-discover="true" style="text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.2s; color: var(--text-main);">Scrap Rates</a><a class="nav-link-glow" href="/book" data-discover="true" style="text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.2s; color: var(--text-main);">Book Pickup</a><a class="nav-link-glow" href="/about" data-discover="true" style="text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.2s; color: var(--text-main);">About Us</a><a class="nav-link-glow" href="/contact" data-discover="true" style="text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.2s; color: var(--text-main);">Contact</a></nav><div style="display: flex; align-items: center; gap: 10px;"><a class="hide-on-mobile logo-zoom" href="/login" data-discover="true" style="background: rgb(11, 143, 58); color: rgb(255, 255, 255); text-decoration: none; padding: 10px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; box-shadow: rgba(11, 143, 58, 0.3) 0px 4px 15px;">Login</a><a href="/ScrapVex.apk" download="ScrapVex.apk" class="hide-on-mobile logo-zoom" style="background: rgb(17, 17, 17); color: rgb(255, 255, 255); text-decoration: none; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path></svg> App</a><button class="show-on-mobile social-glow" style="background: var(--card-bg); border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; width: 45px; height: 45px; border-radius: 12px; font-size: 20px; color: var(--text-main); cursor: pointer; display: flex; justify-content: center; align-items: center;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path></svg></button><button title="Switch to Dark" class="logo-zoom" style="border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; width: 40px; height: 40px; border-radius: 10px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; font-size: 16px; background: rgb(44, 62, 80);"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" color="#fff" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="color: rgb(255, 255, 255);"><path d="M283.211 512c78.962 0 151.079-35.925 198.857-94.792 7.068-8.708-.639-21.43-11.562-19.35-124.203 23.654-238.262-71.576-238.262-196.954 0-72.222 38.662-138.635 101.498-174.394 9.686-5.512 7.25-20.197-3.756-22.23A258.156 258.156 0 0 0 283.211 0c-141.309 0-256 114.511-256 256 0 141.309 114.511 256 256 256z"></path></svg></button></div></div><div style="position: fixed; top: 10px; right: 10px; bottom: 10px; width: 280px; background: var(--card-bg); z-index: 9999; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); box-shadow: rgba(0, 0, 0, 0.1) -10px 0px 40px; padding: 30px; display: flex; flex-direction: column; border-radius: 25px; border: 1px solid var(--glass-border); transform: translateX(110%);"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;"><div class="logo-zoom" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-main);"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M184.561 261.903c3.232 13.997-12.123 24.635-24.068 17.168l-40.736-25.455-50.867 81.402C55.606 356.273 70.96 384 96.012 384H148c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12H96.115c-75.334 0-121.302-83.048-81.408-146.88l50.822-81.388-40.725-25.448c-12.081-7.547-8.966-25.961 4.879-29.158l110.237-25.45c8.611-1.988 17.201 3.381 19.189 11.99l25.452 110.237zm98.561-182.915l41.289 66.076-40.74 25.457c-12.051 7.528-9 25.953 4.879 29.158l110.237 25.45c8.672 1.999 17.215-3.438 19.189-11.99l25.45-110.237c3.197-13.844-11.99-24.719-24.068-17.168l-40.687 25.424-41.263-66.082c-37.521-60.033-125.209-60.171-162.816 0l-17.963 28.766c-3.51 5.62-1.8 13.021 3.82 16.533l33.919 21.195c5.62 3.512 13.024 1.803 16.536-3.817l17.961-28.743c12.712-20.341 41.973-19.676 54.257-.022zM497.288 301.12l-27.515-44.065c-3.511-5.623-10.916-7.334-16.538-3.821l-33.861 21.159c-5.62 3.512-7.33 10.915-3.818 16.536l27.564 44.112c13.257 21.211-2.057 48.96-27.136 48.96H320V336.02c0-14.213-17.242-21.383-27.313-11.313l-80 79.981c-6.249 6.248-6.249 16.379 0 22.627l80 79.989C302.689 517.308 320 510.3 320 495.989V448h95.88c75.274 0 121.335-82.997 81.408-146.88z"></path></svg> <span>Scrapvex</span></div><button class="social-glow" style="background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; font-size: 24px; color: rgb(153, 153, 153); cursor: pointer;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 352 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg></button></div><div style="display: flex; flex-direction: column; gap: 20px; flex: 1 1 0%;"><a class="nav-link-glow" href="/" data-discover="true" style="text-decoration: none; color: var(--text-main); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"></path></svg> Home</a><a class="nav-link-glow" href="/rates" data-discover="true" style="text-decoration: none; color: var(--text-main); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"></path></svg> Scrap Rates</a><a class="nav-link-glow" href="/book" data-discover="true" style="text-decoration: none; color: var(--text-main); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"></path></svg> Book Pickup</a><a class="nav-link-glow" href="/about" data-discover="true" style="text-decoration: none; color: var(--text-main); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"></path></svg> About Us</a><a class="nav-link-glow" href="/contact" data-discover="true" style="text-decoration: none; color: var(--text-main); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 384 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M224 136V0H24C10.7 0 0 10.7 0 24v464c0 13.3 10.7 24 24 24h336c13.3 0 24-10.7 24-24V160H248c-13.2 0-24-10.8-24-24zM64 72c0-4.42 3.58-8 8-8h80c4.42 0 8 3.58 8 8v16c0 4.42-3.58 8-8 8H72c-4.42 0-8-3.58-8-8V72zm0 64c0-4.42 3.58-8 8-8h80c4.42 0 8 3.58 8 8v16c0 4.42-3.58 8-8 8H72c-4.42 0-8-3.58-8-8v-16zm192.81 248H304c8.84 0 16 7.16 16 16s-7.16 16-16 16h-47.19c-16.45 0-31.27-9.14-38.64-23.86-2.95-5.92-8.09-6.52-10.17-6.52s-7.22.59-10.02 6.19l-7.67 15.34a15.986 15.986 0 0 1-14.31 8.84c-.38 0-.75-.02-1.14-.05-6.45-.45-12-4.75-14.03-10.89L144 354.59l-10.61 31.88c-5.89 17.66-22.38 29.53-41 29.53H80c-8.84 0-16-7.16-16-16s7.16-16 16-16h12.39c4.83 0 9.11-3.08 10.64-7.66l18.19-54.64c3.3-9.81 12.44-16.41 22.78-16.41s19.48 6.59 22.77 16.41l13.88 41.64c19.77-16.19 54.05-9.7 66 14.16 2.02 4.06 5.96 6.5 10.16 6.5zM377 105L279.1 7c-4.5-4.5-10.6-7-17-7H256v128h128v-6.1c0-6.3-2.5-12.4-7-16.9z"></path></svg> Contact</a><a href="/ScrapVex.apk" download="ScrapVex.apk" class="nav-link-glow" style="text-decoration: none; color: var(--primary); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path></svg> Download App</a><div style="height: 1px; background: rgb(238, 238, 238); margin: 10px 0px;"></div><a class="nav-link-glow" href="/login" data-discover="true" style="text-decoration: none; color: var(--text-main); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;">Customer Login</a><a class="nav-link-glow" href="/admin-login" data-discover="true" style="text-decoration: none; color: var(--primary); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 15px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M622.3 271.1l-115.2-45c-4.1-1.6-12.6-3.7-22.2 0l-115.2 45c-10.7 4.2-17.7 14-17.7 24.9 0 111.6 68.7 188.8 132.9 213.9 9.6 3.7 18 1.6 22.2 0C558.4 489.9 640 420.5 640 296c0-10.9-7-20.7-17.7-24.9zM496 462.4V273.3l95.5 37.3c-5.6 87.1-60.9 135.4-95.5 151.8zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm96 40c0-2.5.8-4.8 1.1-7.2-2.5-.1-4.9-.8-7.5-.8h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c6.8 0 13.3-1.5 19.2-4-54-42.9-99.2-116.7-99.2-212z"></path></svg> Admin Login</a></div><div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgb(238, 238, 238); font-size: 12px; color: rgb(153, 153, 153); text-align: center;"><p>© 2026 Scrapvex. Smart Recycling.</p></div></div></header><div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 80vh; padding: 20px 0px;"><div class="card-premium fade-up" style="width: 100%; max-width: 440px; padding: 35px 30px; border-radius: 24px;"><div style="text-align: center; margin-bottom: 30px;"><div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.2)); color: var(--primary); font-size: 24px; display: flex; align-items: center; justify-content: center; margin: 0px auto 10px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M622.3 271.1l-115.2-45c-4.1-1.6-12.6-3.7-22.2 0l-115.2 45c-10.7 4.2-17.7 14-17.7 24.9 0 111.6 68.7 188.8 132.9 213.9 9.6 3.7 18 1.6 22.2 0C558.4 489.9 640 420.5 640 296c0-10.9-7-20.7-17.7-24.9zM496 462.4V273.3l95.5 37.3c-5.6 87.1-60.9 135.4-95.5 151.8zM224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm96 40c0-2.5.8-4.8 1.1-7.2-2.5-.1-4.9-.8-7.5-.8h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c6.8 0 13.3-1.5 19.2-4-54-42.9-99.2-116.7-99.2-212z"></path></svg></div><h1 style="font-size: 28px; margin: 10px 0px;">Login</h1><p style="color: rgb(102, 102, 102); font-size: 14px;">Manage your scrap bookings easily</p></div><form style="display: flex; flex-direction: column; gap: 15px;"><div style="display: flex; align-items: center; background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 0px 15px; transition: 0.3s;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="color: rgb(148, 163, 184); margin-right: 12px; font-size: 16px;"><path d="M497.39 361.8l-112-48a24 24 0 0 0-28 6.9l-49.6 60.6A370.66 370.66 0 0 1 130.6 204.11l60.6-49.6a23.94 23.94 0 0 0 6.9-28l-48-112A24.16 24.16 0 0 0 122.6.61l-104 24A24 24 0 0 0 0 48c0 256.5 207.9 464 464 464a24 24 0 0 0 23.4-18.6l24-104a24.29 24.29 0 0 0-14.01-27.6z"></path></svg><input type="text" placeholder="Mobile Number" value="" style="width: 100%; padding: 14px 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; background: transparent; color: var(--text-main); font-size: 15px; outline: none;"></div><div style="display: flex; align-items: center; background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: 14px; padding: 0px 15px; transition: 0.3s; position: relative;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg" style="color: rgb(148, 163, 184); margin-right: 12px; font-size: 16px;"><path d="M400 224h-24v-72C376 68.2 307.8 0 224 0S72 68.2 72 152v72H48c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48zm-104 0H152v-72c0-39.7 32.3-72 72-72s72 32.3 72 72v72z"></path></svg><input type="password" placeholder="Password" value="" style="width: 100%; padding: 14px 45px 14px 0px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; background: transparent; color: var(--text-main); font-size: 15px; outline: none;"><button type="button" title="Show password" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; color: rgb(100, 116, 139); cursor: pointer; font-size: 18px; display: flex; align-items: center; padding: 4px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"></path></svg></button></div><div style="text-align: right;"><a href="/forgot-password?role=user" data-discover="true" style="color: var(--primary); font-size: 13px; text-decoration: none; font-weight: 500;">Forgot Password?</a></div><button type="submit" class="btn-premium" style="margin-top: 10px;">Login <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"></path></svg></button></form><div style="text-align: center; margin-top: 25px; font-size: 14px; color: rgb(100, 116, 139);"><p>New user? <a href="/register" data-discover="true" style="color: var(--primary); font-weight: 600; text-decoration: none;">Create Account</a></p><div style="height: 1px; background: var(--border-color); margin: 15px 0px;"></div><div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;"><a href="/collector-login" data-discover="true" style="display: block; padding: 10px; border-radius: 10px; background: var(--bg-main); color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; text-align: center; border: 1px solid var(--border-color);"> Login as Collector</a><a href="/franchise-login" data-discover="true" style="display: block; padding: 10px; border-radius: 10px; background: var(--bg-main); color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; text-align: center; border: 1px solid var(--border-color);"> Login as Franchise Partner</a><a href="/admin-login" data-discover="true" style="display: block; padding: 10px; border-radius: 10px; background: rgb(248, 250, 252); color: rgb(100, 116, 139); text-decoration: none; font-size: 13px; font-weight: 600; text-align: center; border: 1px solid var(--border-color);"> Login as System Admin</a></div></div></div></div></div></main><nav style="position: fixed; bottom: 0px; left: 0px; right: 0px; height: 64px; background: rgb(255, 255, 255); border-top: 1px solid rgb(241, 245, 249); box-shadow: rgba(0, 0, 0, 0.06) 0px -4px 20px; display: flex; align-items: center; justify-content: space-around; z-index: 9999; padding-bottom: env(safe-area-inset-bottom, 0px);"><button style="background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex: 1 1 0%; padding: 6px 0px; color: rgb(148, 163, 184);"><div style="font-size: 18px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M624 352h-16V243.9c0-12.7-5.1-24.9-14.1-33.9L494 110.1c-9-9-21.2-14.1-33.9-14.1H416V48c0-26.5-21.5-48-48-48H48C21.5 0 0 21.5 0 48v320c0 26.5 21.5 48 48 48h16c0 53 43 96 96 96s96-43 96-96h128c0 53 43 96 96 96s96-43 96-96h48c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zM160 464c-26.5 0-48-21.5-48-48s21.5-48 48-48 48 21.5 48 48-21.5 48-48 48zm320 0c-26.5 0-48-21.5-48-48s21.5-48 48-48 48 21.5 48 48-21.5 48-48 48zm80-208H416V144h44.1l99.9 99.9V256z"></path></svg></div><span style="font-size: 10px; font-weight: 500; margin-top: 2px;">Home</span></button><button style="background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex: 1 1 0%; padding: 6px 0px; color: rgb(148, 163, 184);"><div style="font-size: 18px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 640 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M497.941 225.941L286.059 14.059A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v204.118a48 48 0 0 0 14.059 33.941l211.882 211.882c18.744 18.745 49.136 18.746 67.882 0l204.118-204.118c18.745-18.745 18.745-49.137 0-67.882zM112 160c-26.51 0-48-21.49-48-48s21.49-48 48-48 48 21.49 48 48-21.49 48-48 48zm513.941 133.823L421.823 497.941c-18.745 18.745-49.137 18.745-67.882 0l-.36-.36L527.64 323.522c16.999-16.999 26.36-39.6 26.36-63.64s-9.362-46.641-26.36-63.64L331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882z"></path></svg></div><span style="font-size: 10px; font-weight: 500; margin-top: 2px;">Rates</span></button><button style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, rgb(11, 143, 58), rgb(39, 174, 96)); color: rgb(255, 255, 255); border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: rgba(11, 143, 58, 0.35) 0px 6px 16px; cursor: pointer; transform: translateY(-12px);"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg></button><button style="background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex: 1 1 0%; padding: 6px 0px; color: rgb(11, 143, 58);"><div style="font-size: 18px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M504 255.531c.253 136.64-111.18 248.372-247.82 248.468-59.015.042-113.223-20.53-155.822-54.911-11.077-8.94-11.905-25.541-1.839-35.607l11.267-11.267c8.609-8.609 22.353-9.551 31.891-1.984C173.062 425.135 212.781 440 256 440c101.705 0 184-82.311 184-184 0-101.705-82.311-184-184-184-48.814 0-93.149 18.969-126.068 49.932l50.754 50.754c10.08 10.08 2.941 27.314-11.313 27.314H24c-8.837 0-16-7.163-16-16V38.627c0-14.254 17.234-21.393 27.314-11.314l49.372 49.372C129.209 34.136 189.552 8 256 8c136.81 0 247.747 110.78 248 247.531zm-180.912 78.784l9.823-12.63c8.138-10.463 6.253-25.542-4.21-33.679L288 256.349V152c0-13.255-10.745-24-24-24h-16c-13.255 0-24 10.745-24 24v135.651l65.409 50.874c10.463 8.137 25.541 6.253 33.679-4.21z"></path></svg></div><span style="font-size: 10px; font-weight: 700; margin-top: 2px;">My Pickups</span></button><button style="background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex: 1 1 0%; padding: 6px 0px; color: rgb(11, 143, 58);"><div style="font-size: 18px;"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z"></path></svg></div><span style="font-size: 10px; font-weight: 700; margin-top: 2px;">Account</span></button></nav></div></div>
+  <script type="module" src="/src/main.jsx"></script>
+
+</body></html>
