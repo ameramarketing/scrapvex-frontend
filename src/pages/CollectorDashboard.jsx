@@ -33,6 +33,8 @@ import API from "../services/api";
 import Toast from "../components/Toast";
 import { performLogout } from "../utils/auth";
 
+const settingsInputStyle = { width: "100%", padding: "12px 14px", borderRadius: "10px", border: "1.5px solid #e2e8f0", outline: "none", background: "var(--bg-main, #f8fafc)", fontSize: "14px", color: "var(--text-main, #0f172a)", fontWeight: "500", boxSizing: "border-box" };
+
 function CollectorDashboard() {
   // Synthesize Ding-Dong bell sound using Web Audio API (cross-device/offline friendly)
   const playBellSound = () => {
@@ -3889,7 +3891,6 @@ const Empty = ({ text }) => (
 );
 
 /* STYLES */
-const settingsInputStyle = { width: "100%", padding: "12px 14px", borderRadius: "10px", border: "1.5px solid #e2e8f0", outline: "none", background: "var(--bg-main, #f8fafc)", fontSize: "14px", color: "var(--text-main, #0f172a)", fontWeight: "500", boxSizing: "border-box" };
 const container = {
   display: "flex",
   minHeight: "100vh",
