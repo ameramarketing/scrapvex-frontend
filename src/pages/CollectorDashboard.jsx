@@ -2752,18 +2752,10 @@ function CollectorDashboard() {
                         </div>
                       </div>
 
-                      <div className="mobile-settings-row" onClick={() => navigate("/contact")}>
+                      <div className="mobile-settings-row" onClick={() => navigate("/privacy")}>
                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                          <div className="settings-icon-box" style={{ background: "#eff6ff", color: "#2563eb" }}><FaPhone /></div>
-                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Help & Support</span>
-                        </div>
-                        <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
-                      </div>
-
-                      <div className="mobile-settings-row" onClick={() => navigate("/about")}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                          <div className="settings-icon-box" style={{ background: "#f8fafc", color: "#64748b" }}><FaInfoCircle /></div>
-                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>About ScrapVex</span>
+                          <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaUserShield /></div>
+                          <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main)" }}>Privacy Policy</span>
                         </div>
                         <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                       </div>
