@@ -3488,83 +3488,80 @@ function CollectorDashboard() {
             setCollectorDepositStep(1);
           }}
         >
-          <div
-            style={{ ...modalScroll, maxHeight: "75vh", paddingRight: "5px" }}
-          >
+          <div style={{ maxHeight: "calc(100vh - 150px)", overflowY: "auto", paddingRight: "2px" }}>
             {collectorDepositStep === 1 ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "15px",
-                }}
-              >
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: "14px",
-                    color: "var(--text-muted)",
-                    lineHeight: "1.5",
-                  }}
-                >
-                  Enter the amount you want to add to your wallet balance.
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <p style={{ margin: 0, fontSize: "12px", color: "var(--text-muted)", lineHeight: "1.4" }}>
+                  Enter the amount you want to add to your wallet balance (Min ₹1,000).
                 </p>
+
+                {/* Quick Amount Chips */}
                 <div>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "12px",
-                      color: "var(--text-muted)",
-                      marginBottom: "5px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Amount (₹)
+                  <label style={{ display: "block", fontSize: "11px", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "800" }}>
+                    QUICK AMOUNT
+                  </label>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {[1000, 2000, 5000].map((amt) => (
+                      <button
+                        key={amt}
+                        onClick={() => setCollectorDepositForm({ ...collectorDepositForm, amount: String(amt) })}
+                        style={{
+                          flex: 1,
+                          padding: "6px 0",
+                          borderRadius: "8px",
+                          border: collectorDepositForm.amount === String(amt) ? "1.5px solid #0b8f3a" : "1px solid var(--glass-border)",
+                          background: collectorDepositForm.amount === String(amt) ? "#f0fdf4" : "var(--bg-main)",
+                          color: collectorDepositForm.amount === String(amt) ? "#0b8f3a" : "var(--text-main)",
+                          fontSize: "12px",
+                          fontWeight: "800",
+                          cursor: "pointer"
+                        }}
+                      >
+                        ₹{amt.toLocaleString()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "11px", color: "var(--text-muted)", marginBottom: "4px", fontWeight: "800" }}>
+                    ENTER AMOUNT (₹)
                   </label>
                   <input
                     type="number"
                     value={collectorDepositForm.amount}
-                    onChange={(e) =>
-                      setCollectorDepositForm({
-                        ...collectorDepositForm,
-                        amount: e.target.value,
-                      })
-                    }
-                    placeholder="e.g. 500"
+                    onChange={(e) => setCollectorDepositForm({ ...collectorDepositForm, amount: e.target.value })}
+                    placeholder="e.g. 1000"
                     style={{
                       width: "100%",
-                      padding: "12px",
+                      padding: "10px 12px",
                       borderRadius: "10px",
-                      border: "1px solid var(--glass-border)",
+                      border: "1.5px solid var(--glass-border)",
                       background: "var(--card-bg)",
                       color: "var(--text-main)",
                       boxSizing: "border-box",
                       fontSize: "14px",
+                      fontWeight: "700"
                     }}
                   />
                 </div>
+
                 <button
                   style={{
                     background: "var(--primary)",
                     color: "#fff",
                     border: "none",
                     width: "100%",
-                    padding: "14px",
-                    borderRadius: "12px",
-                    fontWeight: "bold",
-                    fontSize: "14px",
+                    padding: "11px",
+                    borderRadius: "10px",
+                    fontWeight: "800",
+                    fontSize: "13px",
                     cursor: "pointer",
-                    transition: "0.2s",
+                    marginTop: "4px"
                   }}
                   onClick={() => {
-                    if (
-                      !collectorDepositForm.amount ||
-                      Number(collectorDepositForm.amount) < 1000
-                    ) {
-                      return showToast(
-                        "error",
-                        "Minimum deposit amount is ₹1,000!",
-                      );
+                    if (!collectorDepositForm.amount || Number(collectorDepositForm.amount) < 1000) {
+                      return showToast("error", "Minimum deposit amount is ₹1,000!");
                     }
                     setCollectorDepositStep(2);
                   }}
@@ -3573,172 +3570,126 @@ function CollectorDashboard() {
                 </button>
               </div>
             ) : (
-              <div
-                style={{
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
+                
+                {/* Depositing Amount Banner */}
+                <div style={{
+                  width: "100%",
+                  background: "#f0fdf4",
+                  border: "1px solid #bbf7d0",
+                  padding: "8px 12px",
+                  borderRadius: "12px",
                   display: "flex",
-                  flexDirection: "column",
-                  gap: "20px",
+                  justifyContent: "space-between",
                   alignItems: "center",
-                }}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    background: "var(--bg-main)",
-                    padding: "15px",
-                    borderRadius: "15px",
-                    textAlign: "center",
-                    border: "1px solid var(--glass-border)",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <span
-                    style={{ fontSize: "13px", color: "var(--text-muted)" }}
-                  >
-                    Depositing Amount
-                  </span>
-                  <div
-                    style={{
-                      fontSize: "28px",
-                      fontWeight: "bold",
-                      color: "var(--primary)",
-                      marginTop: "5px",
-                    }}
-                  >
-                    ₹{collectorDepositForm.amount}
-                  </div>
+                  boxSizing: "border-box"
+                }}>
+                  <span style={{ fontSize: "12px", color: "#166534", fontWeight: "700" }}>Depositing Amount</span>
+                  <span style={{ fontSize: "18px", fontWeight: "900", color: "#0b8f3a" }}>₹{Number(collectorDepositForm.amount || 0).toLocaleString()}</span>
                 </div>
 
-                {/* Dynamic QR Code */}
-                <div
-                  style={{
-                    background: "#fff",
-                    padding: "15px",
-                    borderRadius: "20px",
-                    border: "1px solid #eee",
-                    textAlign: "center",
-                  }}
-                >
+                {/* Compact Dynamic QR Code */}
+                <div style={{
+                  background: "#ffffff",
+                  padding: "8px",
+                  borderRadius: "14px",
+                  border: "1px solid #e2e8f0",
+                  textAlign: "center",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+                }}>
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`)}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`)}`}
                     alt="UPI QR Code"
-                    style={{
-                      width: "160px",
-                      height: "160px",
-                      display: "block",
-                      margin: "0 auto",
-                    }}
+                    style={{ width: "120px", height: "120px", display: "block", margin: "0 auto" }}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = `https://chart.googleapis.com/chart?cht=qr&chs=160x160&chl=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`)}`;
+                      e.target.src = `https://chart.googleapis.com/chart?cht=qr&chs=120x120&chl=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`)}`;
                     }}
                   />
                 </div>
-                <div
-                  style={{
-                    marginTop: "-5px",
-                    fontWeight: "bold",
-                    color: "var(--primary)",
-                    fontSize: "14px",
-                  }}
-                >
-                  UPI ID: {settings.upiId || "8491028539@pthdfc"}
+
+                {/* UPI ID Row with Copy Feature */}
+                <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "var(--bg-main)", padding: "4px 10px", borderRadius: "8px", border: "1px solid var(--glass-border)" }}>
+                  <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-main)" }}>
+                    UPI ID: {settings.upiId || "8491028539@pthdfc"}
+                  </span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(settings.upiId || "8491028539@pthdfc");
+                      showToast("success", "UPI ID Copied!");
+                    }}
+                    style={{ background: "#0b8f3a", color: "#fff", border: "none", padding: "2px 6px", borderRadius: "4px", fontSize: "9px", fontWeight: "800", cursor: "pointer" }}
+                  >
+                    Copy
+                  </button>
                 </div>
 
-                <div
+                {/* Mobile Pay Button */}
+                <a
+                  href={`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`}
                   style={{
                     width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "10px",
+                    textDecoration: "none",
+                    textAlign: "center",
+                    background: "#0b8f3a",
+                    color: "#fff",
+                    padding: "9px 12px",
+                    borderRadius: "10px",
+                    fontWeight: "800",
+                    fontSize: "12px",
+                    boxSizing: "border-box",
+                    display: "block"
+                  }}
+                  onClick={(e) => {
+                    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    if (!isMobile) {
+                      e.preventDefault();
+                      alert("📲 UPI Mobile App deep links only work directly on mobile devices. On desktop, please scan the QR Code!");
+                    }
                   }}
                 >
-                  {/* Mobile deep link with warning check */}
-                  <a
-                    href={`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${collectorDepositForm.amount}&tn=WalletDeposit`}
-                    className="btn-premium"
-                    style={{
-                      width: "100%",
-                      textDecoration: "none",
-                      textAlign: "center",
-                      background: "#0b8f3a",
-                      color: "#fff",
-                      padding: "12px",
-                      borderRadius: "12px",
-                      fontWeight: "bold",
-                      boxSizing: "border-box",
-                      display: "block",
-                    }}
-                    onClick={(e) => {
-                      const isMobile = /Android|iPhone|iPad|iPod/i.test(
-                        navigator.userAgent,
-                      );
-                      if (!isMobile) {
-                        e.preventDefault();
-                        alert(
-                          "📲 UPI Mobile App deep links only work directly on mobile devices (Android/iOS). On a laptop, please scan the QR Code shown above using your phone's GPay/PhonePe camera scan!",
-                        );
-                      }
-                    }}
-                  >
-                    Pay via UPI Apps 📱
-                  </a>
-                </div>
+                  Pay via UPI Apps 📱
+                </a>
 
-                <div
-                  style={{
-                    width: "100%",
-                    borderTop: "1px dashed var(--glass-border)",
-                    paddingTop: "15px",
-                  }}
-                >
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "12px",
-                      color: "var(--text-muted)",
-                      marginBottom: "8px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Enter 12-digit UPI Ref No. / UTR *
+                {/* UTR Input Section */}
+                <div style={{ width: "100%", borderTop: "1px dashed var(--glass-border)", paddingTop: "8px" }}>
+                  <label style={{ display: "block", fontSize: "11px", color: "var(--text-muted)", marginBottom: "4px", fontWeight: "800" }}>
+                    ENTER 12-DIGIT UTR / REF NO. *
                   </label>
                   <input
                     type="text"
                     value={collectorDepositForm.upiRefNo}
-                    onChange={(e) =>
-                      setCollectorDepositForm({
-                        ...collectorDepositForm,
-                        upiRefNo: e.target.value,
-                      })
-                    }
+                    onChange={(e) => setCollectorDepositForm({ ...collectorDepositForm, upiRefNo: e.target.value })}
                     placeholder="Enter 12-digit UTR/Ref number"
                     style={{
                       width: "100%",
-                      padding: "12px",
-                      borderRadius: "10px",
-                      border: "1px solid var(--glass-border)",
+                      padding: "9px 12px",
+                      borderRadius: "8px",
+                      border: "1.5px solid var(--glass-border)",
                       background: "var(--card-bg)",
                       color: "var(--text-main)",
                       boxSizing: "border-box",
-                      fontSize: "14px",
+                      fontSize: "13px",
                       fontFamily: "monospace",
                       letterSpacing: "1px",
+                      fontWeight: "700"
                     }}
                   />
                 </div>
 
-                <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+                {/* Submit / Back Action Buttons */}
+                <div style={{ display: "flex", gap: "8px", width: "100%", marginTop: "2px" }}>
                   <button
                     style={{
                       flex: 1,
-                      padding: "12px",
+                      padding: "10px",
                       background: "var(--card-bg)",
                       border: "1px solid var(--glass-border)",
                       color: "var(--text-muted)",
                       borderRadius: "10px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
+                      fontWeight: "800",
+                      fontSize: "12px",
+                      cursor: "pointer"
                     }}
                     onClick={() => setCollectorDepositStep(1)}
                   >
@@ -3747,23 +3698,24 @@ function CollectorDashboard() {
                   <button
                     style={{
                       flex: 2,
-                      padding: "12px",
+                      padding: "10px",
                       background: "var(--primary)",
                       color: "#fff",
                       border: "none",
                       borderRadius: "10px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
+                      fontWeight: "800",
+                      fontSize: "12px",
+                      cursor: "pointer"
                     }}
                     onClick={handleCollectorDepositSubmit}
                   >
-                    Submit Request
+                    Submit Deposit Request
                   </button>
                 </div>
+
               </div>
             )}
-          </div>
-        </Modal>
+          </div></Modal>
       )}
 
 {/* Mobile bottom nav rendered by MobileAppShell */}
