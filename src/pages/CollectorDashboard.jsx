@@ -642,10 +642,10 @@ function CollectorDashboard() {
   };
 
   const handleSaveProfile = async () => {
-    if (!profileForm.name.trim()) return showToast("error", "Name is required");
+    if (!(profileForm?.name || "").trim()) return showToast("error", "Name is required");
     if (
-      profileForm.newPassword &&
-      profileForm.newPassword !== profileForm.confirmPassword
+      (profileForm?.newPassword || "") &&
+      (profileForm?.newPassword || "") !== (profileForm?.confirmPassword || "")
     ) {
       return showToast("error", "New passwords do not match");
     }
@@ -653,13 +653,13 @@ function CollectorDashboard() {
     setLoading(true);
     try {
       const formData = new FormData();
-      formData.append("name", profileForm.name);
-      formData.append("address", profileForm.address);
-      formData.append("area", profileForm.area);
-      if (profileForm.oldPassword)
-        formData.append("oldPassword", profileForm.oldPassword);
-      if (profileForm.newPassword)
-        formData.append("newPassword", profileForm.newPassword);
+      formData.append("name", (profileForm?.name || ""));
+      formData.append("address", (profileForm?.address || ""));
+      formData.append("area", (profileForm?.area || ""));
+      if (profileForm?.oldPassword || "")
+        formData.append("oldPassword", (profileForm?.oldPassword || ""));
+      if (profileForm?.newPassword || "")
+        formData.append("newPassword", (profileForm?.newPassword || ""));
       if (profilePhotoFile) formData.append("profilePhoto", profilePhotoFile);
 
       const { data } = await API.put("/auth/profile", formData, {
@@ -1023,7 +1023,7 @@ function CollectorDashboard() {
                         margin: "4px 0 0 0",
                       }}
                     >
-                      Welcome back, {user?.name}
+                      Welcome back, {user?.name || "Collector"}
                     </p>
                   </div>
                 </div>
@@ -2606,7 +2606,7 @@ function CollectorDashboard() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     <div>
                       <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>FULL NAME</label>
-                      <input className="settings-input" name="name" value={profileForm.name} onChange={handleProfileFormChange} style={settingsInputStyle} />
+                      <input className="settings-input" name="name" value={(profileForm?.name || "")} onChange={handleProfileFormChange} style={settingsInputStyle} />
                     </div>
 
                     <div>
@@ -2621,12 +2621,12 @@ function CollectorDashboard() {
 
                     <div>
                       <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>ADDRESS</label>
-                      <textarea className="settings-input" name="address" value={profileForm.address} onChange={handleProfileFormChange} style={{ ...settingsInputStyle, height: "70px", resize: "none" }} />
+                      <textarea className="settings-input" name="address" value={(profileForm?.address || "")} onChange={handleProfileFormChange} style={{ ...settingsInputStyle, height: "70px", resize: "none" }} />
                     </div>
 
                     <div>
                       <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>ASSIGNED AREA</label>
-                      <input className="settings-input" name="area" value={profileForm.area} onChange={handleProfileFormChange} style={settingsInputStyle} />
+                      <input className="settings-input" name="area" value={(profileForm?.area || "")} onChange={handleProfileFormChange} style={settingsInputStyle} />
                     </div>
 
                     <div style={{ height: "1px", background: "#f1f5f9", margin: "8px 0" }} />
@@ -2634,17 +2634,17 @@ function CollectorDashboard() {
 
                     <div>
                       <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>OLD PASSWORD</label>
-                      <input type="password" className="settings-input" name="oldPassword" value={profileForm.oldPassword} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
+                      <input type="password" className="settings-input" name="oldPassword" value={(profileForm?.oldPassword || "")} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
                     </div>
 
                     <div>
                       <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>NEW PASSWORD</label>
-                      <input type="password" className="settings-input" name="newPassword" value={profileForm.newPassword} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
+                      <input type="password" className="settings-input" name="newPassword" value={(profileForm?.newPassword || "")} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
                     </div>
 
                     <div>
                       <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>CONFIRM NEW PASSWORD</label>
-                      <input type="password" className="settings-input" name="confirmPassword" value={profileForm.confirmPassword} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
+                      <input type="password" className="settings-input" name="confirmPassword" value={(profileForm?.confirmPassword || "")} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
                     </div>
                   </div>
 
