@@ -774,15 +774,21 @@ function CollectorDashboard() {
         .premium-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .dashboard-root { overflow-x: hidden !important; max-width: 100vw !important; box-sizing: border-box !important; }
+        .dashboard-root { min-height: 100vh !important; background: var(--bg-main); overflow-x: hidden !important; width: 100% !important; max-width: 100vw !important; box-sizing: border-box !important; }
+        .dashboard-main { flex: 1; display: flex; flex-direction: column; width: 100%; min-width: 0; }
         .native-content { overflow-x: hidden !important; max-width: 100% !important; box-sizing: border-box !important; }
         @media (max-width: 768px) { 
           .desktop-only { display: none !important; } 
           .mobile-only { display: flex !important; }
+          .dashboard-root { height: auto !important; min-height: 100vh !important; }
+          .dashboard-main { overflow-y: visible !important; height: auto !important; }
           .native-content { padding: 16px 12px 90px 12px !important; }
           .stat-grid-container { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
         }
-        @media (min-width: 769px) { .mobile-only { display: none !important; } }
+        @media (min-width: 769px) { 
+          .mobile-only { display: none !important; }
+          .dashboard-main { overflow-y: auto; height: 100vh; }
+        }
       `}</style>
 
       {/* SIDEBAR */}
@@ -798,7 +804,7 @@ function CollectorDashboard() {
         </button>
       </div>
 
-      <div style={main}>
+      <div style={main} className="dashboard-main">
         {/* HEADER */}
         <header style={header}>
           <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
@@ -4240,8 +4246,11 @@ const Empty = ({ text }) => (
 /* STYLES */
 const container = {
   display: "flex",
-  height: "100vh",
+  minHeight: "100vh",
   background: "var(--bg-main)",
+  width: "100%",
+  maxWidth: "100vw",
+  overflowX: "hidden"
 };
 const sidebar = {
   width: "240px",
@@ -4339,7 +4348,8 @@ const main = {
   flex: 1,
   display: "flex",
   flexDirection: "column",
-  overflowY: "auto",
+  width: "100%",
+  minWidth: 0
 };
 const header = {
   background: "var(--card-bg)",
