@@ -1523,3 +1523,23 @@ body.dark-mode .skeleton-loader {
     font-size: 14px !important;
   }
 }
+
+/* Ensure all green backgrounds have white text for contrast */
+[style*="background: var(--primary)"],
+[style*="background: #0b8f3a"],
+[style*="background: #10b981"],
+[style*="background-color: var(--primary)"],
+[style*="background-color: #0b8f3a"],
+[style*="background-color: #10b981"] {
+  color: #ffffff !important;
+}
+
+/* Fix text in dark mode globally */
+body.dark-mode {
+  color: var(--text-main);
+}
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  color: var(--text-main) !important;
+}

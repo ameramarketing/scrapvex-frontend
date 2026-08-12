@@ -2137,7 +2137,7 @@ const playBellSound = () => {
             <div style={{ display: "flex", gap: "6px", marginBottom: "14px", flexWrap: "wrap", alignItems: "center", borderBottom: "2px solid #e5e7eb", paddingBottom: "10px" }}>
               {purchaseDrafts.map((draft, idx) => (
                 <div key={draft.id} style={{ display: "flex", alignItems: "center", borderRadius: "10px", overflow: "hidden", border: activeDraftId === draft.id ? "2px solid #0b8f3a" : "2px solid #e5e7eb", background: activeDraftId === draft.id ? "#f0fdf4" : "#f9fafb" }}>
-                  <span style={{ padding: "6px 12px", fontSize: "12px", fontWeight: "bold", color: activeDraftId === draft.id ? "#0b8f3a" : "#555", cursor: "pointer", whiteSpace: "nowrap" }} onClick={() => switchDraft(draft.id)}>
+                  <span style={{ padding: "6px 12px", fontSize: "12px", fontWeight: "bold", color: activeDraftId === draft.id ? "#0b8f3a" : "var(--text-muted)", cursor: "pointer", whiteSpace: "nowrap" }} onClick={() => switchDraft(draft.id)}>
                     {draft.supplierName ? `📦 ${draft.supplierName.slice(0, 12)}` : `Draft ${idx + 1}`}
                     {draft.items.length > 0 && <span style={{ marginLeft: "4px", background: "#0b8f3a", color: "#fff", borderRadius: "10px", padding: "1px 6px", fontSize: "10px" }}>{draft.items.length}</span>}
                   </span>
@@ -2324,7 +2324,7 @@ const playBellSound = () => {
                   showToast("error", "Failed to generate PDF");
                 }
               }} style={{ flex: 1, minWidth: "120px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", background: "#4f46e5", color: "#fff", border: "none", borderRadius: "10px", padding: "10px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>📥 PDF Download</button>
-              <button onClick={() => window.print()} style={{ flex: 1, minWidth: "80px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", background: "#333", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>🖨️ Print</button>
+              <button onClick={() => window.print()} style={{ flex: 1, minWidth: "80px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", background: "var(--text-main)", color: "#fff", border: "none", borderRadius: "8px", padding: "10px 14px", fontWeight: "bold", cursor: "pointer", fontSize: "13px" }}>🖨️ Print</button>
             </div>
           </div>
         </div>
@@ -2360,7 +2360,7 @@ const playBellSound = () => {
                 </div>
                 <div style={{textAlign: "right"}}>
                    <h2 style={{margin: 0, fontSize: "18px"}}>JAI DATTI TRADING CO</h2>
-                   <p style={{margin: "5px 0", color: "#444"}}>DILLI, SAINIK COLONY JAMMU<br/>GSTIN: 01AMSPG9859M1ZA<br/>Ph: 9070000032</p>
+                   <p style={{margin: "5px 0", color: "var(--text-muted)"}}>DILLI, SAINIK COLONY JAMMU<br/>GSTIN: 01AMSPG9859M1ZA<br/>Ph: 9070000032</p>
                 </div>
              </div>
 
@@ -2368,12 +2368,12 @@ const playBellSound = () => {
                 <div>
                    <strong style={{fontSize: "10px", color: "#888", textTransform: "uppercase"}}>Bill To:</strong>
                    <h3 style={{margin: "5px 0 0 0"}}>{selectedInvoice.buyerName}</h3>
-                   <p style={{margin: "5px 0", color: "#444"}}>{selectedInvoice.buyerAddress}<br/>GSTIN: {selectedInvoice.buyerGSTIN || "Unregistered"}</p>
+                   <p style={{margin: "5px 0", color: "var(--text-muted)"}}>{selectedInvoice.buyerAddress}<br/>GSTIN: {selectedInvoice.buyerGSTIN || "Unregistered"}</p>
                 </div>
                 <div>
                    <strong style={{fontSize: "10px", color: "#888", textTransform: "uppercase"}}>Shipped To:</strong>
                    <h3 style={{margin: "5px 0 0 0"}}>{selectedInvoice.consigneeName || selectedInvoice.buyerName}</h3>
-                   <p style={{margin: "5px 0", color: "#444"}}>{selectedInvoice.consigneeAddress || selectedInvoice.buyerAddress}</p>
+                   <p style={{margin: "5px 0", color: "var(--text-muted)"}}>{selectedInvoice.consigneeAddress || selectedInvoice.buyerAddress}</p>
                 </div>
              </div>
 
@@ -2466,7 +2466,7 @@ const NavItem = ({ active, icon, text, onClick }) => (
 );
 
 const BottomLink = ({ icon, text, onClick, active }) => (
-  <div style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "#666" }} onClick={onClick}>
+  <div style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "var(--text-muted)" }} onClick={onClick}>
      {icon} <span style={{fontSize:"10px", marginTop:"2px"}}>{text}</span>
   </div>
 );

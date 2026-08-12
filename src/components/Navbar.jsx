@@ -153,7 +153,7 @@ function Navbar() {
             title={isDarkMode ? "Switch to Light" : "Switch to Dark"}
             className="logo-zoom"
           >
-            {isDarkMode ? <FaSun color="#111" /> : <FaMoon color="#fff" />}
+            {isDarkMode ? <FaSun color="var(--text-main)" /> : <FaMoon color="#fff" />}
           </button>
         </div>
       </div>

@@ -38,7 +38,7 @@ const ActionTile = ({ icon, title, desc, color, onClick }) => (
 );
 
 const BottomLink = ({ icon, text, onClick, active }) => (
-  <div style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "#666" }} onClick={onClick}>
+  <div style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "var(--text-muted)" }} onClick={onClick}>
      {icon} <span style={{fontSize:"10px", marginTop:"2px"}}>{text}</span>
   </div>
 );
@@ -523,7 +523,7 @@ const playBellSound = () => {
              <div style={sidebarProfileStyle}>
                 <div style={bigAvatarStyle}><FaUserCircle/></div>
                 <h3 style={{margin:"10px 0 5px 0"}}>{user.name}</h3>
-                <p style={{color:"#666", fontSize:"13px"}}>{user.mobile}</p>
+                <p style={{color: "var(--text-muted)", fontSize:"13px"}}>{user.mobile}</p>
              </div>
              <div style={sideNavStyle}>
                 <SideLink active={activeTab === "home"} icon={<FaHome/>} text="Dashboard" onClick={() => setActiveTab("home")} />
@@ -1282,7 +1282,7 @@ const orderCardStyle = { background: "var(--card-bg)", padding: "25px", borderRa
 const orderHeaderStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" };
 const orderDateStyle = { fontSize: "12px", color: "#999" };
 const orderTitleStyle = { margin: "0 0 8px 0", fontSize: "18px", fontWeight: "bold", color: "var(--text-main)" };
-const orderAddrStyle = { fontSize: "13px", color: "#666", display: "flex", alignItems: "center", gap: "8px" };
+const orderAddrStyle = { fontSize: "13px", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "8px" };
 const completedSectionStyle = { marginTop: "20px", padding: "20px", background: "var(--bg-main)", borderRadius: "20px", display: "flex", justifyContent: "space-between", alignItems: "center" };
 const totalPaidStyle = { display: "flex", flexDirection: "column", gap: "2px" };
 const reviewBtnStyle = { background: "#fff9e6", color: "#f39c12", border: "1px solid #f39c12", padding: "8px 15px", borderRadius: "12px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" };

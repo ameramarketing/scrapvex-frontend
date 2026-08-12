@@ -103,7 +103,7 @@ const fullScreenStage = {
   height: "100vh",
   margin: 0,
   padding: 0,
-  background: "#000000",
+  background: "var(--text-main)",
   zIndex: 999999,
   overflow: "hidden",
   touchAction: "pan-y"

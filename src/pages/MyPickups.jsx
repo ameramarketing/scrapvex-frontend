@@ -367,13 +367,13 @@ const listGrid = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minma
 const card = { background: "var(--card-bg)", borderRadius: "24px", padding: "25px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)", border: "1px solid var(--glass-border)" };
 const cardTop = { display: "flex", justifyContent: "space-between", alignItems: "center" };
 const cardBody = { marginTop: "15px" };
-const detailText = { color: "#666", fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", margin: "5px 0" };
+const detailText = { color: "var(--text-muted)", fontSize: "13px", display: "flex", alignItems: "center", gap: "8px", margin: "5px 0" };
 const statusBadge = (status) => ({ padding: "5px 12px", borderRadius: "8px", fontSize: "11px", fontWeight: "bold", background: status === "Completed" ? "var(--primary-light)" : (status === "Pending" ? "rgba(243, 156, 18, 0.1)" : "rgba(79, 70, 229, 0.1)"), color: status === "Completed" ? "var(--primary)" : (status === "Pending" ? "#f39c12" : "#4f46e5") });
 const cancelBtn = { marginTop: "20px", width: "100%", background: "#fff0f0", color: "#e74c3c", border: "none", padding: "12px", borderRadius: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" };
 const receipt = { marginTop: "15px", padding: "15px", background: "#fcfcfc", borderRadius: "16px", border: "1px solid #eee" };
 const receiptTitle = { margin: "0 0 10px 0", fontSize: "13px", fontWeight: "bold", color: "#0b8f3a" };
-const receiptRow = { display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "5px", color: "#555" };
-const receiptTotal = { borderTop: "1px solid #ddd", marginTop: "10px", paddingTop: "10px", display: "flex", justifyContent: "space-between", fontWeight: "bold", color: "#333", fontSize: "13px" };
+const receiptRow = { display: "flex", justifyContent: "space-between", fontSize: "12px", marginBottom: "5px", color: "var(--text-muted)" };
+const receiptTotal = { borderTop: "1px solid #ddd", marginTop: "10px", paddingTop: "10px", display: "flex", justifyContent: "space-between", fontWeight: "bold", color: "var(--text-main)", fontSize: "13px" };
 const rateBtn = { background: "#fff9e6", color: "#f39c12", border: "1px solid #f39c12", padding: "8px", width: "100%", borderRadius: "10px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", marginTop: "15px" };
 const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(5px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "20px" };
 const modal = { background: "#fff", padding: "30px", borderRadius: "24px", width: "100%", maxWidth: "400px", boxShadow: "0 20px 60 rgba(0,0,0,0.2)" };

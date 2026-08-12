@@ -806,7 +806,7 @@ function CollectorDashboard() {
               </div>
               <small
                 style={{
-                  color: user?.isOnline ? "var(--primary)" : "#666",
+                  color: user?.isOnline ? "var(--primary)" : "var(--text-muted)",
                   fontWeight: "bold",
                   display: "flex",
                   alignItems: "center",
@@ -819,7 +819,7 @@ function CollectorDashboard() {
                     width: "8px",
                     height: "8px",
                     borderRadius: "50%",
-                    background: user?.isOnline ? "var(--primary)" : "#666",
+                    background: user?.isOnline ? "var(--primary)" : "var(--text-muted)",
                     display: "inline-block",
                   }}
                 ></span>
@@ -853,7 +853,7 @@ function CollectorDashboard() {
               {user?.isOnline ? (
                 <FaToggleOn size={28} color="var(--primary)" />
               ) : (
-                <FaToggleOff size={28} color="#666" />
+                <FaToggleOff size={28} color="var(--text-muted)" />
               )}
             </button>
             <div
@@ -4144,7 +4144,7 @@ const Modal = ({ title, children, onClose }) => (
 
 const BottomLink = ({ icon, text, onClick, active }) => (
   <div
-    style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "#666" }}
+    style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "var(--text-muted)" }}
     onClick={onClick}
   >
     {icon} <span style={{ fontSize: "10px", marginTop: "2px" }}>{text}</span>
