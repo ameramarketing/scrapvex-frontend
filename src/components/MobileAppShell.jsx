@@ -109,7 +109,9 @@ const nativeAppWrapper = {
   background: "#f8fafc",
   display: "flex",
   flexDirection: "column",
-  paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))"
+  paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))",
+  overflowX: "hidden",
+  width: "100%"
 };
 
 const nativeMainContent = {

@@ -38,7 +38,7 @@ import MobileAppShell from "./components/MobileAppShell";
 import GlobalLoader from "./components/GlobalLoader";
 import NativeOfflineBanner from "./components/NativeOfflineBanner";
 import { StatusBar, Style } from "@capacitor/status-bar";
-import { isNativeApp } from "./platform/platform";
+import { isNativeApp, isMobileEnvironment } from "./platform/platform";
 
 function InitialHomeScreen() {
   const isCapacitor = typeof window !== "undefined" && (
@@ -83,7 +83,7 @@ function App() {
       <NativeOfflineBanner />
       <BrowserRouter>
         <GlobalLoader />
-        {!isNativeApp() && <Navbar />}
+        {!isMobileEnvironment() && <Navbar />}
         <MobileAppShell>
           <Routes>
             {/* PUBLIC ROUTES */}

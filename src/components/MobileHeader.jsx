@@ -3,13 +3,16 @@ import { useNavigate, Link } from "react-router-dom";
 import { 
   FaMapMarkerAlt, FaChevronDown, FaCrosshairs, FaExclamationTriangle, 
   FaVoteYea, FaCheckCircle, FaRecycle, FaBars, FaTimes, FaUser, 
-  FaDownload, FaPhoneAlt, FaEnvelope, FaUserShield, FaSignOutAlt 
+  FaDownload, FaPhoneAlt, FaEnvelope, FaUserShield, FaSignOutAlt,
+  FaMoon, FaSun
 } from "react-icons/fa";
+import { useTheme } from "../context/ThemeContext";
 import API from "../services/api";
 import { performLogout } from "../utils/auth";
 
 function MobileHeader({ onSelectCity }) {
   const navigate = useNavigate();
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -166,10 +169,32 @@ function MobileHeader({ onSelectCity }) {
             <FaChevronDown style={{ fontSize: "8px", color: "#0b8f3a" }} />
           </div>
 
-          {/* Hamburger Drawer Trigger */}
-          <button style={menuTriggerBtn} onClick={() => setShowDrawer(true)}>
-            <FaBars />
-          </button>
+          {/* Right Action Icons */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            {/* Dark Mode Theme Toggle */}
+            <button 
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: "16px",
+                color: isDarkMode ? "#f1c40f" : "#64748b",
+                cursor: "pointer",
+                padding: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }} 
+              onClick={toggleDarkMode}
+              title={isDarkMode ? "Switch to Light" : "Switch to Dark"}
+            >
+              {isDarkMode ? <FaSun /> : <FaMoon />}
+            </button>
+
+            {/* Hamburger Drawer Trigger */}
+            <button style={menuTriggerBtn} onClick={() => setShowDrawer(true)}>
+              <FaBars />
+            </button>
+          </div>
         </div>
       </header>
 
