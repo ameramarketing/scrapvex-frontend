@@ -755,7 +755,7 @@ function CollectorDashboard() {
   );
 
   return (
-    <div style={container}>
+    <div className="dashboard-root" style={container}>
       <Toast
         show={toast.show}
         type={toast.type}
@@ -797,7 +797,7 @@ function CollectorDashboard() {
             >
               <FaBars />
             </button>
-            <h2 style={headerTitle}>COLLECTOR PORTAL</h2>
+            <h2 className="native-header-title" style={headerTitle}>COLLECTOR PORTAL</h2>
           </div>
           <div style={userInfo}>
             <div style={{ textAlign: "right" }} className="desktop-only">
@@ -885,7 +885,7 @@ function CollectorDashboard() {
           </div>
         )}
 
-        <div style={content}>
+        <div className="native-content" style={content}>
           {activeTab === "overview" && (
             <div className="fade-up">
               <div style={{ padding: "0 0 20px 0" }}>
@@ -3098,7 +3098,7 @@ function CollectorDashboard() {
                     {selectedPickup.mobile}
                     <a
                       href={`tel:${selectedPickup.mobile}`}
-                      style={{ ...callBtn, background: "var(--primary)" }}
+                      style={{ ...callBtn, background: "var(--primary)" , color: "#fff"}}
                     >
                       Call
                     </a>
@@ -4087,9 +4087,9 @@ function CollectorDashboard() {
 /* HELPER COMPONENTS */
 const StatCard = ({ icon, title, value, grad }) => (
   <div style={{ ...statCard, background: grad }} className="premium-card">
-    <div style={statIcon}>{icon}</div>
+    <div className="native-stat-icon" style={statIcon}>{icon}</div>
     <div style={{ color: "#fff" }}>
-      <div style={statVal}>{value}</div>
+      <div className="native-stat-val" style={statVal}>{value}</div>
       <div style={statTitle}>{title}</div>
     </div>
   </div>

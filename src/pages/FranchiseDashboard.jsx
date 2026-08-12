@@ -805,7 +805,7 @@ const playBellSound = () => {
   );
 
   return (
-    <div style={container}>
+    <div className="dashboard-root" style={container}>
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <style>{`
@@ -870,7 +870,7 @@ const playBellSound = () => {
         <header style={header}>
           <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
             <button style={menuBtn} className="mobile-only" onClick={() => setIsMobileMenuOpen(true)}><FaBars /></button>
-            <h2 style={headerTitle}>{activeTab.toUpperCase()}</h2>
+            <h2 className="native-header-title" style={headerTitle}>{activeTab.toUpperCase()}</h2>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
             <div style={{ position: "relative", display: "flex", gap: "10px" }}>
@@ -882,7 +882,7 @@ const playBellSound = () => {
               </button>
               {showNotifPanel && (
                 <div style={notifPanel}>
-                  <h4 style={{ margin: "0 0 10px 0", color: "#333" }}>Alerts</h4>
+                  <h4 style={{ margin: "0 0 10px 0", color: "var(--text-main)" }}>Alerts</h4>
                   {notifications.slice(0, 5).map(n => (
                     <div key={n._id} style={notifRow}><strong>{n.title}</strong><br />{n.message}</div>
                   ))}
@@ -893,7 +893,7 @@ const playBellSound = () => {
           </div>
         </header>
 
-        <div style={content} className="mobile-pad-bottom">
+        <div className="native-content mobile-pad-bottom">
           {activeTab !== "overview" && activeTab !== "reports" && activeTab !== "support-chat" && (
             <div style={{ position: "relative", marginBottom: "15px" }}>
               <input
@@ -1412,17 +1412,17 @@ const playBellSound = () => {
               {/* Filters Row */}
               <div className="card-premium" style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))", gap:"12px", marginBottom:"20px", padding:"20px"}}>
                 <div>
-                  <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>📅 From Date</label>
-                  <input type="date" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportFrom} onChange={e => setReportFrom(e.target.value)} />
+                  <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>📅 From Date</label>
+                  <input className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportFrom} onChange={e => setReportFrom(e.target.value)} />
                 </div>
                 <div>
-                  <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>📅 To Date</label>
-                  <input type="date" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportTo} onChange={e => setReportTo(e.target.value)} />
+                  <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>📅 To Date</label>
+                  <input className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportTo} onChange={e => setReportTo(e.target.value)} />
                 </div>
                 {reportType === "summary" && (
                   <div>
-                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>📊 Group By</label>
-                    <select style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportGroupBy} onChange={e => setReportGroupBy(e.target.value)}>
+                    <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>📊 Group By</label>
+                    <select className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportGroupBy} onChange={e => setReportGroupBy(e.target.value)}>
                       <option value="daily">Daily</option>
                       <option value="monthly">Monthly</option>
                       <option value="yearly">Yearly</option>
@@ -1431,8 +1431,8 @@ const playBellSound = () => {
                 )}
                 {reportType === "collectors" && (
                   <div>
-                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>👷 Collector</label>
-                    <select style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportCollectorId} onChange={e => setReportCollectorId(e.target.value)}>
+                    <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>👷 Collector</label>
+                    <select className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportCollectorId} onChange={e => setReportCollectorId(e.target.value)}>
                       <option value="">All Collectors</option>
                       {collectors.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                     </select>
@@ -1440,18 +1440,18 @@ const playBellSound = () => {
                 )}
                 {reportType === "suppliers" && (
                   <div>
-                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>🏪 Supplier Name</label>
-                    <input type="text" placeholder="Search supplier..." style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportSupplierName} onChange={e => setReportSupplierName(e.target.value)} />
+                    <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>🏪 Supplier Name</label>
+                    <input className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportSupplierName} onChange={e => setReportSupplierName(e.target.value)} />
                   </div>
                 )}
                 {reportType === "buyers" && (
                   <div>
-                    <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>🛒 Buyer Name</label>
-                    <input type="text" placeholder="Search buyer..." style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportBuyerName} onChange={e => setReportBuyerName(e.target.value)} />
+                    <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>🛒 Buyer Name</label>
+                    <input className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportBuyerName} onChange={e => setReportBuyerName(e.target.value)} />
                   </div>
                 )}
                 <div style={{display:"flex", alignItems:"flex-end"}}>
-                  <button style={{...saveBtnBig, marginTop:0, padding:"12px"}} onClick={fetchReport} disabled={reportLoading}>
+                  <button className="native-btn" style={{...saveBtnBig, marginTop:0, padding:"12px"}} onClick={fetchReport} disabled={reportLoading}>
                     {reportLoading ? "Loading..." : "🔍 Load Report"}
                   </button>
                 </div>
@@ -1548,7 +1548,7 @@ const playBellSound = () => {
                                 </div>
                                 <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
                                   <div style={{ fontWeight: "bold", color: "#dc3545", fontSize: "14px" }}>₹{p.totalAmount.toFixed(0)}</div>
-                                  <button onClick={() => openPurchaseBillModal(p)} style={{ border: "none", background: "#e0f2fe", color: "#0369a1", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "10px" }}>📄 View</button>
+                                  <button onClick={() => openPurchaseBillModal(p)} style={{ border: "none", background: "#f0fdf4", color: "#0369a1", padding: "4px 8px", borderRadius: "6px", cursor: "pointer", fontWeight: "bold", fontSize: "10px" }}>📄 View</button>
                                 </div>
                               </div>
                             ))}
@@ -1562,7 +1562,7 @@ const playBellSound = () => {
                   {reportType === "summary" && (
                     <table style={{width:"100%", borderCollapse:"collapse", fontSize:"13px"}}>
                       <thead>
-                        <tr style={{background:"#0b8f3a", color:"#fff"}}>
+                        <tr style={{background:"#0b8f3a", color: "#fff"}}>
                           <th style={{padding:"10px 8px", textAlign:"left"}}>Period</th>
                           <th style={{padding:"10px 8px", textAlign:"center"}}>Pickups</th>
                           <th style={{padding:"10px 8px", textAlign:"right"}}>Pickup Amt</th>
@@ -1596,12 +1596,12 @@ const playBellSound = () => {
                       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"12px"}}>
                         <div>
                           <div style={{fontWeight:"bold", fontSize:"15px"}}>👷 {col.collectorName}</div>
-                          <div style={{fontSize:"12px", color:"#666"}}>📞 {col.collectorMobile}</div>
+                          <div style={{fontSize:"12px", color: "var(--text-muted)"}}>📞 {col.collectorMobile}</div>
                         </div>
                         <div style={{textAlign:"right"}}>
                           <div style={{fontSize:"20px", fontWeight:"bold", color:"#0b8f3a"}}>{col.totalPickups} Pickups</div>
                           <div style={{fontSize:"13px", color:"#dc3545"}}>Earned: ₹{col.totalEarnings}</div>
-                          <div style={{fontSize:"12px", color:"#666"}}>Scrap: ₹{col.totalScrapValue}</div>
+                          <div style={{fontSize:"12px", color: "var(--text-muted)"}}>Scrap: ₹{col.totalScrapValue}</div>
                         </div>
                       </div>
                       {col.dailyBreakdown?.length > 0 && (
@@ -1638,11 +1638,11 @@ const playBellSound = () => {
                           <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
                             <div>
                               <div style={{fontWeight:"bold", fontSize:"15px"}}>🏪 {s.supplierName}</div>
-                              <div style={{fontSize:"12px", color:"#666"}}>📞 {s.supplierContact}</div>
+                              <div style={{fontSize:"12px", color: "var(--text-muted)"}}>📞 {s.supplierContact}</div>
                             </div>
                             <div style={{textAlign:"right"}}>
                               <div style={{fontSize:"18px", fontWeight:"bold", color:"#dc3545"}}>₹{s.totalAmount}</div>
-                              <div style={{fontSize:"12px", color:"#666"}}>{s.totalPurchases} purchases | {s.totalItems} items</div>
+                              <div style={{fontSize:"12px", color: "var(--text-muted)"}}>{s.totalPurchases} purchases | {s.totalItems} items</div>
                             </div>
                           </div>
                           <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px"}}>
@@ -1681,11 +1681,11 @@ const playBellSound = () => {
                           <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
                             <div>
                               <div style={{fontWeight:"bold", fontSize:"15px"}}>🛒 {b.buyerName}</div>
-                              <div style={{fontSize:"12px", color:"#666"}}>📞 {b.buyerContact} {b.buyerGSTIN && `• GSTIN: ${b.buyerGSTIN}`}</div>
+                              <div style={{fontSize:"12px", color: "var(--text-muted)"}}>📞 {b.buyerContact} {b.buyerGSTIN && `• GSTIN: ${b.buyerGSTIN}`}</div>
                             </div>
                             <div style={{textAlign:"right"}}>
                               <div style={{fontSize:"18px", fontWeight:"bold", color:"#0b8f3a"}}>₹{b.totalAmount}</div>
-                              <div style={{fontSize:"12px", color:"#666"}}>{b.totalSales} sales</div>
+                              <div style={{fontSize:"12px", color: "var(--text-muted)"}}>{b.totalSales} sales</div>
                             </div>
                           </div>
                           <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px"}}>
@@ -1787,10 +1787,10 @@ const playBellSound = () => {
         <Modal title="Add New Rate" onClose={() => setShowItemModal(false)}>
           <Input placeholder="Item Name" value={newItem.name} onChange={v => setNewItem({ ...newItem, name: v })} />
           <Input placeholder="Price (₹)" type="number" value={newItem.price} onChange={v => setNewItem({ ...newItem, price: v })} />
-          <select style={inputStyle} value={newItem.unit} onChange={e => setNewItem({ ...newItem, unit: e.target.value })}>
+          <select className="native-input" style={inputStyle} value={newItem.unit} onChange={e => setNewItem({ ...newItem, unit: e.target.value })}>
             <option value="kg">kg</option><option value="Pcs">Pcs</option><option value="Unit">Unit</option>
           </select>
-          <select style={inputStyle} value={newItem.category} onChange={e => setNewItem({ ...newItem, category: e.target.value })}>
+          <select className="native-input" style={inputStyle} value={newItem.category} onChange={e => setNewItem({ ...newItem, category: e.target.value })}>
             <option value="Paper">📄 Paper</option>
             <option value="Plastic">🧴 Plastic</option>
             <option value="Metal">🔩 Metal</option>
@@ -1801,7 +1801,7 @@ const playBellSound = () => {
             <option value="Vehicles">🚗 Vehicles</option>
             <option value="Other">📦 Other</option>
           </select>
-          <button style={saveBtnBig} onClick={handleCreateItem}>Add To System</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleCreateItem}>Add To System</button>
         </Modal>
       )}
 
@@ -1812,14 +1812,14 @@ const playBellSound = () => {
           <div style={{ padding: "15px", border: "2px dashed #eee", borderRadius: "12px", textAlign: "center", marginBottom: "15px" }}>
             <input type="file" onChange={e => setAdFile(e.target.files[0])} />
           </div>
-          <button style={saveBtnBig} onClick={handleCreateAd}>Publish Banner</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleCreateAd}>Publish Banner</button>
         </Modal>
       )}
 
       {showResetModal && (
         <Modal title={`Reset: ${resetData.name}`} onClose={() => setShowResetModal(false)}>
           <Input placeholder="New Secure Password" value={resetData.newPassword} onChange={v => setResetData({ ...resetData, newPassword: v })} />
-          <button style={saveBtnBig} onClick={handleResetPassword}>Update Credentials</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleResetPassword}>Update Credentials</button>
         </Modal>
       )}
 
@@ -1839,14 +1839,14 @@ const playBellSound = () => {
         <Modal title={`Edit ${editingRate.name}`} onClose={() => setShowEditRateModal(false)}>
           <label style={labelStyle}>Update Market Price (₹)</label>
           <Input type="number" value={editingRate.price} onChange={v => setEditingRate({ ...editingRate, price: v })} />
-          <button style={saveBtnBig} onClick={handleUpdateRate}>Save Changes</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleUpdateRate}>Save Changes</button>
         </Modal>
       )}
 
       {showTicketModal && (
         <Modal title="Raise Support Ticket" onClose={() => { setShowTicketModal(false); }}>
           <label style={labelStyle}>Category</label>
-          <select style={inputStyle} value={newTicketForm?.category || "General"} onChange={e => setNewTicketForm({ ...newTicketForm, category: e.target.value })}>
+          <select className="native-input" style={inputStyle} value={newTicketForm?.category || "General"} onChange={e => setNewTicketForm({ ...newTicketForm, category: e.target.value })}>
             <option value="General">General</option>
             <option value="Payment">Payment Issue</option>
             <option value="Pickup">Pickup Problem</option>
@@ -1862,7 +1862,7 @@ const playBellSound = () => {
             value={newTicketForm?.message || ""}
             onChange={e => setNewTicketForm({ ...newTicketForm, message: e.target.value })}
           />
-          <button style={saveBtnBig} onClick={handleCreateTicket}>Submit Ticket to Admin</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleCreateTicket}>Submit Ticket to Admin</button>
         </Modal>
       )}
 
@@ -1871,7 +1871,7 @@ const playBellSound = () => {
           <Input placeholder="Full Name" value={newUser.name} onChange={v => setNewUser({ ...newUser, name: v })} />
           <Input placeholder="Mobile No" value={newUser.mobile} onChange={v => setNewUser({ ...newUser, mobile: v })} />
           <Input placeholder="Initial Password" value={newUser.password} onChange={v => setNewUser({ ...newUser, password: v })} />
-          <button style={saveBtnBig} onClick={handleCreateUser}>Register User</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleCreateUser}>Register User</button>
         </Modal>
       )}
 
@@ -1881,7 +1881,7 @@ const playBellSound = () => {
           <Input placeholder="Mobile No" value={newCollector.mobile} onChange={v => setNewCollector({ ...newCollector, mobile: v })} />
           <Input placeholder="Service Area" value={newCollector.area} onChange={v => setNewCollector({ ...newCollector, area: v })} />
           <Input placeholder="Initial Password" value={newCollector.password} onChange={v => setNewCollector({ ...newCollector, password: v })} />
-          <button style={saveBtnBig} onClick={handleCreateCollector}>Register Collector</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleCreateCollector}>Register Collector</button>
         </Modal>
       )}
 
@@ -2042,7 +2042,7 @@ const playBellSound = () => {
 
       {showWalletModal && (
         <Modal title="Manual Wallet Adjustment" onClose={() => setShowWalletModal(false)}>
-          <select style={inputStyle} value={walletForm.userId} onChange={e => setWalletForm({ ...walletForm, userId: e.target.value })}>
+          <select className="native-input" style={inputStyle} value={walletForm.userId} onChange={e => setWalletForm({ ...walletForm, userId: e.target.value })}>
             <option value="">Choose Collector</option>
             {collectors.map(u => <option key={u._id} value={u._id}>{u.name} ({u.mobile})</option>)}
           </select>
@@ -2054,7 +2054,7 @@ const playBellSound = () => {
             </div>
             <div>
               <label style={labelStyle}>Action</label>
-              <select style={inputStyle} value={walletForm.type} onChange={e => setWalletForm({ ...walletForm, type: e.target.value })}>
+              <select className="native-input" style={inputStyle} value={walletForm.type} onChange={e => setWalletForm({ ...walletForm, type: e.target.value })}>
                 <option value="credit">Credit (+)</option>
                 <option value="debit">Debit (-)</option>
               </select>
@@ -2064,7 +2064,7 @@ const playBellSound = () => {
           <label style={labelStyle}>Description (Reason)</label>
           <Input placeholder="e.g. Refund for pickup #123" value={walletForm.description} onChange={v => setWalletForm({ ...walletForm, description: v })} />
 
-          <button style={saveBtnBig} onClick={handleUpdateWallet}>Apply Adjustment</button>
+          <button className="native-btn" style={saveBtnBig} onClick={handleUpdateWallet}>Apply Adjustment</button>
         </Modal>
       )}
 
@@ -2124,7 +2124,7 @@ const playBellSound = () => {
               </div>
             )}
 
-            <button style={saveBtnBig} onClick={handleCreateSale}>Generate E-Invoice</button>
+            <button className="native-btn" style={saveBtnBig} onClick={handleCreateSale}>Generate E-Invoice</button>
           </div>
         </Modal>
       )}
@@ -2161,7 +2161,7 @@ const playBellSound = () => {
                   <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
                     <div style={{ flex: 1 }}>
                       <label style={labelStyle}>Select Collector (Supplier)</label>
-                      <select style={inputStyle} value={draft.supplierId}
+                      <select className="native-input" style={inputStyle} value={draft.supplierId}
                         onChange={e => {
                           const collector = collectors.find(c => c._id === e.target.value);
                           updateActiveDraft({ supplierId: e.target.value, supplierName: collector?.name || "", supplierContact: collector?.mobile || "" });
@@ -2172,7 +2172,7 @@ const playBellSound = () => {
                     </div>
                     <div style={{ flex: 1 }}>
                       <label style={labelStyle}>Contact</label>
-                      <input style={inputStyle} disabled value={draft.supplierContact} readOnly />
+                      <input className="native-input" style={inputStyle} disabled value={draft.supplierContact} readOnly />
                     </div>
                   </div>
 
@@ -2191,12 +2191,12 @@ const playBellSound = () => {
 
                   {draft.items.length > 0 && (
                     <div style={{ marginBottom: "12px", border: "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden" }}>
-                      <div style={{ background: "#f8f9fa", padding: "8px 12px", fontSize: "11px", fontWeight: "bold", color: "#555", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "6px" }}>
+                      <div style={{ background: "#f8f9fa", padding: "8px 12px", fontSize: "11px", fontWeight: "bold", color: "var(--text-muted)", display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "6px" }}>
                         <span>Item</span><span>Qty</span><span>Rate</span><span style={{ color: "#0b8f3a" }}>Amount</span><span></span>
                       </div>
                       {draft.items.map((it, idx) => (
                         <div key={idx} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "6px", padding: "8px 12px", borderTop: "1px solid #f0f0f0", alignItems: "center", fontSize: "12px" }}>
-                          <span style={{ fontWeight: "600", color: "#333" }}>{it.name}</span>
+                          <span style={{ fontWeight: "600", color: "var(--text-main)" }}>{it.name}</span>
                           <input type="number" value={it.quantity} onChange={e => handleEditPurchaseItem(idx, "quantity", e.target.value)}
                             style={{ padding: "4px 6px", borderRadius: "6px", border: "1px solid #d1d5db", fontSize: "12px", width: "100%" }} />
                           <input type="number" value={it.rate} onChange={e => handleEditPurchaseItem(idx, "rate", e.target.value)}
@@ -2214,14 +2214,14 @@ const playBellSound = () => {
                   <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
                     <div style={{ flex: 1 }}>
                       <label style={labelStyle}>Payment Status</label>
-                      <select style={inputStyle} value={draft.paymentStatus} onChange={e => updateActiveDraft({ paymentStatus: e.target.value })}>
+                      <select className="native-input" style={inputStyle} value={draft.paymentStatus} onChange={e => updateActiveDraft({ paymentStatus: e.target.value })}>
                         <option value="Paid">Paid</option>
                         <option value="Pending">Pending</option>
                       </select>
                     </div>
                     <div style={{ flex: 1 }}>
                       <label style={labelStyle}>Method</label>
-                      <select style={inputStyle} value={draft.paymentMethod} onChange={e => updateActiveDraft({ paymentMethod: e.target.value })}>
+                      <select className="native-input" style={inputStyle} value={draft.paymentMethod} onChange={e => updateActiveDraft({ paymentMethod: e.target.value })}>
                         <option value="Cash">Cash</option>
                         <option value="Cash Wallet">Cash Wallet (App)</option>
                         <option value="UPI">UPI</option>
@@ -2252,7 +2252,7 @@ const playBellSound = () => {
 
           </div>
 
-          <button style={{ ...saveBtnBig, marginTop: "15px", background: "linear-gradient(135deg,#0b8f3a,#16a34a)" }} onClick={handleCreatePurchase}>
+          <button style={{ ...saveBtnBig, marginTop: "15px", background: "linear-gradient(135deg,#0b8f3a,#16a34a)" , color: "#fff"}} onClick={handleCreatePurchase}>
             ✅ Complete — {getActiveDraft()?.supplierName || "This Draft"}
           </button>
         </Modal>
@@ -2261,16 +2261,16 @@ const playBellSound = () => {
             {showPurchasePrintModal && lastCreatedPurchase && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
           <div style={{ background: "#fff", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
-            <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" , color: "#fff"}}>
               <span style={{ color: "#fff", fontWeight: "bold", fontSize: "16px" }}>🧾 Purchase Bill</span>
               <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
             </div>
             
-            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "#000", background: "#fff" }}>
+            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "var(--text-main)", background: "#fff" }}>
               <style>{`@media print { body * { visibility: hidden; } #purchase-bill-print, #purchase-bill-print * { visibility: visible; } #purchase-bill-print { position: fixed; left: 0; top: 0; width: 80mm; padding: 5mm; } .no-print { display: none !important; } }`}</style>
               <div style={{ textAlign: "center", borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
                 <div style={{ fontWeight: "bold", fontSize: "15px" }}>⚡ SCRAPVEX</div>
-                <div style={{ fontSize: "10px", color: "#555" }}>Purchase Receipt</div>
+                <div style={{ fontSize: "10px", color: "var(--text-muted)" }}>Purchase Receipt</div>
               </div>
               <div style={{ marginBottom: "8px", lineHeight: 1.8 }}>
                 <div><strong>Supplier:</strong> {lastCreatedPurchase.supplierName}</div>
@@ -2281,7 +2281,7 @@ const playBellSound = () => {
               <div style={{ borderTop: "1px dashed #000", borderBottom: "1px dashed #000", paddingTop: "6px", paddingBottom: "6px", marginBottom: "8px" }}>
                 {lastCreatedPurchase.items.map((it, i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                    <span>{it.name}<br /><span style={{ fontSize: "10px", color: "#555" }}>{it.quantity} × ₹{it.rate}</span></span>
+                    <span>{it.name}<br /><span style={{ fontSize: "10px", color: "var(--text-muted)" }}>{it.quantity} × ₹{it.rate}</span></span>
                     <strong>₹{(it.amount || 0).toFixed(0)}</strong>
                   </div>
                 ))}
@@ -2333,13 +2333,13 @@ const playBellSound = () => {
       {showInvoiceModal && selectedInvoice && (
         <Modal title="GST Tax Invoice Preview" onClose={() => setShowInvoiceModal(false)} wide>
           <div className="no-print" style={{display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8f9fa", padding: "15px", borderRadius: "15px", marginBottom: "20px"}}>
-             <div style={{fontSize: "13px", color: "#666"}}>Professional A4 Portrait Layout Ready</div>
-             <button style={{...saveBtnBig, marginTop: 0, width: "auto", background: "#4f46e5", padding: "10px 25px"}} onClick={() => window.print()}>
+             <div style={{fontSize: "13px", color: "var(--text-muted)"}}>Professional A4 Portrait Layout Ready</div>
+             <button className="native-btn" style={{...saveBtnBig, marginTop: 0, width: "auto", background: "#4f46e5", padding: "10px 25px"}} onClick={() => window.print()}>
                 <FaFileInvoice style={{marginRight: "10px"}}/> Print A4 Invoice
              </button>
           </div>
 
-          <div id="invoice-print-area" style={{padding: "40px", background: "#fff", color: "#000", fontFamily: "'Inter', sans-serif", fontSize: "12px", border: "1px solid #eee", minHeight: "800px"}}>
+          <div id="invoice-print-area" style={{padding: "40px", background: "#fff", color: "var(--text-main)", fontFamily: "'Inter', sans-serif", fontSize: "12px", border: "1px solid #eee", minHeight: "800px"}}>
              <style>{`
                @media print {
                  @page { size: A4; margin: 15mm; }
@@ -2416,7 +2416,7 @@ const playBellSound = () => {
 
              <div style={{marginTop: "40px", display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "20px"}}>
                 <div>
-                   <p style={{fontSize: "11px", color: "#666", marginBottom: "5px"}}>Amount in words:</p>
+                   <p style={{fontSize: "11px", color: "var(--text-muted)", marginBottom: "5px"}}>Amount in words:</p>
                    <strong style={{textTransform: "capitalize"}}>{numberToWords(Math.round(selectedInvoice.totalAmount))} Only</strong>
                 </div>
                 <div style={{textAlign: "right", marginTop: "40px"}}>
@@ -2484,14 +2484,14 @@ const Modal = ({ title, children, onClose, wide }) => (
 );
 
 const QuickAction = ({ icon, text, onClick }) => (
-  <button style={actionBtn} onClick={onClick} className="premium-card">
+  <button className="native-btn premium-card">
     <div style={{ width: "30px", height: "30px", borderRadius: "8px", background: "#eef8f1", display: "flex", justifyContent: "center", alignItems: "center" }}>{icon}</div>
     <span>{text}</span>
   </button>
 );
 
 const Input = ({ placeholder, value, onChange, type = "text", ...props }) => (
-  <input type={type} style={inputStyle} placeholder={placeholder} value={value} onChange={e => onChange?.(e.target.value)} {...props} />
+  <input className="native-input" style={inputStyle} placeholder={placeholder} value={value} onChange={e => onChange?.(e.target.value)} {...props} />
 );
 
 const StatusBadge = ({ status }) => {
@@ -2545,7 +2545,7 @@ const adCard = { border: "1px solid var(--glass-border)", borderRadius: "20px", 
 const adImg = { width: "100%", height: "120px", objectFit: "cover" };
 
 const notifPanel = { position: "absolute", top: "50px", right: 0, width: "260px", background: "var(--card-bg)", boxShadow: "0 20px 50px rgba(0,0,0,0.1)", borderRadius: "20px", padding: "20px", zIndex: 1000, border: "1px solid var(--glass-border)" };
-const notifRow = { padding: "10px 0", borderBottom: "1px solid #f8f9fc", fontSize: "12px", color: "#555" };
+const notifRow = { padding: "10px 0", borderBottom: "1px solid #f8f9fc", fontSize: "12px", color: "var(--text-muted)" };
 
 const loaderStyle = { display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "var(--bg-main)" };
 const mobileSidebar = { 
@@ -2573,7 +2573,7 @@ const mobileMenuOverlay = {
 };
 
 const titleBar = { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" };
-const labelStyle = { display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", fontWeight: "bold", color: "#666", marginBottom: "8px" };
+const labelStyle = { display: "flex", alignItems: "center", gap: "8px", fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px" };
 const settingsGrid = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "30px", marginTop: "20px" };
 const settingsSection = { display: "flex", flexDirection: "column" };
 const tableContainer = { maxHeight: "500px", overflowY: "auto" };
