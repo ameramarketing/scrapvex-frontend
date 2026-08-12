@@ -109,11 +109,14 @@ function Navbar() {
             <Link 
               key={i} 
               to={link.path} 
-              style={{...navLink, color: location.pathname === link.path ? "var(--primary)" : "var(--text-main)"}}
+              style={{
+                ...navLink,
+                color: location.pathname === link.path ? "var(--primary)" : "var(--text-main)",
+                fontWeight: location.pathname === link.path ? "800" : "600",
+              }}
               className="nav-link-glow"
             >
               {link.name}
-              {location.pathname === link.path && <div style={activeDot} />}
             </Link>
           ))}
         </nav>
@@ -213,43 +216,116 @@ function Navbar() {
 }
 
 /* STYLES */
-const headerWrap = { position: "sticky", top: 0, left: 0, right: 0, zIndex: 1000, transition: "0.3s" };
-const navInner = { display: "flex", justifyContent: "space-between", alignItems: "center", height: "75px" };
-const logo = { display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", color: "var(--text-main)" };
-const logoIcon = { background: "#0b8f3a", color: "#fff", width: "40px", height: "40px", borderRadius: "10px", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" };
-const logoText = { fontSize: "22px", fontWeight: "800", letterSpacing: "-0.5px" };
-const desktopNav = { display: "flex", gap: "30px", alignItems: "center" };
-const navLink = { textDecoration: "none", fontSize: "15px", fontWeight: "600", transition: "0.2s" };
-const activeDot = { position: "absolute", bottom: "-8px", left: "50%", transform: "translateX(-50%)", width: "5px", height: "5px", background: "#0b8f3a", borderRadius: "50%" };
-const actions = { display: "flex", alignItems: "center", gap: "10px" };
-const userWrapper = { display: "flex", alignItems: "center", gap: "10px", background: "var(--primary-light)", padding: "8px 15px", borderRadius: "12px", cursor: "pointer", border: "1.5px solid var(--primary)", color: "var(--text-main)" };
-const loginBtn = { background: "#0b8f3a", color: "#fff", textDecoration: "none", padding: "10px 24px", borderRadius: "10px", fontSize: "14px", fontWeight: "700", boxShadow: "0 4px 15px rgba(11,143,58,0.3)" };
-const downloadBtn = { background: "#111", color: "#fff", textDecoration: "none", padding: "10px 20px", borderRadius: "10px", fontSize: "14px", fontWeight: "700", display: "flex", alignItems: "center", gap: "8px" };
-const themeBtn = { border: "none", width: "40px", height: "40px", borderRadius: "10px", display: "flex", justifyContent: "center", alignItems: "center", cursor: "pointer", transition: "0.3s", fontSize: "16px" };
-const menuBtn = { background: "var(--card-bg)", border: "none", width: "45px", height: "45px", borderRadius: "12px", fontSize: "20px", color: "var(--text-main)", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" };
-
-const mobileOverlay = { 
-  position: "fixed", 
-  top: "10px", 
-  right: "10px", 
-  bottom: "10px",
-  width: "280px", 
-  background: "var(--card-bg)", 
-  zIndex: 9999, 
-  transition: "0.4s cubic-bezier(0.165, 0.84, 0.44, 1)", 
-  boxShadow: "-10px 0 40px rgba(0,0,0,0.1)", 
-  padding: "30px", 
-  display: "flex", 
-  flexDirection: "column",
-  borderRadius: "25px",
-  border: "1px solid var(--glass-border)"
+const headerWrap = {
+  position: "sticky",
+  top: 0,
+  left: 0,
+  right: 0,
+  zIndex: 1000,
+  transition: "background 0.3s, box-shadow 0.3s, border-color 0.3s",
+  backdropFilter: "blur(12px)",
 };
-const overlayHeader = { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" };
-const closeBtn = { background: "none", border: "none", fontSize: "24px", color: "#999", cursor: "pointer" };
-const mobileLinks = { display: "flex", flexDirection: "column", gap: "20px", flex: 1 };
-const mobileNavLink = { textDecoration: "none", color: "var(--text-main)", fontSize: "18px", fontWeight: "700", display: "flex", alignItems: "center", gap: "15px" };
-const divider = { height: "1px", background: "#eee", margin: "10px 0" };
-const overlayFooter = { marginTop: "auto", paddingTop: "20px", borderTop: "1px solid #eee", fontSize: "12px", color: "#999", textAlign: "center" };
-const backdrop = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)", zIndex: 9998 };
+const navInner = { display: "flex", justifyContent: "space-between", alignItems: "center", height: "72px" };
+const logo = { display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", color: "var(--text-main)" };
+const logoText = { fontSize: "21px", fontWeight: "900", letterSpacing: "-0.5px", color: "var(--text-main)" };
+const desktopNav = { display: "flex", gap: "6px", alignItems: "center" };
+const navLink = {
+  textDecoration: "none",
+  fontSize: "14px",
+  fontWeight: "600",
+  transition: "color 0.2s ease",
+  padding: "8px 12px",
+  borderRadius: "8px",
+  position: "relative",
+  display: "inline-block",
+};
+const actions = { display: "flex", alignItems: "center", gap: "8px" };
+const userWrapper = {
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
+  background: "var(--primary-light)",
+  padding: "8px 14px",
+  borderRadius: "10px",
+  cursor: "pointer",
+  border: "1.5px solid rgba(11,143,58,0.2)",
+  color: "var(--text-main)",
+  transition: "all 0.2s ease",
+};
+const loginBtn = {
+  background: "var(--primary)",
+  color: "#fff",
+  textDecoration: "none",
+  padding: "9px 20px",
+  borderRadius: "10px",
+  fontSize: "14px",
+  fontWeight: "700",
+  boxShadow: "0 3px 10px rgba(11,143,58,0.25)",
+  transition: "all 0.2s ease",
+  display: "inline-flex",
+  alignItems: "center",
+};
+const downloadBtn = {
+  background: "var(--text-main)",
+  color: "var(--card-bg)",
+  textDecoration: "none",
+  padding: "9px 16px",
+  borderRadius: "10px",
+  fontSize: "13px",
+  fontWeight: "700",
+  display: "flex",
+  alignItems: "center",
+  gap: "7px",
+  transition: "all 0.2s ease",
+};
+const themeBtn = {
+  border: "1.5px solid var(--card-border)",
+  width: "40px",
+  height: "40px",
+  borderRadius: "10px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  cursor: "pointer",
+  transition: "all 0.25s ease",
+  fontSize: "16px",
+};
+const menuBtn = {
+  background: "var(--bg-subtle)",
+  border: "1.5px solid var(--card-border)",
+  width: "42px",
+  height: "42px",
+  borderRadius: "11px",
+  fontSize: "19px",
+  color: "var(--text-main)",
+  cursor: "pointer",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+};
+
+const mobileOverlay = {
+  position: "fixed",
+  top: "10px",
+  right: "10px",
+  bottom: "10px",
+  width: "280px",
+  background: "var(--card-bg)",
+  zIndex: 9999,
+  transition: "transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)",
+  boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+  padding: "28px 24px",
+  display: "flex",
+  flexDirection: "column",
+  borderRadius: "22px",
+  border: "1px solid var(--card-border)",
+};
+const overlayHeader = { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" };
+const closeBtn = { background: "var(--bg-subtle)", border: "1.5px solid var(--card-border)", width: "36px", height: "36px", borderRadius: "9px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", color: "var(--text-muted)", cursor: "pointer" };
+const mobileLinks = { display: "flex", flexDirection: "column", gap: "4px", flex: 1 };
+const mobileNavLink = { textDecoration: "none", color: "var(--text-main)", fontSize: "16px", fontWeight: "700", display: "flex", alignItems: "center", gap: "14px", padding: "12px 10px", borderRadius: "10px", transition: "background 0.2s" };
+const divider = { height: "1px", background: "var(--card-border)", margin: "12px 0" };
+const overlayFooter = { marginTop: "auto", paddingTop: "16px", borderTop: "1px solid var(--card-border)", fontSize: "12px", color: "var(--text-light)", textAlign: "center" };
+const backdrop = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", zIndex: 9998 };
 
 export default Navbar;

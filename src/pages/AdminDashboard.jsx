@@ -1035,29 +1035,50 @@ const playBellSound = () => {
 
   if (loading) return <div style={loaderStyle}><FaRecycle className="spin" style={{fontSize: "45px", color: "var(--primary)"}} /></div>;
 
+  const NavGroup = ({ title, children }) => (
+    <div style={{ marginBottom: "16px" }}>
+      <div style={{ fontSize: "11px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", padding: "0 12px 8px 12px" }}>{title}</div>
+      {children}
+    </div>
+  );
+
   const NavContent = () => (
-    <>
-      <NavItem active={activeTab === "overview"} icon={<FaInfoCircle />} text="Overview" onClick={() => {setActiveTab("overview"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "pickups"} icon={<FaTruck />} text="Pickups" onClick={() => {setActiveTab("pickups"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "users"} icon={<FaUsers />} text="Users" onClick={() => {setActiveTab("users"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "collectors"} icon={<FaTools />} text="Collectors" onClick={() => {setActiveTab("collectors"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "franchises"} icon={<FaMapMarkerAlt />} text="Franchises" onClick={() => {setActiveTab("franchises"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "rates"} icon={<FaTag />} text="Rates" onClick={() => {setActiveTab("rates"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "accounting"} icon={<FaChartLine />} text="Accounting" onClick={() => {setActiveTab("accounting"); fetchAccountingData(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "buyers"} icon={<FaUsers />} text="Buyers" onClick={() => {setActiveTab("buyers"); fetchBuyers(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "suppliers"} icon={<FaTruck />} text="Sellers" onClick={() => {setActiveTab("suppliers"); fetchSuppliers(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "wallet"} icon={<FaWallet />} text="Wallet Mgmt" onClick={() => {setActiveTab("wallet"); fetchAllTransactions(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "withdrawals"} icon={<FaMoneyCheckAlt />} text="Withdrawals" onClick={() => {setActiveTab("withdrawals"); fetchWithdrawals(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "support"} icon={<FaTicketAlt />} text="Support" onClick={() => {setActiveTab("support"); fetchTickets(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "contacts"} icon={<FaEnvelope />} text="Inquiries" onClick={() => {setActiveTab("contacts"); fetchContactMessages(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "broadcasts"} icon={<FaRss />} text="Broadcasts" onClick={() => {setActiveTab("broadcasts"); fetchBroadcasts(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "audit"} icon={<FaClipboardList />} text="Audit Logs" onClick={() => {setActiveTab("audit"); fetchAuditLogs(); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "ads"} icon={<FaAd />} text="Banners" onClick={() => {setActiveTab("ads"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "reviews"} icon={<FaStar />} text="Reviews" onClick={() => {setActiveTab("reviews"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "settings"} icon={<FaCog />} text="Settings" onClick={() => {setActiveTab("settings"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "whatsapp"} icon={<FaWhatsapp style={{ color: "#25D366" }} />} text="WhatsApp QR " onClick={() => {setActiveTab("whatsapp"); setIsMobileMenuOpen(false);}} />
-      <NavItem active={activeTab === "reports"} icon={<FaChartLine />} text="📊 Reports" onClick={() => {setActiveTab("reports"); setIsMobileMenuOpen(false);}} />
-    </>
+    <div style={{ padding: "0 8px", display: "flex", flexDirection: "column", gap: "4px" }}>
+      <NavGroup title="OPERATIONS">
+        <NavItem active={activeTab === "overview"} icon={<FaInfoCircle />} text="Overview" onClick={() => {setActiveTab("overview"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "pickups"} icon={<FaTruck />} text="Pickups" onClick={() => {setActiveTab("pickups"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "users"} icon={<FaUsers />} text="Users" onClick={() => {setActiveTab("users"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "collectors"} icon={<FaTools />} text="Collectors" onClick={() => {setActiveTab("collectors"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "franchises"} icon={<FaMapMarkerAlt />} text="Franchises" onClick={() => {setActiveTab("franchises"); setIsMobileMenuOpen(false);}} />
+      </NavGroup>
+
+      <NavGroup title="FINANCE">
+        <NavItem active={activeTab === "accounting"} icon={<FaChartLine />} text="Accounting" onClick={() => {setActiveTab("accounting"); fetchAccountingData(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "wallet"} icon={<FaWallet />} text="Wallet" onClick={() => {setActiveTab("wallet"); fetchAllTransactions(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "withdrawals"} icon={<FaMoneyCheckAlt />} text="Withdrawals" onClick={() => {setActiveTab("withdrawals"); fetchWithdrawals(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "buyers"} icon={<FaBuilding />} text="Buyers" onClick={() => {setActiveTab("buyers"); fetchBuyers(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "suppliers"} icon={<FaTruck />} text="Sellers" onClick={() => {setActiveTab("suppliers"); fetchSuppliers(); setIsMobileMenuOpen(false);}} />
+      </NavGroup>
+
+      <NavGroup title="CATALOG">
+        <NavItem active={activeTab === "rates"} icon={<FaTag />} text="Rates" onClick={() => {setActiveTab("rates"); setIsMobileMenuOpen(false);}} />
+      </NavGroup>
+
+      <NavGroup title="COMMUNICATION">
+        <NavItem active={activeTab === "support"} icon={<FaTicketAlt />} text="Support" onClick={() => {setActiveTab("support"); fetchTickets(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "contacts"} icon={<FaEnvelope />} text="Contacts" onClick={() => {setActiveTab("contacts"); fetchContactMessages(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "broadcasts"} icon={<FaRss />} text="Broadcasts" onClick={() => {setActiveTab("broadcasts"); fetchBroadcasts(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "whatsapp"} icon={<FaWhatsapp style={{ color: "#25D366" }} />} text="WhatsApp" onClick={() => {setActiveTab("whatsapp"); setIsMobileMenuOpen(false);}} />
+      </NavGroup>
+
+      <NavGroup title="SYSTEM">
+        <NavItem active={activeTab === "audit"} icon={<FaClipboardList />} text="Audit" onClick={() => {setActiveTab("audit"); fetchAuditLogs(); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "ads"} icon={<FaAd />} text="Banners" onClick={() => {setActiveTab("ads"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "reviews"} icon={<FaStar />} text="Reviews" onClick={() => {setActiveTab("reviews"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "settings"} icon={<FaCog />} text="Settings" onClick={() => {setActiveTab("settings"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "reports"} icon={<FaChartLine />} text="Reports" onClick={() => {setActiveTab("reports"); setIsMobileMenuOpen(false);}} />
+      </NavGroup>
+    </div>
   );
 
   return (
@@ -1091,17 +1112,21 @@ const playBellSound = () => {
 
       {/* MAIN */}
       <div style={main}>
-        <header style={header}>
+        <header style={{...header, padding: "16px 24px", background: "var(--card-bg)", borderBottom: "1px solid var(--card-border)", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
           <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
             <button style={menuBtn} className="mobile-only" onClick={() => setIsMobileMenuOpen(true)}><FaBars /></button>
-            <h2 style={headerTitle}>{activeTab.toUpperCase()}</h2>
+            <h2 style={{...headerTitle, fontSize: "20px", fontWeight: "800", color: "var(--text-main)", letterSpacing: "-0.5px"}}>{activeTab.toUpperCase()}</h2>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <div style={{ position: "relative", display:"flex", gap:"10px" }}>
-              <button style={bellBtn} onClick={() => { setShowNotifPanel(!showNotifPanel); if(!showNotifPanel) markAllNotificationsRead(); }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <div style={{ position: "relative", display:"flex", gap:"15px", alignItems: "center" }}>
+              <div className="desktop-only" style={{ textAlign: "right", marginRight: "10px" }}>
+                <div style={{ fontSize: "14px", fontWeight: "bold", color: "var(--text-main)" }}>Admin User</div>
+                <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Superadmin</div>
+              </div>
+              <button style={{...bellBtn, width: "40px", height: "40px", borderRadius: "50%", background: "var(--bg-subtle)", color: "var(--text-main)", border: "1px solid var(--glass-border)", display: "flex", justifyContent: "center", alignItems: "center"}} onClick={() => { setShowNotifPanel(!showNotifPanel); if(!showNotifPanel) markAllNotificationsRead(); }}>
                 <FaBell /> {notifications.filter(n => !n.isRead).length > 0 && <span style={badge}>{notifications.filter(n => !n.isRead).length}</span>}
               </button>
-              <button style={logoutHeaderBtn} onClick={logout} title="Logout">
+              <button style={{...logoutHeaderBtn, width: "40px", height: "40px", borderRadius: "50%", background: "#fee2e2", color: "#ef4444", border: "1px solid #fca5a5", display: "flex", justifyContent: "center", alignItems: "center"}} onClick={logout} title="Logout">
                 <FaSignOutAlt />
               </button>
               {showNotifPanel && (
@@ -1149,85 +1174,150 @@ const playBellSound = () => {
 
           {activeTab === "overview" && (
             <>
-              <div style={statGrid}>
-                <StatCard icon={<FaUsers />} title="Total Users" value={stats.totalUsers} grad="linear-gradient(135deg, #0b8f3a 0%, #20b050 100%)" />
-                <StatCard icon={<FaTruck />} title="All Pickups (Count)" value={stats.totalPickups} grad="linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)" />
-                <StatCard icon={<FaChartLine />} title="App Pickups Value" value={`₹${accountingStats.totalCompletedPickupAmount?.toFixed(0) || 0}`} grad="linear-gradient(135deg, #f39c12 0%, #d35400 100%)" />
-                <StatCard icon={<FaChartLine />} title="System Sale Vol." value={`₹${accountingStats.totalNetworkSale?.toFixed(0) || 0}`} grad="linear-gradient(135deg, #e67e22 0%, #d35400 100%)" />
-                <StatCard icon={<FaPercent />} title="Commission Earned" value={`₹${accountingStats.totalCommission?.toFixed(2) || 0}`} grad="linear-gradient(135deg, #16a085 0%, #1abc9c 100%)" />
-                <StatCard icon={<FaRupeeSign />} title="Admin Net Profit" value={`₹${((accountingStats.overallProfit || 0) + (accountingStats.totalCommission || 0)).toFixed(2)}`} grad="linear-gradient(135deg, #0b8f3a 0%, #000 100%)" />
-                <StatCard icon={<FaWallet />} title="Users Wallet Balance" value={`₹${walletStats.customerWalletBalance || 0}`} grad="linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)" />
-                <StatCard icon={<FaBuilding />} title="Partner Wallets (Fran/Coll)" value={`₹${walletStats.partnerWalletBalance || 0}`} grad="linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)" />
-                <StatCard icon={<FaBoxOpen />} title="Franchise Stock Value" value={`₹${accountingStats.franchiseStockValue?.toFixed(0) || 0}`} grad="linear-gradient(135deg, #34495e 0%, #2c3e50 100%)" />
-              </div>
-              <div style={mainGrid} className="responsive-flex">
-                 <div style={{...box, flex: 2}} className="premium-card">
-                    <h3 style={boxTitle}>Recent Activity</h3>
-                    <div style={{display: "flex", flexDirection: "column", gap: "10px"}}>
-                       <h4 style={{fontSize: "12px", color: "var(--text-muted)", margin: "0"}}>LATEST PICKUPS</h4>
-                       {filteredPickups.slice(0, 3).map(p => (
-                         <div key={p._id} style={listRow}>
-                           <span>{p.scrapType} • <span style={{color:"var(--text-muted)"}}>{p.name}</span></span>
-                           <StatusBadge status={p.status} />
-                         </div>
-                       ))}
-                       
-                       <h4 style={{fontSize: "12px", color: "var(--text-muted)", margin: "15px 0 0 0"}}>LATEST WALLET ACTIONS</h4>
-                       {transactions.slice(0, 3).map(tx => (
-                         <div key={tx._id} style={listRow}>
-                           <span>{tx.description} • <small style={{color:"var(--text-muted)"}}>{tx.user?.name}</small></span>
-                           <span style={{fontWeight:"bold", color: tx.type==="credit"?"#0b8f3a":"#dc3545", fontSize:"13px"}}>
-                             {tx.type==="credit"?"+":"-"}₹{tx.amount}
-                           </span>
-                         </div>
-                       ))}
-                    </div>
-                    {pickups.length === 0 && transactions.length === 0 && <p style={muted}>No activity recorded yet.</p>}
-                 </div>
-                 <div style={{...box, flex: 1}} className="premium-card">
-                    <h3 style={boxTitle}>Quick Access</h3>
-                    <div style={btnStack}>
-                       <QuickAction icon={<FaUserPlus/>} text="Register User" onClick={()=>setShowUserModal(true)} />
-                       <QuickAction icon={<FaPlus/>} text="Hire Collector" onClick={()=>setShowCollectorModal(true)} />
-                       <QuickAction icon={<FaChartLine/>} text="Open Accounting" onClick={()=>{setActiveTab("accounting"); fetchAccountingData();}} />
-                       <QuickAction icon={<FaWallet/>} text="Wallet Adjust" onClick={()=>setShowWalletModal(true)} />
-                       <QuickAction icon={<FaTag/>} text="Update Rates" onClick={()=>setActiveTab("rates")} />
-                    </div>
-                 </div>
+              <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaUsers /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Total Users</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>{stats.totalUsers}</div></div>
+                  </div>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(44, 62, 80, 0.1)", color: "#2c3e50", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaTruck /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Total Pickups</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>{stats.totalPickups}</div></div>
+                  </div>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(243, 156, 18, 0.1)", color: "#f39c12", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaChartLine /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>App Value</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>₹{accountingStats.totalCompletedPickupAmount?.toFixed(0) || 0}</div></div>
+                  </div>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(230, 126, 34, 0.1)", color: "#e67e22", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaChartLine /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Sys Sale Vol</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>₹{accountingStats.totalNetworkSale?.toFixed(0) || 0}</div></div>
+                  </div>
+                </div>
+  
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(22, 160, 133, 0.1)", color: "#16a085", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaPercent /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Commission</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>₹{accountingStats.totalCommission?.toFixed(2) || 0}</div></div>
+                  </div>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaRupeeSign /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Net Profit</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>₹{((accountingStats.overallProfit || 0) + (accountingStats.totalCommission || 0)).toFixed(2)}</div></div>
+                  </div>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(155, 89, 182, 0.1)", color: "#9b59b6", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaWallet /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>User Wallet</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>₹{walletStats.customerWalletBalance || 0}</div></div>
+                  </div>
+                  <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(231, 76, 60, 0.1)", color: "#e74c3c", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaBuilding /></div>
+                    <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Partner Wallets</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>₹{walletStats.partnerWalletBalance || 0}</div></div>
+                  </div>
+                </div>
+  
+                <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                   <div className="card-premium" style={{ flex: 2, minWidth: "300px", background: "var(--card-bg)", borderRadius: "var(--radius-xl)", padding: "24px", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+                      <h3 style={{ margin: "0 0 16px 0", fontSize: "16px", color: "var(--text-main)" }}>Recent Activity</h3>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                         <h4 style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-muted)", margin: "0" }}>LATEST PICKUPS</h4>
+                         {filteredPickups.slice(0, 3).map(p => (
+                           <div key={p._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "var(--bg-subtle)", borderRadius: "var(--radius-md)", border: "1px solid var(--glass-border)" }}>
+                             <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-main)" }}>{p.scrapType} <span style={{ color:"var(--text-muted)", fontWeight: "normal", fontSize: "13px" }}>• {p.name}</span></span>
+                             <span className={`badge-status badge-${p.status.toLowerCase()}`}>{p.status}</span>
+                           </div>
+                         ))}
+                         
+                         <h4 style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--text-muted)", margin: "16px 0 0 0" }}>LATEST WALLET ACTIONS</h4>
+                         {transactions.slice(0, 3).map(tx => (
+                           <div key={tx._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "var(--bg-subtle)", borderRadius: "var(--radius-md)", border: "1px solid var(--glass-border)" }}>
+                             <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-main)" }}>{tx.description} <small style={{ color:"var(--text-muted)", fontWeight: "normal", fontSize: "13px" }}>• {tx.user?.name}</small></span>
+                             <span style={{ fontWeight:"bold", color: tx.type==="credit" ? "var(--success)" : "var(--danger)", fontSize:"14px" }}>
+                               {tx.type==="credit"?"+":"-"}₹{tx.amount}
+                             </span>
+                           </div>
+                         ))}
+                      </div>
+                      {pickups.length === 0 && transactions.length === 0 && <p className="empty-state">No activity recorded yet.</p>}
+                   </div>
+                   
+                   <div className="card-premium" style={{ flex: 1, minWidth: "250px", background: "var(--card-bg)", borderRadius: "var(--radius-xl)", padding: "24px", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+                      <h3 style={{ margin: "0 0 16px 0", fontSize: "16px", color: "var(--text-main)" }}>Quick Access</h3>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "12px" }}>
+                         <button className="btn-ghost" style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "flex-start", padding: "12px 16px", width: "100%", borderRadius: "var(--radius-md)", background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", color: "var(--text-main)", cursor: "pointer", fontWeight: "bold" }} onClick={()=>setShowUserModal(true)}><FaUserPlus style={{color:"var(--primary)"}}/> Register User</button>
+                         <button className="btn-ghost" style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "flex-start", padding: "12px 16px", width: "100%", borderRadius: "var(--radius-md)", background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", color: "var(--text-main)", cursor: "pointer", fontWeight: "bold" }} onClick={()=>setShowCollectorModal(true)}><FaPlus style={{color:"var(--primary)"}}/> Hire Collector</button>
+                         <button className="btn-ghost" style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "flex-start", padding: "12px 16px", width: "100%", borderRadius: "var(--radius-md)", background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", color: "var(--text-main)", cursor: "pointer", fontWeight: "bold" }} onClick={()=>{setActiveTab("accounting"); fetchAccountingData();}}><FaChartLine style={{color:"var(--primary)"}}/> Open Accounting</button>
+                         <button className="btn-ghost" style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "flex-start", padding: "12px 16px", width: "100%", borderRadius: "var(--radius-md)", background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", color: "var(--text-main)", cursor: "pointer", fontWeight: "bold" }} onClick={()=>setShowWalletModal(true)}><FaWallet style={{color:"var(--primary)"}}/> Wallet Adjust</button>
+                         <button className="btn-ghost" style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "flex-start", padding: "12px 16px", width: "100%", borderRadius: "var(--radius-md)", background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", color: "var(--text-main)", cursor: "pointer", fontWeight: "bold" }} onClick={()=>setActiveTab("rates")}><FaTag style={{color:"var(--primary)"}}/> Update Rates</button>
+                      </div>
+                   </div>
+                </div>
               </div>
             </>
           )}
 
           {activeTab === "pickups" && (
-             <div style={box} className="premium-card">
-                <h3 style={boxTitle}>Pickup History</h3>
-  
-              
-
-
-
-<div style={tableContainer}>
+             <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+                <h3 style={{ margin: "0 0 20px 0", fontSize: "18px", color: "var(--text-main)" }}>Pickup History</h3>
+                <div className="desktop-only">
+                  <table className="data-table" style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid var(--glass-border)", color: "var(--text-muted)", fontSize: "13px" }}>
+                        <th style={{ padding: "12px 8px" }}>Type & Customer</th>
+                        <th style={{ padding: "12px 8px" }}>Location</th>
+                        <th style={{ padding: "12px 8px" }}>Status</th>
+                        <th style={{ padding: "12px 8px", textAlign: "right" }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredPickups.map(p => (
+                        <tr key={p._id} style={{ borderBottom: "1px solid var(--glass-border)" }}>
+                          <td style={{ padding: "12px 8px" }}>
+                            <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px" }}>{p.scrapType}</div>
+                            <div style={{ color: "var(--text-muted)", fontSize: "12px" }}>{p.name} • {p.mobile}</div>
+                          </td>
+                          <td style={{ padding: "12px 8px", fontSize: "13px", color: "var(--text-main)" }}>{p.address}</td>
+                          <td style={{ padding: "12px 8px" }}>
+                            <span className={`badge-status badge-${p.status.toLowerCase()}`}>{p.status}</span>
+                          </td>
+                          <td style={{ padding: "12px 8px", textAlign: "right" }}>
+                            {["Pending", "Rejected"].includes(p.status) && (
+                              <button className="btn-premium" style={{ padding: "6px 12px", fontSize: "12px" }} onClick={()=>{setSelectedPickup(p); setShowAssignModal(true);}}>
+                                Assign Now
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {filteredPickups.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No pickups found.</div>}
+                </div>
+                <div className="mobile-only" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                    {filteredPickups.map(p => (
-                     <div key={p._id} style={listRow}>
-                        <div style={{flex:1}}>
-                           <div style={rowTitle}>{p.scrapType}</div>
-                           <small style={muted}>{p.name} • {p.mobile} <br/> {p.address}</small>
+                     <div key={p._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", border: "1px solid var(--glass-border)" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                           <div>
+                              <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>{p.scrapType}</div>
+                              <div style={{ color: "var(--text-muted)", fontSize: "13px" }}>{p.name} • {p.mobile}</div>
+                           </div>
+                           <span className={`badge-status badge-${p.status.toLowerCase()}`}>{p.status}</span>
                         </div>
-                        <div style={{textAlign: "right"}}>
-                           <StatusBadge status={p.status} />
-                           {["Pending", "Rejected"].includes(p.status) && <button style={assignBtn} onClick={()=>{setSelectedPickup(p); setShowAssignModal(true);}}>Assign Now</button>}
-                        </div>
+                        <div style={{ fontSize: "13px", color: "var(--text-main)", marginBottom: "12px" }}>📍 {p.address}</div>
+                        {["Pending", "Rejected"].includes(p.status) && (
+                          <button className="btn-premium" style={{ width: "100%", padding: "10px" }} onClick={()=>{setSelectedPickup(p); setShowAssignModal(true);}}>
+                            Assign Collector
+                          </button>
+                        )}
                      </div>
                    ))}
+                   {filteredPickups.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No pickups found.</div>}
                 </div>
              </div>
           )}
 
           {activeTab === "settings" && (
-             <div style={box} className="premium-card">
-                <h3 style={boxTitle}>Global Platform & Dynamic Brand Settings</h3>
-                <div style={settingsGrid}>
-                   <div style={settingsSection}>
+             <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+                <h3 style={{ margin: "0 0 24px 0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Global Platform & Dynamic Brand Settings</h3>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px" }}>
+                   <div style={{ background: "var(--bg-subtle)", padding: "20px", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
                       <h4 style={{ margin: "0 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🎨 Brand, Festival Logo & Icons</h4>
                       
                       <label style={labelStyle}> Upload Brand / Festival Logo</label>
@@ -1328,7 +1418,7 @@ const playBellSound = () => {
                       <Input type="number" value={settings.pickupCommissionPercentage} onChange={v => setSettings({...settings, pickupCommissionPercentage: v})} />
                    </div>
 
-                   <div style={settingsSection}>
+                   <div style={{ background: "var(--bg-subtle)", padding: "20px", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
                       <h4 style={{ margin: "0 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🎁 Rewards & Operational Charges</h4>
                       
                       <label style={labelStyle}><FaRupeeSign/> Referral Cash Bonus (₹)</label>
@@ -1367,156 +1457,207 @@ const playBellSound = () => {
 
           {/* OTHER TABS (Users, Collectors, Rates, Ads, Reviews) with same premium-card style... */}
           {activeTab === "rates" && (
-             <div style={box} className="premium-card">
-                <div style={titleBar}><h3>SCRAP RATES</h3> <button style={addBtn} onClick={()=>setShowItemModal(true)}><FaPlus/></button></div>
-                {filteredItems.map(it => (
-                  <div key={it._id} style={listRow}>
-                     <span>{it.name} <br/><small style={muted}>{it.category}</small></span>
-                     <div style={{display:"flex", gap:"10px", alignItems:"center"}}>
-                        <strong style={{color:"#0b8f3a"}}>₹{it.price}/{it.unit}</strong>
-                        <button style={smBtn} onClick={()=>{setEditingRate(it); setShowEditRateModal(true);}}><FaTools size={12}/></button>
-                        <button style={smDelBtn} onClick={()=>handleDeleteItem(it._id, "rate")}><FaTrash size={12}/></button>
-                     </div>
-                  </div>
-                ))}
+             <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                  <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)" }}>Scrap Rates</h3> 
+                  <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>setShowItemModal(true)}><FaPlus/> Add Rate</button>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+                  {filteredItems.map(it => (
+                    <div key={it._id} style={{ background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                       <div>
+                          <div style={{ fontSize: "15px", fontWeight: "700", color: "var(--text-main)", marginBottom: "4px" }}>{it.name}</div>
+                          <span style={{ display: "inline-block", background: "rgba(44, 62, 80, 0.1)", color: "#2c3e50", fontSize: "10px", fontWeight: "bold", padding: "4px 8px", borderRadius: "12px", textTransform: "uppercase" }}>{it.category}</span>
+                       </div>
+                       <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                          <strong style={{ color: "var(--primary)", fontSize: "16px" }}>₹{it.price}/{it.unit}</strong>
+                          <div style={{ display: "flex", gap: "6px" }}>
+                            <button className="btn-secondary" style={{ padding: "6px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={()=>{setEditingRate(it); setShowEditRateModal(true);}}><FaTools size={12}/></button>
+                            <button className="btn-danger" style={{ padding: "6px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={()=>handleDeleteItem(it._id, "rate")}><FaTrash size={12}/></button>
+                          </div>
+                       </div>
+                    </div>
+                  ))}
+                </div>
+                {filteredItems.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No rates found.</div>}
              </div>
           )}
           
           {(activeTab === "users" || activeTab === "collectors" || activeTab === "franchises") && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}><h3>{activeTab.toUpperCase()}</h3> <button style={addBtn} onClick={() => activeTab === "users" ? setShowUserModal(true) : activeTab === "franchises" ? setShowFranchiseModal(true) : setShowCollectorModal(true)}><FaPlus/></button></div>
-              <div style={tableContainer}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>{activeTab}</h3> 
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={() => activeTab === "users" ? setShowUserModal(true) : activeTab === "franchises" ? setShowFranchiseModal(true) : setShowCollectorModal(true)}><FaPlus/> Add New</button>
+              </div>
+              <div className="desktop-only">
+                <table className="data-table" style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid var(--glass-border)", color: "var(--text-muted)", fontSize: "13px" }}>
+                      <th style={{ padding: "12px 8px" }}>Name & Mobile</th>
+                      <th style={{ padding: "12px 8px" }}>Role Details</th>
+                      <th style={{ padding: "12px 8px", textAlign: "right" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).map(u => (
+                      <tr key={u._id} style={{ borderBottom: "1px solid var(--glass-border)" }}>
+                        <td style={{ padding: "12px 8px" }}>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px" }}>{u.name}</div>
+                          <div style={{ color: "var(--text-muted)", fontSize: "12px" }}>{u.mobile}</div>
+                        </td>
+                        <td style={{ padding: "12px 8px", fontSize: "13px", color: "var(--text-muted)" }}>
+                          {u.area && <span style={{ display: "inline-block", background: "rgba(44, 62, 80, 0.1)", color: "#2c3e50", padding: "4px 8px", borderRadius: "6px", marginRight: "6px" }}>Area: {u.area}</span>}
+                          {u.assignedCity && <span style={{ display: "inline-block", background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", padding: "4px 8px", borderRadius: "6px", marginRight: "6px" }}>City: {u.assignedCity}</span>}
+                          {u.walletBalance !== undefined && <span style={{ display: "inline-block", background: "rgba(243, 156, 18, 0.1)", color: "#f39c12", padding: "4px 8px", borderRadius: "6px" }}>Wallet: ₹{u.walletBalance}</span>}
+                        </td>
+                        <td style={{ padding: "12px 8px", textAlign: "right" }}>
+                          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                            <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: "12px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Admin Transfer" }); setShowWalletModal(true); }}>Transfer</button>
+                            <button className="btn-secondary" style={{ padding: "6px 10px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey/></button>
+                            <button className="btn-danger" style={{ padding: "6px 10px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={() => handleDeleteItem(u._id, activeTab === "users" ? "user" : activeTab === "franchises" ? "franchise" : "collector")}><FaTrash/></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mobile-only" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).map(u => (
-                  <div key={u._id} style={listRow}>
-                    <span>{u.name} <br/><small style={muted}>{u.mobile} {u.area && `• ${u.area}`} {u.assignedCity && `• ${u.assignedCity}`} {u.walletBalance !== undefined && `• Wallet: ₹${u.walletBalance}`}</small></span>
-                    <div style={{display: "flex", gap: "10px"}}>
-                      <button style={smBtn} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Admin Transfer" }); setShowWalletModal(true); }}>Transfer</button>
-                      <button style={smBtn} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey/></button>
-                      <button style={smDelBtn} onClick={() => handleDeleteItem(u._id, activeTab === "users" ? "user" : activeTab === "franchises" ? "franchise" : "collector")}><FaTrash/></button>
-                    </div>
+                  <div key={u._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", border: "1px solid var(--glass-border)" }}>
+                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                        <div>
+                           <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>{u.name}</div>
+                           <div style={{ color: "var(--text-muted)", fontSize: "13px" }}>{u.mobile}</div>
+                        </div>
+                        {u.walletBalance !== undefined && <div style={{ fontSize: "14px", fontWeight: "bold", color: "#f39c12" }}>₹{u.walletBalance}</div>}
+                     </div>
+                     <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "12px" }}>
+                        {u.area && `Area: ${u.area} `} {u.assignedCity && `City: ${u.assignedCity}`}
+                     </div>
+                     <div style={{ display: "flex", gap: "8px" }}>
+                       <button className="btn-secondary" style={{ flex: 1, padding: "8px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Admin Transfer" }); setShowWalletModal(true); }}>Transfer</button>
+                       <button className="btn-secondary" style={{ padding: "8px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey/></button>
+                       <button className="btn-danger" style={{ padding: "8px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={() => handleDeleteItem(u._id, activeTab === "users" ? "user" : activeTab === "franchises" ? "franchise" : "collector")}><FaTrash/></button>
+                     </div>
                   </div>
                 ))}
               </div>
+              {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No records found.</div>}
             </div>
           )}
 
           {activeTab === "ads" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}><h3>MANAGED BANNERS</h3> <button style={addBtn} onClick={() => setShowAdModal(true)}><FaPlus/></button></div>
-              <div style={adGrid}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Managed Banners</h3> 
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={() => setShowAdModal(true)}><FaPlus/> Add Banner</button>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "16px" }}>
                 {ads.map(ad => (
-                  <div key={ad._id} style={adCard} className="premium-card">
-                    <img src={ad.imageUrl} style={adImg} alt="" />
-                    <div style={{padding: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                       <span style={{fontSize: "12px", fontWeight: "bold"}}>{ad.title}</span>
-                       <button style={smDelBtn} onClick={() => handleDeleteItem(ad._id, "ad")}><FaTrash/></button>
+                  <div key={ad._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)", overflow: "hidden", display: "flex", flexDirection: "column" }} className="premium-card">
+                    <img src={ad.imageUrl} style={{ width: "100%", height: "120px", objectFit: "cover" }} alt="" />
+                    <div style={{padding: "12px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                       <span style={{fontSize: "13px", fontWeight: "700", color: "var(--text-main)"}}>{ad.title}</span>
+                       <button className="btn-danger" style={{ padding: "6px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={() => handleDeleteItem(ad._id, "ad")}><FaTrash size={12}/></button>
                     </div>
                   </div>
                 ))}
               </div>
+              {ads.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No banners configured.</div>}
             </div>
           )}
 
           {activeTab === "reviews" && (
-            <div style={box} className="premium-card">
-              <h3>PLATFORM REVIEWS</h3>
-              {reviews.map(r => (
-                <div key={r._id} style={listRow}>
-                   <div>
-                      <div style={{color: "#f39c12", marginBottom:"5px"}}>{[...Array(Number(r.rating) || 0)].map((_, i) => <FaStar key={i} size={12}/>)}</div>
-                      <div style={{fontSize:"14px", marginBottom: "5px"}}>
-                        <strong>{r.user?.name}</strong> <span style={{color:"#999", fontSize:"12px"}}>reviewed</span> <strong>{r.collector?.name || "Unknown"}</strong>
-                      </div>
-                      <span style={{fontSize:"13px", color:"#555", fontStyle: "italic"}}>"{r.comment}"</span>
-                   </div>
-                   <div style={{textAlign: "right"}}>
-                      <small style={muted}>{new Date(r.createdAt).toLocaleDateString()}</small>
-                   </div>
-                </div>
-              ))}
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <h3 style={{ margin: "0 0 20px 0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Platform Reviews</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {reviews.map(r => (
+                  <div key={r._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "16px", background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
+                     <div>
+                        <div style={{color: "#f39c12", marginBottom:"6px"}}>{[...Array(Number(r.rating) || 0)].map((_, i) => <FaStar key={i} size={14}/>)}</div>
+                        <div style={{fontSize:"14px", marginBottom: "6px", color: "var(--text-main)"}}>
+                          <strong>{r.user?.name}</strong> <span style={{color:"var(--text-muted)", fontSize:"12px"}}>reviewed</span> <strong>{r.collector?.name || "Unknown"}</strong>
+                        </div>
+                        <span style={{fontSize:"13px", color:"var(--text-muted)", fontStyle: "italic"}}>"{r.comment}"</span>
+                     </div>
+                     <div style={{textAlign: "right"}}>
+                        <small style={{ color: "var(--text-muted)" }}>{new Date(r.createdAt).toLocaleDateString()}</small>
+                     </div>
+                  </div>
+                ))}
+                {reviews.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No reviews yet.</div>}
+              </div>
             </div>
           )}
 
           {activeTab === "wallet" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}>
-                <h3>WALLET & TRANSACTIONS</h3>
-                <div style={{display:"flex", gap:"10px"}}>
-                   <button style={addBtn} onClick={()=>setShowWalletModal(true)}><FaPlus/> Manual Adjust</button>
-                </div>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Wallet & Transactions</h3>
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>setShowWalletModal(true)}><FaPlus/> Manual Adjust</button>
               </div>
               
-              <div style={statGrid}>
-                 <div style={{...miniStat, background: "#eef8f1"}}>
-                    <small>Available Liability</small>
-                    <div style={{fontSize:"18px", fontWeight:"bold", color:"#0b8f3a"}}>₹{walletStats.totalAvailable}</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+                 <div style={{ background: "rgba(11, 143, 58, 0.05)", border: "1px solid rgba(11, 143, 58, 0.2)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                    <small style={{ color: "var(--primary)", fontWeight: "700", textTransform: "uppercase" }}>Available Liability</small>
+                    <div style={{ fontSize: "24px", fontWeight: "900", color: "var(--primary)", marginTop: "8px" }}>₹{walletStats.totalAvailable}</div>
                  </div>
-                 <div style={{...miniStat, background: "#fff9e6"}}>
-                    <small>Pending Liability</small>
-                    <div style={{fontSize:"18px", fontWeight:"bold", color:"#f39c12"}}>₹{walletStats.totalPending}</div>
+                 <div style={{ background: "rgba(243, 156, 18, 0.05)", border: "1px solid rgba(243, 156, 18, 0.2)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                    <small style={{ color: "#f39c12", fontWeight: "700", textTransform: "uppercase" }}>Pending Liability</small>
+                    <div style={{ fontSize: "24px", fontWeight: "900", color: "#f39c12", marginTop: "8px" }}>₹{walletStats.totalPending}</div>
                  </div>
-                 <div style={{...miniStat, background: "#eef2ff"}}>
-                    <small>Total Users</small>
-                    <div style={{fontSize:"18px", fontWeight:"bold", color:"#4f46e5"}}>{walletStats.userCount}</div>
+                 <div style={{ background: "rgba(79, 70, 229, 0.05)", border: "1px solid rgba(79, 70, 229, 0.2)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                    <small style={{ color: "#4f46e5", fontWeight: "700", textTransform: "uppercase" }}>Total Users</small>
+                    <div style={{ fontSize: "24px", fontWeight: "900", color: "#4f46e5", marginTop: "8px" }}>{walletStats.userCount}</div>
                  </div>
               </div>
 
-              
-              {/* PENDING UPI DEPOSITS PANEL */}
               {transactions.filter(tx => tx.source === "deposit" && tx.status === "pending").length > 0 && (
-                <div style={{ marginBottom: "25px", border: "1px solid #ffeeba", background: "#fffdf5", padding: "20px", borderRadius: "18px" }}>
-                  <h4 style={{ margin: "0 0 15px 0", color: "#856404", fontSize: "14px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "8px" }}>
-                    ⚠️ PENDING UPI DEPOSITS REQUESTS ({transactions.filter(tx => tx.source === "deposit" && tx.status === "pending").length})
+                <div style={{ marginBottom: "24px", border: "1px solid rgba(243, 156, 18, 0.3)", background: "rgba(243, 156, 18, 0.05)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                  <h4 style={{ margin: "0 0 16px 0", color: "#b9770e", fontSize: "14px", fontWeight: "bold", display: "flex", alignItems: "center", gap: "8px" }}>
+                    ⚠️ PENDING UPI DEPOSIT REQUESTS ({transactions.filter(tx => tx.source === "deposit" && tx.status === "pending").length})
                   </h4>
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {transactions.filter(tx => tx.source === "deposit" && tx.status === "pending").map(dep => (
-                      <div key={dep._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "12px 18px", borderRadius: "12px", border: "1px solid #f1f1f1" }} className="premium-card">
+                      <div key={dep._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--card-bg)", padding: "16px", borderRadius: "var(--radius-md)", border: "1px solid var(--glass-border)" }} className="premium-card">
                         <div>
-                          <div style={{ fontWeight: "bold", fontSize: "14px", color: "#000" }}>{dep.user?.name || "Unknown User"} ({dep.user?.mobile || "N/A"})</div>
-                          <div style={{ fontSize: "12px", color: "#666", marginTop: "3px" }}>
-                            <strong>UTR/UPI Ref No:</strong> <span style={{ fontFamily: "monospace", background: "#f8f9fa", padding: "2px 6px", borderRadius: "4px", fontSize: "12px", border: "1px solid #e1e1e1", fontWeight: "bold", letterSpacing: "1px", color: "#000" }}>{dep.depositDetails?.upiRefNo || "N/A"}</span>
+                          <div style={{ fontWeight: "700", fontSize: "15px", color: "var(--text-main)" }}>{dep.user?.name || "Unknown User"} ({dep.user?.mobile || "N/A"})</div>
+                          <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>
+                            <strong>UTR/UPI Ref No:</strong> <span style={{ fontFamily: "monospace", background: "var(--bg-subtle)", padding: "2px 8px", borderRadius: "4px", border: "1px solid var(--glass-border)", color: "var(--text-main)" }}>{dep.depositDetails?.upiRefNo || "N/A"}</span>
                           </div>
-                          <div style={{ fontSize: "11px", color: "#888", marginTop: "3px" }}>Requested: {new Date(dep.createdAt).toLocaleString()}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "4px" }}>Requested: {new Date(dep.createdAt).toLocaleString()}</div>
                         </div>
-                        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                          <span style={{ fontSize: "18px", fontWeight: "bold", color: "#0b8f3a", marginRight: "10px" }}>₹{dep.amount}</span>
-                          <button 
-                            style={{ background: "#eef8f1", color: "#0b8f3a", border: "none", borderRadius: "8px", padding: "6px 14px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "5px" }} 
-                            onClick={() => handleApproveDeposit(dep._id)}
-                          >
-                            Approve ✅
-                          </button>
-                          <button 
-                            style={{ background: "#fff5f5", color: "#dc3545", border: "none", borderRadius: "8px", padding: "6px 14px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", gap: "5px" }} 
-                            onClick={() => handleRejectDeposit(dep._id)}
-                          >
-                            Reject ❌
-                          </button>
+                        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                          <span style={{ fontSize: "20px", fontWeight: "900", color: "var(--primary)", marginRight: "8px" }}>₹{dep.amount}</span>
+                          <button className="btn-secondary" style={{ background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", border: "1px solid rgba(11, 143, 58, 0.2)", padding: "8px 16px" }} onClick={() => handleApproveDeposit(dep._id)}>Approve ✅</button>
+                          <button className="btn-secondary" style={{ background: "rgba(220, 53, 69, 0.1)", color: "#dc3545", border: "1px solid rgba(220, 53, 69, 0.2)", padding: "8px 16px" }} onClick={() => handleRejectDeposit(dep._id)}>Reject ❌</button>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
               )}
-<div style={tableContainer}>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {filteredTransactions.map(tx => (
-                  <div key={tx._id} style={listRow}>
-                    <div style={{display:"flex", gap:"15px", alignItems:"center"}}>
-                       <div style={{...txIcon, background: tx.status==="paid_in_cash" ? "#fff9e6" : (tx.type==="credit"?"#eef8f1":"#fff5f5")}}>
-                          {tx.status==="paid_in_cash" ? <FaRupeeSign color="#f39c12"/> : (tx.type==="credit" ? <FaArrowUp color="#0b8f3a"/> : <FaArrowDown color="#dc3545"/>)}
+                  <div key={tx._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
+                    <div style={{display:"flex", gap:"16px", alignItems:"center"}}>
+                       <div style={{ width: "40px", height: "40px", borderRadius: "10px", display: "flex", justifyContent: "center", alignItems: "center", background: tx.status==="paid_in_cash" ? "rgba(243, 156, 18, 0.1)" : (tx.type==="credit"?"rgba(11, 143, 58, 0.1)":"rgba(220, 53, 69, 0.1)")}}>
+                          {tx.status==="paid_in_cash" ? <FaRupeeSign color="#f39c12"/> : (tx.type==="credit" ? <FaArrowUp color="var(--primary)"/> : <FaArrowDown color="#dc3545"/>)}
                        </div>
                        <div>
-                          <div style={rowTitle}>{tx.description}</div>
-                          <small style={muted}>{tx.user?.name} ({tx.user?.mobile}) • {new Date(tx.createdAt).toLocaleString()}</small>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>{tx.description}</div>
+                          <small style={{ color: "var(--text-muted)", fontSize: "12px" }}>{tx.user?.name} ({tx.user?.mobile}) • {new Date(tx.createdAt).toLocaleString()}</small>
                        </div>
                     </div>
                     <div style={{textAlign:"right"}}>
-                       <div style={{fontWeight:"bold", color: tx.status==="paid_in_cash" ? "#666" : (tx.type==="credit"?"#0b8f3a":"#dc3545")}}>
+                       <div style={{fontWeight:"900", fontSize: "16px", color: tx.status==="paid_in_cash" ? "var(--text-muted)" : (tx.type==="credit"?"var(--primary)":"#dc3545")}}>
                           {tx.status==="paid_in_cash"?"":" "}{tx.type==="credit"?"+":"-"}₹{tx.amount}
                        </div>
-                       <small style={{...statusBadge, background: tx.status==="completed"?"#eef8f1": tx.status==="paid_in_cash"?"#fff9e6":"#fff5f5", color: tx.status==="completed"?"#0b8f3a": tx.status==="paid_in_cash"?"#f39c12":"#dc3545"}}>
+                       <span className={`badge-status badge-${tx.status==="paid_in_cash"?"pending": tx.status==="completed"?"completed":"cancelled"}`}>
                           {tx.status.replace(/_/g, " ")}
-                       </small>
+                       </span>
                     </div>
                   </div>
                 ))}
@@ -1525,104 +1666,102 @@ const playBellSound = () => {
           )}
 
           {activeTab === "accounting" && (
-            <div style={box} className="premium-card no-print">
-              <div style={titleBar}>
-                <h3>VYAPAR BILLING & ACCOUNTING</h3>
+            <div className="card-premium fade-up no-print" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
+                <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)" }}>Vyapar Billing & Accounting</h3>
                 <div style={{display: "flex", gap: "10px"}}>
-                  <button style={addBtn} onClick={()=>setShowPurchaseModal(true)}><FaPlus/> Record Purchase</button>
-                  <button style={addBtn} onClick={()=>setShowSaleModal(true)}><FaPlus/> Create Sale Invoice</button>
+                  <button className="btn-secondary" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", color: "var(--text-main)", borderRadius: "var(--radius-md)" }} onClick={()=>setShowPurchaseModal(true)}><FaPlus/> Record Purchase</button>
+                  <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>setShowSaleModal(true)}><FaPlus/> Create Sale Invoice</button>
                 </div>
               </div>
-
-
               
-              <div style={statGrid}>
-                <div style={{...miniStat, background: accountingStats.overallProfit >= 0 ? "#eef8f1" : "#fff5f5", border: accountingStats.overallProfit >= 0 ? "1px solid #c3e6cb" : "1px solid #f5c6cb"}}>
-                    <small style={{color: accountingStats.overallProfit >= 0 ? "#0b8f3a" : "#dc3545", fontWeight: "600"}}>📈 ADMIN NET PROFIT</small>
-                    <div style={{fontSize:"20px", fontWeight:"800", color: accountingStats.overallProfit >= 0 ? "#155724" : "#721c24", marginTop: "5px"}}>
-                      +₹{accountingStats.overallProfit?.toFixed(2) || 0}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+                <div style={{ background: accountingStats.overallProfit >= 0 ? "rgba(11, 143, 58, 0.05)" : "rgba(220, 53, 69, 0.05)", border: accountingStats.overallProfit >= 0 ? "1px solid rgba(11, 143, 58, 0.2)" : "1px solid rgba(220, 53, 69, 0.2)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                    <small style={{color: accountingStats.overallProfit >= 0 ? "var(--primary)" : "#dc3545", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px"}}>📈 Admin Net Profit</small>
+                    <div style={{fontSize:"24px", fontWeight:"900", color: accountingStats.overallProfit >= 0 ? "var(--primary)" : "#dc3545", marginTop: "8px"}}>
+                      {accountingStats.overallProfit >= 0 ? "+" : "-"}₹{Math.abs(accountingStats.overallProfit || 0).toFixed(2)}
                     </div>
-                    <small style={{color:"#666", fontSize:"10px"}}>Total Sales - Total Purchases</small>
+                    <small style={{color:"var(--text-muted)", fontSize:"11px", marginTop: "4px", display: "block"}}>Total Sales - Total Purchases</small>
                 </div>
-                <div style={{...miniStat, background: "#e8f4f8", border: "1px solid #bee5eb"}}>
-                    <small style={{color: "#0c5460", fontWeight: "600"}}>💰 ADMIN STOCK VALUE</small>
-                    <div style={{fontSize:"20px", fontWeight:"800", color:"#0c5460", marginTop: "5px"}}>₹{accountingStats.stockValue?.toFixed(2) || 0}</div>
-                    <small style={{color:"#666", fontSize:"10px"}}>Investment in your stock</small>
+                <div style={{ background: "rgba(44, 62, 80, 0.05)", border: "1px solid rgba(44, 62, 80, 0.1)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                    <small style={{color: "#2c3e50", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px"}}>💰 Admin Stock Value</small>
+                    <div style={{fontSize:"24px", fontWeight:"900", color:"#2c3e50", marginTop: "8px"}}>₹{accountingStats.stockValue?.toFixed(2) || 0}</div>
+                    <small style={{color:"var(--text-muted)", fontSize:"11px", marginTop: "4px", display: "block"}}>Investment in your stock</small>
                 </div>
-                <div style={{...miniStat, background: "#f8f9fa", border: "1px solid #dee2e6"}}>
-                    <small style={{color: "#333", fontWeight: "600"}}>🛒 ADMIN PURCHASES</small>
-                    <div style={{fontSize:"20px", fontWeight:"800", color:"#222", marginTop: "5px"}}>₹{accountingStats.totalPurchaseAmount?.toFixed(2)}</div>
-                    <small style={{color:"#666", fontSize:"10px"}}>Your direct material buys</small>
+                <div style={{ background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                    <small style={{color: "var(--text-main)", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px"}}>🛒 Admin Purchases</small>
+                    <div style={{fontSize:"24px", fontWeight:"900", color:"var(--text-main)", marginTop: "8px"}}>₹{accountingStats.totalPurchaseAmount?.toFixed(2)}</div>
+                    <small style={{color:"var(--text-muted)", fontSize:"11px", marginTop: "4px", display: "block"}}>Your direct material buys</small>
                 </div>
-                <div style={{...miniStat, background: "#eef2ff", border: "1px solid #d1dbff"}}>
-                    <small style={{color: "#4f46e5", fontWeight: "600"}}>💵 ADMIN SALES</small>
-                    <div style={{fontSize:"20px", fontWeight:"800", color:"#1e1b4b", marginTop: "5px"}}>₹{accountingStats.totalSaleAmount?.toFixed(2)}</div>
-                    <small style={{color:"#666", fontSize:"10px"}}>Your direct revenue</small>
+                <div style={{ background: "rgba(79, 70, 229, 0.05)", border: "1px solid rgba(79, 70, 229, 0.1)", padding: "20px", borderRadius: "var(--radius-lg)" }}>
+                    <small style={{color: "#4f46e5", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.5px"}}>💵 Admin Sales</small>
+                    <div style={{fontSize:"24px", fontWeight:"900", color:"#4f46e5", marginTop: "8px"}}>₹{accountingStats.totalSaleAmount?.toFixed(2)}</div>
+                    <small style={{color:"var(--text-muted)", fontSize:"11px", marginTop: "4px", display: "block"}}>Your direct revenue</small>
                 </div>
               </div>
 
-              <h4 style={{marginTop: "30px"}}>Live Inventory</h4>
-              <div style={{...tableContainer, maxHeight: "250px", marginBottom: "30px"}}>
+              <h4 style={{ margin: "0 0 16px 0", fontSize: "16px", color: "var(--text-main)" }}>Live Inventory</h4>
+              <div style={{ maxHeight: "300px", overflowY: "auto", border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", marginBottom: "32px", padding: "16px", background: "var(--bg-subtle)" }}>
                  {filteredInventory.map(inv => (
-                   <div key={inv._id} style={listRow}>
-                      <div style={{display:"flex", gap:"15px", alignItems:"center"}}>
-                         <img src={inv.scrapItem?.image || "https://via.placeholder.com/40"} style={{width:"40px", height:"40px", borderRadius:"8px", objectFit:"cover"}} alt=""/>
+                   <div key={inv._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", borderBottom: "1px solid var(--glass-border)" }}>
+                      <div style={{display:"flex", gap:"16px", alignItems:"center"}}>
+                         <img src={inv.scrapItem?.image || "https://via.placeholder.com/48"} style={{width:"48px", height:"48px", borderRadius:"12px", objectFit:"cover"}} alt=""/>
                          <div>
-                            <div style={rowTitle}>{inv.scrapItem?.name} <span style={muted}>({inv.scrapItem?.category})</span></div>
-                            <small style={muted}>Bought: {inv.totalBoughtQuantity} {inv.scrapItem?.unit} | Sold: {inv.totalSoldQuantity} {inv.scrapItem?.unit}</small>
+                            <div style={{ fontWeight: "700", fontSize: "15px", color: "var(--text-main)", marginBottom: "4px" }}>{inv.scrapItem?.name} <span style={{ color: "var(--text-muted)", fontWeight: "normal", fontSize: "13px" }}>({inv.scrapItem?.category})</span></div>
+                            <small style={{ color: "var(--text-muted)" }}>Bought: {inv.totalBoughtQuantity} {inv.scrapItem?.unit} | Sold: {inv.totalSoldQuantity} {inv.scrapItem?.unit}</small>
                          </div>
                       </div>
                       <div style={{textAlign:"right"}}>
-                         <div style={{fontSize: "16px", fontWeight: "bold", color: inv.quantityAvailable > 0 ? "#0b8f3a" : "#dc3545"}}>
-                           {inv.quantityAvailable} {inv.scrapItem?.unit}
+                         <div style={{fontSize: "18px", fontWeight: "900", color: inv.quantityAvailable > 0 ? "var(--primary)" : "#dc3545"}}>
+                           {inv.quantityAvailable} <span style={{ fontSize: "14px", fontWeight: "normal" }}>{inv.scrapItem?.unit}</span>
                          </div>
-                         <small style={muted}>Available in Stock</small>
+                         <small style={{ color: "var(--text-muted)", fontSize: "11px", textTransform: "uppercase" }}>Available in Stock</small>
                       </div>
                    </div>
                  ))}
-                 {inventory.length === 0 && <p style={muted}>No inventory data yet.</p>}
+                 {inventory.length === 0 && <p className="empty-state" style={{ textAlign: "center", color: "var(--text-muted)" }}>No inventory data yet.</p>}
               </div>
 
-              <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px"}}>
-                <div>
-                  <h4>Recent Purchases (Kharida)</h4>
-                  <div style={tableContainer}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "24px" }}>
+                <div style={{ border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", padding: "20px", background: "var(--bg-main)" }}>
+                  <h4 style={{ margin: "0 0 16px 0", fontSize: "16px", color: "var(--text-main)" }}>Recent Purchases (Kharida)</h4>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                      {filteredPurchases.map(p => (
-                       <div key={p._id} style={{...listRow, cursor: "pointer"}} onClick={() => openPurchaseBillModal(p)}>
-                          <div style={{flex: 1}}>
-                             <div style={rowTitle}>{p.supplierName} <span style={muted}>({p.supplierContact})</span></div>
-                             <small style={muted}>{new Date(p.createdAt).toLocaleDateString()} | Items: {p.items.length} | {p.paymentMethod}</small>
+                       <div key={p._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "16px", background: "var(--card-bg)", borderRadius: "var(--radius-md)", border: "1px solid var(--glass-border)", cursor: "pointer", transition: "0.2s" }} onClick={() => openPurchaseBillModal(p)}>
+                          <div>
+                             <div style={{ fontWeight: "700", color: "var(--text-main)", marginBottom: "4px" }}>{p.supplierName}</div>
+                             <small style={{ color: "var(--text-muted)" }}>{p.supplierContact} • {new Date(p.createdAt).toLocaleDateString()} • Items: {p.items.length}</small>
                           </div>
-                          <div style={{textAlign:"right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px"}}>
-                             <div style={{fontWeight:"bold", color:"#dc3545"}}>-₹{p.totalAmount}</div>
-                             <small style={{...statusBadge, background: p.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: p.paymentStatus==="Paid"?"#0b8f3a":"#f39c12"}}>{p.paymentStatus}</small>
-                             <div style={{display: "flex", gap: "5px"}}>
-                               <button style={{...smBtn, fontSize: "10px", padding: "3px 7px", background: "#0b8f3a", color: "#fff"}} onClick={(e) => { e.stopPropagation(); openPurchaseBillModal(p); }}>📄 View Bill</button>
-                               <button style={{...smBtn, fontSize: "10px", padding: "3px 7px", background: "#ff9800", color: "#fff"}} onClick={(e) => { e.stopPropagation(); openEditPurchase(p); }}>✏️ Edit</button>
+                          <div style={{textAlign:"right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px"}}>
+                             <div style={{fontWeight:"900", color:"#dc3545", fontSize: "16px"}}>-₹{p.totalAmount}</div>
+                             <span className={`badge-status badge-${p.paymentStatus.toLowerCase()}`}>{p.paymentStatus}</span>
+                             <div style={{display: "flex", gap: "6px"}}>
+                               <button className="btn-secondary" style={{ padding: "4px 8px", fontSize: "11px" }} onClick={(e) => { e.stopPropagation(); openPurchaseBillModal(p); }}>📄 Bill</button>
+                               <button className="btn-secondary" style={{ padding: "4px 8px", fontSize: "11px" }} onClick={(e) => { e.stopPropagation(); openEditPurchase(p); }}>✏️ Edit</button>
                              </div>
                           </div>
                        </div>
                      ))}
-                     {purchases.length === 0 && <p style={muted}>No manual purchases yet.</p>}
+                     {purchases.length === 0 && <p className="empty-state" style={{ textAlign: "center", color: "var(--text-muted)" }}>No manual purchases yet.</p>}
                   </div>
                 </div>
                 
-                <div>
-                  <h4>Sales & Invoices</h4>
-                  <div style={tableContainer}>
+                <div style={{ border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", padding: "20px", background: "var(--bg-main)" }}>
+                  <h4 style={{ margin: "0 0 16px 0", fontSize: "16px", color: "var(--text-main)" }}>Sales & Invoices</h4>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                      {filteredSales.map(sale => (
-                       <div key={sale._id} style={listRow}>
+                       <div key={sale._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "16px", background: "var(--card-bg)", borderRadius: "var(--radius-md)", border: "1px solid var(--glass-border)" }}>
                           <div>
-                             <div style={rowTitle}>{sale.buyerName} <span style={muted}>({sale.buyerContact})</span></div>
-                             <small style={muted}>{new Date(sale.createdAt).toLocaleDateString()} | {sale.invoiceNumber || "INV"}</small>
+                             <div style={{ fontWeight: "700", color: "var(--text-main)", marginBottom: "4px" }}>{sale.buyerName}</div>
+                             <small style={{ color: "var(--text-muted)" }}>{sale.buyerContact} • {new Date(sale.createdAt).toLocaleDateString()} • {sale.invoiceNumber || "INV"}</small>
                           </div>
-                          <div style={{textAlign:"right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px"}}>
-                             <div style={{fontWeight:"bold", color:"#0b8f3a"}}>+₹{sale.totalAmount}</div>
-                             <button style={{...smBtn, fontSize: "10px", padding: "4px 8px"}} onClick={() => { setSelectedInvoice(sale); setShowInvoiceModal(true); }}>View Invoice</button>
+                          <div style={{textAlign:"right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px"}}>
+                             <div style={{fontWeight:"900", color:"var(--primary)", fontSize: "16px"}}>+₹{sale.totalAmount}</div>
+                             <button className="btn-secondary" style={{ padding: "4px 12px", fontSize: "11px" }} onClick={() => { setSelectedInvoice(sale); setShowInvoiceModal(true); }}>View Invoice</button>
                           </div>
                        </div>
                      ))}
-                     {sales.length === 0 && <p style={muted}>No sales recorded yet.</p>}
+                     {sales.length === 0 && <p className="empty-state" style={{ textAlign: "center", color: "var(--text-muted)" }}>No sales recorded yet.</p>}
                   </div>
                 </div>
               </div>
@@ -1631,76 +1770,128 @@ const playBellSound = () => {
 
 
           {activeTab === "withdrawals" && (
-            <div style={box} className="premium-card">
-              <h3>PAYOUT REQUESTS</h3>
-              <div style={tableContainer}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <h3 style={{ margin: "0 0 20px 0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Payout Requests</h3>
+              <div className="desktop-only">
+                <table className="data-table" style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid var(--glass-border)", color: "var(--text-muted)", fontSize: "13px" }}>
+                      <th style={{ padding: "12px 8px" }}>User Details</th>
+                      <th style={{ padding: "12px 8px" }}>Bank / UPI</th>
+                      <th style={{ padding: "12px 8px" }}>Status / Amount</th>
+                      <th style={{ padding: "12px 8px", textAlign: "right" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredWithdrawals.map(w => (
+                      <tr key={w._id} style={{ borderBottom: "1px solid var(--glass-border)" }}>
+                        <td style={{ padding: "12px 8px" }}>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px" }}>{w.user?.name}</div>
+                          <div style={{ color: "var(--text-muted)", fontSize: "12px" }}>{w.user?.mobile} • {new Date(w.createdAt).toLocaleDateString()}</div>
+                        </td>
+                        <td style={{ padding: "12px 8px", fontSize: "13px" }}>
+                          {w.bankDetails ? (
+                            <div>
+                              <strong>UPI:</strong> {w.bankDetails.upiId} <br/>
+                              <strong>Name:</strong> {w.bankDetails.accountName}
+                            </div>
+                          ) : <span style={{ color: "var(--text-muted)" }}>N/A</span>}
+                        </td>
+                        <td style={{ padding: "12px 8px" }}>
+                          <div style={{ fontWeight: "900", color: "var(--primary)", fontSize: "16px" }}>₹{w.amount}</div>
+                          <span className={`badge-status badge-${w.status.toLowerCase()}`}>{w.status}</span>
+                        </td>
+                        <td style={{ padding: "12px 8px", textAlign: "right" }}>
+                          {w.status === "Pending" && (
+                            <div style={{display: "flex", gap: "8px", justifyContent: "flex-end"}}>
+                              <button className="btn-secondary" style={{ background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", border: "1px solid rgba(11, 143, 58, 0.2)", padding: "6px 12px" }} onClick={() => {
+                                const tid = prompt("Enter Bank Payment Reference / UTR:");
+                                if (tid) API.put(`/withdrawals/${w._id}`, { status: "Completed", transactionId: tid }).then(() => {
+                                  showToast("success", "Withdrawal Approved & Processed! ✅");
+                                  fetchWithdrawals();
+                                });
+                              }}>Approve ✅</button>
+                              <button className="btn-secondary" style={{ background: "rgba(220, 53, 69, 0.1)", color: "#dc3545", border: "1px solid rgba(220, 53, 69, 0.2)", padding: "6px 12px" }} onClick={() => {
+                                const reason = prompt("Enter Rejection Reason (this will be sent on WhatsApp):");
+                                if (reason) API.put(`/withdrawals/${w._id}`, { status: "Rejected", adminNote: reason }).then(() => {
+                                  showToast("success", "Withdrawal Rejected & Refunded! ❌");
+                                  fetchWithdrawals();
+                                });
+                              }}>Reject ❌</button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mobile-only" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {filteredWithdrawals.map(w => (
-                  <div key={w._id} style={listRow}>
-                    <div>
-                      <div style={rowTitle}>₹{w.amount}</div>
-                      <small style={muted}>{w.user?.name} ({w.user?.mobile})</small>
-                      {w.bankDetails && (
-                        <div style={{background:"#f8f9fa", padding:"5px 10px", borderRadius:"6px", marginTop:"5px", fontSize:"11px"}}>
-                          <strong>UPI:</strong> {w.bankDetails.upiId} <br/>
-                          <strong>Name:</strong> {w.bankDetails.accountName}
-                        </div>
-                      )}
-                      <small style={muted}>{new Date(w.createdAt).toLocaleString()}</small>
+                  <div key={w._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", border: "1px solid var(--glass-border)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                      <div>
+                        <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>₹{w.amount}</div>
+                        <div style={{ color: "var(--text-muted)", fontSize: "13px" }}>{w.user?.name} ({w.user?.mobile})</div>
+                      </div>
+                      <span className={`badge-status badge-${w.status.toLowerCase()}`}>{w.status}</span>
                     </div>
-                    <div style={{textAlign: "right"}}>
-                      {w.status === "Pending" && (
-                        <div style={{display: "flex", gap: "8px", marginTop: "8px", justifyContent: "flex-end"}}>
-                          <button style={{ ...smBtn, background: "#0b8f3a" }} onClick={() => {
-                            const tid = prompt("Enter Bank Payment Reference / UTR:");
-                            if (tid) API.put(`/withdrawals/${w._id}`, { status: "Completed", transactionId: tid }).then(() => {
-                              showToast("success", "Withdrawal Approved & Processed! ✅");
-                              fetchWithdrawals();
-                            });
-                          }}>
-                            Approve ✅
-                          </button>
-                          <button style={{ ...smBtn, background: "#dc2626" }} onClick={() => {
-                            const reason = prompt("Enter Rejection Reason (this will be sent on WhatsApp):");
-                            if (reason) API.put(`/withdrawals/${w._id}`, { status: "Rejected", adminNote: reason }).then(() => {
-                              showToast("success", "Withdrawal Rejected & Refunded! ❌");
-                              fetchWithdrawals();
-                            });
-                          }}>
-                            Reject ❌
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    {w.bankDetails && (
+                      <div style={{ background: "rgba(44, 62, 80, 0.05)", padding: "8px 12px", borderRadius: "var(--radius-md)", margin: "8px 0", fontSize: "12px", border: "1px solid rgba(44, 62, 80, 0.1)" }}>
+                        <strong>UPI:</strong> {w.bankDetails.upiId} <br/>
+                        <strong>Name:</strong> {w.bankDetails.accountName}
+                      </div>
+                    )}
+                    <small style={{ color: "var(--text-muted)", display: "block", marginBottom: "12px" }}>{new Date(w.createdAt).toLocaleString()}</small>
+                    {w.status === "Pending" && (
+                      <div style={{display: "flex", gap: "8px"}}>
+                        <button className="btn-secondary" style={{ flex: 1, background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", border: "1px solid rgba(11, 143, 58, 0.2)", padding: "8px" }} onClick={() => {
+                          const tid = prompt("Enter Bank Payment Reference / UTR:");
+                          if (tid) API.put(`/withdrawals/${w._id}`, { status: "Completed", transactionId: tid }).then(() => {
+                            showToast("success", "Withdrawal Approved! ✅");
+                            fetchWithdrawals();
+                          });
+                        }}>Approve</button>
+                        <button className="btn-secondary" style={{ flex: 1, background: "rgba(220, 53, 69, 0.1)", color: "#dc3545", border: "1px solid rgba(220, 53, 69, 0.2)", padding: "8px" }} onClick={() => {
+                          const reason = prompt("Enter Rejection Reason:");
+                          if (reason) API.put(`/withdrawals/${w._id}`, { status: "Rejected", adminNote: reason }).then(() => {
+                            showToast("success", "Withdrawal Rejected! ❌");
+                            fetchWithdrawals();
+                          });
+                        }}>Reject</button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
+              {filteredWithdrawals.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No payout requests.</div>}
             </div>
           )}
 
 
           {activeTab === "support" && (
-            <div style={box} className="premium-card">
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
               {!selectedTicket ? (
                 <>
-                  <h3 style={{ margin: "0 0 20px 0", color: "var(--text-main)", fontSize: "18px", fontWeight: "bold" }}>Global Support Tickets</h3>
-                  <div style={tableContainer}>
+                  <h3 style={{ margin: "0 0 20px 0", color: "var(--text-main)", fontSize: "18px", fontWeight: "bold", textTransform: "uppercase" }}>Global Support Tickets</h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {filteredTickets.map(t => (
-                      <div key={t._id} style={{ ...listRow, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div key={t._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)", padding: "16px" }}>
                         <div>
-                          <div style={{ ...rowTitle, fontSize: "15px", color: "var(--text-main)" }}>{t.subject}</div>
-                          <small style={muted}>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px", marginBottom: "4px" }}>{t.subject}</div>
+                          <small style={{ color: "var(--text-muted)", fontSize: "13px" }}>
                             By: <strong>{t.user?.name}</strong> ({t.user?.mobile}) • Cat: <strong>{t.category}</strong> • {new Date(t.createdAt).toLocaleDateString()}
                           </small>
                         </div>
-                        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                           <span style={{ fontSize: "11px", fontWeight: "bold", padding: "4px 10px", borderRadius: "20px", background: t.status === "open" ? "rgba(11, 143, 58, 0.1)" : t.status === "resolved" ? "rgba(66, 133, 244, 0.1)" : "rgba(243, 156, 18, 0.1)", color: t.status === "open" ? "#0b8f3a" : t.status === "resolved" ? "#4285f4" : "#f39c12" }}>
                             {t.status}
                           </span>
-                          <button style={smBtn} onClick={() => setSelectedTicket(t)}>View & Reply</button>
+                          <button className="btn-secondary" style={{ padding: "6px 12px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => setSelectedTicket(t)}>View & Reply</button>
                         </div>
                       </div>
                     ))}
-                    {tickets.length === 0 && <p style={muted}>No support tickets found.</p>}
+                    {tickets.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No support tickets found.</div>}
                   </div>
                 </>
               ) : (
@@ -1796,94 +1987,106 @@ const playBellSound = () => {
           )}
 
           {activeTab === "broadcasts" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}><h3>PUSH BROADCASTS</h3> <button style={addBtn} onClick={() => {
-                const title = prompt("Broadcast Title:");
-                const message = prompt("Message Content:");
-                const target = prompt("Target (Users/Collectors/Franchises):");
-                if(title && message) API.post("/broadcasts", { title, message, target }).then(()=>fetchBroadcasts());
-              }}><FaPlus/></button></div>
-              <div style={tableContainer}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Push Broadcasts</h3> 
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={() => {
+                  const title = prompt("Broadcast Title:");
+                  const message = prompt("Message Content:");
+                  const target = prompt("Target (Users/Collectors/Franchises):");
+                  if(title && message) API.post("/broadcasts", { title, message, target }).then(()=>fetchBroadcasts());
+                }}><FaPlus/> New Broadcast</button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {broadcasts.map(b => (
-                  <div key={b._id} style={listRow}>
+                  <div key={b._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
                     <div>
-                      <div style={rowTitle}>{b.title}</div>
-                      <small style={muted}>To: {b.target} • {new Date(b.createdAt).toLocaleDateString()}</small>
+                      <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px", marginBottom: "4px" }}>{b.title}</div>
+                      <small style={{ color: "var(--text-muted)" }}>Target: <span style={{ fontWeight: "bold", color: "var(--primary)" }}>{b.target}</span> • {new Date(b.createdAt).toLocaleDateString()}</small>
                     </div>
                   </div>
                 ))}
+                {broadcasts.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No broadcasts sent yet.</div>}
               </div>
             </div>
           )}
 
           {activeTab === "audit" && (
-            <div style={box} className="premium-card">
-              <h3>SYSTEM AUDIT LOGS</h3>
-              <div style={tableContainer}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <h3 style={{ margin: "0 0 20px 0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>System Audit Logs</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {auditLogs.map(l => (
-                  <div key={l._id} style={listRow}>
+                  <div key={l._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
                     <div>
-                      <div style={rowTitle}>{l.action}</div>
-                      <small style={muted}>{l.module} • By: {l.performedBy?.name} • {new Date(l.createdAt).toLocaleString()}</small>
+                      <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px", marginBottom: "4px" }}>{l.action}</div>
+                      <small style={{ color: "var(--text-muted)", fontSize: "12px" }}><span style={{ color: "var(--primary)", fontWeight: "bold" }}>{l.module}</span> • By: {l.performedBy?.name} • {new Date(l.createdAt).toLocaleString()}</small>
                     </div>
-                    <div style={{fontSize: "10px", color: "#999"}}>{l.ipAddress}</div>
+                    <div style={{ fontSize: "11px", color: "var(--text-muted)", background: "rgba(44, 62, 80, 0.05)", padding: "4px 8px", borderRadius: "6px" }}>{l.ipAddress}</div>
                   </div>
                 ))}
+                {auditLogs.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No logs recorded.</div>}
               </div>
             </div>
           )}
 
           {activeTab === "buyers" && (
-            <div style={box} className="premium-card">
-               <div style={titleBar}><h3>MANAGED BUYERS</h3> <button style={addBtn} onClick={()=>{setNewBuyer({ name: "", contact: "", email: "", address: "", gstin: "", pan: "" }); setShowBuyerModal(true);}}><FaPlus/></button></div>
-               <div style={tableContainer}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                 <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Managed Buyers</h3> 
+                 <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>{setNewBuyer({ name: "", contact: "", email: "", address: "", gstin: "", pan: "" }); setShowBuyerModal(true);}}><FaPlus/> Add Buyer</button>
+               </div>
+               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
                   {buyers.map(b => (
-                    <div key={b._id} style={listRow}>
+                    <div key={b._id} style={{ background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                        <div>
-                          <div style={rowTitle}>{b.name}</div>
-                          <small style={muted}>{b.contact} • {b.gstin || "No GST"}</small>
+                          <div style={{ fontSize: "15px", fontWeight: "700", color: "var(--text-main)", marginBottom: "4px" }}>{b.name}</div>
+                          <small style={{ color: "var(--text-muted)" }}>{b.contact} • {b.gstin || "No GST"}</small>
                        </div>
-                       <div style={{display:"flex", gap:"10px"}}>
-                          <button style={smBtn} onClick={()=>{setNewBuyer(b); setShowBuyerModal(true);}}><FaTools/></button>
-                          <button style={smDelBtn} onClick={()=>handleDeleteItem(b._id, "buyer")}><FaTrash/></button>
+                       <div style={{display:"flex", gap:"8px"}}>
+                          <button className="btn-secondary" style={{ padding: "6px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={()=>{setNewBuyer(b); setShowBuyerModal(true);}}><FaTools size={12}/></button>
+                          <button className="btn-danger" style={{ padding: "6px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={()=>handleDeleteItem(b._id, "buyer")}><FaTrash size={12}/></button>
                        </div>
                     </div>
                   ))}
-                  {buyers.length === 0 && <p style={muted}>No buyers registered.</p>}
                </div>
+               {buyers.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No buyers registered.</div>}
             </div>
           )}
 
           {activeTab === "suppliers" && (
-            <div style={box} className="premium-card">
-               <div style={titleBar}><h3>MANAGED SELLERS (SUPPLIERS)</h3> <button style={addBtn} onClick={()=>{setNewSupplier({ name: "", contact: "", address: "", gstin: "", category: "Individual" }); setShowSupplierModal(true);}}><FaPlus/></button></div>
-               <div style={tableContainer}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                 <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Managed Sellers (Suppliers)</h3> 
+                 <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>{setNewSupplier({ name: "", contact: "", address: "", gstin: "", category: "Individual" }); setShowSupplierModal(true);}}><FaPlus/> Add Seller</button>
+               </div>
+               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
                   {suppliers.map(s => (
-                    <div key={s._id} style={listRow}>
+                    <div key={s._id} style={{ background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                        <div>
-                          <div style={rowTitle}>{s.name}</div>
-                          <small style={muted}>{s.contact} • {s.category}</small>
+                          <div style={{ fontSize: "15px", fontWeight: "700", color: "var(--text-main)", marginBottom: "4px" }}>{s.name}</div>
+                          <span style={{ display: "inline-block", background: "rgba(44, 62, 80, 0.1)", color: "#2c3e50", fontSize: "10px", fontWeight: "bold", padding: "4px 8px", borderRadius: "6px", marginBottom: "4px", textTransform: "uppercase" }}>{s.category}</span>
+                          <small style={{ color: "var(--text-muted)", display: "block" }}>{s.contact}</small>
                        </div>
-                       <div style={{display:"flex", gap:"10px"}}>
-                          <button style={smBtn} onClick={()=>{setNewSupplier(s); setShowSupplierModal(true);}}><FaTools/></button>
-                          <button style={smDelBtn} onClick={()=>handleDeleteItem(s._id, "supplier")}><FaTrash/></button>
+                       <div style={{display:"flex", gap:"8px"}}>
+                          <button className="btn-secondary" style={{ padding: "6px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={()=>{setNewSupplier(s); setShowSupplierModal(true);}}><FaTools size={12}/></button>
+                          <button className="btn-danger" style={{ padding: "6px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={()=>handleDeleteItem(s._id, "supplier")}><FaTrash size={12}/></button>
                        </div>
                     </div>
                   ))}
-                  {suppliers.length === 0 && <p style={muted}>No sellers registered.</p>}
                </div>
+               {suppliers.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No sellers registered.</div>}
             </div>
           )}
 
           {activeTab === "contacts" && (
-            <div style={box} className="premium-card">
-              <h3 style={{ margin: "0 0 20px 0", color: "var(--text-main)", fontSize: "18px", fontWeight: "bold" }}>Guest Inquiries (Contact Us Messages)</h3>
-              <div style={tableContainer}>
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <h3 style={{ margin: "0 0 20px 0", color: "var(--text-main)", fontSize: "18px", fontWeight: "bold", textTransform: "uppercase" }}>Guest Inquiries (Contact Us Messages)</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {contacts.map(c => (
-                  <div key={c._id} style={{ ...listRow, display: "flex", flexDirection: "column", gap: "10px", padding: "20px" }}>
+                  <div key={c._id} style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "20px", background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "10px" }}>
                       <div>
-                        <div style={{ ...rowTitle, fontSize: "16px", color: "var(--text-main)" }}>{c.subject}</div>
+                        <div style={{ fontWeight: "700", fontSize: "16px", color: "var(--text-main)", marginBottom: "4px" }}>{c.subject}</div>
                         <small style={{ color: "var(--text-muted)" }}>
                           From: <strong>{c.name}</strong> • Email: <a href={`mailto:${c.email}`} style={{ color: "var(--primary)" }}>{c.email}</a> • Phone: <a href={`tel:${c.phone}`} style={{ color: "var(--primary)" }}>{c.phone}</a>
                         </small>
@@ -1913,7 +2116,7 @@ const playBellSound = () => {
                     </small>
                   </div>
                 ))}
-                {contacts.length === 0 && <p style={muted}>No inquiries found.</p>}
+                {contacts.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No inquiries found.</div>}
               </div>
             </div>
           )}
@@ -1923,14 +2126,12 @@ const playBellSound = () => {
               <WhatsAppGatewayPanel />
             </div>
           )}
-        </div>
-      </div>
 
-      {/* ═══════════════ REPORTS TAB ═══════════════ */}
-      {activeTab === "reports" && (
-        <div style={box} className="premium-card">
-          <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"20px", flexWrap:"wrap", gap:"10px"}}>
-            <h3 style={{margin:0}}>📊 Reports & Analytics</h3>
+          {/* ═══════════════ REPORTS TAB ═══════════════ */}
+          {activeTab === "reports" && (
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"20px", flexWrap:"wrap", gap:"10px"}}>
+                <h3 style={{margin:0, fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase"}}>📊 Reports & Analytics</h3>
             <button style={{...addBtn, background:"#16a34a", display:"flex", alignItems:"center", gap:"6px"}} onClick={downloadCSV}>
               ⬇️ Download CSV
             </button>
@@ -2265,8 +2466,10 @@ const playBellSound = () => {
 
             </div>
           )}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* MODALS (Enhanced styling) */}
 
@@ -3025,11 +3228,11 @@ const playBellSound = () => {
       )}
 
       {/* MOBILE BOTTOM NAV */}
-      <div style={bottomNavStyle} className="mobile-only">
-        <BottomLink icon={<FaInfoCircle size={22}/>} text="Home" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
-        <BottomLink icon={<FaTruck size={22}/>} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
-        <BottomLink icon={<FaWallet size={22}/>} text="Wallet" active={activeTab === "wallet"} onClick={() => {setActiveTab("wallet"); fetchAllTransactions();}} />
-        <BottomLink icon={<FaBars size={22}/>} text="Menu" active={false} onClick={() => setIsMobileMenuOpen(true)} />
+      <div style={{...bottomNavStyle, height: "60px", padding: "0 10px", alignItems: "center", paddingBottom: "env(safe-area-inset-bottom, 10px)"}} className="mobile-only">
+        <BottomLink icon={<FaInfoCircle size={20}/>} text="Overview" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
+        <BottomLink icon={<FaTruck size={20}/>} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
+        <BottomLink icon={<FaWallet size={20}/>} text="Wallet" active={activeTab === "wallet"} onClick={() => {setActiveTab("wallet"); fetchAllTransactions();}} />
+        <BottomLink icon={<FaBars size={20}/>} text="More" active={false} onClick={() => setIsMobileMenuOpen(true)} />
       </div>
 
     </div>

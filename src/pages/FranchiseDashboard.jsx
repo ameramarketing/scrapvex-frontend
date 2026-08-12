@@ -789,7 +789,7 @@ const playBellSound = () => {
   if (loading) return <div style={loaderStyle}><FaRecycle className="spin" style={{fontSize: "45px", color: "var(--primary)"}} /></div>;
 
   const NavContent = () => (
-    <>
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <NavItem active={activeTab === "overview"} icon={<FaInfoCircle />} text="Overview" onClick={() => { setActiveTab("overview"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "pickups"} icon={<FaTruck />} text="Pickups" onClick={() => { setActiveTab("pickups"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "accounting"} icon={<FaChartLine />} text="Accounting" onClick={() => { setActiveTab("accounting"); fetchAccountingData(); setIsMobileMenuOpen(false); }} />
@@ -798,11 +798,10 @@ const playBellSound = () => {
       <NavItem active={activeTab === "rates"} icon={<FaTag />} text="Scrap Rates" onClick={() => { setActiveTab("rates"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "collectors"} icon={<FaTools />} text="Collectors" onClick={() => { setActiveTab("collectors"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "wallet"} icon={<FaWallet />} text="Wallet" onClick={() => { setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions(); setIsMobileMenuOpen(false); }} />
-
       <NavItem active={activeTab === "support"} icon={<FaTicketAlt />} text="Support" onClick={() => { setActiveTab("support"); fetchTickets(); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "reviews"} icon={<FaStar />} text="Reviews" onClick={() => { setActiveTab("reviews"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "dist-settings"} icon={<FaCog />} text="City Settings" onClick={() => { setActiveTab("dist-settings"); fetchDistSettings(); setIsMobileMenuOpen(false); }} />
-    </>
+    </div>
   );
 
   return (
@@ -925,50 +924,200 @@ const playBellSound = () => {
           )}
 
           {activeTab === "overview" && (
-            <>
-              <div style={statGrid}>
-                <StatCard icon={<FaTruck />} title="Local Pickups" value={stats.totalPickups} grad="linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%)" />
-                <StatCard icon={<FaChartLine />} title="Sales Amount" value={`₹${accountingStats.totalSaleAmount}`} grad="linear-gradient(135deg, #e67e22 0%, #d35400 100%)" />
-                <StatCard icon={<FaRupeeSign />} title="Net Profit" value={`₹${accountingStats.overallProfit}`} grad="linear-gradient(135deg, #0b8f3a 0%, #000 100%)" />
-                <StatCard icon={<FaWallet />} title="Wallet Balance" value={`₹${walletStats.totalAvailable}`} grad="linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)" />
+            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              <div style={{ padding: "20px 24px 0 24px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", letterSpacing: "-0.03em", margin: 0 }}>Franchise Operations</h2>
+                <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: "4px 0 0 0" }}>Daily overview of your scrap operations</p>
               </div>
-              <div style={mainGrid} className="responsive-flex">
-                <div style={{ ...box, flex: 2 }} className="premium-card">
-                  <h3 style={boxTitle}>Recent Pickup Requests</h3>
+
+              {/* Row 1 KPI Cards */}
+              <div className="grid-4" style={{ padding: "0 24px" }}>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--primary-light)", color: "var(--primary)" }}><FaTruck /></div>
+                  <div><div className="kpi-label">Local Pickups</div><div className="kpi-value">{stats.totalPickups}</div></div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--warning-light)", color: "var(--warning)" }}><FaClock /></div>
+                  <div><div className="kpi-label">Pending Pickups</div><div className="kpi-value">{stats.pending || 0}</div></div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--success-light)", color: "var(--success)" }}><FaCheckCircle /></div>
+                  <div><div className="kpi-label">Completed Pickups</div><div className="kpi-value">{stats.completed || 0}</div></div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--info-light)", color: "var(--info)" }}><FaChartLine /></div>
+                  <div><div className="kpi-label">Sales Amount</div><div className="kpi-value">₹{accountingStats.totalSaleAmount}</div></div>
+                </div>
+              </div>
+
+              {/* Row 2 KPI Cards */}
+              <div className="grid-4" style={{ padding: "0 24px" }}>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--info-light)", color: "var(--info)" }}><FaClipboardList /></div>
+                  <div><div className="kpi-label">Inventory Value</div><div className="kpi-value">₹{accountingStats.stockValue?.toFixed(2) || 0}</div></div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--primary-light)", color: "var(--primary)" }}><FaWallet /></div>
+                  <div><div className="kpi-label">Wallet Balance</div><div className="kpi-value">₹{walletStats.totalAvailable}</div></div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--success-light)", color: "var(--success)" }}><FaUsers /></div>
+                  <div><div className="kpi-label">Active Collectors</div><div className="kpi-value">{collectors.length}</div></div>
+                </div>
+                <div className="kpi-card">
+                  <div className="kpi-icon" style={{ background: "var(--warning-light)", color: "var(--warning)" }}><FaRupeeSign /></div>
+                  <div><div className="kpi-label">Net Profit</div><div className="kpi-value">₹{accountingStats.overallProfit}</div></div>
+                </div>
+              </div>
+
+              <div className="grid-2 responsive-flex" style={{ padding: "0 24px" }}>
+                {/* Recent Pickups */}
+                <div className="card-premium" style={{ flex: 2 }}>
+                  <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Pickup Requests</h3>
                   {filteredPickups.slice(0, 5).map(p => (
-                    <div key={p._id} style={listRow}>
-                      <span>{p.scrapType} • <span style={{ color: "#666" }}>{p.name}</span></span>
-                      <StatusBadge status={p.status} />
+                    <div key={p._id} style={{
+                      background: "var(--bg-subtle)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)",
+                      padding: "16px 18px", marginBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"
+                    }}>
+                      <div>
+                        <div style={{ fontWeight: "700", fontSize: "14px", color: "var(--text-main)" }}>{p.name} <span style={{ color: "var(--text-muted)", fontSize: "12px", fontWeight: "normal" }}>({p.scrapType})</span></div>
+                        <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>📍 {p.address}</div>
+                      </div>
+                      <span className={`badge-status badge-${p.status.toLowerCase()}`}>{p.status}</span>
                     </div>
                   ))}
-                  {pickups.length === 0 && <p style={muted}>No requests yet.</p>}
+                  {pickups.length === 0 && (
+                    <div className="empty-state">
+                      <div className="empty-state-icon">🚚</div>
+                      <h3>No Recent Pickups</h3>
+                      <p>Pickup requests will appear here.</p>
+                    </div>
+                  )}
                 </div>
-                <div style={{ ...box, flex: 1 }} className="premium-card">
-                  <h3 style={boxTitle}>Power Actions</h3>
-                  <div style={btnStack}>
-                    <QuickAction icon={<FaPlus />} text="New Collector" onClick={() => setShowCollectorModal(true)} />
-                    <QuickAction icon={<FaTag />} text="Scrap Rates" onClick={() => setActiveTab("rates")} />
-                    <QuickAction icon={<FaChartLine />} text="Accounting" onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }} />
-                    <QuickAction icon={<FaCog />} text="City Settings" onClick={() => { setActiveTab("dist-settings"); fetchDistSettings(); }} />
+
+                {/* Quick Actions */}
+                <div className="card-premium" style={{ flex: 1 }}>
+                  <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Quick Actions</h3>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "12px" }}>
+                    <button className="btn-secondary" style={{ width: "100%", justifyContent: "flex-start", padding: "12px 16px" }} onClick={() => { setActiveTab("accounting"); setShowPurchaseModal(true); }}><FaPlus /> Record Purchase</button>
+                    <button className="btn-secondary" style={{ width: "100%", justifyContent: "flex-start", padding: "12px 16px" }} onClick={() => { setActiveTab("accounting"); setShowSaleModal(true); }}><FaFileInvoice /> New Invoice</button>
+                    <button className="btn-secondary" style={{ width: "100%", justifyContent: "flex-start", padding: "12px 16px" }} onClick={() => setShowCollectorModal(true)}><FaUserPlus /> Manage Collectors</button>
+                    <button className="btn-secondary" style={{ width: "100%", justifyContent: "flex-start", padding: "12px 16px" }} onClick={() => setActiveTab("reports")}><FaChartLine /> View Reports</button>
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           )}
 
           {activeTab === "pickups" && (
-            <div style={box} className="premium-card">
-              <h3 style={boxTitle}>Pickup History</h3>
-              <div style={tableContainer}>
+            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "16px 20px" }}>
+              <div style={{ padding: "0" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Pickup History</h2>
+                <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: "4px 0 16px 0" }}>Manage all your franchise pickups</p>
+              </div>
+              <div className="grid-3">
                 {filteredPickups.map(p => (
-                  <div key={p._id} style={listRow}>
-                    <div style={{ flex: 1 }}>
-                      <div style={rowTitle}>{p.scrapType}</div>
-                      <small style={muted}>{p.name} • {p.mobile} <br /> {p.address}</small>
+                  <div key={p._id} style={{
+                    background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-xl)", padding: "16px 18px",
+                    boxShadow: "var(--card-shadow)", borderLeft: `4px solid ${p.status === 'Completed' ? 'var(--success)' : p.status === 'Pending' ? 'var(--warning)' : 'var(--primary)'}`,
+                    display: "flex", flexDirection: "column", justifyContent: "space-between"
+                  }}>
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <div>
+                          <div style={{ fontWeight: "800", fontSize: "15px", color: "var(--text-main)" }}>{p.name}</div>
+                          <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "3px" }}>📞 {p.mobile}</div>
+                        </div>
+                        <span className={`badge-status badge-${p.status.toLowerCase()}`}>{p.status}</span>
+                      </div>
+                      <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "8px", background: "var(--bg-subtle)", padding: "8px", borderRadius: "8px" }}>
+                        📍 {p.address}
+                      </div>
+                      <div style={{ fontSize: "13px", fontWeight: "bold", color: "var(--text-main)", marginTop: "12px" }}>
+                        Scrap Type: {p.scrapType}
+                      </div>
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                      <StatusBadge status={p.status} />
-                      {["Pending", "Rejected"].includes(p.status) && <button style={assignBtn} onClick={() => { setSelectedPickup(p); setShowAssignModal(true); }}>Assign Now</button>}
+                    
+                    <div style={{ marginTop: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>{new Date(p.createdAt).toLocaleDateString()}</span>
+                      {["Pending", "Rejected"].includes(p.status) && (
+                        <button className="btn-premium" style={{ height: "32px", fontSize: "12px", padding: "0 12px" }} onClick={() => { setSelectedPickup(p); setShowAssignModal(true); }}>
+                          Assign Collector
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {filteredPickups.length === 0 && (
+                <div className="empty-state">
+                  <div className="empty-state-icon">🚚</div>
+                  <h3>No Pickups Found</h3>
+                  <p>There are currently no pickup requests available.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "settings" && (
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", marginBottom: "20px" }}>Global Platform Settings</h2>
+              <div className="card-premium" style={{ padding: "24px" }}>
+                <div className="grid-2">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}><FaRupeeSign /> Min Order Value</label>
+                      <Input type="number" value={settings.minAmount} onChange={v => setSettings({ ...settings, minAmount: v })} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}><FaEnvelope /> Business Email</label>
+                      <Input value={settings.contactEmail} onChange={v => setSettings({ ...settings, contactEmail: v })} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}><FaPhone /> Business Phone</label>
+                      <Input value={settings.contactPhone} onChange={v => setSettings({ ...settings, contactPhone: v })} />
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}><FaMapMarkerAlt /> Office Address</label>
+                      <Input value={settings.officeAddress} onChange={v => setSettings({ ...settings, officeAddress: v })} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}><FaFacebook /> Facebook URL</label>
+                      <Input value={settings.facebookUrl} onChange={v => setSettings({ ...settings, facebookUrl: v })} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "flex", alignItems: "center", gap: "6px" }}><FaInstagram /> Instagram URL</label>
+                      <Input value={settings.instagramUrl} onChange={v => setSettings({ ...settings, instagramUrl: v })} />
+                    </div>
+                  </div>
+                </div>
+                <button className="btn-premium" style={{ width: "100%", marginTop: "24px", padding: "16px", fontSize: "16px" }} onClick={handleUpdateSettings}>Save All Configurations</button>
+              </div>
+            </div>
+          )}
+
+          {/* OTHER TABS (Users, Collectors, Rates, Ads, Reviews) with same premium-card style... */}
+          {activeTab === "rates" && (
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Scrap Rates</h2>
+                <button className="btn-premium" onClick={() => setShowItemModal(true)}><FaPlus /> Add Rate</button>
+              </div>
+              <div className="grid-3">
+                {filteredItems.map(it => (
+                  <div key={it._id} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "var(--card-shadow)" }}>
+                    <div>
+                      <div style={{ fontWeight: "800", fontSize: "15px", color: "var(--text-main)" }}>{it.name}</div>
+                      <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>{it.category}</div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div style={{ fontWeight: "900", fontSize: "16px", color: "var(--primary)" }}>₹{it.price}<span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: "normal" }}>/{it.unit}</span></div>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button className="btn-secondary" style={{ padding: "6px", height: "auto" }} onClick={() => { setEditingRate(it); setShowEditRateModal(true); }}><FaTools size={12} /></button>
+                        <button className="btn-danger" style={{ padding: "6px", height: "auto" }} onClick={() => handleDeleteItem(it._id, "rate")}><FaTrash size={12} /></button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -976,66 +1125,27 @@ const playBellSound = () => {
             </div>
           )}
 
-          {activeTab === "settings" && (
-            <div style={box} className="premium-card">
-              <h3 style={boxTitle}>Global Platform Settings</h3>
-              <div style={settingsGrid}>
-                <div style={settingsSection}>
-                  <label style={labelStyle}><FaRupeeSign /> Min Order Value</label>
-                  <Input type="number" value={settings.minAmount} onChange={v => setSettings({ ...settings, minAmount: v })} />
-
-                  <label style={labelStyle}><FaEnvelope /> Business Email</label>
-                  <Input value={settings.contactEmail} onChange={v => setSettings({ ...settings, contactEmail: v })} />
-
-                  <label style={labelStyle}><FaPhone /> Business Phone</label>
-                  <Input value={settings.contactPhone} onChange={v => setSettings({ ...settings, contactPhone: v })} />
-                </div>
-                <div style={settingsSection}>
-                  <label style={labelStyle}><FaMapMarkerAlt /> Office Address</label>
-                  <Input value={settings.officeAddress} onChange={v => setSettings({ ...settings, officeAddress: v })} />
-
-                  <label style={labelStyle}><FaFacebook /> Facebook URL</label>
-                  <Input value={settings.facebookUrl} onChange={v => setSettings({ ...settings, facebookUrl: v })} />
-
-                  <label style={labelStyle}><FaInstagram /> Instagram URL</label>
-                  <Input value={settings.instagramUrl} onChange={v => setSettings({ ...settings, instagramUrl: v })} />
-                </div>
-              </div>
-              <button style={saveBtnBig} onClick={handleUpdateSettings}>Save All Configurations</button>
-            </div>
-          )}
-
-          {/* OTHER TABS (Users, Collectors, Rates, Ads, Reviews) with same premium-card style... */}
-          {activeTab === "rates" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}><h3>SCRAP RATES</h3> <button style={addBtn} onClick={() => setShowItemModal(true)}><FaPlus /></button></div>
-              {filteredItems.map(it => (
-                <div key={it._id} style={listRow}>
-                  <span>{it.name} <br /><small style={muted}>{it.category}</small></span>
-                  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                    <strong style={{ color: "#0b8f3a" }}>₹{it.price}/{it.unit}</strong>
-                    <button style={smBtn} onClick={() => { setEditingRate(it); setShowEditRateModal(true); }}><FaTools size={12} /></button>
-                    <button style={smDelBtn} onClick={() => handleDeleteItem(it._id, "rate")}><FaTrash size={12} /></button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
           {activeTab === "collectors" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}>
-                <h3>COLLECTORS</h3>
-                <button style={addBtn} onClick={() => setShowCollectorModal(true)}><FaPlus /></button>
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Collectors</h2>
+                <button className="btn-premium" onClick={() => setShowCollectorModal(true)}><FaPlus /> Add Collector</button>
               </div>
-              <div style={tableContainer}>
+              <div className="grid-2">
                 {filteredCollectors.map(u => (
-                  <div key={u._id} style={listRow}>
-                    <span>{u.name} <br /><small style={muted}>{u.mobile} {u.area && `• ${u.area}`} {u.walletBalance !== undefined && `• Wallet: ₹${u.walletBalance}`}</small></span>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <button style={smBtn} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Franchise Transfer" }); setShowWalletModal(true); }}>Transfer</button>
-                      <button style={smBtn} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey /></button>
-                      <button style={smDelBtn} onClick={() => handleDeleteItem(u._id, "collector")}><FaTrash /></button>
+                  <div key={u._id} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "var(--card-shadow)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontWeight: "800", fontSize: "16px", color: "var(--text-main)" }}>{u.name}</div>
+                        <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>📞 {u.mobile} {u.area && `• 📍 ${u.area}`}</div>
+                        {u.walletBalance !== undefined && <div style={{ fontSize: "13px", fontWeight: "bold", color: "var(--primary)", marginTop: "6px" }}>Wallet: ₹{u.walletBalance}</div>}
+                      </div>
+                      <span className="badge-status badge-active">Active</span>
+                    </div>
+                    <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
+                      <button className="btn-secondary" style={{ flex: 1, padding: "8px", fontSize: "12px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Franchise Transfer" }); setShowWalletModal(true); }}>Transfer</button>
+                      <button className="btn-secondary" style={{ padding: "8px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey /></button>
+                      <button className="btn-danger" style={{ padding: "8px" }} onClick={() => handleDeleteItem(u._id, "collector")}><FaTrash /></button>
                     </div>
                   </div>
                 ))}
@@ -1044,15 +1154,18 @@ const playBellSound = () => {
           )}
 
           {activeTab === "ads" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}><h3>MANAGED BANNERS</h3> <button style={addBtn} onClick={() => setShowAdModal(true)}><FaPlus /></button></div>
-              <div style={adGrid}>
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Managed Banners</h2>
+                <button className="btn-premium" onClick={() => setShowAdModal(true)}><FaPlus /> Add Banner</button>
+              </div>
+              <div className="grid-3">
                 {ads.map(ad => (
-                  <div key={ad._id} style={adCard} className="premium-card">
-                    <img src={ad.imageUrl} style={adImg} alt="" />
-                    <div style={{ padding: "10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: "12px", fontWeight: "bold" }}>{ad.title}</span>
-                      <button style={smDelBtn} onClick={() => handleDeleteItem(ad._id, "ad")}><FaTrash /></button>
+                  <div key={ad._id} style={{ border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)", overflow: "hidden", background: "var(--card-bg)", boxShadow: "var(--card-shadow)" }}>
+                    <img src={ad.imageUrl} style={{ width: "100%", height: "140px", objectFit: "cover" }} alt="" />
+                    <div style={{ padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "14px", fontWeight: "bold", color: "var(--text-main)" }}>{ad.title}</span>
+                      <button className="btn-danger" style={{ padding: "8px", height: "auto" }} onClick={() => handleDeleteItem(ad._id, "ad")}><FaTrash /></button>
                     </div>
                   </div>
                 ))}
@@ -1061,174 +1174,162 @@ const playBellSound = () => {
           )}
 
           {activeTab === "reviews" && (
-            <div style={box} className="premium-card">
-              <h3>PLATFORM REVIEWS</h3>
-              {reviews.map(r => (
-                <div key={r._id} style={listRow}>
-                  <div>
-                    <div style={{ color: "#f39c12", marginBottom: "5px" }}>{[...Array(r.rating)].map((_, i) => <FaStar key={i} size={12} />)}</div>
-                    <div style={{ fontSize: "14px", marginBottom: "5px" }}>
-                      <strong>{r.user?.name}</strong> <span style={{ color: "#999", fontSize: "12px" }}>reviewed</span> <strong>{r.collector?.name || "Unknown"}</strong>
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", marginBottom: "20px" }}>Platform Reviews</h2>
+              <div className="grid-2">
+                {reviews.map(r => (
+                  <div key={r._id} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)", padding: "16px", boxShadow: "var(--card-shadow)" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                      <div>
+                        <div style={{ color: "#f39c12", marginBottom: "4px" }}>{[...Array(r.rating)].map((_, i) => <FaStar key={i} size={14} />)}</div>
+                        <div style={{ fontSize: "13px", color: "var(--text-main)" }}>
+                          <strong>{r.user?.name}</strong> <span style={{ color: "var(--text-muted)" }}>reviewed</span> <strong>{r.collector?.name || "Unknown"}</strong>
+                        </div>
+                      </div>
+                      <small style={{ color: "var(--text-muted)", fontSize: "11px" }}>{new Date(r.createdAt).toLocaleDateString()}</small>
                     </div>
-                    <span style={{ fontSize: "13px", color: "#555", fontStyle: "italic" }}>"{r.comment}"</span>
+                    <div style={{ fontSize: "14px", color: "var(--text-main)", fontStyle: "italic", background: "var(--bg-subtle)", padding: "12px", borderRadius: "8px" }}>"{r.comment}"</div>
                   </div>
-                  <div style={{ textAlign: "right" }}>
-                    <small style={muted}>{new Date(r.createdAt).toLocaleDateString()}</small>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
 
           {activeTab === "wallet" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}>
-                <h3>WALLET & TRANSACTIONS</h3>
-                <div style={{ display: "flex", gap: "10px" }}>
-                  <button style={{ ...addBtn, background: "#4f46e5", marginRight: "10px" }} onClick={() => setShowFranchiseDepositModal(true)}><FaPlus /> Add Funds</button>
-                  <button style={addBtn} onClick={() => setShowWalletModal(true)}><FaPlus /> Manual Adjust</button>
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Wallet & Transactions</h2>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button className="btn-premium" style={{ background: "linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)", border: "none" }} onClick={() => setShowFranchiseDepositModal(true)}><FaPlus /> Add Funds</button>
+                  <button className="btn-secondary" onClick={() => setShowWalletModal(true)}><FaPlus /> Manual Adjust</button>
                 </div>
               </div>
 
-              <div style={statGrid}>
-                <div style={{ ...miniStat, background: "#eef8f1" }}>
-                  <small>Available Wallet Balance</small>
-                  <div style={{ fontSize: "18px", fontWeight: "bold", color: "#0b8f3a" }}>₹{walletStats.totalAvailable}</div>
+              <div className="grid-3" style={{ marginBottom: "24px" }}>
+                <div style={{ background: "linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)", borderRadius: "var(--radius-xl)", padding: "28px 24px", color: "#fff", position: "relative", overflow: "hidden", boxShadow: "0 10px 25px rgba(11, 143, 58, 0.3)" }}>
+                  <div style={{ fontSize: "13px", opacity: 0.85, marginBottom: "8px", fontWeight: "600" }}>Available Balance</div>
+                  <div style={{ fontSize: "36px", fontWeight: "900", letterSpacing: "-0.03em" }}>₹{walletStats.totalAvailable}</div>
                 </div>
-                <div style={{ ...miniStat, background: "#fff9e6" }}>
-                  <small>Pending Wallet Balance</small>
-                  <div style={{ fontSize: "18px", fontWeight: "bold", color: "#f39c12" }}>₹{walletStats.totalPending}</div>
-                </div>
-                <div style={{ ...miniStat, background: "#eef2ff" }}>
-                  <small>Total Users</small>
-                  <div style={{ fontSize: "18px", fontWeight: "bold", color: "#4f46e5" }}>{walletStats.userCount}</div>
-                </div>
-              </div>
-
-              <div style={tableContainer}>
-                {filteredTransactions.map(tx => (
-                  <div key={tx._id} style={listRow}>
-                    <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-                      <div style={{ ...txIcon, background: tx.status === "paid_in_cash" ? "#fff9e6" : (tx.type === "credit" ? "#eef8f1" : "#fff5f5") }}>
-                        {tx.status === "paid_in_cash" ? <FaRupeeSign color="#f39c12" /> : (tx.type === "credit" ? <FaArrowUp color="#0b8f3a" /> : <FaArrowDown color="#dc3545" />)}
-                      </div>
-                      <div>
-                        <div style={rowTitle}>{tx.description}</div>
-                        <small style={muted}>{tx.user?.name} ({tx.user?.mobile}) • {new Date(tx.createdAt).toLocaleString()}</small>
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontWeight: "bold", color: tx.status === "paid_in_cash" ? "#666" : (tx.type === "credit" ? "#0b8f3a" : "#dc3545") }}>
-                        {tx.status === "paid_in_cash" ? "" : " "}{tx.type === "credit" ? "+" : "-"}₹{tx.amount}
-                      </div>
-                      <small style={{ ...statusBadge, background: tx.status === "completed" ? "#eef8f1" : tx.status === "paid_in_cash" ? "#fff9e6" : "#fff5f5", color: tx.status === "completed" ? "#0b8f3a" : tx.status === "paid_in_cash" ? "#f39c12" : "#dc3545" }}>
-                        {(tx.status || "").replace(/_/g, " ")}
-                      </small>
-                    </div>
+                <div className="kpi-card" style={{ border: "1px solid var(--warning-border)", background: "var(--warning-light)" }}>
+                  <div>
+                    <div className="kpi-label" style={{ color: "var(--warning)" }}>Pending Balance</div>
+                    <div className="kpi-value" style={{ color: "var(--warning)" }}>₹{walletStats.totalPending}</div>
                   </div>
-                ))}
+                </div>
+                <div className="kpi-card">
+                  <div>
+                    <div className="kpi-label">Total Users</div>
+                    <div className="kpi-value">{walletStats.userCount}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card-premium">
+                <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Transactions</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {filteredTransactions.map(tx => (
+                    <div key={tx._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--card-border)" }}>
+                      <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                        <div style={{ width: "44px", height: "44px", borderRadius: "12px", display: "flex", justifyContent: "center", alignItems: "center", background: tx.status === "paid_in_cash" ? "var(--warning-light)" : (tx.type === "credit" ? "var(--success-light)" : "var(--danger-light)") }}>
+                          {tx.status === "paid_in_cash" ? <FaRupeeSign color="var(--warning)" /> : (tx.type === "credit" ? <FaArrowUp color="var(--success)" /> : <FaArrowDown color="var(--danger)" />)}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px" }}>{tx.description}</div>
+                          <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>{tx.user?.name} ({tx.user?.mobile}) • {new Date(tx.createdAt).toLocaleString()}</div>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: "16px", fontWeight: "800", color: tx.status === "paid_in_cash" ? "var(--text-muted)" : (tx.type === "credit" ? "var(--success)" : "var(--danger)") }}>
+                          {tx.status === "paid_in_cash" ? "" : " "}{tx.type === "credit" ? "+" : "-"}₹{tx.amount}
+                        </div>
+                        <span className={`badge-status badge-${tx.status === "completed" ? "completed" : tx.status === "paid_in_cash" ? "pending" : "cancelled"}`} style={{ marginTop: "4px", display: "inline-block" }}>
+                          {(tx.status || "").replace(/_/g, " ")}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {filteredTransactions.length === 0 && <div className="empty-state"><h3>No Transactions</h3><p>Your transaction history is empty.</p></div>}
+                </div>
               </div>
             </div>
           )}
 
           {activeTab === "accounting" && (
-            <div style={box} className="premium-card no-print">
-              <div style={{ ...titleBar, flexWrap: "wrap", gap: "10px" }}>
-                <h3 style={{margin: 0}}>BILLING & ACCOUNTING</h3>
+            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "24px", padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", alignItems: "flex-start", gap: "12px" }}>
+                <div>
+                  <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Accounting & Billing</h2>
+                  <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: "4px 0 0 0" }}>Manage your purchases and sales</p>
+                </div>
                 <div style={{ display: "flex", gap: "8px" }}>
-                  <button style={{...addBtn, padding: "6px 12px", fontSize: "12px"}} onClick={() => setShowPurchaseModal(true)}>
-                    <FaPlus /> <span className="desktop-only">Record </span>Purchase
+                  <button className="btn-secondary" onClick={() => setShowPurchaseModal(true)}>
+                    <FaPlus /> Record Purchase
                   </button>
-                  <button style={{...addBtn, padding: "6px 12px", fontSize: "12px"}} onClick={() => setShowSaleModal(true)}>
-                    <FaPlus /> <span className="desktop-only">Create Sale </span>Invoice
+                  <button className="btn-premium" onClick={() => setShowSaleModal(true)}>
+                    <FaPlus /> Create Sale Invoice
                   </button>
                 </div>
               </div>
 
-              <div style={statGrid}>
-                <div style={{ ...miniStat, background: accountingStats.overallProfit >= 0 ? "#eef8f1" : "#fff5f5", border: accountingStats.overallProfit >= 0 ? "1px solid #c3e6cb" : "1px solid #f5c6cb" }}>
-                  <small style={{ color: accountingStats.overallProfit >= 0 ? "#0b8f3a" : "#dc3545", fontWeight: "600" }}>📈 NET PROFIT / LOSS</small>
-                  <div style={{ fontSize: "20px", fontWeight: "800", color: accountingStats.overallProfit >= 0 ? "#155724" : "#721c24", marginTop: "5px" }}>
-                    {accountingStats.overallProfit >= 0 ? "+" : "-"}₹{Math.abs(accountingStats.overallProfit).toFixed(2)}
+              <div className="grid-5" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px" }}>
+                <div className="kpi-card" style={{ border: accountingStats.overallProfit >= 0 ? "1px solid var(--success-border)" : "1px solid var(--danger-border)", background: accountingStats.overallProfit >= 0 ? "var(--success-light)" : "var(--danger-light)" }}>
+                  <div>
+                    <div className="kpi-label" style={{ color: accountingStats.overallProfit >= 0 ? "var(--success)" : "var(--danger)" }}>NET PROFIT/LOSS</div>
+                    <div className="kpi-value" style={{ color: accountingStats.overallProfit >= 0 ? "var(--success)" : "var(--danger)" }}>{accountingStats.overallProfit >= 0 ? "+" : "-"}₹{Math.abs(accountingStats.overallProfit).toFixed(2)}</div>
                   </div>
-                  <small style={{ color: "#666", fontSize: "10px" }}>Total Sales - Total Purchases</small>
                 </div>
-                <div style={{ ...miniStat, background: "#e8f4f8", border: "1px solid #bee5eb" }}>
-                  <small style={{ color: "#0c5460", fontWeight: "600" }}>💰 CURRENT STOCK VALUE</small>
-                  <div style={{ fontSize: "20px", fontWeight: "800", color: "#0c5460", marginTop: "5px" }}>₹{accountingStats.stockValue?.toFixed(2) || 0}</div>
-                  <small style={{ color: "#666", fontSize: "10px" }}>Investment sitting in warehouse</small>
+                <div className="kpi-card">
+                  <div><div className="kpi-label">STOCK VALUE</div><div className="kpi-value">₹{accountingStats.stockValue?.toFixed(2) || 0}</div></div>
                 </div>
-                <div style={{ ...miniStat, background: "#f8f9fa", border: "1px solid #dee2e6" }}>
-                  <small style={{ color: "#333", fontWeight: "600" }}>🛒 TOTAL PURCHASES</small>
-                  <div style={{ fontSize: "20px", fontWeight: "800", color: "#222", marginTop: "5px" }}>₹{accountingStats.totalPurchaseAmount?.toFixed(2)}</div>
-                  <small style={{ color: "#666", fontSize: "10px" }}>Total cash spent on buying</small>
+                <div className="kpi-card">
+                  <div><div className="kpi-label">TOTAL PURCHASES</div><div className="kpi-value">₹{accountingStats.totalPurchaseAmount?.toFixed(2)}</div></div>
                 </div>
-                <div style={{ ...miniStat, background: "#eef2ff", border: "1px solid #d1dbff" }}>
-                  <small style={{ color: "#4f46e5", fontWeight: "600" }}>💵 TOTAL SALES</small>
-                  <div style={{ fontSize: "20px", fontWeight: "800", color: "#1e1b4b", marginTop: "5px" }}>₹{accountingStats.totalSaleAmount?.toFixed(2)}</div>
-                  <small style={{ color: "#666", fontSize: "10px" }}>Total revenue generated</small>
+                <div className="kpi-card">
+                  <div><div className="kpi-label">TOTAL SALES</div><div className="kpi-value">₹{accountingStats.totalSaleAmount?.toFixed(2)}</div></div>
+                </div>
+                <div className="kpi-card">
+                  <div><div className="kpi-label">TODAY'S PROFIT</div><div className="kpi-value">₹{accountingStats.todayProfit?.toFixed(2) || 0}</div></div>
                 </div>
               </div>
 
-
-              <h4 style={{ marginTop: "30px" }}>Live Inventory</h4>
-              <div style={{ ...tableContainer, maxHeight: "250px", marginBottom: "30px" }}>
-                {filteredInventory.map(inv => (
-                  <div key={inv._id} style={listRow}>
-                    <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-                      <img src={inv.scrapItem?.image || "https://via.placeholder.com/40"} style={{ width: "40px", height: "40px", borderRadius: "8px", objectFit: "cover" }} alt="" />
-                      <div>
-                        <div style={rowTitle}>{inv.scrapItem?.name} <span style={muted}>({inv.scrapItem?.category})</span></div>
-                        <small style={muted}>Bought: {inv.totalBoughtQuantity} {inv.scrapItem?.unit} | Sold: {inv.totalSoldQuantity} {inv.scrapItem?.unit}</small>
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: "16px", fontWeight: "bold", color: inv.quantityAvailable > 0 ? "#0b8f3a" : "#dc3545" }}>
-                        {inv.quantityAvailable} {inv.scrapItem?.unit}
-                      </div>
-                      <small style={muted}>Available in Stock</small>
-                    </div>
-                  </div>
-                ))}
-                {inventory.length === 0 && <p style={muted}>No inventory data yet.</p>}
-              </div>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                <div>
-                  <h4>Recent Purchases</h4>
-                  <div style={tableContainer}>
+              <div className="grid-2 responsive-flex" style={{ marginTop: "16px" }}>
+                <div className="card-premium">
+                  <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Purchases</h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {filteredPurchases.map(p => (
-                      <div key={p._id} style={{...listRow, cursor: "pointer"}} onClick={() => openPurchaseBillModal(p)}>
+                      <div key={p._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", border: "1px solid var(--card-border)", cursor: "pointer" }} onClick={() => openPurchaseBillModal(p)}>
                         <div>
-                          <div style={rowTitle}>{p.supplierName} <span style={muted}>({p.supplierContact})</span></div>
-                          <small style={muted}>{new Date(p.createdAt).toLocaleDateString()} | Items: {p.items.length} | <span style={{color: "#0b8f3a", fontWeight: "bold"}}>📄 View Bill</span></small>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{p.supplierName} <span style={{ color: "var(--text-muted)", fontSize: "12px", fontWeight: "normal" }}>({p.supplierContact})</span></div>
+                          <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>Items: {p.items.length} • {new Date(p.createdAt).toLocaleDateString()}</div>
+                          <div style={{ marginTop: "8px" }}><span style={{ fontSize: "12px", fontWeight: "bold", color: "var(--primary)" }}>📄 View Bill</span></div>
                         </div>
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ fontWeight: "bold", color: "#dc3545" }}>-₹{p.totalAmount}</div>
-                          <small style={{ ...statusBadge, background: p.paymentStatus === "Paid" ? "#eef8f1" : "#fff9e6", color: p.paymentStatus === "Paid" ? "#0b8f3a" : "#f39c12" }}>{p.paymentStatus}</small>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
+                          <span className={`badge-status badge-${p.paymentStatus === "Paid" ? 'completed' : 'pending'}`}>{p.paymentStatus}</span>
+                          <div style={{ fontWeight: "800", color: "var(--danger)" }}>-₹{p.totalAmount}</div>
                         </div>
                       </div>
                     ))}
-                    {purchases.length === 0 && <p style={muted}>No manual purchases yet.</p>}
+                    {purchases.length === 0 && <div className="empty-state"><h3>No Purchases</h3><p>Your recent purchases will appear here.</p></div>}
                   </div>
                 </div>
 
-                <div>
-                  <h4>Sales & Invoices</h4>
-                  <div style={tableContainer}>
+                <div className="card-premium">
+                  <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Sales</h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {filteredSales.map(sale => (
-                      <div key={sale._id} style={listRow}>
+                      <div key={sale._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", border: "1px solid var(--card-border)" }}>
                         <div>
-                          <div style={rowTitle}>{sale.buyerName} <span style={muted}>({sale.buyerContact})</span></div>
-                          <small style={muted}>{new Date(sale.createdAt).toLocaleDateString()} | {sale.invoiceNumber || "INV"}</small>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{sale.buyerName} <span style={{ color: "var(--text-muted)", fontSize: "12px", fontWeight: "normal" }}>({sale.buyerContact})</span></div>
+                          <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>INV: {sale.invoiceNumber || "N/A"} • {new Date(sale.createdAt).toLocaleDateString()}</div>
                         </div>
-                        <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px" }}>
-                          <div style={{ fontWeight: "bold", color: "#0b8f3a" }}>+₹{sale.totalAmount}</div>
-                          <button style={{ ...smBtn, fontSize: "10px", padding: "4px 8px" }} onClick={() => { setSelectedInvoice(sale); setShowInvoiceModal(true); }}>View Invoice</button>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
+                          <span className="badge-status badge-completed">Paid</span>
+                          <div style={{ fontWeight: "800", color: "var(--success)" }}>+₹{sale.totalAmount}</div>
+                          <button className="btn-secondary" style={{ fontSize: "11px", padding: "4px 8px", height: "auto" }} onClick={() => { setSelectedInvoice(sale); setShowInvoiceModal(true); }}>View Invoice</button>
                         </div>
                       </div>
                     ))}
-                    {sales.length === 0 && <p style={muted}>No sales recorded yet.</p>}
+                    {sales.length === 0 && <div className="empty-state"><h3>No Sales</h3><p>Your recent sales will appear here.</p></div>}
                   </div>
                 </div>
               </div>
@@ -1236,48 +1337,59 @@ const playBellSound = () => {
           )}
 
           {activeTab === "inventory" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}>
-                <h3 style={{margin: 0}}>LIVE INVENTORY</h3>
-                <div style={{ ...miniStat, background: "#e8f4f8", border: "1px solid #bee5eb", maxWidth: "250px", display: "inline-block", padding: "10px 15px", borderRadius: "12px" }}>
-                  <small style={{ color: "#0c5460", fontWeight: "600", fontSize: "11px" }}>💰 STOCK VALUE</small>
-                  <div style={{ fontSize: "16px", fontWeight: "800", color: "#0c5460", marginTop: "3px" }}>₹{accountingStats.stockValue?.toFixed(2) || 0}</div>
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Live Inventory</h2>
+                <div style={{ background: "var(--card-bg)", border: "1px solid var(--info-border)", padding: "12px 20px", borderRadius: "var(--radius-xl)", display: "flex", alignItems: "center", gap: "12px", boxShadow: "var(--card-shadow)" }}>
+                  <div style={{ fontSize: "24px" }}>💰</div>
+                  <div>
+                    <div style={{ fontSize: "11px", fontWeight: "bold", color: "var(--info)", textTransform: "uppercase" }}>Stock Value</div>
+                    <div style={{ fontSize: "18px", fontWeight: "900", color: "var(--text-main)" }}>₹{accountingStats.stockValue?.toFixed(2) || 0}</div>
+                  </div>
                 </div>
               </div>
-              <div style={tableContainer}>
+              
+              <div className="grid-3">
                 {inventory.map(inv => (
-                  <div key={inv._id} style={listRow}>
-                    <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-                      <img src={inv.scrapItem?.image || "https://via.placeholder.com/40"} style={{ width: "40px", height: "40px", borderRadius: "8px", objectFit: "cover" }} alt="" />
-                      <div>
-                        <div style={rowTitle}>{inv.scrapItem?.name} <span style={muted}>({inv.scrapItem?.category})</span></div>
-                        <small style={muted}>Bought: {inv.totalBoughtQuantity} {inv.scrapItem?.unit} | Sold: {inv.totalSoldQuantity} {inv.scrapItem?.unit}</small>
+                  <div key={inv._id} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-xl)", padding: "16px", display: "flex", gap: "16px", alignItems: "center", boxShadow: "var(--card-shadow)" }}>
+                    <img src={inv.scrapItem?.image || "https://via.placeholder.com/60"} style={{ width: "60px", height: "60px", borderRadius: "12px", objectFit: "cover" }} alt="" />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: "800", fontSize: "15px", color: "var(--text-main)" }}>{inv.scrapItem?.name}</div>
+                      <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>{inv.scrapItem?.category}</div>
+                      <div style={{ marginTop: "8px", fontSize: "12px", color: "var(--text-muted)" }}>
+                        Bought: {inv.totalBoughtQuantity} • Sold: {inv.totalSoldQuantity}
                       </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: "16px", fontWeight: "bold", color: inv.quantityAvailable > 0 ? "#0b8f3a" : "#dc3545" }}>
-                        {inv.quantityAvailable} {inv.scrapItem?.unit}
+                      <div style={{ fontSize: "20px", fontWeight: "900", color: inv.quantityAvailable > 0 ? "var(--primary)" : "var(--danger)" }}>
+                        {inv.quantityAvailable} <span style={{ fontSize: "12px" }}>{inv.scrapItem?.unit}</span>
                       </div>
-                      <small style={muted}>Available in Stock</small>
+                      <span className={`badge-status badge-${inv.quantityAvailable > 0 ? 'active' : 'cancelled'}`} style={{ marginTop: "4px", display: "inline-block" }}>In Stock</span>
                     </div>
                   </div>
                 ))}
-                {inventory.length === 0 && <p style={muted}>No inventory data yet.</p>}
               </div>
+              {inventory.length === 0 && (
+                <div className="empty-state">
+                  <div className="empty-state-icon">📦</div>
+                  <h3>Empty Inventory</h3>
+                  <p>You currently have no items in stock.</p>
+                </div>
+              )}
             </div>
           )}
 
           {activeTab === "reports" && (
-            <div style={box} className="premium-card">
-              <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"20px", flexWrap:"wrap", gap:"10px"}}>
-                <h3 style={{margin:0}}>📊 Reports & Analytics</h3>
-                <button style={{...addBtn, background:"#16a34a", display:"flex", alignItems:"center", gap:"6px"}} onClick={downloadCSV}>
-                  ⬇️ Download CSV
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"24px", flexWrap:"wrap", gap:"12px"}}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>📊 Reports & Analytics</h2>
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px" }} onClick={downloadCSV}>
+                  <FaDownload /> Download CSV
                 </button>
               </div>
 
               {/* Report Type Tabs */}
-              <div style={{display:"flex", gap:"8px", flexWrap:"wrap", marginBottom:"20px"}}>
+              <div style={{display:"flex", gap:"8px", flexWrap:"wrap", marginBottom:"24px"}}>
                 {[
                   {key:"purchases", label:"🧾 Purchases & Inventory"},
                   {key:"summary", label:"📈 Summary"},
@@ -1286,16 +1398,19 @@ const playBellSound = () => {
                   {key:"buyers", label:"🛒 Buyers"}
                 ].map(t => (
                   <button key={t.key}
-                    style={{padding:"8px 16px", borderRadius:"20px", border:"none", cursor:"pointer", fontWeight:"bold", fontSize:"13px",
-                      background: reportType===t.key ? "#0b8f3a" : "#f0f0f0",
-                      color: reportType===t.key ? "#fff" : "#333"}}
+                    style={{
+                      padding: "10px 18px", borderRadius: "100px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "13px",
+                      background: reportType===t.key ? "var(--primary)" : "var(--bg-subtle)",
+                      color: reportType===t.key ? "#fff" : "var(--text-main)",
+                      transition: "all 0.2s"
+                    }}
                     onClick={() => { setReportType(t.key); setReportData([]); setReportInventory([]); }}
                   >{t.label}</button>
                 ))}
               </div>
 
               {/* Filters Row */}
-              <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))", gap:"10px", marginBottom:"15px", background:"#f8fffe", padding:"15px", borderRadius:"15px", border:"1px solid #bbf7d0"}}>
+              <div className="card-premium" style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))", gap:"12px", marginBottom:"20px", padding:"20px"}}>
                 <div>
                   <label style={{fontSize:"11px", fontWeight:"bold", color:"#666", display:"block", marginBottom:"4px"}}>📅 From Date</label>
                   <input type="date" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportFrom} onChange={e => setReportFrom(e.target.value)} />
@@ -1603,50 +1718,65 @@ const playBellSound = () => {
           )}
 
           {activeTab === "support" && (
-            <div style={box} className="premium-card">
-              <div style={titleBar}>
-                <h3>SUPPORT TICKETS</h3>
-                <button style={addBtn} onClick={() => setShowTicketModal(true)}><FaPlus /> Raise Ticket</button>
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Support Tickets</h2>
+                <button className="btn-premium" onClick={() => setShowTicketModal(true)}><FaPlus /> Raise Ticket</button>
               </div>
-              <div style={tableContainer}>
+              <div className="grid-2">
                 {filteredTickets.map(t => (
-                  <div key={t._id} style={listRow}>
-                    <div>
-                      <div style={rowTitle}>{t.subject}</div>
-                      <small style={muted}>Category: {t.category} • {new Date(t.createdAt).toLocaleDateString()}</small>
+                  <div key={t._id} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)", padding: "16px", boxShadow: "var(--card-shadow)", display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontWeight: "800", fontSize: "15px", color: "var(--text-main)" }}>{t.subject}</div>
+                        <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>Category: {t.category}</div>
+                      </div>
+                      <span className={`badge-status badge-${t.status.toLowerCase()}`}>{t.status}</span>
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                      <StatusBadge status={t.status} />
-                    </div>
+                    <div style={{ fontSize: "13px", color: "var(--text-main)", background: "var(--bg-subtle)", padding: "12px", borderRadius: "8px" }}>{t.message}</div>
+                    <div style={{ textAlign: "right", fontSize: "11px", color: "var(--text-muted)" }}>{new Date(t.createdAt).toLocaleDateString()}</div>
                   </div>
                 ))}
-                {tickets.length === 0 && <p style={muted}>No support tickets raised.</p>}
               </div>
+              {tickets.length === 0 && (
+                <div className="empty-state">
+                  <div className="empty-state-icon">🎫</div>
+                  <h3>No Support Tickets</h3>
+                  <p>You haven't raised any support tickets yet.</p>
+                </div>
+              )}
             </div>
           )}
 
           {activeTab === "dist-settings" && (
-            <div style={box} className="premium-card">
-              <h3>DISTRICT CONFIGURATIONS</h3>
-              <div style={settingsGrid}>
-                <div style={settingsSection}>
-                  <label style={labelStyle}>Service Radius (km)</label>
-                  <Input type="number" value={distSettings.serviceRadius} onChange={v => setDistSettings({ ...distSettings, serviceRadius: v })} />
-
-                  <label style={labelStyle}>Working Hours</label>
-                  <Input value={distSettings.workingHours} onChange={v => setDistSettings({ ...distSettings, workingHours: v })} />
+            <div className="fade-up" style={{ padding: "16px 20px" }}>
+              <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", marginBottom: "20px" }}>District Configurations</h2>
+              <div className="card-premium" style={{ padding: "24px" }}>
+                <div className="grid-2">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "block" }}>Service Radius (km)</label>
+                      <Input type="number" value={distSettings.serviceRadius} onChange={v => setDistSettings({ ...distSettings, serviceRadius: v })} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "block" }}>Working Hours</label>
+                      <Input value={distSettings.workingHours} onChange={v => setDistSettings({ ...distSettings, workingHours: v })} />
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    <div>
+                      <label style={{ fontSize: "12px", fontWeight: "bold", color: "var(--text-muted)", marginBottom: "8px", display: "block" }}>Off Day</label>
+                      <Input value={distSettings.offDay} onChange={v => setDistSettings({ ...distSettings, offDay: v })} />
+                    </div>
+                  </div>
                 </div>
-                <div style={settingsSection}>
-                  <label style={labelStyle}>Off Day</label>
-                  <Input value={distSettings.offDay} onChange={v => setDistSettings({ ...distSettings, offDay: v })} />
-                </div>
+                <button className="btn-premium" style={{ width: "100%", marginTop: "24px", padding: "16px", fontSize: "16px" }} onClick={async () => {
+                  try {
+                    const { data } = await API.post("/district-settings", distSettings);
+                    if (data.success) showToast("success", "District Settings Updated!");
+                  } catch (e) { showToast("error", "Failed to save settings"); }
+                }}>Save District Settings</button>
               </div>
-              <button style={saveBtnBig} onClick={async () => {
-                try {
-                  const { data } = await API.post("/district-settings", distSettings);
-                  if (data.success) showToast("success", "District Settings Updated!");
-                } catch (e) { showToast("error", "Failed to save settings"); }
-              }}>Save District Settings</button>
             </div>
           )}
         </div>
