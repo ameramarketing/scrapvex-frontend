@@ -1057,7 +1057,7 @@ const playBellSound = () => {
 
   const NavGroup = ({ title, children }) => (
     <div style={{ marginBottom: "16px" }}>
-      <div style={{ fontSize: "11px", fontWeight: "bold", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", padding: "0 12px 8px 12px" }}>{title}</div>
+      <div style={{ fontSize: "11px", fontWeight: "bold", color: "rgba(255,255,255,0.55)", textTransform: "uppercase", letterSpacing: "1px", padding: "0 12px 8px 12px" }}>{title}</div>
       {children}
     </div>
   );
@@ -1297,7 +1297,7 @@ const playBellSound = () => {
             <div style={{ position: "relative", marginBottom: "15px" }}>
               <input
                 type="text"
-                placeholder={`🔍 Search in ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}...`}
+                placeholder={`Search in ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
