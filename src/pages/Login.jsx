@@ -57,41 +57,49 @@ function Login() {
         .login-card {
           width: 100%;
           max-width: 400px;
-          background: #ffffff;
+          background: var(--card-bg, #ffffff);
           padding: 30px 24px;
           border-radius: 20px;
-          border: 1px solid rgba(15,23,42,0.06);
-          box-shadow: 0 10px 25px -5px rgba(0,0,0,0.02), 0 8px 10px -6px rgba(0,0,0,0.02);
+          border: 1.5px solid var(--card-border, rgba(15,23,42,0.06));
+          box-shadow: var(--card-shadow, 0 10px 25px -5px rgba(0,0,0,0.02));
+          box-sizing: border-box;
+        }
+        .login-card label {
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--text-main, #0f172a);
+          margin-bottom: 6px;
+          display: block;
         }
         .login-logo-circle {
           width: 54px;
           height: 54px;
           border-radius: 14px;
-          background: #f0fdf4;
+          background: var(--bg-subtle, #f0fdf4);
           color: #0b8f3a;
           font-size: 22px;
           display: flex;
           align-items: center;
           justify-content: center;
           margin: 0 auto 12px;
-          border: 1.5px solid #dcfce7;
+          border: 1.5px solid var(--card-border, #dcfce7);
         }
         .login-input-row {
           display: flex;
           align-items: center;
           gap: 12px;
-          background: #f8fafc;
+          background: var(--input-bg, #f8fafc);
           padding: 12px 16px;
           border-radius: 12px;
           margin-bottom: 14px;
-          border: 1.5px solid #e2e8f0;
+          border: 1.5px solid var(--card-border, #e2e8f0);
           transition: all 0.2s ease;
           position: relative;
         }
         .login-input-row:focus-within {
-          border-color: #0b8f3a;
-          background: #ffffff;
-          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.15);
+          border-color: #0b8f3a !important;
+          background: var(--card-bg, #ffffff) !important;
+          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.15) !important;
         }
         .login-input-field {
           border: none;
@@ -99,8 +107,8 @@ function Login() {
           background: transparent;
           width: 100%;
           font-size: 14px;
-          color: #0f172a;
-          font-weight: 500;
+          color: var(--text-main, #0f172a);
+          font-weight: 600;
           text-align: left !important;
         }
         .login-eye-btn {
@@ -110,7 +118,7 @@ function Login() {
           transform: translateY(-50%);
           background: none;
           border: none;
-          color: #64748b;
+          color: var(--text-muted, #64748b);
           cursor: pointer;
           font-size: 16px;
           display: flex;
@@ -121,18 +129,18 @@ function Login() {
           display: block;
           padding: 11px;
           border-radius: 10px;
-          background: #f8fafc;
-          color: #475569;
+          background: var(--input-bg, #f8fafc);
+          color: var(--text-main, #475569);
           text-decoration: none;
           font-size: 12px;
           font-weight: 700;
           text-align: center;
-          border: 1.5px solid #e2e8f0;
+          border: 1.5px solid var(--card-border, #e2e8f0);
           transition: all 0.2s ease;
         }
         .login-role-btn:hover {
-          border-color: #cbd5e1;
-          background: #f1f5f9;
+          border-color: #0b8f3a;
+          color: #0b8f3a;
         }
       `}</style>
 

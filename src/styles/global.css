@@ -1614,6 +1614,13 @@ body.dark-mode .kpi-card,
 body.dark-mode .modal-content,
 body.dark-mode .modal-body,
 body.dark-mode .auth-card,
+body.dark-mode .login-card,
+body.dark-mode .admin-login-card,
+body.dark-mode .franchise-login-card,
+body.dark-mode .collector-login-card,
+body.dark-mode .register-card,
+body.dark-mode [class*="login-card"],
+body.dark-mode [class*="auth-card"],
 body.dark-mode .rate-card,
 body.dark-mode .pickup-card,
 [data-theme="dark"] .card,
@@ -1624,12 +1631,29 @@ body.dark-mode .pickup-card,
 [data-theme="dark"] .modal-content,
 [data-theme="dark"] .modal-body,
 [data-theme="dark"] .auth-card,
+[data-theme="dark"] .login-card,
+[data-theme="dark"] .admin-login-card,
+[data-theme="dark"] .franchise-login-card,
+[data-theme="dark"] .collector-login-card,
+[data-theme="dark"] .register-card,
+[data-theme="dark"] [class*="login-card"],
+[data-theme="dark"] [class*="auth-card"],
 [data-theme="dark"] .rate-card,
 [data-theme="dark"] .pickup-card {
   background-color: #152035 !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
   color: #ffffff !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Force dark input rows and role buttons in Dark Mode */
+body.dark-mode [class*="input-row"],
+body.dark-mode [class*="role-btn"],
+[data-theme="dark"] [class*="input-row"],
+[data-theme="dark"] [class*="role-btn"] {
+  background-color: #0e1626 !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
 }
 
 /* Override all light grey sub-containers */
