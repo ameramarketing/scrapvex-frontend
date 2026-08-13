@@ -2801,75 +2801,80 @@ const playBellSound = () => {
           </div>
         </Modal>
       )}
-      
-            {showPurchaseBillModal && selectedPurchaseBill && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(5px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000, padding: "20px" }} onClick={() => setShowPurchaseBillModal(false)}>
-          <div style={{ background: "var(--card-bg)", borderRadius: "var(--radius-xl)", padding: "24px", width: "100%", maxWidth: "520px", maxHeight: "90vh", overflowY: "auto", boxShadow: "var(--card-hover-shadow)", border: "1px solid var(--card-border)" }} onClick={e => e.stopPropagation()}>
+
+      {showPurchaseBillModal && selectedPurchaseBill && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(9, 13, 22, 0.75)", backdropFilter: "blur(6px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000, padding: "20px" }} onClick={() => setShowPurchaseBillModal(false)}>
+          <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "var(--radius-xl)", padding: "24px", width: "100%", maxWidth: "520px", maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 50px rgba(0,0,0,0.4)", border: "1.5px solid var(--card-border, rgba(255,255,255,0.15))" }} onClick={e => e.stopPropagation()}>
             <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"18px"}}>
-              <h3 style={{margin:0, color:"var(--primary)"}}>?? Purchase Bill Details</h3>
-              <button onClick={() => setShowPurchaseBillModal(false)} style={{background:"none", border:"none", fontSize:"20px", cursor:"pointer", color:"var(--text-muted)"}}>?</button>
+              <h3 style={{margin:0, color:"var(--primary)", fontSize: "18px", fontWeight: "800"}}>📄 Purchase Bill Details</h3>
+              <button onClick={() => setShowPurchaseBillModal(false)} style={{background:"none", border:"none", fontSize:"20px", cursor:"pointer", color:"var(--text-muted)"}}>✕</button>
             </div>
 
             {/* Current Bill */}
-            <div style={{background:"var(--bg-subtle)", border:"1px solid var(--card-border)", borderRadius:"15px", padding:"15px", marginBottom:"15px"}}>
-              <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
+            <div style={{background:"var(--input-bg, #f8fafc)", border:"1.5px solid var(--card-border, rgba(255,255,255,0.1))", borderRadius:"16px", padding:"16px", marginBottom:"16px"}}>
+              <div style={{display:"flex", justifyContent:"space-between", marginBottom:"12px"}}>
                 <div>
-                  <div style={{fontWeight:"bold", fontSize:"16px"}}>{selectedPurchaseBill.supplierName}</div>
-                  <div style={{fontSize:"12px", color: "var(--text-muted)"}}>?? {selectedPurchaseBill.supplierContact || "N/A"}</div>
-                  <div style={{fontSize:"11px", color:"var(--text-muted)"}}>{new Date(selectedPurchaseBill.createdAt).toLocaleString()}</div>
+                  <div style={{fontWeight:"800", fontSize:"16px", color: "var(--text-main)"}}>{selectedPurchaseBill.supplierName}</div>
+                  <div style={{fontSize:"12px", color: "var(--text-muted)", marginTop: "2px"}}>📞 {selectedPurchaseBill.supplierContact || "N/A"}</div>
+                  <div style={{fontSize:"11px", color:"var(--text-muted)", marginTop: "2px"}}>📅 {new Date(selectedPurchaseBill.createdAt).toLocaleString()}</div>
                 </div>
                 <div style={{textAlign:"right"}}>
-                  <div style={{fontSize:"22px", fontWeight:"bold", color:"#dc3545"}}>?{selectedPurchaseBill.totalAmount}</div>
-                  <span style={{background: selectedPurchaseBill.paymentStatus==="Paid"?"#eef8f1":"#fff9e6", color: selectedPurchaseBill.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", padding:"3px 10px", borderRadius:"8px", fontSize:"11px", fontWeight:"bold"}}>{selectedPurchaseBill.paymentStatus}</span>
+                  <div style={{fontSize:"22px", fontWeight:"900", color:"#ef4444"}}>₹{selectedPurchaseBill.totalAmount}</div>
+                  <span className={`badge-status badge-${selectedPurchaseBill.paymentStatus === "Paid" ? "completed" : "pending"}`} style={{ marginTop: "4px", display: "inline-block" }}>
+                    {selectedPurchaseBill.paymentStatus}
+                  </span>
                 </div>
               </div>
               {/* Items */}
-              <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px", marginTop:"10px"}}>
+              <table style={{width:"100%", borderCollapse:"collapse", fontSize:"12px", marginTop:"12px"}}>
                 <thead>
-                  <tr style={{background:"#0b8f3a", color: "#fff"}}>
-                    <th style={{padding:"6px 8px", textAlign:"left"}}>Item</th>
-                    <th style={{padding:"6px 8px", textAlign:"center"}}>Qty (kg)</th>
-                    <th style={{padding:"6px 8px", textAlign:"center"}}>Rate</th>
-                    <th style={{padding:"6px 8px", textAlign:"right"}}>Amount</th>
+                  <tr style={{background:"#0b8f3a", color: "#ffffff"}}>
+                    <th style={{padding:"8px 10px", textAlign:"left", borderRadius: "6px 0 0 6px"}}>Item</th>
+                    <th style={{padding:"8px 10px", textAlign:"center"}}>Qty (kg)</th>
+                    <th style={{padding:"8px 10px", textAlign:"center"}}>Rate</th>
+                    <th style={{padding:"8px 10px", textAlign:"right", borderRadius: "0 6px 6px 0"}}>Amount</th>
                   </tr>
                 </thead>
                 <tbody>
                   {selectedPurchaseBill.items.map((item, idx) => (
-                    <tr key={idx} style={{borderBottom:"1px solid var(--card-border)"}}>
-                      <td style={{padding:"6px 8px"}}>{item.name}</td>
-                      <td style={{padding:"6px 8px", textAlign:"center"}}>{item.quantity}</td>
-                      <td style={{padding:"6px 8px", textAlign:"center"}}>?{item.rate}</td>
-                      <td style={{padding:"6px 8px", textAlign:"right", fontWeight:"bold"}}>?{item.amount}</td>
+                    <tr key={idx} style={{borderBottom:"1px solid var(--card-border, rgba(255,255,255,0.1))"}}>
+                      <td style={{padding:"8px 10px", color: "var(--text-main)", fontWeight: "600"}}>{item.name}</td>
+                      <td style={{padding:"8px 10px", textAlign:"center", color: "var(--text-main)"}}>{item.quantity}</td>
+                      <td style={{padding:"8px 10px", textAlign:"center", color: "var(--text-main)"}}>₹{item.rate}</td>
+                      <td style={{padding:"8px 10px", textAlign:"right", fontWeight:"800", color: "#0b8f3a"}}>₹{item.amount}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              {selectedPurchaseBill.notes && <div style={{marginTop:"8px", fontSize:"11px", color: "var(--text-muted)"}}>?? {selectedPurchaseBill.notes}</div>}
+              {selectedPurchaseBill.notes && <div style={{marginTop:"10px", fontSize:"12px", color: "var(--text-muted)"}}>📌 {selectedPurchaseBill.notes}</div>}
             </div>
 
             {/* All Purchases from same Supplier */}
-            <div style={{marginBottom:"10px"}}>
-              <div style={{fontWeight:"bold", fontSize:"13px", color:"var(--text-main)", marginBottom:"10px"}}>
-                ?? {selectedPurchaseBill.supplierName} Se Sab Purchases ({supplierPurchaseHistory.length} records)
-                <span style={{float:"right", color:"#dc3545", fontWeight:"bold"}}>Total: ?{supplierTotalAmount}</span>
+            <div style={{marginBottom:"16px"}}>
+              <div style={{fontWeight:"800", fontSize:"13px", color:"var(--text-main)", marginBottom:"10px", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                <span>📦 {selectedPurchaseBill.supplierName} Se Sab Purchases ({supplierPurchaseHistory.length} records)</span>
+                <span style={{color:"#ef4444", fontWeight:"900"}}>Total: ₹{supplierTotalAmount}</span>
               </div>
-              <div style={{maxHeight:"200px", overflowY:"auto"}}>
-                {supplierPurchaseHistory.map((p, idx) => (
-                  <div key={p._id} style={{display:"flex", justifyContent:"space-between", padding:"8px 10px", background: idx%2===0?"var(--bg-subtle)":"", borderRadius:"8px", marginBottom:"4px", fontSize:"12px"}}>
+              <div style={{maxHeight:"200px", overflowY:"auto", display: "flex", flexDirection: "column", gap: "6px"}}>
+                {supplierPurchaseHistory.map((p) => (
+                  <div key={p._id} style={{display:"flex", justifyContent:"space-between", padding:"10px 12px", background: "var(--input-bg, #f8fafc)", border: "1px solid var(--card-border, rgba(255,255,255,0.1))", borderRadius:"10px", fontSize:"12px"}}>
                     <div>
-                      <div style={{fontWeight:"bold"}}>#{p._id.slice(-6).toUpperCase()} � {p.items.length} item(s)</div>
-                      <div style={{color:"var(--text-muted)"}}>{new Date(p.createdAt).toLocaleDateString()} | {p.paymentMethod}</div>
+                      <div style={{fontWeight:"700", color: "var(--text-main)"}}>#{p._id.slice(-6).toUpperCase()} • {p.items.length} item(s)</div>
+                      <div style={{fontSize:"11px", color:"var(--text-muted)", marginTop: "2px"}}>{new Date(p.createdAt).toLocaleDateString()} | {p.paymentMethod || "Cash"}</div>
                     </div>
                     <div style={{textAlign:"right"}}>
-                      <div style={{fontWeight:"bold", color:"#dc3545"}}>?{p.totalAmount}</div>
-                      <span style={{color: p.paymentStatus==="Paid"?"#0b8f3a":"#f39c12", fontSize:"10px"}}>{p.paymentStatus}</span>
+                      <div style={{fontWeight:"900", color:"var(--text-main)"}}>₹{p.totalAmount}</div>
+                      <span className={`badge-status badge-${p.paymentStatus === "Paid" ? "completed" : "pending"}`} style={{ fontSize: "9px", padding: "2px 6px" }}>
+                        {p.paymentStatus}
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div style={{display:"flex", gap:"10px", marginTop:"15px"}}>
-              <button className="native-btn" style={{ padding: "12px", border: "none", borderRadius: "10px", cursor: "pointer", fontWeight: "bold", flex:1, margin:0, background:"#0b8f3a", color: "#fff"}} onClick={() => { setShowPurchaseBillModal(false); setLastCreatedPurchase(selectedPurchaseBill); setShowPurchasePrintModal(true); }}>??? Print / WhatsApp</button>
+            <div style={{display:"flex", gap:"10px", marginTop:"16px"}}>
+              <button className="btn-secondary" style={{ padding: "10px", borderRadius: "10px", fontWeight: "800", flex:1, margin:0, background: "#f59e0b", color: "#ffffff", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }} onClick={() => { setShowPurchaseBillModal(false); openEditPurchase(selectedPurchaseBill); }}>✏️ Edit Bill</button>
+              <button className="btn-premium" style={{ padding: "10px", borderRadius: "10px", fontWeight: "800", flex:1, margin:0, background:"#0b8f3a", color: "#ffffff", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }} onClick={() => { setShowPurchaseBillModal(false); setLastCreatedPurchase(selectedPurchaseBill); setShowPurchasePrintModal(true); }}>🖨️ Print / WhatsApp</button>
             </div>
           </div>
         </div>
@@ -2958,8 +2963,8 @@ const QuickAction = ({ icon, text, onClick }) => (
   </button>
 );
 
-const Input = ({ placeholder, value, onChange, type = "text", ...props }) => (
-  <input className="native-input" style={inputStyle} placeholder={placeholder} value={value} onChange={e => onChange?.(e.target.value)} {...props} />
+const Input = ({ placeholder, value, onChange, type = "text" }) => (
+  <input className="native-input" style={inputStyle} type={type} placeholder={placeholder} value={value} onChange={e => onChange?.(e.target.value)} />
 );
 
 const StatusBadge = ({ status }) => {
