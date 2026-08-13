@@ -1738,18 +1738,18 @@ const playBellSound = () => {
                   <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)" }}>Scrap Rates</h3> 
                   <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>setShowItemModal(true)}><FaPlus/> Add Rate</button>
                 </div>
-                <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
                   {filteredItems.map(it => (
-                    <div key={it._id} style={{ background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                       <div>
-                          <div style={{ fontSize: "15px", fontWeight: "700", color: "var(--text-main)", marginBottom: "4px" }}>{it.name}</div>
-                          <span style={{ display: "inline-block", background: "rgba(44, 62, 80, 0.1)", color: "#2c3e50", fontSize: "10px", fontWeight: "bold", padding: "4px 8px", borderRadius: "12px", textTransform: "uppercase" }}>{it.category}</span>
+                    <div key={it._id} style={{ background: "var(--card-bg, #ffffff)", border: "1.5px solid var(--card-border, #cbd5e1)", borderRadius: "14px", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", boxShadow: "0 2px 5px rgba(0,0,0,0.02)", width: "100%", boxSizing: "border-box" }}>
+                       <div style={{ flex: "1 1 0", minWidth: 0 }}>
+                          <div style={{ fontSize: "14px", fontWeight: "800", color: "var(--text-main)", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.name}</div>
+                          <span style={{ display: "inline-block", background: "#f0fdf4", color: "#0b8f3a", fontSize: "9px", fontWeight: "800", padding: "2px 6px", borderRadius: "6px", textTransform: "uppercase" }}>{it.category}</span>
                        </div>
-                       <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                          <strong style={{ color: "var(--primary)", fontSize: "16px" }}>₹{it.price}/{it.unit}</strong>
+                       <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
+                          <strong style={{ color: "#0b8f3a", fontSize: "15px", fontWeight: "900" }}>₹{it.price}<small style={{ fontSize: "11px", color: "var(--text-muted)", fontWeight: "normal" }}>/{it.unit}</small></strong>
                           <div style={{ display: "flex", gap: "6px" }}>
-                            <button className="btn-secondary" style={{ padding: "6px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={()=>{setEditingRate(it); setShowEditRateModal(true);}}><FaTools size={12}/></button>
-                            <button className="btn-danger" style={{ padding: "6px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={()=>handleDeleteItem(it._id, "rate")}><FaTrash size={12}/></button>
+                            <button className="btn-secondary" style={{ padding: "6px 8px", border: "1.5px solid var(--card-border, #cbd5e1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={()=>{setEditingRate(it); setShowEditRateModal(true);}}><FaTools size={12}/></button>
+                            <button className="btn-danger" style={{ padding: "6px 8px", border: "1px solid #fca5a5", borderRadius: "8px", background: "#fee2e2", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={()=>handleDeleteItem(it._id, "rate")}><FaTrash size={12}/></button>
                           </div>
                        </div>
                     </div>
@@ -1993,11 +1993,11 @@ const playBellSound = () => {
 
           {activeTab === "accounting" && (
             <div className="card-premium fade-up no-print" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
                 <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)" }}>Vyapar Billing & Accounting</h3>
-                <div style={{display: "flex", gap: "10px"}}>
-                  <button className="btn-secondary" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", color: "var(--text-main)", borderRadius: "var(--radius-md)" }} onClick={()=>setShowPurchaseModal(true)}><FaPlus/> Record Purchase</button>
-                  <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>setShowSaleModal(true)}><FaPlus/> Create Sale Invoice</button>
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", width: "100%" }}>
+                  <button className="btn-secondary" style={{ flex: "1 1 130px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", padding: "10px 12px", background: "var(--bg-subtle)", border: "1.5px solid var(--card-border, #cbd5e1)", color: "var(--text-main)", borderRadius: "12px", fontWeight: "800", fontSize: "13px" }} onClick={()=>setShowPurchaseModal(true)}><FaPlus/> Record Purchase</button>
+                  <button className="btn-premium" style={{ flex: "1 1 130px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", padding: "10px 12px", borderRadius: "12px", fontWeight: "800", fontSize: "13px" }} onClick={()=>setShowSaleModal(true)}><FaPlus/> Create Sale Invoice</button>
                 </div>
               </div>
               
@@ -2463,8 +2463,8 @@ const playBellSound = () => {
             </button>
           </div>
 
-          {/* Report Type Tabs */}
-          <div style={{display:"flex", gap:"8px", flexWrap:"wrap", marginBottom:"20px"}}>
+          {/* Report Type Tabs (Native Horizontal Touch Scroll Chips) */}
+          <div className="scroll-chips" style={{display:"flex", gap:"8px", flexWrap:"nowrap", overflowX:"auto", marginBottom:"20px", paddingBottom: "4px", WebkitOverflowScrolling: "touch"}}>
             {[
               {key:"summary", label:"📈 Summary"},
               {key:"purchases", label:"🧾 Purchases & Inventory"},
@@ -2473,9 +2473,9 @@ const playBellSound = () => {
               {key:"buyers", label:"🛒 Buyers"}
             ].map(t => (
               <button key={t.key}
-                style={{padding:"8px 16px", borderRadius:"20px", border:"none", cursor:"pointer", fontWeight:"bold", fontSize:"13px",
-                  background: reportType===t.key ? "#0b8f3a" : "#f0f0f0",
-                  color: reportType===t.key ? "#fff" : "var(--text-main)"}}
+                style={{padding:"8px 14px", borderRadius:"12px", border: reportType===t.key ? "1.5px solid #0b8f3a" : "1.5px solid var(--card-border, #cbd5e1)", cursor:"pointer", fontWeight:"800", fontSize:"12px", flexShrink: 0,
+                  background: reportType===t.key ? "#0b8f3a" : "var(--bg-subtle, #f8fafc)",
+                  color: reportType===t.key ? "#fff" : "var(--text-main, #0f172a)"}}
                 onClick={() => { setReportType(t.key); setReportData([]); }}
               >{t.label}</button>
             ))}
