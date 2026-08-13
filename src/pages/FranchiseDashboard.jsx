@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   FaUsers, FaTruck, FaClock, FaCheckCircle, FaRupeeSign,
   FaSignOutAlt, FaTrash, FaPlus, FaKey, FaBell, FaInfoCircle,
   FaAd, FaTag, FaTools, FaStar, FaUserPlus, FaBars, FaTimes, FaCog,
   FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram, FaRecycle, FaWallet, FaHistory, FaArrowUp, FaArrowDown, FaChartLine,
-  FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt
+  FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt,
+  FaMoon, FaSun, FaEdit, FaUser, FaShieldAlt, FaHome, FaBoxes, FaSearch
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
@@ -60,6 +60,18 @@ const playBellSound = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark" || document.body.getAttribute("data-theme") === "dark";
+  });
+
+  const toggleDarkMode = () => {
+    const newTheme = darkMode ? "light" : "dark";
+    setDarkMode(!darkMode);
+    localStorage.setItem("theme", newTheme);
+    document.body.setAttribute("data-theme", newTheme);
+  };
+
   const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => { setSearchQuery(""); }, [activeTab]);
 
@@ -927,6 +939,151 @@ const playBellSound = () => {
                   style={{ position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: "#999", fontWeight: "bold", fontSize: "14px" }}
                 >✕</span>
               )}
+            </div>
+          )}
+
+          
+          {/* FRANCHISE ACCOUNT TAB */}
+          {activeTab === "account" && (
+            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "12px 14px 40px 14px" }}>
+              {/* Franchise Profile Header Card */}
+              <div style={{
+                background: "var(--card-bg, #ffffff)",
+                borderRadius: "18px",
+                padding: "16px",
+                border: "1px solid var(--card-border, #e2e8f0)",
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
+              }}>
+                <div style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50%",
+                  background: "#f0fdf4",
+                  color: "#0b8f3a",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "22px",
+                  fontWeight: "900",
+                  flexShrink: 0
+                }}>
+                  <FaBuilding />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: "0 0 2px 0", fontSize: "16px", fontWeight: "900", color: "var(--text-main, #0f172a)" }}>
+                    {JSON.parse(localStorage.getItem("user") || "{}").name || "Franchise Partner"}
+                  </h3>
+                  <div style={{ fontSize: "12px", color: "var(--text-muted, #64748b)" }}>
+                    {JSON.parse(localStorage.getItem("user") || "{}").mobile || ""} • {JSON.parse(localStorage.getItem("user") || "{}").assignedCity || "Rajouri"}
+                  </div>
+                  <span style={{ fontSize: "10px", fontWeight: "800", color: "#0b8f3a", background: "#f0fdf4", padding: "2px 8px", borderRadius: "10px", display: "inline-block", marginTop: "4px" }}>
+                    Verified ScrapVex Franchise
+                  </span>
+                </div>
+              </div>
+
+              {/* MANAGEMENT SECTION */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>
+                  OPERATIONS MANAGEMENT
+                </span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("collectors")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaUsers /></div>
+                      <span style={rowTextStyle}>Manage Collectors ({collectors.length})</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("rates")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaTag /></div>
+                      <span style={rowTextStyle}>City Scrap Rates</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("users")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaUserCheck /></div>
+                      <span style={rowTextStyle}>Registered App Customers</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FINANCE SECTION */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>
+                  FINANCE & PAYOUTS
+                </span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaWallet /></div>
+                      <span style={rowTextStyle}>Franchise Wallet & UPI Deposit</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaFileInvoice /></div>
+                      <span style={rowTextStyle}>Accounting & Profit Statements</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* APP & HELP SECTION */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>
+                  APP & SUPPORT
+                </span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("tickets"); fetchTickets(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaTicketAlt /></div>
+                      <span style={rowTextStyle}>Raise Support Ticket</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={() => navigate("/privacy")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaShieldAlt /></div>
+                      <span style={rowTextStyle}>Privacy Policy</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={toggleDarkMode}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#f8fafc", color: "#64748b" }}>
+                        {darkMode ? <FaSun color="#f59e0b" /> : <FaMoon />}
+                      </div>
+                      <span style={rowTextStyle}>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* LOGOUT BUTTON */}
+              <button
+                onClick={logout}
+                style={{
+                  width: "100%",
+                  padding: "14px",
+                  borderRadius: "14px",
+                  border: "none",
+                  background: "#fef2f2",
+                  color: "#dc2626",
+                  fontWeight: "800",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  marginTop: "8px"
+                }}
+              >
+                <FaSignOutAlt /> Log Out Franchise Account
+              </button>
             </div>
           )}
 
@@ -2711,5 +2868,31 @@ const numberToWords = (num) => {
   return words.trim();
 };
 
-export default FranchiseDashboard;
 
+const accountRowStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "12px 14px",
+  borderBottom: "1px solid var(--card-border, #f1f5f9)",
+  cursor: "pointer"
+};
+
+const iconSquareStyle = {
+  width: "32px",
+  height: "32px",
+  borderRadius: "10px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "14px",
+  flexShrink: 0
+};
+
+const rowTextStyle = {
+  fontSize: "13px",
+  fontWeight: "800",
+  color: "var(--text-main, #0f172a)"
+};
+
+export default FranchiseDashboard;
