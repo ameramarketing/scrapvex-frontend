@@ -84,7 +84,7 @@ const overlayStyle = {
   left: 0,
   right: 0,
   bottom: 0,
-  background: "rgba(11, 143, 58, 0.15)",
+  background: "rgba(9, 13, 22, 0.75)",
   backdropFilter: "blur(8px)",
   WebkitBackdropFilter: "blur(8px)",
   zIndex: 99999,
@@ -95,10 +95,10 @@ const overlayStyle = {
 };
 
 const cardStyle = {
-  background: "rgba(255, 255, 255, 0.95)",
+  background: "var(--card-bg, #ffffff)",
   padding: "30px 40px",
   borderRadius: "24px",
-  boxShadow: "0 20px 50px rgba(0, 0, 0, 0.18)",
+  boxShadow: "0 20px 50px rgba(0, 0, 0, 0.3)",
   textAlign: "center",
   display: "flex",
   flexDirection: "column",
@@ -106,7 +106,7 @@ const cardStyle = {
   gap: "12px",
   maxWidth: "340px",
   width: "100%",
-  border: "1.5px solid rgba(11, 143, 58, 0.2)"
+  border: "1.5px solid var(--card-border, rgba(11, 143, 58, 0.2))"
 };
 
 const logoCircleStyle = {
@@ -129,14 +129,14 @@ const titleStyle = {
   margin: "6px 0 0 0",
   fontSize: "18px",
   fontWeight: "800",
-  color: "#0f172a",
+  color: "var(--text-main, #0f172a)",
   letterSpacing: "-0.3px"
 };
 
 const subStyle = {
   margin: 0,
   fontSize: "12px",
-  color: "#64748b",
+  color: "var(--text-muted, #64748b)",
   fontWeight: "500"
 };
 

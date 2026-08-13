@@ -111,17 +111,22 @@ function CollectorRegister() {
           box-shadow: var(--card-shadow);
         }
         .auth-logo-circle {
-          width: 54px;
-          height: 54px;
-          border-radius: 14px;
-          background: #f0fdf4;
-          color: var(--primary);
-          font-size: 22px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin: 0 auto 12px;
-          border: 1.5px solid #dcfce7;
+          width: 56px !important;
+          height: 56px !important;
+          border-radius: 16px !important;
+          background: #0b8f3a !important;
+          color: #ffffff !important;
+          font-size: 24px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 auto 12px !important;
+          border: 2px solid #08752f !important;
+          box-shadow: 0 4px 12px rgba(11, 143, 58, 0.25) !important;
+        }
+        .auth-logo-circle svg {
+          color: #ffffff !important;
+          fill: #ffffff !important;
         }
         .auth-input-row {
           display: flex;
