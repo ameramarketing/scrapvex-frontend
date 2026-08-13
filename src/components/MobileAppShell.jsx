@@ -68,7 +68,7 @@ function MobileAppShell({ children }) {
     { label: "Pickups", icon: <FaTruck />, tab: "pickups", path: "/admin-dashboard?tab=pickups" },
     { label: "Franchises", icon: <FaStore />, tab: "franchises", path: "/admin-dashboard?tab=franchises" },
     { label: "Wallet", icon: <FaWallet />, tab: "wallet", path: "/admin-dashboard?tab=wallet" },
-    { label: "Account", icon: <FaUser />, tab: "settings", path: "/admin-dashboard?tab=settings" }
+    { label: "Account", icon: <FaUser />, tab: "account", path: "/admin-dashboard?tab=account" }
   ];
 
   const userNavItems = [

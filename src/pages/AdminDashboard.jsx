@@ -1166,27 +1166,6 @@ const playBellSound = () => {
         }}>
           {/* Left Branding: ScrapVex ADMIN */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <button
-              type="button"
-              className="mobile-only"
-              onClick={(e) => { e.stopPropagation(); setIsMobileMenuOpen(true); }}
-              style={{
-                background: "var(--bg-subtle, #f8fafc)",
-                border: "1.5px solid var(--card-border, #cbd5e1)",
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--text-main, #334155)",
-                cursor: "pointer",
-                marginRight: "2px"
-              }}
-              title="All Tabs Menu"
-            >
-              <FaBars size={17} />
-            </button>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
               <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
                 <FaRecycle />
@@ -1318,6 +1297,116 @@ const playBellSound = () => {
                   style={{ position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: "#999", fontWeight: "bold", fontSize: "14px" }}
                 >✕</span>
               )}
+            </div>
+          )}
+
+          
+          {/* ADMIN ACCOUNT TAB - UNIFIED LAUNCHER FOR ALL 20 TABS */}
+          {activeTab === "account" && (
+            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "12px 14px 40px 14px" }}>
+              {/* Profile Card */}
+              <div style={{
+                background: "var(--card-bg, #ffffff)",
+                borderRadius: "18px",
+                padding: "16px",
+                border: "1px solid var(--card-border, #e2e8f0)",
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
+              }}>
+                <div style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50%",
+                  background: "#f0fdf4",
+                  color: "#0b8f3a",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "22px",
+                  fontWeight: "900",
+                  flexShrink: 0
+                }}>
+                  <FaShieldAlt />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: "0 0 2px 0", fontSize: "16px", fontWeight: "900", color: "var(--text-main, #0f172a)" }}>
+                    Superadmin Console
+                  </h3>
+                  <div style={{ fontSize: "12px", color: "var(--text-muted, #64748b)" }}>
+                    ScrapVex Master Operations
+                  </div>
+                  <span style={{ fontSize: "10px", fontWeight: "800", color: "#0b8f3a", background: "#f0fdf4", padding: "2px 8px", borderRadius: "10px", display: "inline-block", marginTop: "4px" }}>
+                    🟢 System Administrator
+                  </span>
+                </div>
+              </div>
+
+              {/* OPERATIONS */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>OPERATIONS</span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("overview")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaInfoCircle /></div><span style={rowTextStyle}>Overview Dashboard</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("pickups")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaTruck /></div><span style={rowTextStyle}>Pickups ({pickups.length})</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("users")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fdf2f8", color: "#db2777" }}><FaUsers /></div><span style={rowTextStyle}>App Users ({allUsers.length})</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("collectors")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaTools /></div><span style={rowTextStyle}>Collectors ({collectors.length})</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("franchises")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fff7ed", color: "#ea580c" }}><FaMapMarkerAlt /></div><span style={rowTextStyle}>Franchises ({franchises.length})</span></div></div>
+                </div>
+              </div>
+
+              {/* FINANCE */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>FINANCE</span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaChartLine /></div><span style={rowTextStyle}>Accounting Statements</span></div></div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("wallet"); fetchAllTransactions(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaWallet /></div><span style={rowTextStyle}>Platform Wallet Ledger</span></div></div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("withdrawals"); fetchWithdrawals(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaMoneyCheckAlt /></div><span style={rowTextStyle}>Withdrawals & Payouts</span></div></div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("buyers"); fetchBuyers(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaBuilding /></div><span style={rowTextStyle}>Buyers Management</span></div></div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("suppliers"); fetchSuppliers(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fdf2f8", color: "#db2777" }}><FaTruck /></div><span style={rowTextStyle}>Sellers & Suppliers</span></div></div>
+                </div>
+              </div>
+
+              {/* CATALOG */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>CATALOG</span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("rates")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaTag /></div><span style={rowTextStyle}>Platform Scrap Rates</span></div></div>
+                </div>
+              </div>
+
+              {/* COMMUNICATION */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>COMMUNICATION</span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("support"); fetchTickets(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaTicketAlt /></div><span style={rowTextStyle}>Support Tickets</span></div></div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("contacts"); fetchContactMessages(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaEnvelope /></div><span style={rowTextStyle}>Contact Submissions</span></div></div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("broadcasts"); fetchBroadcasts(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fdf2f8", color: "#db2777" }}><FaRss /></div><span style={rowTextStyle}>Push Broadcasts</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("whatsapp")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#25D366" }}><FaWhatsapp /></div><span style={rowTextStyle}>WhatsApp Engine Gateway</span></div></div>
+                </div>
+              </div>
+
+              {/* SYSTEM */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>SYSTEM</span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("audit"); fetchAuditLogs(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaClipboardList /></div><span style={rowTextStyle}>Audit Logs</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("ads")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fff7ed", color: "#ea580c" }}><FaAd /></div><span style={rowTextStyle}>Promotional Banners</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("reviews")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaStar /></div><span style={rowTextStyle}>Customer Reviews</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("settings")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f8fafc", color: "#64748b" }}><FaCog /></div><span style={rowTextStyle}>Platform Settings</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("reports")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaChartLine /></div><span style={rowTextStyle}>Reports & Export Statements</span></div></div>
+                </div>
+              </div>
+
+              {/* LOGOUT */}
+              <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid #fee2e2", overflow: "hidden", marginTop: "8px" }}>
+                <div style={{ ...accountRowStyle, color: "#dc2626" }} onClick={logout}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ ...iconSquareStyle, background: "#fee2e2", color: "#dc2626" }}><FaSignOutAlt /></div>
+                    <span style={{ ...rowTextStyle, color: "#dc2626", fontWeight: "800" }}>Sign Out</span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

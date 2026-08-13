@@ -940,27 +940,6 @@ const playBellSound = () => {
         }}>
           {/* Left Branding: ScrapVex FRANCHISE */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <button
-              type="button"
-              className="mobile-only"
-              onClick={(e) => { e.stopPropagation(); setIsMobileMenuOpen(true); }}
-              style={{
-                background: "var(--bg-subtle, #f8fafc)",
-                border: "1.5px solid var(--card-border, #cbd5e1)",
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--text-main, #334155)",
-                cursor: "pointer",
-                marginRight: "2px"
-              }}
-              title="All Tabs Menu"
-            >
-              <FaBars size={17} />
-            </button>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
               <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
                 <FaRecycle />
