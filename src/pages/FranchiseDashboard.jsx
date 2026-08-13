@@ -967,32 +967,34 @@ const playBellSound = () => {
 
             {/* Notification Bell */}
             <button
+              type="button"
               onClick={() => { setShowNotifPanel(!showNotifPanel); if (!showNotifPanel) markAllNotificationsRead(); }}
               style={{
-                background: "var(--bg-main, #f1f5f9)",
-                border: "none",
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
+                background: "var(--bg-subtle, #f8fafc)",
+                border: "1.5px solid var(--card-border, #cbd5e1)",
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "var(--text-main, #0f172a)",
                 cursor: "pointer",
-                position: "relative"
+                position: "relative",
+                flexShrink: 0
               }}
               title="Notifications"
             >
-              <FaBell size={18} />
+              <FaBell style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "var(--text-main, #334155)" }} />
               {notifications.filter(n => !n.isRead).length > 0 && (
                 <span style={{
                   position: "absolute",
                   top: "4px",
                   right: "4px",
-                  width: "8px",
-                  height: "8px",
+                  width: "9px",
+                  height: "9px",
                   borderRadius: "50%",
-                  background: "#dc2626"
+                  background: "#dc2626",
+                  border: "1.5px solid #ffffff"
                 }} />
               )}
             </button>

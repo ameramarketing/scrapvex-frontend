@@ -118,7 +118,25 @@ const playBellSound = () => {
 };
 
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get("tab") || "overview";
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    const urlTab = searchParams.get("tab");
+    if (urlTab && urlTab !== activeTab) {
+      setActiveTab(urlTab);
+      if (urlTab === "accounting") fetchAccountingData();
+      if (urlTab === "wallet") fetchAllTransactions();
+      if (urlTab === "withdrawals") fetchWithdrawals();
+      if (urlTab === "buyers") fetchBuyers();
+      if (urlTab === "suppliers") fetchSuppliers();
+      if (urlTab === "support") fetchTickets();
+      if (urlTab === "contacts") fetchContactMessages();
+      if (urlTab === "broadcasts") fetchBroadcasts();
+      if (urlTab === "audit") fetchAuditLogs();
+    }
+  }, [searchParams]);
   const [stats, setStats] = useState({ totalUsers: 0, totalPickups: 0, pending: 0, completed: 0, revenue: 0 });
   const [pickups, setPickups] = useState([]);
   const [collectors, setCollectors] = useState([]);
@@ -1169,32 +1187,34 @@ const playBellSound = () => {
 
             {/* Notification Bell */}
             <button
+              type="button"
               onClick={() => { setShowNotifPanel(!showNotifPanel); if (!showNotifPanel) markAllNotificationsRead(); }}
               style={{
                 background: "var(--bg-subtle, #f8fafc)",
-                border: "1px solid var(--card-border, #e2e8f0)",
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
+                border: "1.5px solid var(--card-border, #cbd5e1)",
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "var(--text-main, #334155)",
                 cursor: "pointer",
-                position: "relative"
+                position: "relative",
+                flexShrink: 0
               }}
               title="Notifications"
             >
-              <FaBell size={17} />
+              <FaBell style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "var(--text-main, #334155)" }} />
               {notifications.filter(n => !n.isRead).length > 0 && (
                 <span style={{
                   position: "absolute",
                   top: "4px",
                   right: "4px",
-                  width: "8px",
-                  height: "8px",
+                  width: "9px",
+                  height: "9px",
                   borderRadius: "50%",
-                  background: "#dc2626"
+                  background: "#dc2626",
+                  border: "1.5px solid #ffffff"
                 }} />
               )}
             </button>
