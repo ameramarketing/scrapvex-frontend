@@ -12,6 +12,7 @@ import Toast from "../components/Toast";
 import { performLogout } from "../utils/auth";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useTheme } from "../context/ThemeContext";
 
 function WhatsAppGatewayPanel() {
   const [waData, setWaData] = useState({ isReady: false, status: 'initializing', qrCodeUrl: null });
@@ -244,20 +245,7 @@ const playBellSound = () => {
   const [selectedPickup, setSelectedPickup] = useState(null);
   const [editingRate, setEditingRate] = useState(null);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
-
-  const toggleDarkMode = () => {
-    const nextTheme = !darkMode ? "dark" : "light";
-    setDarkMode(!darkMode);
-    localStorage.setItem("theme", nextTheme);
-    document.documentElement.setAttribute("data-theme", nextTheme);
-    document.body.setAttribute("data-theme", nextTheme);
-    if (!darkMode) {
-      document.body.classList.add("dark-mode");
-    } else {
-      document.body.classList.remove("dark-mode");
-    }
-  };
+  const { isDarkMode: darkMode, toggleDarkMode } = useTheme();
   const [resetData, setResetData] = useState({ userId: "", newPassword: "", name: "" });
   
   // Form States
@@ -1269,6 +1257,27 @@ const playBellSound = () => {
               ) : (
                 <FaMoon style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "var(--text-main, #334155)" }} />
               )}
+            </button>
+
+            {/* Logout Button */}
+            <button
+              type="button"
+              onClick={async () => { await performLogout(); window.location.href = "/admin-login"; }}
+              style={{
+                background: "var(--bg-subtle, #f8fafc)",
+                border: "1.5px solid var(--card-border, #cbd5e1)",
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                flexShrink: 0
+              }}
+              title="Logout"
+            >
+              <FaSignOutAlt style={{ width: "18px", height: "18px", color: "#e74c3c" }} />
             </button>
           </div>
 

@@ -284,7 +284,7 @@ const badgeWrap = { display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "
 const pill = { background: "var(--card-bg)", padding: "10px 18px", borderRadius: "99px", boxShadow: "0 5px 15px rgba(0,0,0,0.05)", display: "flex", gap: "8px", alignItems: "center", fontSize: "13px", fontWeight: "600", color: "var(--text-main)", border: "1px solid var(--glass-border)" };
 const trustBoxInner = { display: "flex", gap: "30px", alignItems: "center", background: "var(--card-bg)" };
 const trustIcon = { fontSize: "50px", color: "var(--primary)" };
-const ctaBanner = { width: "100%", padding: "60px 20px", borderRadius: "30px", textAlign: "center", flexDirection: "column" };
+const ctaBanner = { width: "100%", padding: "60px 20px", borderRadius: "30px", textAlign: "center", flexDirection: "column", background: "#0b8f3a", display: "flex", alignItems: "center", justifyContent: "center" };
 
 /* ────────────────────────────────────────────────────────
    MOBILE INLINE STYLES

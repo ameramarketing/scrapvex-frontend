@@ -948,6 +948,25 @@ function CollectorDashboard() {
             >
               {isDarkMode ? <FaSun /> : <FaMoon />}
             </button>
+
+            {/* Logout Button */}
+            <button
+              style={{
+                background: "none",
+                border: "none",
+                fontSize: "15px",
+                color: "#e74c3c",
+                cursor: "pointer",
+                padding: "5px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              onClick={async () => { await performLogout(); window.location.href = "/collector-login"; }}
+              title="Logout"
+            >
+              <FaSignOutAlt />
+            </button>
           </div>
         </header>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 /* Pages */
 import Home from "./pages/Home";
@@ -57,6 +57,15 @@ function InitialHomeScreen() {
   return <Home />;
 }
 
+const DASHBOARD_ROUTES = ["/admin-dashboard", "/collector-dashboard", "/franchise-dashboard"];
+
+function NavbarWrapper() {
+  const location = useLocation();
+  const isDashboard = DASHBOARD_ROUTES.some(r => location.pathname.startsWith(r));
+  if (isMobileEnvironment() || isDashboard) return null;
+  return <Navbar />;
+}
+
 function App() {
   const [showSplash, setShowSplash] = React.useState(() => {
     // Show splash once per session or on app load
@@ -83,7 +92,7 @@ function App() {
       <NativeOfflineBanner />
       <BrowserRouter>
         <GlobalLoader />
-        {!isMobileEnvironment() && <Navbar />}
+        <NavbarWrapper />
         <MobileAppShell>
           <Routes>
             {/* PUBLIC ROUTES */}

@@ -125,9 +125,9 @@ function Navbar() {
         <div style={actions}>
           {user ? (
             <div style={{display:"flex", alignItems:"center", gap:"10px"}}>
-              <div style={userWrapper} className="hide-on-mobile logo-zoom" onClick={() => navigate(getDashboardPath())}>
-                 <FaUserCircle size={24} color="#0b8f3a" />
-                 <span style={{fontWeight:"600", fontSize:"14px"}}>{user.name?.split(" ")[0]}</span>
+              <div style={userWrapper} className="hide-on-mobile logo-zoom social-glow" onClick={() => navigate(getDashboardPath())}>
+                 <FaUserCircle size={20} color="#0b8f3a" style={{flexShrink: 0, display:"block"}} />
+                 <span style={{fontWeight:"700", fontSize:"14px", lineHeight:"1"}}>{user.name?.split(" ")[0]}</span>
               </div>
             </div>
           ) : (
@@ -243,7 +243,7 @@ const actions = { display: "flex", alignItems: "center", gap: "8px" };
 const userWrapper = {
   display: "flex",
   alignItems: "center",
-  gap: "8px",
+  gap: "7px",
   background: "var(--primary-light)",
   padding: "8px 14px",
   borderRadius: "10px",
@@ -251,6 +251,7 @@ const userWrapper = {
   border: "1.5px solid rgba(11,143,58,0.2)",
   color: "var(--text-main)",
   transition: "all 0.2s ease",
+  lineHeight: "1",
 };
 const loginBtn = {
   background: "var(--primary)",

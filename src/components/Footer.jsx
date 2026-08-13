@@ -30,15 +30,15 @@ function Footer() {
           </p>
           <div style={socialWrap}>
             {settings?.facebookUrl && settings.facebookUrl !== "#" ? (
-              <a href={settings.facebookUrl} target="_blank" rel="noreferrer"><Social icon={<FaFacebookF />} /></a>
+              <a href={settings.facebookUrl} target="_blank" rel="noreferrer" className="social-glow" style={{borderRadius:"10px"}}><Social icon={<FaFacebookF />} /></a>
             ) : <Social icon={<FaFacebookF />} />}
             
             {settings?.instagramUrl && settings.instagramUrl !== "#" ? (
-              <a href={settings.instagramUrl} target="_blank" rel="noreferrer"><Social icon={<FaInstagram />} /></a>
+              <a href={settings.instagramUrl} target="_blank" rel="noreferrer" className="social-glow" style={{borderRadius:"10px"}}><Social icon={<FaInstagram />} /></a>
             ) : <Social icon={<FaInstagram />} />}
             
             {settings ? (
-              <a href={settings.linkedinUrl || "#"} target="_blank" rel="noreferrer"><Social icon={<FaLinkedinIn />} /></a>
+              <a href={settings.linkedinUrl || "#"} target="_blank" rel="noreferrer" className="social-glow" style={{borderRadius:"10px"}}><Social icon={<FaLinkedinIn />} /></a>
             ) : <Social icon={<FaLinkedinIn />} />}
             <Social icon={<FaWhatsapp />} />
           </div>
@@ -127,7 +127,7 @@ const logoIcon = { width: "45px", height: "45px", borderRadius: "12px", backgrou
 const logoText = { margin: 0, fontSize: "24px", fontWeight: "800" };
 const desc = { color: "var(--text-muted)", lineHeight: "1.7", fontSize: "14px" };
 const socialWrap = { display: "flex", gap: "10px" };
-const socialBtn = { width: "40px", height: "40px", borderRadius: "10px", border: "none", background: "var(--glass-border)", color: "var(--text-main)", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center" };
+const socialBtn = { width: "40px", height: "40px", borderRadius: "10px", border: "1.5px solid var(--glass-border)", background: "var(--glass-border)", color: "var(--text-main)", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.25s ease" };
 const title = { marginBottom: "25px", fontSize: "18px", fontWeight: "700", position: "relative", color: "var(--text-main)" };
 const linkCol = { display: "flex", flexDirection: "column", gap: "12px" };
 const infoCol = { display: "flex", flexDirection: "column", gap: "15px" };

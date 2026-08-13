@@ -13,6 +13,7 @@ import Toast from "../components/Toast";
 import { performLogout } from "../utils/auth";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { useTheme } from "../context/ThemeContext";
 
 function FranchiseDashboard() {
 
@@ -76,22 +77,7 @@ const playBellSound = () => {
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("theme") === "dark" || document.body.getAttribute("data-theme") === "dark";
-  });
-
-  const toggleDarkMode = () => {
-    const newTheme = darkMode ? "light" : "dark";
-    setDarkMode(!darkMode);
-    localStorage.setItem("theme", newTheme);
-    document.body.setAttribute("data-theme", newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
-    if (!darkMode) {
-      document.body.classList.add("dark-mode");
-    } else {
-      document.body.classList.remove("dark-mode");
-    }
-  };
+  const { isDarkMode: darkMode, toggleDarkMode } = useTheme();
 
   const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => { setSearchQuery(""); }, [activeTab]);
@@ -1036,6 +1022,27 @@ const playBellSound = () => {
               ) : (
                 <FaMoon style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "var(--text-main, #334155)" }} />
               )}
+            </button>
+
+            {/* Logout Button */}
+            <button
+              type="button"
+              onClick={async () => { await performLogout(); window.location.href = "/franchise-login"; }}
+              style={{
+                background: "var(--bg-subtle, #f8fafc)",
+                border: "1.5px solid var(--card-border, #cbd5e1)",
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                flexShrink: 0
+              }}
+              title="Logout"
+            >
+              <FaSignOutAlt style={{ width: "18px", height: "18px", color: "#e74c3c" }} />
             </button>
           </div>
 
