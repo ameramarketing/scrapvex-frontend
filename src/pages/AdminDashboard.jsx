@@ -1398,6 +1398,7 @@ const playBellSound = () => {
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaChartLine /></div><span style={rowTextStyle}>Accounting Statements</span></div></div>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("wallet"); fetchAllTransactions(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaWallet /></div><span style={rowTextStyle}>Platform Wallet Ledger</span></div></div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("inventory"); fetchAccountingData(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#e0e7ff", color: "#4338ca" }}><FaBoxes /></div><span style={rowTextStyle}>Stock & Inventory Valuation</span></div></div>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("withdrawals"); fetchWithdrawals(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaMoneyCheckAlt /></div><span style={rowTextStyle}>Withdrawals & Payouts</span></div></div>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("buyers"); fetchBuyers(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaBuilding /></div><span style={rowTextStyle}>Buyers Management</span></div></div>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("suppliers"); fetchSuppliers(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fdf2f8", color: "#db2777" }}><FaTruck /></div><span style={rowTextStyle}>Sellers & Suppliers</span></div></div>
@@ -1940,6 +1941,56 @@ const playBellSound = () => {
             </div>
           )}
 
+          
+          {/* ═══════════════ INVENTORY TAB (STANDALONE NATIVE MOBILE APP VIEW) ═══════════════ */}
+          {activeTab === "inventory" && (
+            <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "12px 14px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <h3 style={{ margin: "0", fontSize: "18px", fontWeight: "900", color: "var(--text-main)" }}>Live Scrap Inventory</h3>
+                  <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "var(--text-muted)" }}>Current material stock & valuation</p>
+                </div>
+                <button className="btn-premium" style={{ height: "36px", padding: "0 12px", fontSize: "12px" }} onClick={() => { setActiveTab("accounting"); setShowPurchaseModal(true); }}>
+                  + Add Stock
+                </button>
+              </div>
+
+              {/* Total Valuation Card */}
+              <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "16px", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: "11px", fontWeight: "800", color: "#0b8f3a", textTransform: "uppercase" }}>Total Stock Valuation</div>
+                  <div style={{ fontSize: "24px", fontWeight: "900", color: "#0b8f3a", marginTop: "4px" }}>₹{accountingStats.stockValue?.toFixed(2) || "0.00"}</div>
+                </div>
+                <div style={{ width: "42px", height: "42px", borderRadius: "12px", background: "#0b8f3a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>
+                  <FaBoxes />
+                </div>
+              </div>
+
+              {/* Inventory Item Cards */}
+              <div className="grid-2">
+                {filteredInventory.map(inv => (
+                  <div key={inv._id} style={{ background: "var(--card-bg, #ffffff)", border: "1px solid var(--card-border, #e2e8f0)", borderRadius: "16px", padding: "14px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)", display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <div>
+                        <div style={{ fontWeight: "800", fontSize: "15px", color: "var(--text-main)" }}>{inv.name}</div>
+                        <span style={{ fontSize: "10px", fontWeight: "800", color: "#0b8f3a", background: "#f0fdf4", padding: "2px 8px", borderRadius: "8px", textTransform: "uppercase", display: "inline-block", marginTop: "4px" }}>{inv.category || "Scrap"}</span>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontWeight: "900", fontSize: "16px", color: "#0b8f3a" }}>{inv.quantity} <small style={{ fontSize: "11px", color: "var(--text-muted)", fontWeight: "normal" }}>{inv.unit || "kg"}</small></div>
+                        <div style={{ fontSize: "11px", color: "var(--text-muted)" }}>₹{inv.avgPrice || inv.price || 0}/{inv.unit || "kg"}</div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "8px", borderTop: "1px solid var(--card-border, #f1f5f9)", fontSize: "12px" }}>
+                      <span style={{ color: "var(--text-muted)" }}>Total Value:</span>
+                      <strong style={{ color: "var(--text-main)" }}>₹{((inv.quantity || 0) * (inv.avgPrice || inv.price || 0)).toFixed(2)}</strong>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {filteredInventory.length === 0 && <div className="empty-state">No stock items in inventory.</div>}
+            </div>
+          )}
+
           {activeTab === "accounting" && (
             <div className="card-premium fade-up no-print" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
@@ -2434,11 +2485,11 @@ const playBellSound = () => {
           <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))", gap:"10px", marginBottom:"15px", background:"#f8fffe", padding:"15px", borderRadius:"15px", border:"1px solid #bbf7d0"}}>
             <div>
               <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>📅 From Date</label>
-              <input className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportFrom} onChange={e => setReportFrom(e.target.value)} />
+              <input type="date" className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px", height: "40px"}} value={reportFrom} onChange={e => setReportFrom(e.target.value)} />
             </div>
             <div>
               <label style={{fontSize:"11px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"4px"}}>📅 To Date</label>
-              <input className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px"}} value={reportTo} onChange={e => setReportTo(e.target.value)} />
+              <input type="date" className="native-input" style={{...inputStyle, marginBottom:0, fontSize:"13px", height: "40px"}} value={reportTo} onChange={e => setReportTo(e.target.value)} />
             </div>
             {reportType === "summary" && (
               <div>
