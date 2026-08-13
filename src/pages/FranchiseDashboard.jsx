@@ -759,12 +759,19 @@ const playBellSound = () => {
   };
 
   const handleDeleteItem = async (id, type) => {
-    if (!window.confirm(`Delete this ${type}?`)) return;
+    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
     try {
       let ep = type === "rate" ? `/admin/scrap-items/${id}` : type === "ad" ? `/ads/${id}` : `/admin/${type}s/${id}`;
-      await API.delete(ep);
-      showToast("success", "Deleted"); fetchAdminData();
-    } catch (e) { showToast("error", "Failed"); }
+      const { data } = await API.delete(ep);
+      if (data?.success) {
+        showToast("success", "Item deleted successfully!");
+        fetchAdminData();
+      } else {
+        showToast("error", data?.message || "Failed to delete item");
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Failed to delete item");
+    }
   };
 
 

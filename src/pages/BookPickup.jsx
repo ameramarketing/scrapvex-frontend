@@ -319,10 +319,11 @@ const mobileHeroCard = {
 };
 
 const heroPill = {
-  background: "rgba(255, 255, 255, 0.2)",
-  padding: "3px 8px",
+  background: "rgba(255, 255, 255, 0.25)",
+  color: "#ffffff",
+  padding: "3px 10px",
   borderRadius: "99px",
-  fontSize: "9px",
+  fontSize: "10px",
   fontWeight: "800",
   letterSpacing: "0.5px",
   display: "flex",
@@ -334,15 +335,18 @@ const mobileHeroTitle = {
   fontSize: "24px",
   fontWeight: "900",
   lineHeight: "1.15",
-  margin: "0 0 8px 0"
+  margin: "0 0 8px 0",
+  color: "#ffffff"
 };
 
 const mobileHeroSub = {
-  fontSize: "12px",
+  fontSize: "13px",
   lineHeight: "1.5",
-  opacity: 0.9,
+  color: "#ffffff",
+  opacity: 0.95,
   margin: "0 0 16px 0",
-  maxWidth: "280px"
+  fontWeight: "500",
+  maxWidth: "290px"
 };
 
 const mobileHeroCta = {

@@ -151,9 +151,9 @@ function Rates() {
     if (lower.includes("paper")) return <FaFileAlt />;
     
     // Metals
-    if (lower.includes("iron") || lower.includes("loha") || lower.includes("steel")) return <FaWeightHanging />;
-    if (lower.includes("copper") || lower.includes("tamba") || lower.includes("brass") || lower.includes("peetal")) return <FaWeightHanging />;
-    if (lower.includes("aluminium") || lower.includes("aluminum")) return <FaWeightHanging />;
+    if (lower.includes("iron") || lower.includes("loha") || lower.includes("steel")) return <FaCog />;
+    if (lower.includes("copper") || lower.includes("tamba") || lower.includes("brass") || lower.includes("peetal")) return <FaCube />;
+    if (lower.includes("aluminium") || lower.includes("aluminum")) return <FaCube />;
     
     // E-Waste & IT
     if (lower.includes("laptop") || lower.includes("computer") || lower.includes("cpu")) return <FaLaptop />;
