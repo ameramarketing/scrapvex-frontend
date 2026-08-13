@@ -1072,7 +1072,7 @@ const playBellSound = () => {
                   border: "1px solid #d1d5db",
                   outline: "none",
                   fontSize: "14px",
-                  background: "#fff",
+                  background: "var(--card-bg, #ffffff)",
                   boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
                   transition: "border-color 0.2s ease"
                 }}
@@ -1227,7 +1227,7 @@ const playBellSound = () => {
                   </div>
                   <div style={accountRowStyle} onClick={toggleDarkMode}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ ...iconSquareStyle, background: "#f8fafc", color: "#64748b" }}>
+                      <div style={{ ...iconSquareStyle, background: "var(--bg-main, #f8fafc)", color: "var(--text-muted, #64748b)" }}>
                         {darkMode ? <FaSun color="#f59e0b" /> : <FaMoon />}
                       </div>
                       <span style={rowTextStyle}>{darkMode ? "Light Mode" : "Dark Mode"}</span>
@@ -1847,8 +1847,8 @@ const playBellSound = () => {
 
                       <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
                         {/* Item Wise Inventory Breakdown */}
-                        <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
-                          <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>📦 Received Inventory (Item Wise)</h4>
+                        <div style={{ flex: 1, minWidth: "300px", background: "var(--bg-main, #f8fafc)", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                          <h4 style={{ margin: "0 0 12px 0", color: "var(--text-main, #0f172a)", display: "flex", alignItems: "center", gap: "6px" }}>📦 Received Inventory (Item Wise)</h4>
                           {reportInventory.length === 0 ? (
                             <div style={{ fontStyle: "italic", color: "#94a3b8", textAlign: "center", padding: "20px" }}>No items purchased in this period</div>
                           ) : (
@@ -1863,7 +1863,7 @@ const playBellSound = () => {
                               <tbody>
                                 {reportInventory.map((item, idx) => (
                                   <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0" }}>
-                                    <td style={{ padding: "8px 4px", fontWeight: "600", color: "#1e293b" }}>{item.name}</td>
+                                    <td style={{ padding: "8px 4px", fontWeight: "600", color: "var(--text-main, #0f172a)" }}>{item.name}</td>
                                     <td style={{ padding: "8px 4px", textAlign: "center", fontWeight: "bold", color: "#0b8f3a" }}>{item.quantity} {item.unit}</td>
                                     <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{(item.amount || 0).toFixed(0)}</td>
                                   </tr>
@@ -1874,14 +1874,14 @@ const playBellSound = () => {
                         </div>
 
                         {/* Bills List */}
-                        <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
-                          <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>🧾 Purchase Bills List</h4>
+                        <div style={{ flex: 1, minWidth: "300px", background: "var(--bg-main, #f8fafc)", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                          <h4 style={{ margin: "0 0 12px 0", color: "var(--text-main, #0f172a)", display: "flex", alignItems: "center", gap: "6px" }}>🧾 Purchase Bills List</h4>
                           <div style={{ maxHeight: "400px", overflowY: "auto" }}>
                             {reportData.map((p, idx) => (
-                              <div key={idx} style={{ padding: "10px", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
+                              <div key={idx} style={{ padding: "10px", background: "var(--card-bg, #ffffff)", border: "1px solid #e2e8f0", borderRadius: "10px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
                                 <div>
-                                  <div style={{ fontWeight: "bold", color: "#1e293b" }}>{p.supplierName}</div>
-                                  <div style={{ color: "#64748b", marginTop: "2px" }}>Bill No: #{p.billNo} | {p.date}</div>
+                                  <div style={{ fontWeight: "bold", color: "var(--text-main, #0f172a)" }}>{p.supplierName}</div>
+                                  <div style={{ color: "var(--text-muted, #64748b)", marginTop: "2px" }}>Bill No: #{p.billNo} | {p.date}</div>
                                   <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>{p.itemsCount} items • {p.paymentMethod}</div>
                                 </div>
                                 <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
@@ -2311,7 +2311,7 @@ const playBellSound = () => {
               <div style={{textAlign: "center", width: "100%", background: "var(--bg-main)", padding: "16px", borderRadius: "16px", border: "1px solid var(--glass-border)"}}>
                  <div style={{fontSize: "12px", color: "var(--text-muted)", marginBottom: "8px", fontWeight: "bold"}}>SCAN QR WITH ANY UPI APP (GPAY / PHONEPE / PAYTM)</div>
                  
-                 <div style={{background: "#fff", padding: "12px", borderRadius: "16px", display: "inline-block", boxShadow: "0 8px 20px rgba(0,0,0,0.08)", border: "2px solid #0b8f3a"}}>
+                 <div style={{background: "var(--card-bg, #ffffff)", padding: "12px", borderRadius: "16px", display: "inline-block", boxShadow: "0 8px 20px rgba(0,0,0,0.08)", border: "2px solid #0b8f3a"}}>
                     <img 
                        src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=${settings?.upiId || "8491028539@pthdfc"}&pn=ScrapVex&am=${franchiseDepositForm.amount}&tn=WalletDeposit`)}`} 
                        alt="Official UPI QR Code" 
@@ -2598,13 +2598,13 @@ const playBellSound = () => {
 
             {showPurchasePrintModal && lastCreatedPurchase && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
-          <div style={{ background: "#fff", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
+          <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
             <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" , color: "#fff"}}>
               <span style={{ color: "#fff", fontWeight: "bold", fontSize: "16px" }}>🧾 Purchase Bill</span>
               <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
             </div>
             
-            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "var(--text-main)", background: "#fff" }}>
+            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "var(--text-main)", background: "var(--card-bg, #ffffff)" }}>
               <style>{`@media print { body * { visibility: hidden; } #purchase-bill-print, #purchase-bill-print * { visibility: visible; } #purchase-bill-print { position: fixed; left: 0; top: 0; width: 80mm; padding: 5mm; } .no-print { display: none !important; } }`}</style>
               <div style={{ textAlign: "center", borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
                 <div style={{ fontWeight: "bold", fontSize: "15px" }}>⚡ SCRAPVEX</div>
@@ -2677,7 +2677,7 @@ const playBellSound = () => {
              </button>
           </div>
 
-          <div id="invoice-print-area" style={{padding: "40px", background: "#fff", color: "var(--text-main)", fontFamily: "'Inter', sans-serif", fontSize: "12px", border: "1px solid #eee", minHeight: "800px"}}>
+          <div id="invoice-print-area" style={{padding: "40px", background: "var(--card-bg, #ffffff)", color: "var(--text-main)", fontFamily: "'Inter', sans-serif", fontSize: "12px", border: "1px solid #eee", minHeight: "800px"}}>
              <style>{`
                @media print {
                  @page { size: A4; margin: 15mm; }

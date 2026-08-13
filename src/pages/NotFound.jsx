@@ -30,7 +30,7 @@ const wrap = {
 };
 
 const card = {
-  background:"#fff",
+  background: "var(--card-bg, #ffffff)",
   padding:"40px",
   borderRadius:"24px",
   textAlign:"center",

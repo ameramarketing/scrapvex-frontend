@@ -2604,45 +2604,45 @@ function CollectorDashboard() {
                   {/* Form Inputs */}
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>FULL NAME</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>FULL NAME</label>
                       <input className="settings-input" name="name" value={(profileForm?.name || "")} onChange={handleProfileFormChange} style={settingsInputStyle} />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>MOBILE NUMBER</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>MOBILE NUMBER</label>
                       <input className="settings-input" value={user?.mobile || ""} disabled style={{ ...settingsInputStyle, color: "#94a3b8", cursor: "not-allowed" }} />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>EMAIL ADDRESS</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>EMAIL ADDRESS</label>
                       <input className="settings-input" value={user?.email || "-"} disabled style={{ ...settingsInputStyle, color: "#94a3b8", cursor: "not-allowed" }} />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>ADDRESS</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>ADDRESS</label>
                       <textarea className="settings-input" name="address" value={(profileForm?.address || "")} onChange={handleProfileFormChange} style={{ ...settingsInputStyle, height: "70px", resize: "none" }} />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>ASSIGNED AREA</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>ASSIGNED AREA</label>
                       <input className="settings-input" name="area" value={(profileForm?.area || "")} onChange={handleProfileFormChange} style={settingsInputStyle} />
                     </div>
 
-                    <div style={{ height: "1px", background: "#f1f5f9", margin: "8px 0" }} />
+                    <div style={{ height: "1px", background: "var(--bg-subtle, #f1f5f9)", margin: "8px 0" }} />
                     <span style={{ fontSize: "12px", fontWeight: "800", color: "var(--text-main)" }}>Change Password (Optional)</span>
 
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>OLD PASSWORD</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>OLD PASSWORD</label>
                       <input type="password" className="settings-input" name="oldPassword" value={(profileForm?.oldPassword || "")} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>NEW PASSWORD</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>NEW PASSWORD</label>
                       <input type="password" className="settings-input" name="newPassword" value={(profileForm?.newPassword || "")} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>CONFIRM NEW PASSWORD</label>
+                      <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>CONFIRM NEW PASSWORD</label>
                       <input type="password" className="settings-input" name="confirmPassword" value={(profileForm?.confirmPassword || "")} onChange={handleProfileFormChange} placeholder="••••••••" style={settingsInputStyle} />
                     </div>
                   </div>
@@ -3609,7 +3609,7 @@ function CollectorDashboard() {
 
                 {/* Compact Dynamic QR Code */}
                 <div style={{
-                  background: "#ffffff",
+                  background: "var(--card-bg, #ffffff)",
                   padding: "8px",
                   borderRadius: "14px",
                   border: "1px solid #e2e8f0",
@@ -4298,7 +4298,7 @@ const bottomNavStyle = {
   left: 0,
   right: 0,
   height: "64px",
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   borderTop: "1.5px solid #e2e8f0",
   boxShadow: "0 -6px 20px rgba(15,23,42,0.06)",
   display: "flex",

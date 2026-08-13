@@ -86,7 +86,7 @@ function ForgotPassword() {
   };
 
   return (
-    <div style={{ background: "#f8fafc", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+    <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
       <Toast
         show={toast.show}
         type={toast.type}
@@ -167,10 +167,10 @@ function ForgotPassword() {
             {step === 2 && <FaShieldAlt />}
             {step === 3 && <FaKey />}
           </div>
-          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: "0 0 4px 0" }}>
+          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main, #0f172a)", margin: "0 0 4px 0" }}>
             {step === 1 ? "Forgot Password" : (step === 2 ? "Verify OTP" : "Reset Password")}
           </h1>
-          <p style={{ color: "#64748b", fontSize: "12px", margin: 0 }}>
+          <p style={{ color: "var(--text-muted, #64748b)", fontSize: "12px", margin: 0 }}>
             {step === 1 ? `Recover your ${role} account` : (step === 2 ? `Enter OTP sent to ${mobile}` : "Create a strong new password")}
           </p>
         </div>
@@ -228,7 +228,7 @@ function ForgotPassword() {
                 required 
               />
             </div>
-            <p style={{ textAlign: "center", fontSize: "12px", color: "#64748b", margin: "0 0 16px 0" }}>
+            <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "0 0 16px 0" }}>
               {otpChannel === "whatsapp" ? "💬 OTP sent to your WhatsApp" : "📱 OTP sent via SMS"}
             </p>
             <button type="submit" className="btn-premium" style={{ height: "46px", border: "none", fontSize: "14px", fontWeight: "800" }} disabled={loading}>

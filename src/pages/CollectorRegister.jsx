@@ -243,7 +243,7 @@ function CollectorRegister() {
         <div style={modalBackdrop}>
           <div style={modalCard} className="fade-up">
             <div style={modalHeaderIcon}><FaKey /></div>
-            <h3 style={{ fontSize: "18px", fontWeight: "800", margin: "12px 0 6px 0", color: "#0f172a" }}>Enter Collector OTP</h3>
+            <h3 style={{ fontSize: "18px", fontWeight: "800", margin: "12px 0 6px 0", color: "var(--text-main, #0f172a)" }}>Enter Collector OTP</h3>
             <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "0 0 16px 0", lineHeight: "1.5" }}>
               {otpChannel === "whatsapp" ? "💬 Secret OTP sent to WhatsApp inbox" : "📱 Secret OTP sent via SMS"} on <b>+91 {form.mobile}</b>.
             </p>
@@ -288,10 +288,10 @@ function CollectorRegister() {
 
 const wrap = { minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "16px", background: "var(--bg-main)" };
 const modalBackdrop = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15, 23, 42, 0.6)", backdropFilter: "blur(4px)", zIndex: 99999, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" };
-const modalCard = { background: "#ffffff", width: "100%", maxWidth: "360px", borderRadius: "20px", padding: "24px", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.15)" };
+const modalCard = { background: "var(--card-bg, #ffffff)", width: "100%", maxWidth: "360px", borderRadius: "20px", padding: "24px", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.15)" };
 const modalHeaderIcon = { width: "50px", height: "50px", borderRadius: "50%", background: "#f0fdf4", color: "#0b8f3a", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", margin: "0 auto" };
 const modalErrorBox = { background: "#fef2f2", border: "1px solid #fecaca", color: "#dc2626", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", marginBottom: "14px" };
-const otpInputGroup = { background: "#f8fafc", borderRadius: "12px", padding: "10px", border: "2px solid #0b8f3a" };
-const otpInput = { width: "100%", border: "none", outline: "none", background: "transparent", textAlign: "center", fontSize: "24px", fontWeight: "800", letterSpacing: "8px", color: "#0f172a" };
+const otpInputGroup = { background: "var(--bg-main, #f8fafc)", borderRadius: "12px", padding: "10px", border: "2px solid #0b8f3a" };
+const otpInput = { width: "100%", border: "none", outline: "none", background: "transparent", textAlign: "center", fontSize: "24px", fontWeight: "800", letterSpacing: "8px", color: "var(--text-main, #0f172a)" };
 
 export default CollectorRegister;

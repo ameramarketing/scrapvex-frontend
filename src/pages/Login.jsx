@@ -50,7 +50,7 @@ function Login() {
   };
 
   return (
-    <div style={{ background: "#f8fafc", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
+    <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <style>{`
@@ -140,8 +140,8 @@ function Login() {
         {/* LOGO AREA */}
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
           <div className="login-logo-circle"><FaRecycle /></div>
-          <h1 style={{ fontSize: "22px", fontWeight: "900", color: "#0f172a", margin: "0 0 4px 0" }}>Welcome Back</h1>
-          <p style={{ color: "#64748b", fontSize: "12px", margin: 0 }}>Login to schedule & track scrap pickups</p>
+          <h1 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main, #0f172a)", margin: "0 0 4px 0" }}>Welcome Back</h1>
+          <p style={{ color: "var(--text-muted, #64748b)", fontSize: "12px", margin: 0 }}>Login to schedule & track scrap pickups</p>
         </div>
 
         {/* LOGIN FORM */}
@@ -194,7 +194,7 @@ function Login() {
           </button>
         </form>
 
-        <div style={{ textAlign: "center", marginTop: "20px", fontSize: "13px", color: "#64748b" }}>
+        <div style={{ textAlign: "center", marginTop: "20px", fontSize: "13px", color: "var(--text-muted, #64748b)" }}>
           <p style={{ margin: 0 }}>New user? <Link to="/register" style={{ color: "#0b8f3a", fontWeight: "700", textDecoration: "none" }}>Create Account</Link></p>
           
           <div style={{ height: "1px", background: "#e2e8f0", margin: "16px 0" }} />
@@ -202,7 +202,7 @@ function Login() {
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             <Link to="/collector-login" className="login-role-btn">Login as Collector</Link>
             <Link to="/franchise-login" className="login-role-btn">Login as Franchise Partner</Link>
-            <Link to="/admin-login" className="login-role-btn" style={{ background: "#f1f5f9", border: "1.5px solid #cbd5e1" }}>Login as System Admin</Link>
+            <Link to="/admin-login" className="login-role-btn" style={{ background: "var(--bg-subtle, #f1f5f9)", border: "1.5px solid #cbd5e1" }}>Login as System Admin</Link>
           </div>
         </div>
       </div>

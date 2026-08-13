@@ -112,22 +112,22 @@ function MyPickups() {
   // ────────────────────────────────────────────────────────
   if (isMobile) {
     return (
-      <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "40px" }}>
+      <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", paddingBottom: "40px" }}>
         <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
         {/* MOBILE HEADER */}
         <div style={{ padding: "20px 16px 10px 16px" }}>
-          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: 0 }}>My Pickups</h1>
-          <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Track your recycle requests & history</p>
+          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main, #0f172a)", margin: 0 }}>My Pickups</h1>
+          <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "2px 0 0 0" }}>Track your recycle requests & history</p>
         </div>
 
         {/* LIST SECTION */}
         {pickups.length === 0 ? (
           <div className="container" style={{ padding: "40px 16px", textAlign: "center" }}>
-            <div style={{ background: "#ffffff", padding: "30px 20px", borderRadius: "18px", border: "1px solid rgba(15,23,42,0.06)", boxShadow: "0 4px 12px rgba(0,0,0,0.02)" }}>
+            <div style={{ background: "var(--card-bg, #ffffff)", padding: "30px 20px", borderRadius: "18px", border: "1px solid rgba(15,23,42,0.06)", boxShadow: "0 4px 12px rgba(0,0,0,0.02)" }}>
               <FaTruck style={{ fontSize: "40px", color: "#94a3b8", marginBottom: "12px" }} />
-              <h3 style={{ fontSize: "15px", fontWeight: "800", color: "#334155", margin: "0 0 4px 0" }}>No Pickups Found</h3>
-              <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px 0" }}>Your completed and upcoming pickups will appear here.</p>
+              <h3 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main, #0f172a)", margin: "0 0 4px 0" }}>No Pickups Found</h3>
+              <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "0 0 16px 0" }}>Your completed and upcoming pickups will appear here.</p>
               <button style={mobileBookBtn} onClick={() => navigate("/book")}>Schedule a Pickup</button>
             </div>
           </div>
@@ -157,7 +157,7 @@ function MyPickups() {
 
                   {/* Card Body */}
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <h3 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", margin: 0 }}>{item.scrapType}</h3>
+                    <h3 style={{ fontSize: "14px", fontWeight: "800", color: "var(--text-main, #0f172a)", margin: 0 }}>{item.scrapType}</h3>
                     
                     <div style={mobileDetailRow}>
                       <FaCalendarAlt style={{ color: "#94a3b8", fontSize: "12px" }} />
@@ -177,7 +177,7 @@ function MyPickups() {
                           <div style={{ flex: 1, height: "5px", borderRadius: "4px", background: ["Accepted", "Assigned", "Completed"].includes(item.status) ? "#0b8f3a" : "#cbd5e1" }} title="Collector Assigned" />
                           <div style={{ flex: 1, height: "5px", borderRadius: "4px", background: item.status === "Completed" ? "#0b8f3a" : "#cbd5e1" }} title="Completed" />
                         </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px", fontWeight: "800", color: "#64748b" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px", fontWeight: "800", color: "var(--text-muted, #64748b)" }}>
                           <span style={{ color: "#0b8f3a" }}>1. Booked ✓</span>
                           <span style={{ color: ["Accepted", "Assigned", "Completed"].includes(item.status) ? "#0b8f3a" : "#64748b" }}>
                             {["Accepted", "Assigned"].includes(item.status) ? "2. Collector Assigned" : item.status === "Completed" ? "2. Assigned ✓" : "2. Assigning..."}
@@ -191,7 +191,7 @@ function MyPickups() {
 
                     {/* ACTION BUTTONS (TRACK STATUS vs VIEW ITEMS) */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
-                      <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>
+                      <span style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", fontWeight: "600" }}>
                         Est: <strong style={{ color: "#0b8f3a", fontSize: "14px" }}>₹{item.amount}</strong>
                       </span>
                       <div style={{ display: "flex", gap: "6px" }}>
@@ -240,22 +240,22 @@ function MyPickups() {
                   {/* Expanded Details */}
                   {isExpanded && (
                     <div style={mobileExpandedBlock}>
-                      <div style={{ height: "1px", background: "#f1f5f9", margin: "10px 0" }} />
+                      <div style={{ height: "1px", background: "var(--bg-subtle, #f1f5f9)", margin: "10px 0" }} />
                       
                       {/* Items Breakdowns */}
-                      <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>ITEMS LIST</span>
+                      <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>ITEMS LIST</span>
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         {item.items?.map((it, idx) => (
-                          <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#334155" }}>
+                          <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-main, #0f172a)" }}>
                             <span>{it.name} ({it.quantity} {it.unit})</span>
-                            <strong style={{ color: "#334155" }}>₹{it.subtotal}</strong>
+                            <strong style={{ color: "var(--text-main, #0f172a)" }}>₹{it.subtotal}</strong>
                           </div>
                         ))}
                       </div>
 
-                      <div style={{ height: "1px", background: "#f1f5f9", margin: "10px 0" }} />
+                      <div style={{ height: "1px", background: "var(--bg-subtle, #f1f5f9)", margin: "10px 0" }} />
 
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
                         <span>Final Amount Paid:</span>
                         <span style={{ color: "#0b8f3a" }}>₹{item.amount}</span>
                       </div>
@@ -295,8 +295,8 @@ function MyPickups() {
           <div style={modalOverlay}>
             <div style={mobileModalCard} className="fade-up">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "800", color: "#0f172a" }}>Rate Service</h3>
-                <button style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#64748b" }} onClick={() => setShowReviewModal(false)}><FaTimes /></button>
+                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Rate Service</h3>
+                <button style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "var(--text-muted, #64748b)" }} onClick={() => setShowReviewModal(false)}><FaTimes /></button>
               </div>
               
               <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "16px" }}>
@@ -333,13 +333,13 @@ function MyPickups() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
                 <div>
                   <span style={{ fontSize: "10px", fontWeight: "900", color: "#0b8f3a", letterSpacing: "0.5px" }}>LIVE PICKUP TRACKER</span>
-                  <h3 style={{ margin: "2px 0 0 0", fontSize: "15px", fontWeight: "900", color: "#0f172a" }}>
+                  <h3 style={{ margin: "2px 0 0 0", fontSize: "15px", fontWeight: "900", color: "var(--text-main, #0f172a)" }}>
                     PICKUP #${trackingPickup._id.slice(-6).toUpperCase()}
                   </h3>
                 </div>
                 <button 
                   onClick={() => setShowTrackingModal(false)}
-                  style={{ background: "#f1f5f9", border: "none", width: "30px", height: "30px", borderRadius: "50%", cursor: "pointer", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}
+                  style={{ background: "var(--bg-subtle, #f1f5f9)", border: "none", width: "30px", height: "30px", borderRadius: "50%", cursor: "pointer", color: "var(--text-muted, #64748b)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}
                 >
                   <FaTimes />
                 </button>
@@ -355,8 +355,8 @@ function MyPickups() {
                     <div style={{ width: "2px", height: "36px", background: ["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "#0b8f3a" : "#cbd5e1" }} />
                   </div>
                   <div>
-                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>Pickup Booking Confirmed</h4>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Pickup Booking Confirmed</h4>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "var(--text-muted, #64748b)" }}>
                       Requested on ${new Date(trackingPickup.createdAt).toLocaleDateString()} for ${trackingPickup.pickupDate ? new Date(trackingPickup.pickupDate).toLocaleDateString() : "Scheduled Slot"}
                     </p>
                   </div>
@@ -376,7 +376,7 @@ function MyPickups() {
                     <div style={{ width: "2px", height: "36px", background: trackingPickup.status === "Completed" ? "#0b8f3a" : "#cbd5e1" }} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
                       {["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "Collector Assigned" : "Assigning Scrap Collector..."}
                     </h4>
                     {["Accepted", "Assigned"].includes(trackingPickup.status) ? (
@@ -392,7 +392,7 @@ function MyPickups() {
                         )}
                       </div>
                     ) : (
-                      <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                      <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "var(--text-muted, #64748b)" }}>
                         {trackingPickup.status === "Completed" ? "Collector completed pickup & weighing." : "Connecting nearest verified collector in your area..."}
                       </p>
                     )}
@@ -412,10 +412,10 @@ function MyPickups() {
                     </div>
                   </div>
                   <div>
-                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
                       {trackingPickup.status === "Completed" ? "Pickup Completed & Paid" : "Doorstep Weighing & Payout"}
                     </h4>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "var(--text-muted, #64748b)" }}>
                       {trackingPickup.status === "Completed" ? `Paid ₹${trackingPickup.amount} via ${trackingPickup.paymentMethod || "Wallet/Cash"}` : `Est. Scrap Value: ₹${trackingPickup.amount}`}
                     </p>
                   </div>
@@ -527,13 +527,13 @@ function MyPickups() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
                 <div>
                   <span style={{ fontSize: "10px", fontWeight: "900", color: "#0b8f3a", letterSpacing: "0.5px" }}>LIVE PICKUP TRACKER</span>
-                  <h3 style={{ margin: "2px 0 0 0", fontSize: "15px", fontWeight: "900", color: "#0f172a" }}>
+                  <h3 style={{ margin: "2px 0 0 0", fontSize: "15px", fontWeight: "900", color: "var(--text-main, #0f172a)" }}>
                     PICKUP #${trackingPickup._id.slice(-6).toUpperCase()}
                   </h3>
                 </div>
                 <button 
                   onClick={() => setShowTrackingModal(false)}
-                  style={{ background: "#f1f5f9", border: "none", width: "30px", height: "30px", borderRadius: "50%", cursor: "pointer", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}
+                  style={{ background: "var(--bg-subtle, #f1f5f9)", border: "none", width: "30px", height: "30px", borderRadius: "50%", cursor: "pointer", color: "var(--text-muted, #64748b)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}
                 >
                   <FaTimes />
                 </button>
@@ -549,8 +549,8 @@ function MyPickups() {
                     <div style={{ width: "2px", height: "36px", background: ["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "#0b8f3a" : "#cbd5e1" }} />
                   </div>
                   <div>
-                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>Pickup Booking Confirmed</h4>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Pickup Booking Confirmed</h4>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "var(--text-muted, #64748b)" }}>
                       Requested on ${new Date(trackingPickup.createdAt).toLocaleDateString()} for ${trackingPickup.pickupDate ? new Date(trackingPickup.pickupDate).toLocaleDateString() : "Scheduled Slot"}
                     </p>
                   </div>
@@ -570,7 +570,7 @@ function MyPickups() {
                     <div style={{ width: "2px", height: "36px", background: trackingPickup.status === "Completed" ? "#0b8f3a" : "#cbd5e1" }} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
                       {["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "Collector Assigned" : "Assigning Scrap Collector..."}
                     </h4>
                     {["Accepted", "Assigned"].includes(trackingPickup.status) ? (
@@ -586,7 +586,7 @@ function MyPickups() {
                         )}
                       </div>
                     ) : (
-                      <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                      <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "var(--text-muted, #64748b)" }}>
                         {trackingPickup.status === "Completed" ? "Collector completed pickup & weighing." : "Connecting nearest verified collector in your area..."}
                       </p>
                     )}
@@ -606,10 +606,10 @@ function MyPickups() {
                     </div>
                   </div>
                   <div>
-                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
                       {trackingPickup.status === "Completed" ? "Pickup Completed & Paid" : "Doorstep Weighing & Payout"}
                     </h4>
-                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "var(--text-muted, #64748b)" }}>
                       {trackingPickup.status === "Completed" ? `Paid ₹${trackingPickup.amount} via ${trackingPickup.paymentMethod || "Wallet/Cash"}` : `Est. Scrap Value: ₹${trackingPickup.amount}`}
                     </p>
                   </div>
@@ -649,7 +649,7 @@ const receiptRow = { display: "flex", justifyContent: "space-between", fontSize:
 const receiptTotal = { borderTop: "1px solid #ddd", marginTop: "10px", paddingTop: "10px", display: "flex", justifyContent: "space-between", fontWeight: "bold", color: "var(--text-main)", fontSize: "13px" };
 const rateBtn = { background: "#fff9e6", color: "#f39c12", border: "1px solid #f39c12", padding: "8px", width: "100%", borderRadius: "10px", fontSize: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", marginTop: "15px" };
 const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(5px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "20px" };
-const modal = { background: "#fff", padding: "30px", borderRadius: "24px", width: "100%", maxWidth: "400px", boxShadow: "0 20px 60 rgba(0,0,0,0.2)" };
+const modal = { background: "var(--card-bg, #ffffff)", padding: "30px", borderRadius: "24px", width: "100%", maxWidth: "400px", boxShadow: "0 20px 60 rgba(0,0,0,0.2)" };
 const textarea = { width: "100%", height: "100px", padding: "12px", borderRadius: "12px", border: "1px solid #eee", marginBottom: "15px", outline: "none", resize: "none" };
 const submitReviewBtn = { width: "100%", padding: "14px", background: "#0b8f3a", color: "#fff", border: "none", borderRadius: "12px", fontWeight: "bold", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center", gap: "10px" };
 
@@ -657,7 +657,7 @@ const submitReviewBtn = { width: "100%", padding: "14px", background: "#0b8f3a",
    MOBILE INLINE STYLES
    ──────────────────────────────────────────────────────── */
 const mobileCardStyle = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   borderRadius: "16px",
   padding: "14px",
   border: "1px solid rgba(15,23,42,0.06)",
@@ -669,7 +669,7 @@ const mobileDetailRow = {
   alignItems: "center",
   gap: "8px",
   fontSize: "12px",
-  color: "#64748b"
+  color: "var(--text-muted, #64748b)"
 };
 
 const mobileBookBtn = {
@@ -733,7 +733,7 @@ const mobileRateBtn = {
 };
 
 const mobileModalCard = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   padding: "20px",
   borderRadius: "20px",
   width: "100%",
@@ -751,7 +751,7 @@ const mobileTextarea = {
   outline: "none",
   resize: "none",
   fontSize: "12px",
-  color: "#0f172a"
+  color: "var(--text-main, #0f172a)"
 };
 
 const mobileSubmitReviewBtn = {

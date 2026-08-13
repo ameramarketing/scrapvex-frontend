@@ -214,12 +214,12 @@ function Rates() {
   // ────────────────────────────────────────────────────────
   if (isMobile) {
     return (
-      <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "40px" }}>
+      <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", paddingBottom: "40px" }}>
         
         {/* COMPACT HEADER */}
         <div style={{ padding: "20px 16px 10px 16px" }}>
-          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: 0 }}>Scrap Rates</h1>
-          <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Updated market rates for Jammu & Kashmir</p>
+          <h1 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main, #0f172a)", margin: 0 }}>Scrap Rates</h1>
+          <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "2px 0 0 0" }}>Updated market rates for Jammu & Kashmir</p>
         </div>
 
         {/* CITY SELECTOR & SEARCH BAR */}
@@ -228,7 +228,7 @@ function Rates() {
             <div style={mobileSearchBox}>
               <FaMapMarkerAlt style={{ color: "#0b8f3a", fontSize: "13px" }} />
               <select
-                style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "12px", fontWeight: "700", color: "#334155", textTransform: "capitalize", cursor: "pointer" }}
+                style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "12px", fontWeight: "700", color: "var(--text-main, #0f172a)", textTransform: "capitalize", cursor: "pointer" }}
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
               >
@@ -241,7 +241,7 @@ function Rates() {
               <input
                 type="text"
                 placeholder="Search scrap item..."
-                style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "12px", color: "#0f172a", fontWeight: "600" }}
+                style={{ border: "none", outline: "none", background: "transparent", width: "100%", fontSize: "12px", color: "var(--text-main, #0f172a)", fontWeight: "600" }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -281,17 +281,17 @@ function Rates() {
         {/* RATES LIST */}
         {loading ? (
           <div style={{ textAlign: "center", padding: "40px" }}>
-            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: "600" }}>Loading latest rates...</span>
+            <span style={{ fontSize: "13px", color: "var(--text-muted, #64748b)", fontWeight: "600" }}>Loading latest rates...</span>
           </div>
         ) : groupedData.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px" }}>
-            <span style={{ fontSize: "13px", color: "#64748b", fontWeight: "600" }}>No items found for "{search}"</span>
+            <span style={{ fontSize: "13px", color: "var(--text-muted, #64748b)", fontWeight: "600" }}>No items found for "{search}"</span>
           </div>
         ) : (
           groupedData.map((category, idx) => (
             <div key={idx} className="container" style={{ padding: "0 16px 16px 16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px", borderLeft: "3.5px solid #0b8f3a", paddingLeft: "6px" }}>
-                <span style={{ fontSize: "13px", fontWeight: "800", color: "#334155" }}>{category.title.toUpperCase()}</span>
+                <span style={{ fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>{category.title.toUpperCase()}</span>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
@@ -470,7 +470,7 @@ const btn = { background: "var(--card-bg)", color: "var(--primary)", border: "no
    MOBILE INLINE STYLES
    ──────────────────────────────────────────────────────── */
 const mobileSearchBox = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   padding: "10px 14px",
   borderRadius: "10px",
   display: "flex",
@@ -480,7 +480,7 @@ const mobileSearchBox = {
 };
 
 const mobileRateCard = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   borderRadius: "14px",
   padding: "12px",
   border: "1.5px solid rgba(15,23,42,0.06)",

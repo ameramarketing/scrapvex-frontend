@@ -41,7 +41,7 @@ function Notifications() {
   };
 
   return (
-    <div style={{ background: "#f8fafc", minHeight: "100vh" }}>
+    <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh" }}>
       
       <div className="container" style={wrapper}>
         <div style={topHeaderRow}>
@@ -104,7 +104,7 @@ const topHeaderRow = {
 };
 
 const backBtn = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   border: "1px solid #e2e8f0",
   padding: "8px 14px",
   borderRadius: "10px",
@@ -119,7 +119,7 @@ const backBtn = {
 const pageTitle = {
   fontSize: "20px",
   fontWeight: "800",
-  color: "#0f172a",
+  color: "var(--text-main, #0f172a)",
   margin: 0
 };
 
@@ -178,7 +178,7 @@ const titleRow = {
 const titleText = {
   fontSize: "14px",
   fontWeight: "700",
-  color: "#0f172a",
+  color: "var(--text-main, #0f172a)",
   margin: 0
 };
 
@@ -189,7 +189,7 @@ const timeText = {
 
 const messageText = {
   fontSize: "13px",
-  color: "#64748b",
+  color: "var(--text-muted, #64748b)",
   margin: 0,
   lineHeight: "1.4"
 };
@@ -197,7 +197,7 @@ const messageText = {
 const emptyBox = {
   textAlign: "center",
   padding: "60px 20px",
-  color: "#64748b"
+  color: "var(--text-muted, #64748b)"
 };
 
 const emptyIcon = {

@@ -765,7 +765,7 @@ const playBellSound = () => {
 
                                   <div style={{textAlign: "center", padding: "10px 0", width: "100%"}}>
                                      <div style={{fontSize: "12px", color: "var(--text-muted)", marginBottom: "5px", fontWeight: "bold"}}>SCAN QR WITH GPAY / PHONEPE / PAYTM</div>
-                                     <div style={{background: "#fff", padding: "15px", borderRadius: "16px", display: "inline-block", boxShadow: "0 10px 25px rgba(0,0,0,0.1)", border: "2px solid var(--primary)"}}>
+                                     <div style={{background: "var(--card-bg, #ffffff)", padding: "15px", borderRadius: "16px", display: "inline-block", boxShadow: "0 10px 25px rgba(0,0,0,0.1)", border: "2px solid var(--primary)"}}>
                                         <img 
                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${settings.upiId || "8491028539@pthdfc"}&pn=Scrapvex&am=${depositForm.amount}&tn=WalletDeposit`)}`} 
                                            alt="UPI QR Code" 

@@ -95,7 +95,7 @@ function Profile() {
   // ────────────────────────────────────────────────────────
   if (isMobile) {
     return (
-      <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "40px" }}>
+      <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", paddingBottom: "40px" }}>
         <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
         <style>{`
@@ -145,16 +145,16 @@ function Profile() {
           {editMode && (
             <button 
               onClick={() => setEditMode(false)} 
-              style={{ background: "none", border: "none", color: "#0f172a", fontSize: "16px", padding: "4px", display: "flex", alignItems: "center" }}
+              style={{ background: "none", border: "none", color: "var(--text-main, #0f172a)", fontSize: "16px", padding: "4px", display: "flex", alignItems: "center" }}
             >
               <FaArrowLeft />
             </button>
           )}
           <div>
-            <h1 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: 0 }}>
+            <h1 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main, #0f172a)", margin: 0 }}>
               {editMode ? "Edit Profile" : "Account"}
             </h1>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>
+            <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "2px 0 0 0" }}>
               {editMode ? "Update details and security preferences" : "Manage settings & details"}
             </p>
           </div>
@@ -163,7 +163,7 @@ function Profile() {
         {/* EDIT PROFILE MODE */}
         {editMode ? (
           <div className="container" style={{ padding: "0 16px" }}>
-            <div style={{ background: "#ffffff", borderRadius: "18px", padding: "20px", border: "1px solid rgba(15,23,42,0.06)", boxShadow: "0 4px 12px rgba(0,0,0,0.01)" }}>
+            <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "18px", padding: "20px", border: "1px solid rgba(15,23,42,0.06)", boxShadow: "0 4px 12px rgba(0,0,0,0.01)" }}>
               {/* Photo Area */}
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "20px" }}>
                 <div style={{ position: "relative", width: "80px", height: "80px" }}>
@@ -185,41 +185,41 @@ function Profile() {
               {/* Form Fields */}
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <div>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>FULL NAME</label>
+                  <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>FULL NAME</label>
                   <input className="settings-input" name="name" value={user.name} onChange={handleChange} />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>MOBILE NUMBER</label>
+                  <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>MOBILE NUMBER</label>
                   <input className="settings-input" value={user.mobile} disabled style={{ color: "#94a3b8", cursor: "not-allowed" }} />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>EMAIL ADDRESS</label>
+                  <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>EMAIL ADDRESS</label>
                   <input className="settings-input" name="email" value={user.email} onChange={handleChange} />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>PRIMARY ADDRESS</label>
+                  <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>PRIMARY ADDRESS</label>
                   <textarea className="settings-input" name="address" value={user.address} onChange={handleChange} style={{ height: "70px", resize: "none" }} />
                 </div>
 
                 {/* Password Fields */}
-                <div style={{ height: "1px", background: "#f1f5f9", margin: "8px 0" }} />
-                <span style={{ fontSize: "12px", fontWeight: "800", color: "#0f172a" }}>Change Password (Optional)</span>
+                <div style={{ height: "1px", background: "var(--bg-subtle, #f1f5f9)", margin: "8px 0" }} />
+                <span style={{ fontSize: "12px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Change Password (Optional)</span>
 
                 <div>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>CURRENT PASSWORD</label>
+                  <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>CURRENT PASSWORD</label>
                   <input type="password" className="settings-input" name="oldPassword" value={user.oldPassword} onChange={handleChange} placeholder="••••••••" />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>NEW PASSWORD</label>
+                  <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>NEW PASSWORD</label>
                   <input type="password" className="settings-input" name="newPassword" value={user.newPassword} onChange={handleChange} placeholder="••••••••" />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px" }}>CONFIRM NEW PASSWORD</label>
+                  <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px" }}>CONFIRM NEW PASSWORD</label>
                   <input type="password" className="settings-input" name="confirmPassword" value={user.confirmPassword} onChange={handleChange} placeholder="••••••••" />
                 </div>
               </div>
@@ -235,7 +235,7 @@ function Profile() {
                   {loading ? <FaRecycle className="spin" /> : <><FaSave /> Save Changes</>}
                 </button>
                 <button 
-                  style={{ flex: 0.8, height: "44px", border: "1.5px solid #e2e8f0", background: "#ffffff", color: "#475569", borderRadius: "10px", fontWeight: "700", fontSize: "13px", cursor: "pointer" }} 
+                  style={{ flex: 0.8, height: "44px", border: "1.5px solid #e2e8f0", background: "var(--card-bg, #ffffff)", color: "#475569", borderRadius: "10px", fontWeight: "700", fontSize: "13px", cursor: "pointer" }} 
                   onClick={() => { setEditMode(false); setUser(storedUser); }}
                 >
                   Cancel
@@ -249,7 +249,7 @@ function Profile() {
           <div className="container" style={{ padding: "0 16px" }}>
             
             {/* TOP PROFILE CARD */}
-            <div style={{ background: "#ffffff", borderRadius: "18px", padding: "16px", border: "1px solid rgba(15,23,42,0.06)", boxShadow: "0 4px 12px rgba(0,0,0,0.01)", display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
+            <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "18px", padding: "16px", border: "1px solid rgba(15,23,42,0.06)", boxShadow: "0 4px 12px rgba(0,0,0,0.01)", display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" }}>
               <div style={{ width: "60px", height: "60px", borderRadius: "50%", overflow: "hidden", background: "#f0fdf4", border: "2px solid #0b8f3a" }}>
                 {photoPreview ? (
                   <img src={photoPreview} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -258,8 +258,8 @@ function Profile() {
                 )}
               </div>
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <h2 style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a", margin: 0 }}>{user.name}</h2>
-                <span style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>{user.mobile}</span>
+                <h2 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main, #0f172a)", margin: 0 }}>{user.name}</h2>
+                <span style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", marginTop: "2px" }}>{user.mobile}</span>
                 {user.email && <span style={{ fontSize: "11px", color: "#94a3b8", marginTop: "2px" }}>{user.email}</span>}
               </div>
             </div>
@@ -273,7 +273,7 @@ function Profile() {
                   <div className="mobile-settings-row" onClick={() => setEditMode(true)}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaEdit /></div>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>Edit Profile Details</span>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>Edit Profile Details</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>
@@ -287,7 +287,7 @@ function Profile() {
                   <div className="mobile-settings-row" onClick={() => navigate("/my-pickups")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#eff6ff", color: "#2563eb" }}><FaHistory /></div>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>My Pickup History</span>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>My Pickup History</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>
@@ -295,7 +295,7 @@ function Profile() {
                   <div className="mobile-settings-row" onClick={() => navigate("/wallet")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#fef3c7", color: "#d97706" }}><FaWallet /></div>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>My Wallet & Payouts</span>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>My Wallet & Payouts</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>
@@ -309,7 +309,7 @@ function Profile() {
                   <div className="mobile-settings-row" onClick={() => navigate("/notifications")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaBell /></div>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>Notifications</span>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>Notifications</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>
@@ -317,15 +317,15 @@ function Profile() {
                   <div className="mobile-settings-row" onClick={() => navigate("/contact")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#eff6ff", color: "#2563eb" }}><FaPhone /></div>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>Help & Support</span>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>Help & Support</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>
 
                   <div className="mobile-settings-row" onClick={() => navigate("/about")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                      <div className="settings-icon-box" style={{ background: "#f8fafc", color: "#64748b" }}><FaInfoCircle /></div>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>About ScrapVex</span>
+                      <div className="settings-icon-box" style={{ background: "var(--bg-main, #f8fafc)", color: "var(--text-muted, #64748b)" }}><FaInfoCircle /></div>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>About ScrapVex</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>
@@ -333,7 +333,7 @@ function Profile() {
                   <div className="mobile-settings-row" onClick={() => navigate("/privacy")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaShieldAlt /></div>
-                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>Privacy Policy</span>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>Privacy Policy</span>
                     </div>
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>

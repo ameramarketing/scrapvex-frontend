@@ -1307,7 +1307,7 @@ const playBellSound = () => {
                   border: "1px solid #d1d5db",
                   outline: "none",
                   fontSize: "14px",
-                  background: "#fff",
+                  background: "var(--card-bg, #ffffff)",
                   boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
                   transition: "border-color 0.2s ease"
                 }}
@@ -1397,7 +1397,7 @@ const playBellSound = () => {
 
               {/* OPERATIONS */}
               <div>
-                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>OPERATIONS</span>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>OPERATIONS</span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => setActiveTab("overview")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaInfoCircle /></div><span style={rowTextStyle}>Overview Dashboard</span></div></div>
                   <div style={accountRowStyle} onClick={() => setActiveTab("pickups")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaTruck /></div><span style={rowTextStyle}>Pickups ({pickups.length})</span></div></div>
@@ -1409,7 +1409,7 @@ const playBellSound = () => {
 
               {/* FINANCE */}
               <div>
-                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>FINANCE</span>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>FINANCE</span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaChartLine /></div><span style={rowTextStyle}>Accounting Statements</span></div></div>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("wallet"); fetchAllTransactions(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaWallet /></div><span style={rowTextStyle}>Platform Wallet Ledger</span></div></div>
@@ -1422,7 +1422,7 @@ const playBellSound = () => {
 
               {/* CATALOG */}
               <div>
-                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>CATALOG</span>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>CATALOG</span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => setActiveTab("rates")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaTag /></div><span style={rowTextStyle}>Platform Scrap Rates</span></div></div>
                 </div>
@@ -1430,7 +1430,7 @@ const playBellSound = () => {
 
               {/* COMMUNICATION */}
               <div>
-                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>COMMUNICATION</span>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>COMMUNICATION</span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("support"); fetchTickets(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaTicketAlt /></div><span style={rowTextStyle}>Support Tickets</span></div></div>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("contacts"); fetchContactMessages(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaEnvelope /></div><span style={rowTextStyle}>Contact Submissions</span></div></div>
@@ -1441,12 +1441,12 @@ const playBellSound = () => {
 
               {/* SYSTEM */}
               <div>
-                <span style={{ fontSize: "11px", fontWeight: "800", color: "#64748b", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>SYSTEM</span>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>SYSTEM</span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("audit"); fetchAuditLogs(); }}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaClipboardList /></div><span style={rowTextStyle}>Audit Logs</span></div></div>
                   <div style={accountRowStyle} onClick={() => setActiveTab("ads")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fff7ed", color: "#ea580c" }}><FaAd /></div><span style={rowTextStyle}>Promotional Banners</span></div></div>
                   <div style={accountRowStyle} onClick={() => setActiveTab("reviews")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaStar /></div><span style={rowTextStyle}>Customer Reviews</span></div></div>
-                  <div style={accountRowStyle} onClick={() => setActiveTab("settings")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f8fafc", color: "#64748b" }}><FaCog /></div><span style={rowTextStyle}>Platform Settings</span></div></div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("settings")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "var(--bg-main, #f8fafc)", color: "var(--text-muted, #64748b)" }}><FaCog /></div><span style={rowTextStyle}>Platform Settings</span></div></div>
                   <div style={accountRowStyle} onClick={() => setActiveTab("reports")}><div style={{ display: "flex", alignItems: "center", gap: "10px" }}><div style={{ ...iconSquareStyle, background: "#f5f3ff", color: "#7c3aed" }}><FaChartLine /></div><span style={rowTextStyle}>Reports & Export Statements</span></div></div>
                 </div>
               </div>
@@ -2597,8 +2597,8 @@ const playBellSound = () => {
 
                   <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>
                     {/* Item Wise Inventory Breakdown */}
-                    <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
-                      <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>📦 Received Inventory (Item Wise)</h4>
+                    <div style={{ flex: 1, minWidth: "300px", background: "var(--bg-main, #f8fafc)", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                      <h4 style={{ margin: "0 0 12px 0", color: "var(--text-main, #0f172a)", display: "flex", alignItems: "center", gap: "6px" }}>📦 Received Inventory (Item Wise)</h4>
                       {reportInventory.length === 0 ? (
                         <div style={{ fontStyle: "italic", color: "#94a3b8", textAlign: "center", padding: "20px" }}>No items purchased in this period</div>
                       ) : (
@@ -2613,7 +2613,7 @@ const playBellSound = () => {
                           <tbody>
                             {reportInventory.map((item, idx) => (
                               <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0" }}>
-                                <td style={{ padding: "8px 4px", fontWeight: "600", color: "#1e293b" }}>{item.name}</td>
+                                <td style={{ padding: "8px 4px", fontWeight: "600", color: "var(--text-main, #0f172a)" }}>{item.name}</td>
                                 <td style={{ padding: "8px 4px", textAlign: "center", fontWeight: "bold", color: "#0b8f3a" }}>{item.quantity} {item.unit}</td>
                                 <td style={{ padding: "8px 4px", textAlign: "right", fontWeight: "600" }}>₹{(item.amount || 0).toFixed(0)}</td>
                               </tr>
@@ -2624,14 +2624,14 @@ const playBellSound = () => {
                     </div>
 
                     {/* Bills List */}
-                    <div style={{ flex: 1, minWidth: "300px", background: "#f8fafc", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
-                      <h4 style={{ margin: "0 0 12px 0", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>🧾 Purchase Bills List</h4>
+                    <div style={{ flex: 1, minWidth: "300px", background: "var(--bg-main, #f8fafc)", padding: "18px", borderRadius: "15px", border: "1px solid #e2e8f0" }}>
+                      <h4 style={{ margin: "0 0 12px 0", color: "var(--text-main, #0f172a)", display: "flex", alignItems: "center", gap: "6px" }}>🧾 Purchase Bills List</h4>
                       <div style={{ maxHeight: "400px", overflowY: "auto" }}>
                         {reportData.map((p, idx) => (
-                          <div key={idx} style={{ padding: "10px", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "10px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
+                          <div key={idx} style={{ padding: "10px", background: "var(--card-bg, #ffffff)", border: "1px solid #e2e8f0", borderRadius: "10px", marginBottom: "8px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px" }}>
                             <div>
-                              <div style={{ fontWeight: "bold", color: "#1e293b" }}>{p.supplierName}</div>
-                              <div style={{ color: "#64748b", marginTop: "2px" }}>Bill No: #{p.billNo} | {p.date}</div>
+                              <div style={{ fontWeight: "bold", color: "var(--text-main, #0f172a)" }}>{p.supplierName}</div>
+                              <div style={{ color: "var(--text-muted, #64748b)", marginTop: "2px" }}>Bill No: #{p.billNo} | {p.date}</div>
                               <div style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>{p.itemsCount} items • {p.paymentMethod}</div>
                             </div>
                             <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
@@ -2841,13 +2841,13 @@ const playBellSound = () => {
            <Input placeholder="Title" value={newAd.title} onChange={v => setNewAd({...newAd, title: v})} />
            <Input placeholder="Target Link (optional)" value={newAd.link} onChange={v => setNewAd({...newAd, link: v})} />
            
-           <label style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "5px" }}>🖥️ Desktop Banner Image (16:9 Landscape):</label>
-           <div style={{padding:"12px", border:"2px dashed #cbd5e1", borderRadius:"12px", textAlign:"center", marginBottom:"15px", background: "#f8fafc"}}>
+           <label style={{ fontSize: "13px", fontWeight: "bold", color: "var(--text-main, #0f172a)", display: "block", marginBottom: "5px" }}>🖥️ Desktop Banner Image (16:9 Landscape):</label>
+           <div style={{padding:"12px", border:"2px dashed #cbd5e1", borderRadius:"12px", textAlign:"center", marginBottom:"15px", background: "var(--bg-main, #f8fafc)"}}>
               <input type="file" onChange={e => setAdFile(e.target.files[0])} />
            </div>
 
-           <label style={{ fontSize: "13px", fontWeight: "bold", color: "#334155", display: "block", marginBottom: "5px" }}>📱 Mobile App Banner Image (Square / 4:3 Portrait):</label>
-           <div style={{padding:"12px", border:"2px dashed #cbd5e1", borderRadius:"12px", textAlign:"center", marginBottom:"15px", background: "#f8fafc"}}>
+           <label style={{ fontSize: "13px", fontWeight: "bold", color: "var(--text-main, #0f172a)", display: "block", marginBottom: "5px" }}>📱 Mobile App Banner Image (Square / 4:3 Portrait):</label>
+           <div style={{padding:"12px", border:"2px dashed #cbd5e1", borderRadius:"12px", textAlign:"center", marginBottom:"15px", background: "var(--bg-main, #f8fafc)"}}>
               <input type="file" onChange={e => setMobileAdFile(e.target.files[0])} />
            </div>
 
@@ -3136,13 +3136,13 @@ const playBellSound = () => {
       {/* ── PRINT BILL MODAL (after purchase complete) ── */}
             {showPurchasePrintModal && lastCreatedPurchase && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center", padding: "20px" }}>
-          <div style={{ background: "#fff", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
+          <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "20px", maxWidth: "420px", width: "100%", boxShadow: "0 25px 60px rgba(0,0,0,0.3)", overflow: "hidden" }}>
             <div className="no-print" style={{ background: "linear-gradient(135deg,#0b8f3a,#16a34a)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" , color: "#fff"}}>
               <span style={{ color: "#fff", fontWeight: "bold", fontSize: "16px" }}>🧾 Purchase Bill</span>
               <button onClick={() => setShowPurchasePrintModal(false)} style={{ background: "rgba(255,255,255,0.2)", color: "#fff", border: "none", borderRadius: "8px", padding: "6px 12px", cursor: "pointer", fontWeight: "bold" }}>✕</button>
             </div>
             
-            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "var(--text-main)", background: "#fff" }}>
+            <div id="purchase-bill-print" style={{ padding: "20px", fontFamily: "monospace", fontSize: "12px", color: "var(--text-main)", background: "var(--card-bg, #ffffff)" }}>
               <style>{`@media print { body * { visibility: hidden; } #purchase-bill-print, #purchase-bill-print * { visibility: visible; } #purchase-bill-print { position: fixed; left: 0; top: 0; width: 80mm; padding: 5mm; } .no-print { display: none !important; } }`}</style>
               <div style={{ textAlign: "center", borderBottom: "1px dashed #000", paddingBottom: "8px", marginBottom: "8px" }}>
                 <div style={{ fontWeight: "bold", fontSize: "15px" }}>⚡ SCRAPVEX</div>
@@ -3332,7 +3332,7 @@ const playBellSound = () => {
       {showInvoiceModal && selectedInvoice && (
 
         <Modal title="Invoice Preview" onClose={() => setShowInvoiceModal(false)}>
-          <div id="invoice-print-area" style={{padding: "20px", border: "1px solid #000", background: "#fff", marginBottom: "15px", fontFamily: "Arial, sans-serif", fontSize: "11px", color: "var(--text-main)"}}>
+          <div id="invoice-print-area" style={{padding: "20px", border: "1px solid #000", background: "var(--card-bg, #ffffff)", marginBottom: "15px", fontFamily: "Arial, sans-serif", fontSize: "11px", color: "var(--text-main)"}}>
             
             <style>{`
               #invoice-print-area table { width: 100%; border-collapse: collapse; }

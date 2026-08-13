@@ -60,8 +60,8 @@ function BookPickup() {
         {/* COMPACT GREETING & PROFILE ACCESS */}
         <div style={mobileHeaderGreetingStyle}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "700", letterSpacing: "0.5px" }}>WELCOME BACK</span>
-            <h2 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "2px 0 0 0" }}>
+            <span style={{ fontSize: "11px", color: "var(--text-muted, #64748b)", fontWeight: "700", letterSpacing: "0.5px" }}>WELCOME BACK</span>
+            <h2 style={{ fontSize: "18px", fontWeight: "800", color: "var(--text-main, #0f172a)", margin: "2px 0 0 0" }}>
               {user ? user.name.split(" ")[0] : "Scrap Recycler"} 👋
             </h2>
           </div>
@@ -95,13 +95,13 @@ function BookPickup() {
           <div className="container" style={{ padding: "0 16px 20px 16px" }}>
             <div style={ratesPreviewCardStyle}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <span style={{ fontSize: "12px", fontWeight: "800", color: "#64748b", letterSpacing: "0.5px" }}>SCRAP RATES PREVIEW</span>
-                <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "600" }}>Jammu & Kashmir</span>
+                <span style={{ fontSize: "12px", fontWeight: "800", color: "var(--text-muted, #64748b)", letterSpacing: "0.5px" }}>SCRAP RATES PREVIEW</span>
+                <span style={{ fontSize: "11px", color: "var(--text-muted, #64748b)", fontWeight: "600" }}>Jammu & Kashmir</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "12px" }}>
                 {rates.map(item => (
                   <div key={item._id} style={rateItemStyle}>
-                    <span style={{ fontSize: "13px", fontWeight: "600", color: "#334155" }}>{item.name}</span>
+                    <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-main, #0f172a)" }}>{item.name}</span>
                     <span style={{ fontSize: "15px", fontWeight: "800", color: "#0b8f3a" }}>₹{item.price}/{item.unit}</span>
                   </div>
                 ))}
@@ -116,8 +116,8 @@ function BookPickup() {
         {/* BOOKING FORM SECTION */}
         <div id="booking-form-section" className="container" style={{ padding: "0 16px 24px 16px" }}>
           <div style={{ marginBottom: "12px", borderLeft: "4px solid #0b8f3a", paddingLeft: "8px" }}>
-            <h2 style={{ fontSize: "17px", fontWeight: "800", color: "#0f172a", margin: 0 }}>Request a Pickup</h2>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Fill details to assign verified collector</p>
+            <h2 style={{ fontSize: "17px", fontWeight: "800", color: "var(--text-main, #0f172a)", margin: 0 }}>Request a Pickup</h2>
+            <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "2px 0 0 0" }}>Fill details to assign verified collector</p>
           </div>
           <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "18px", border: "1px solid var(--card-border, rgba(15,23,42,0.06))", boxShadow: "var(--card-shadow, 0 4px 12px rgba(0,0,0,0.02))" }}>
             <PickupForm />
@@ -129,8 +129,8 @@ function BookPickup() {
           <div style={mobileTrustCard}>
             <div style={trustIconStyle}><FaRecycle /></div>
             <div>
-              <h3 style={{ fontSize: "15px", fontWeight: "800", color: "#0f172a", margin: "0 0 4px 0" }}>Eco-Friendly Recycling</h3>
-              <p style={{ fontSize: "12px", color: "#64748b", margin: 0, lineHeight: "1.5" }}>
+              <h3 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main, #0f172a)", margin: "0 0 4px 0" }}>Eco-Friendly Recycling</h3>
+              <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: 0, lineHeight: "1.5" }}>
                 We process your scrap responsibly to lower environmental impact and keep communities clean.
               </p>
             </div>
@@ -142,18 +142,18 @@ function BookPickup() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
             <div style={compactFeatureCard}>
               <FaTruck style={{ fontSize: "16px", color: "#0b8f3a", marginBottom: "4px" }} />
-              <span style={{ fontSize: "11px", fontWeight: "700", color: "#0f172a" }}>Doorstep</span>
-              <span style={{ fontSize: "9px", color: "#64748b" }}>Free Pickup</span>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>Doorstep</span>
+              <span style={{ fontSize: "9px", color: "var(--text-muted, #64748b)" }}>Free Pickup</span>
             </div>
             <div style={compactFeatureCard}>
               <FaMoneyBillWave style={{ fontSize: "16px", color: "#0b8f3a", marginBottom: "4px" }} />
-              <span style={{ fontSize: "11px", fontWeight: "700", color: "#0f172a" }}>UPI / Cash</span>
-              <span style={{ fontSize: "9px", color: "#64748b" }}>Instant Pay</span>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>UPI / Cash</span>
+              <span style={{ fontSize: "9px", color: "var(--text-muted, #64748b)" }}>Instant Pay</span>
             </div>
             <div style={compactFeatureCard}>
               <FaShieldAlt style={{ fontSize: "16px", color: "#0b8f3a", marginBottom: "4px" }} />
-              <span style={{ fontSize: "11px", fontWeight: "700", color: "#0f172a" }}>Verified</span>
-              <span style={{ fontSize: "9px", color: "#64748b" }}>Safe Agents</span>
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-main, #0f172a)" }}>Verified</span>
+              <span style={{ fontSize: "9px", color: "var(--text-muted, #64748b)" }}>Safe Agents</span>
             </div>
           </div>
         </div>
@@ -294,7 +294,7 @@ const mobileHeaderGreetingStyle = {
   justifyContent: "space-between",
   alignItems: "center",
   padding: "16px 16px 12px 16px",
-  background: "#f8fafc"
+  background: "var(--bg-main, #f8fafc)"
 };
 
 const profileIconCircleStyle = {
@@ -354,7 +354,7 @@ const mobileHeroCta = {
   padding: "12px",
   borderRadius: "12px",
   border: "none",
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   color: "#0b8f3a",
   fontSize: "13px",
   fontWeight: "800",

@@ -80,7 +80,7 @@ function Register() {
   };
 
   return (
-    <div style={{ background: "#f8fafc", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 16px" }}>
+    <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 16px" }}>
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <style>{`
@@ -153,8 +153,8 @@ function Register() {
         {/* HEADER AREA */}
         <div style={{ textAlign: "center", marginBottom: "24px" }}>
           <div className="register-logo-circle"><FaUserPlus /></div>
-          <h1 style={{ fontSize: "22px", fontWeight: "900", color: "#0f172a", margin: "0 0 4px 0" }}>Create Account</h1>
-          <p style={{ color: "#64748b", fontSize: "12px", margin: 0 }}>Join ScrapVex to recycle smarter</p>
+          <h1 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main, #0f172a)", margin: "0 0 4px 0" }}>Create Account</h1>
+          <p style={{ color: "var(--text-muted, #64748b)", fontSize: "12px", margin: 0 }}>Join ScrapVex to recycle smarter</p>
         </div>
 
         {/* REGISTRATION FORM */}
@@ -277,7 +277,7 @@ function Register() {
           </div>
         </form>
 
-        <div style={{ marginTop: "24px", textAlign: "center", fontSize: "13px", color: "#64748b" }}>
+        <div style={{ marginTop: "24px", textAlign: "center", fontSize: "13px", color: "var(--text-muted, #64748b)" }}>
           <p style={{ margin: 0 }}>Already have an account? <Link to="/login" style={{ color: "#0b8f3a", fontWeight: "700", textDecoration: "none" }}>Login Here</Link></p>
         </div>
       </div>
@@ -289,8 +289,8 @@ function Register() {
             <div style={modalHeaderIcon}>
               <FaKey />
             </div>
-            <h3 style={{ fontSize: "18px", fontWeight: "800", margin: "12px 0 6px 0", color: "#0f172a" }}>Enter 6-Digit OTP</h3>
-            <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px 0", lineHeight: "1.5" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: "800", margin: "12px 0 6px 0", color: "var(--text-main, #0f172a)" }}>Enter 6-Digit OTP</h3>
+            <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", margin: "0 0 16px 0", lineHeight: "1.5" }}>
               {otpChannel === "whatsapp" ? "💬 Secret OTP sent to your WhatsApp inbox" : "📩 Secret OTP sent via SMS"} on <b>+91 {form.mobile}</b>.
             </p>
 
@@ -358,7 +358,7 @@ const modalBackdrop = {
 };
 
 const modalCard = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   width: "100%",
   maxWidth: "360px",
   borderRadius: "20px",
@@ -392,7 +392,7 @@ const modalErrorBox = {
 };
 
 const otpInputGroup = {
-  background: "#f8fafc",
+  background: "var(--bg-main, #f8fafc)",
   borderRadius: "12px",
   padding: "10px",
   border: "2px solid #0b8f3a"
@@ -407,7 +407,7 @@ const otpInput = {
   fontSize: "24px",
   fontWeight: "800",
   letterSpacing: "8px",
-  color: "#0f172a"
+  color: "var(--text-main, #0f172a)"
 };
 
 export default Register;
