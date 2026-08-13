@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaTruck, FaTags, FaHistory, FaUser, FaPlus, FaWallet, FaRecycle } from "react-icons/fa";
+import { FaTruck, FaTags, FaHistory, FaUser, FaPlus, FaWallet, FaRecycle, FaHome, FaChartLine, FaBoxes } from "react-icons/fa";
 import MobileHeader from "./MobileHeader";
 import NativePageTransition from "./NativePageTransition";
 import { useBackButton } from "../hooks/useBackButton";
@@ -26,8 +26,6 @@ function MobileAppShell({ children }) {
   // Hide mobile shell on Admin / Collector dashboards
   const hideShellRoutes = [
     "/admin-dashboard",
-    
-    "/franchise-dashboard",
     "/admin-login",
     "/collector-login",
     "/franchise-login",
@@ -47,6 +45,7 @@ function MobileAppShell({ children }) {
   })();
 
   const isCollector = user?.role === "collector" || location.pathname.startsWith("/collector-dashboard");
+  const isFranchise = user?.role === "franchise" || location.pathname.startsWith("/franchise-dashboard");
 
   const collectorNavItems = [
     { label: "Overview", icon: <FaRecycle />, tab: "overview", path: "/collector-dashboard?tab=overview" },
@@ -54,6 +53,15 @@ function MobileAppShell({ children }) {
     { label: "Wallet", icon: <FaWallet />, tab: "wallet", path: "/collector-dashboard?tab=wallet" },
     { label: "History", icon: <FaHistory />, tab: "history", path: "/collector-dashboard?tab=history" },
     { label: "Account", icon: <FaUser />, tab: "profile", path: "/collector-dashboard?tab=profile" }
+  ];
+
+  const franchiseNavItems = [
+    { label: "Home", icon: <FaHome />, tab: "overview", path: "/franchise-dashboard?tab=overview" },
+    { label: "Pickups", icon: <FaTruck />, tab: "pickups", path: "/franchise-dashboard?tab=pickups" },
+    { label: "Accounting", icon: <FaChartLine />, tab: "accounting", path: "/franchise-dashboard?tab=accounting" },
+    { label: "Inventory", icon: <FaBoxes />, tab: "inventory", path: "/franchise-dashboard?tab=inventory" },
+    { label: "Wallet", icon: <FaWallet />, tab: "wallet", path: "/franchise-dashboard?tab=wallet" },
+    { label: "Account", icon: <FaUser />, tab: "account", path: "/franchise-dashboard?tab=account" }
   ];
 
   const userNavItems = [
@@ -64,7 +72,7 @@ function MobileAppShell({ children }) {
     { label: "Account", icon: <FaUser />, path: user ? "/profile" : "/login" }
   ];
 
-  const bottomNavItems = isCollector ? collectorNavItems : userNavItems;
+  const bottomNavItems = isCollector ? collectorNavItems : isFranchise ? franchiseNavItems : userNavItems;
 
   // If viewing on Desktop Website, return children directly (100% original website layout, no preview bar)
   if (!isMobileDevice) {
@@ -74,7 +82,7 @@ function MobileAppShell({ children }) {
   // Mobile Device Layout / Native APK Layout
   return (
     <div style={nativeAppWrapper}>
-      {!location.pathname.startsWith("/collector-dashboard") && <MobileHeader />}
+      {!location.pathname.startsWith("/collector-dashboard") && !location.pathname.startsWith("/franchise-dashboard") && <MobileHeader />}
       <main style={nativeMainContent}>
         <NativePageTransition>{children}</NativePageTransition>
       </main>
@@ -83,7 +91,7 @@ function MobileAppShell({ children }) {
       <nav style={nativeBottomNav}>
         {bottomNavItems.map((item, idx) => {
           const currentTab = new URLSearchParams(location.search).get("tab") || "overview";
-          const isActive = isCollector ? (currentTab === item.tab) : (location.pathname === item.path);
+          const isActive = (isCollector || isFranchise) ? (currentTab === item.tab) : (location.pathname === item.path);
           if (item.isCenterBtn) {
             return (
               <button
