@@ -1117,7 +1117,19 @@ const playBellSound = () => {
         .premium-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; }
         .spinner { width: 40px; height: 40px; border: 4px solid #eef8f1; border-top: 4px solid #0b8f3a; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @media (max-width: 768px) { .desktop-only { display: none !important; } }
+        @media (max-width: 768px) { 
+          .desktop-only { display: none !important; }
+          .mobile-only { display: flex !important; }
+          .grid-3, .grid-2 { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .kpi-grid, .stat-grid-container { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+          .responsive-flex { flex-direction: column !important; gap: 15px !important; }
+          .responsive-flex > div { width: 100% !important; flex: unset !important; }
+          .mobile-pad-bottom { padding-bottom: 110px !important; }
+          .dashboard-root { height: auto !important; min-height: 100vh !important; }
+          .dashboard-main { overflow-y: visible !important; height: auto !important; }
+          .native-content { padding: 14px 12px 90px 12px !important; }
+          table { display: block !important; overflow-x: auto !important; width: 100% !important; }
+        }
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>
 
