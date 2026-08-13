@@ -325,7 +325,114 @@ function MyPickups() {
           </div>
         )}
 
-      </div>
+      
+        {/* LIVE TRACKING TIMELINE MODAL */}
+        {showTrackingModal && trackingPickup && (
+          <div style={modalOverlay} onClick={() => setShowTrackingModal(false)}>
+            <div style={mobileModalCard} className="fade-up" onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                <div>
+                  <span style={{ fontSize: "10px", fontWeight: "900", color: "#0b8f3a", letterSpacing: "0.5px" }}>LIVE PICKUP TRACKER</span>
+                  <h3 style={{ margin: "2px 0 0 0", fontSize: "15px", fontWeight: "900", color: "#0f172a" }}>
+                    PICKUP #${trackingPickup._id.slice(-6).toUpperCase()}
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => setShowTrackingModal(false)}
+                  style={{ background: "#f1f5f9", border: "none", width: "30px", height: "30px", borderRadius: "50%", cursor: "pointer", color: "#64748b", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}
+                >
+                  <FaTimes />
+                </button>
+              </div>
+
+              {/* TRACKING TIMELINE STEPS */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "10px 4px" }}>
+                
+                {/* Step 1: Requested */}
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#0b8f3a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "bold" }}>✓</div>
+                    <div style={{ width: "2px", height: "36px", background: ["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "#0b8f3a" : "#cbd5e1" }} />
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>Pickup Booking Confirmed</h4>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                      Requested on ${new Date(trackingPickup.createdAt).toLocaleDateString()} for ${trackingPickup.pickupDate ? new Date(trackingPickup.pickupDate).toLocaleDateString() : "Scheduled Slot"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 2: Collector Assigned */}
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ 
+                      width: "24px", height: "24px", borderRadius: "50%", 
+                      background: ["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "#0b8f3a" : "#e2e8f0", 
+                      color: ["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "#fff" : "#94a3b8", 
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "bold" 
+                    }}>
+                      {["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "✓" : "2"}
+                    </div>
+                    <div style={{ width: "2px", height: "36px", background: trackingPickup.status === "Completed" ? "#0b8f3a" : "#cbd5e1" }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>
+                      {["Accepted", "Assigned", "Completed"].includes(trackingPickup.status) ? "Collector Assigned" : "Assigning Scrap Collector..."}
+                    </h4>
+                    {["Accepted", "Assigned"].includes(trackingPickup.status) ? (
+                      <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 10px", borderRadius: "10px", marginTop: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div>
+                          <div style={{ fontSize: "12px", fontWeight: "800", color: "#166534" }}>${trackingPickup.collectorName || "ScrapVex Field Officer"}</div>
+                          <div style={{ fontSize: "10px", color: "#15803d" }}>En-route for Rajouri doorstep pickup</div>
+                        </div>
+                        {trackingPickup.collectorMobile && (
+                          <a href={`tel:${trackingPickup.collectorMobile}`} style={{ background: "#0b8f3a", color: "#fff", padding: "5px 9px", borderRadius: "6px", textDecoration: "none", fontSize: "10px", fontWeight: "800", display: "flex", alignItems: "center", gap: "4px" }}>
+                            <FaPhoneAlt size={10} /> Call
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                        {trackingPickup.status === "Completed" ? "Collector completed pickup & weighing." : "Connecting nearest verified collector in your area..."}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Step 3: Doorstep Weighing & Completed */}
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <div style={{ 
+                      width: "24px", height: "24px", borderRadius: "50%", 
+                      background: trackingPickup.status === "Completed" ? "#0b8f3a" : "#e2e8f0", 
+                      color: trackingPickup.status === "Completed" ? "#fff" : "#94a3b8", 
+                      display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "bold" 
+                    }}>
+                      {trackingPickup.status === "Completed" ? "✓" : "3"}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>
+                      {trackingPickup.status === "Completed" ? "Pickup Completed & Paid" : "Doorstep Weighing & Payout"}
+                    </h4>
+                    <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
+                      {trackingPickup.status === "Completed" ? `Paid ₹${trackingPickup.amount} via ${trackingPickup.paymentMethod || "Wallet/Cash"}` : `Est. Scrap Value: ₹${trackingPickup.amount}`}
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+              <button
+                onClick={() => setShowTrackingModal(false)}
+                style={{ width: "100%", padding: "11px", background: "#0b8f3a", color: "#fff", border: "none", borderRadius: "12px", fontWeight: "800", fontSize: "13px", cursor: "pointer", marginTop: "10px" }}
+              >
+                Close Tracker
+              </button>
+            </div>
+          </div>
+        )}
+</div>
     );
   }
 
@@ -411,6 +518,8 @@ function MyPickups() {
 
       {!isCollector && <Footer />}
     
+        
+
         {/* LIVE TRACKING TIMELINE MODAL */}
         {showTrackingModal && trackingPickup && (
           <div style={modalOverlay} onClick={() => setShowTrackingModal(false)}>
@@ -419,7 +528,7 @@ function MyPickups() {
                 <div>
                   <span style={{ fontSize: "10px", fontWeight: "900", color: "#0b8f3a", letterSpacing: "0.5px" }}>LIVE PICKUP TRACKER</span>
                   <h3 style={{ margin: "2px 0 0 0", fontSize: "15px", fontWeight: "900", color: "#0f172a" }}>
-                    PICKUP #{trackingPickup._id.slice(-6).toUpperCase()}
+                    PICKUP #${trackingPickup._id.slice(-6).toUpperCase()}
                   </h3>
                 </div>
                 <button 
@@ -442,7 +551,7 @@ function MyPickups() {
                   <div>
                     <h4 style={{ margin: 0, fontSize: "13px", fontWeight: "800", color: "#0f172a" }}>Pickup Booking Confirmed</h4>
                     <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
-                      Requested on {new Date(trackingPickup.createdAt).toLocaleDateString()} for {trackingPickup.pickupDate ? new Date(trackingPickup.pickupDate).toLocaleDateString() : "Scheduled Slot"}
+                      Requested on ${new Date(trackingPickup.createdAt).toLocaleDateString()} for ${trackingPickup.pickupDate ? new Date(trackingPickup.pickupDate).toLocaleDateString() : "Scheduled Slot"}
                     </p>
                   </div>
                 </div>
@@ -467,11 +576,11 @@ function MyPickups() {
                     {["Accepted", "Assigned"].includes(trackingPickup.status) ? (
                       <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 10px", borderRadius: "10px", marginTop: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div>
-                          <div style={{ fontSize: "12px", fontWeight: "800", color: "#166534" }}>{trackingPickup.collectorName || "ScrapVex Field Officer"}</div>
+                          <div style={{ fontSize: "12px", fontWeight: "800", color: "#166534" }}>${trackingPickup.collectorName || "ScrapVex Field Officer"}</div>
                           <div style={{ fontSize: "10px", color: "#15803d" }}>En-route for Rajouri doorstep pickup</div>
                         </div>
                         {trackingPickup.collectorMobile && (
-                          <a href={"tel:" + trackingPickup.collectorMobile} style={{ background: "#0b8f3a", color: "#fff", padding: "5px 9px", borderRadius: "6px", textDecoration: "none", fontSize: "10px", fontWeight: "800", display: "flex", alignItems: "center", gap: "4px" }}>
+                          <a href={`tel:${trackingPickup.collectorMobile}`} style={{ background: "#0b8f3a", color: "#fff", padding: "5px 9px", borderRadius: "6px", textDecoration: "none", fontSize: "10px", fontWeight: "800", display: "flex", alignItems: "center", gap: "4px" }}>
                             <FaPhoneAlt size={10} /> Call
                           </a>
                         )}
@@ -501,7 +610,7 @@ function MyPickups() {
                       {trackingPickup.status === "Completed" ? "Pickup Completed & Paid" : "Doorstep Weighing & Payout"}
                     </h4>
                     <p style={{ margin: "2px 0 0 0", fontSize: "11px", color: "#64748b" }}>
-                      {trackingPickup.status === "Completed" ? "Paid ₹" + trackingPickup.amount + " via " + (trackingPickup.paymentMethod || "Wallet/Cash") : "Est. Scrap Value: ₹" + trackingPickup.amount}
+                      {trackingPickup.status === "Completed" ? `Paid ₹${trackingPickup.amount} via ${trackingPickup.paymentMethod || "Wallet/Cash"}` : `Est. Scrap Value: ₹${trackingPickup.amount}`}
                     </p>
                   </div>
                 </div>
