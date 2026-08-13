@@ -98,41 +98,43 @@ function ForgotPassword() {
         .forgot-card {
           width: 100%;
           max-width: 400px;
-          background: #ffffff;
+          background: var(--card-bg, #ffffff);
           padding: 30px 24px;
           border-radius: 20px;
-          border: 1px solid rgba(15,23,42,0.06);
-          box-shadow: 0 10px 25px -5px rgba(0,0,0,0.02), 0 8px 10px -6px rgba(0,0,0,0.02);
+          border: 1.5px solid var(--card-border, rgba(15,23,42,0.06));
+          box-shadow: var(--card-shadow, 0 10px 25px -5px rgba(0,0,0,0.02));
+          box-sizing: border-box;
+          transition: all 0.3s ease;
         }
         .forgot-logo-circle {
           width: 54px;
           height: 54px;
           border-radius: 14px;
-          background: #f0fdf4;
+          background: var(--bg-subtle, #f0fdf4);
           color: #0b8f3a;
           font-size: 22px;
           display: flex;
           align-items: center;
           justify-content: center;
           margin: 0 auto 12px;
-          border: 1.5px solid #dcfce7;
+          border: 1.5px solid var(--card-border, #dcfce7);
         }
         .forgot-input-row {
           display: flex;
           align-items: center;
           gap: 12px;
-          background: #f8fafc;
+          background: var(--input-bg, #f8fafc);
           padding: 12px 16px;
           border-radius: 12px;
           margin-bottom: 14px;
-          border: 1.5px solid #e2e8f0;
+          border: 1.5px solid var(--card-border, #e2e8f0);
           transition: all 0.2s ease;
           position: relative;
         }
         .forgot-input-row:focus-within {
-          border-color: #0b8f3a;
-          background: #ffffff;
-          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.15);
+          border-color: #0b8f3a !important;
+          background: var(--card-bg, #ffffff) !important;
+          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.15) !important;
         }
         .forgot-input-field {
           border: none;
@@ -140,8 +142,8 @@ function ForgotPassword() {
           background: transparent;
           width: 100%;
           font-size: 14px;
-          color: #0f172a;
-          font-weight: 500;
+          color: var(--text-main, #0f172a);
+          font-weight: 600;
         }
         .forgot-eye-btn {
           position: absolute;
@@ -150,12 +152,38 @@ function ForgotPassword() {
           transform: translateY(-50%);
           background: none;
           border: none;
-          color: #64748b;
+          color: var(--text-muted, #64748b);
           cursor: pointer;
           font-size: 16px;
           display: flex;
           align-items: center;
           padding: 4px;
+        }
+
+        body.dark-mode .forgot-card,
+        [data-theme="dark"] .forgot-card {
+          background-color: #152035 !important;
+          border-color: rgba(255, 255, 255, 0.15) !important;
+          color: #ffffff !important;
+        }
+
+        body.dark-mode .forgot-input-row,
+        [data-theme="dark"] .forgot-input-row {
+          background-color: #0e1626 !important;
+          border-color: rgba(255, 255, 255, 0.18) !important;
+          color: #ffffff !important;
+        }
+
+        body.dark-mode .forgot-input-field,
+        [data-theme="dark"] .forgot-input-field {
+          color: #ffffff !important;
+        }
+
+        body.dark-mode .forgot-logo-circle,
+        [data-theme="dark"] .forgot-logo-circle {
+          background-color: #1a253d !important;
+          color: #0b8f3a !important;
+          border-color: rgba(255, 255, 255, 0.2) !important;
         }
       `}</style>
 

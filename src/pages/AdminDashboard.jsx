@@ -1302,17 +1302,18 @@ const playBellSound = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
                   width: "100%",
-                  padding: "12px 16px 12px 40px",
+                  padding: "12px 16px 12px 46px",
                   borderRadius: "12px",
-                  border: "1px solid #d1d5db",
+                  border: "1.5px solid var(--card-border, #d1d5db)",
                   outline: "none",
                   fontSize: "14px",
                   background: "var(--card-bg, #ffffff)",
+                  color: "var(--text-main, #0f172a)",
                   boxShadow: "0 2px 5px rgba(0,0,0,0.03)",
                   transition: "border-color 0.2s ease"
                 }}
               />
-              <span style={{ position: "absolute", left: "15px", top: "50%", transform: "translateY(-50%)", color: "#888", fontSize: "14px" }}>🔍</span>
+              <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#0b8f3a", fontSize: "15px", pointerEvents: "none" }}>🔍</span>
               {searchQuery && (
                 <span 
                   onClick={() => setSearchQuery("")} 

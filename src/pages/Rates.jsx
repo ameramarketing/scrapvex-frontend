@@ -482,13 +482,17 @@ const mobileSearchBox = {
 const mobileRateCard = {
   background: "var(--card-bg, #ffffff)",
   borderRadius: "14px",
-  padding: "12px",
-  border: "1.5px solid rgba(15,23,42,0.06)",
+  padding: "12px 8px",
+  border: "1.5px solid var(--card-border, rgba(15,23,42,0.06))",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   textAlign: "center",
-  boxShadow: "0 2px 6px rgba(0,0,0,0.01)"
+  boxShadow: "var(--card-shadow, 0 2px 6px rgba(0,0,0,0.01))",
+  width: "100%",
+  boxSizing: "border-box",
+  minWidth: 0,
+  overflow: "hidden"
 };
 
 const mobileRateCardIcon = {
