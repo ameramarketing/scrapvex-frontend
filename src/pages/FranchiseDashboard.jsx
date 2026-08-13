@@ -886,7 +886,7 @@ const playBellSound = () => {
       </div>
 
       {/* MAIN */}
-      <div style={main}>
+      <div style={main} className="franchise-main-content">
         {/* HEADER (SAME AS COLLECTOR DASHBOARD) */}
         <header style={{
           background: "var(--card-bg, #ffffff)",
