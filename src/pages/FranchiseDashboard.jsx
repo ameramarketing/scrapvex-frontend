@@ -266,36 +266,51 @@ const playBellSound = () => {
   const fetchAdminData = async () => {
     try {
       setLoading(true);
-      const user = JSON.parse(localStorage.getItem("user"));
-      const [resStats, resPickups, resCollectors, resItems, resCityRates] = await Promise.all([
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const assignedCity = user?.assignedCity || user?.city || "Rajouri";
+      
+      const results = await Promise.allSettled([
         API.get("/admin/dashboard"),
         API.get("/admin/pickups"),
         API.get("/admin/collectors"),
         API.get("/scrap-items"),
-        API.get(`/admin/get-city-rates?city=${user.assignedCity}`)
+        API.get(`/admin/get-city-rates?city=${encodeURIComponent(assignedCity)}`)
       ]);
 
-      if (resStats.data.success) setStats(resStats.data.stats);
-      if (resPickups.data.success) setPickups(resPickups.data.pickups);
-      if (resCollectors.data.success) setCollectors(resCollectors.data.collectors);
+      const [resStats, resPickups, resCollectors, resItems, resCityRates] = results;
 
-      // Merge global items with city-specific rates
-      if (resItems.data.success) {
-        const globalItems = resItems.data.data;
-        const cityRates = resCityRates.data.rates || [];
-        const merged = globalItems.map(gi => {
-          const cityRate = cityRates.find(cr => cr.scrapItem?._id === gi._id);
-          return cityRate ? { ...gi, price: cityRate.price } : gi;
-        });
-        setItems(merged);
+      if (resStats.status === "fulfilled" && resStats.value.data?.success) {
+        setStats(resStats.value.data.stats || {});
+      }
+      if (resPickups.status === "fulfilled" && resPickups.value.data?.success) {
+        setPickups(resPickups.value.data.pickups || []);
+      }
+      if (resCollectors.status === "fulfilled" && resCollectors.value.data?.success) {
+        setCollectors(resCollectors.value.data.collectors || []);
       }
 
-      fetchSettings();
-      fetchReviews();
-      fetchWalletStats();
-      fetchAccountingData(); // New: Fetch accounting for overview
+      // Merge global items with city-specific rates
+      let globalItems = [];
+      let cityRates = [];
+      if (resItems.status === "fulfilled" && resItems.value.data?.success) {
+        globalItems = resItems.value.data.data || [];
+      }
+      if (resCityRates.status === "fulfilled" && resCityRates.value.data?.rates) {
+        cityRates = resCityRates.value.data.rates || [];
+      }
+
+      const merged = globalItems.map(gi => {
+        const cityRate = cityRates.find(cr => cr.scrapItem?._id === gi._id || cr.scrapItem === gi._id);
+        return cityRate ? { ...gi, price: cityRate.price } : gi;
+      });
+      setItems(merged);
+
+      fetchSettings().catch(() => {});
+      fetchReviews().catch(() => {});
+      fetchWalletStats().catch(() => {});
+      fetchAccountingData().catch(() => {});
     } catch (error) {
-      showToast("error", "Failed to load data.");
+      console.error("fetchAdminData error:", error);
     } finally {
       setLoading(false);
     }
