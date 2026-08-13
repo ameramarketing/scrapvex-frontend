@@ -865,6 +865,9 @@ const playBellSound = () => {
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @media (max-width: 768px) {
           .desktop-only { display: none !important; }
+          .mobile-only { display: flex !important; }
+          .grid-3 { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .grid-2 { grid-template-columns: 1fr !important; gap: 12px !important; }
           .responsive-flex {
             flex-direction: column !important;
             gap: 15px !important;
@@ -876,6 +879,10 @@ const playBellSound = () => {
           .mobile-pad-bottom {
             padding-bottom: 120px !important;
           }
+          .dashboard-root { height: auto !important; min-height: 100vh !important; }
+          .dashboard-main { overflow-y: visible !important; height: auto !important; }
+          .native-content { padding: 14px 12px 90px 12px !important; }
+          table { display: block !important; overflow-x: auto !important; width: 100% !important; }
         }
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>
