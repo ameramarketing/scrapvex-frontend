@@ -531,8 +531,10 @@ input:disabled, select:disabled, textarea:disabled {
 /* High-Contrast Badge Styling in Dark Mode */
 body.dark-mode .badge-status.badge-pending,
 body.dark-mode .badge-pending,
+body.dark-mode [class*="badge-pending"],
 [data-theme="dark"] .badge-status.badge-pending,
-[data-theme="dark"] .badge-pending {
+[data-theme="dark"] .badge-pending,
+[data-theme="dark"] [class*="badge-pending"] {
   background: rgba(245, 158, 11, 0.25) !important;
   color: #fbbf24 !important;
   border: 1.5px solid #f59e0b !important;
@@ -544,12 +546,16 @@ body.dark-mode .badge-status.badge-confirmed,
 body.dark-mode .badge-accepted,
 body.dark-mode .badge-assigned,
 body.dark-mode .badge-confirmed,
+body.dark-mode [class*="badge-accepted"],
+body.dark-mode [class*="badge-assigned"],
 [data-theme="dark"] .badge-status.badge-accepted,
 [data-theme="dark"] .badge-status.badge-assigned,
 [data-theme="dark"] .badge-status.badge-confirmed,
 [data-theme="dark"] .badge-accepted,
 [data-theme="dark"] .badge-assigned,
-[data-theme="dark"] .badge-confirmed {
+[data-theme="dark"] .badge-confirmed,
+[data-theme="dark"] [class*="badge-accepted"],
+[data-theme="dark"] [class*="badge-assigned"] {
   background: rgba(59, 130, 246, 0.25) !important;
   color: #60a5fa !important;
   border: 1.5px solid #3b82f6 !important;
@@ -559,10 +565,14 @@ body.dark-mode .badge-status.badge-completed,
 body.dark-mode .badge-status.badge-active,
 body.dark-mode .badge-completed,
 body.dark-mode .badge-active,
+body.dark-mode [class*="badge-active"],
+body.dark-mode [class*="badge-completed"],
 [data-theme="dark"] .badge-status.badge-completed,
 [data-theme="dark"] .badge-status.badge-active,
 [data-theme="dark"] .badge-completed,
-[data-theme="dark"] .badge-active {
+[data-theme="dark"] .badge-active,
+[data-theme="dark"] [class*="badge-active"],
+[data-theme="dark"] [class*="badge-completed"] {
   background: rgba(16, 185, 129, 0.25) !important;
   color: #34d399 !important;
   border: 1.5px solid #10b981 !important;
@@ -572,10 +582,14 @@ body.dark-mode .badge-status.badge-cancelled,
 body.dark-mode .badge-status.badge-rejected,
 body.dark-mode .badge-cancelled,
 body.dark-mode .badge-rejected,
+body.dark-mode [class*="badge-cancelled"],
+body.dark-mode [class*="badge-rejected"],
 [data-theme="dark"] .badge-status.badge-cancelled,
 [data-theme="dark"] .badge-status.badge-rejected,
 [data-theme="dark"] .badge-cancelled,
-[data-theme="dark"] .badge-rejected {
+[data-theme="dark"] .badge-rejected,
+[data-theme="dark"] [class*="badge-cancelled"],
+[data-theme="dark"] [class*="badge-rejected"] {
   background: rgba(239, 68, 68, 0.25) !important;
   color: #f87171 !important;
   border: 1.5px solid #ef4444 !important;

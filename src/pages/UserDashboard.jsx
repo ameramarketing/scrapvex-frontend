@@ -569,7 +569,7 @@ const playBellSound = () => {
                  {pickups.length > 0 ? (
                     <div style={orderCardStyle} className="premium-card">
                        <div style={{display:"flex", justifyContent:"space-between", marginBottom:"15px"}}>
-                          <div style={statusBadgeStyle(pickups[0].status)}>{pickups[0].status}</div>
+                          <div className={statusBadgeStyle(pickups[0].status)}>{pickups[0].status}</div>
                           <span style={orderDateStyle}>{new Date(pickups[0].createdAt).toLocaleDateString()}</span>
                        </div>
                        <h4 style={orderTitleStyle}>{pickups[0].scrapType}</h4>
@@ -967,7 +967,7 @@ const playBellSound = () => {
                          pickups.map(p => (
                             <div key={p._id} style={{...orderCardStyle, padding:"20px"}} className="premium-card">
                                <div style={{display:"flex", justifyContent:"space-between", marginBottom:"10px"}}>
-                                  <div style={statusBadgeStyle(p.status)}>{p.status}</div>
+                                  <div className={statusBadgeStyle(p.status)}>{p.status}</div>
                                   <span style={orderDateStyle}>{new Date(p.createdAt).toLocaleDateString()}</span>
                                </div>
                                <h4 style={{margin:"5px 0", color:"var(--text-main)"}}>{p.scrapType}</h4>
@@ -1321,9 +1321,10 @@ const ProfileField = ({ label, value }) => (
 );
 
 const statusBadgeStyle = (s) => {
-  if (s === "Completed") return { padding: "5px 12px", borderRadius: "10px", fontSize: "11px", fontWeight: "bold", background: "#eef8f1", color: "#0b8f3a" };
-  if (s === "Pending" || s === "Rejected") return { padding: "5px 12px", borderRadius: "10px", fontSize: "11px", fontWeight: "bold", background: "#fff9e6", color: "#f39c12" };
-  return { padding: "5px 12px", borderRadius: "10px", fontSize: "11px", fontWeight: "bold", background: "#eef2ff", color: "#4f46e5" };
+  const status = (s || "").toLowerCase();
+  if (status === "completed") return "badge-status badge-completed";
+  if (status === "pending" || status === "rejected") return "badge-status badge-pending";
+  return "badge-status badge-active";
 };
 
 export default UserDashboard;

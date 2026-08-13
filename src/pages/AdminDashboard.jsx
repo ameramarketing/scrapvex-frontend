@@ -3621,8 +3621,8 @@ const Input = ({ placeholder, value, onChange, type = "text" }) => (
 );
 
 const StatusBadge = ({ status }) => {
-  const colors = { Pending: "#f39c12", Assigned: "#007bff", Completed: "#28a745" };
-  return <span style={{ background: colors[status]+"20", color: colors[status], padding: "4px 12px", borderRadius: "20px", fontSize: "10px", fontWeight: "bold"}}>{status}</span>;
+  const s = (status || "").toLowerCase();
+  return <span className={`badge-status badge-${s}`}>{status}</span>;
 };
 
 /* STYLES */
