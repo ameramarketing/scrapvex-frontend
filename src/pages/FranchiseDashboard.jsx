@@ -14,6 +14,7 @@ import { performLogout } from "../utils/auth";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useTheme } from "../context/ThemeContext";
+import { triggerNativeNotification } from "../utils/pushNotifications";
 
 function FranchiseDashboard() {
 
@@ -325,7 +326,14 @@ const playBellSound = () => {
   const fetchNotifications = async () => {
     try {
       const { data } = await API.get("/notifications");
-      if (data.success) setNotifications(data.data);
+      if (data.success && Array.isArray(data.data)) {
+        setNotifications(data.data);
+        const unread = data.data.filter(n => n && !n.isRead);
+        if (unread.length > 0) {
+          const latest = unread[0];
+          triggerNativeNotification(latest.title || "New Franchise Alert", latest.message, latest._id);
+        }
+      }
     } catch (e) { console.error(e); }
   };
 

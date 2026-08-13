@@ -38,6 +38,7 @@ import MobileAppShell from "./components/MobileAppShell";
 import GlobalLoader from "./components/GlobalLoader";
 import NativeOfflineBanner from "./components/NativeOfflineBanner";
 import { StatusBar, Style } from "@capacitor/status-bar";
+import { requestNotificationPermission } from "./utils/pushNotifications";
 import { isNativeApp, isMobileEnvironment } from "./platform/platform";
 
 function InitialHomeScreen() {
@@ -78,8 +79,9 @@ function App() {
     setShowSplash(false);
   };
 
-  // Initialize Native Features
+  // Initialize Native Features & Push Notifications
   React.useEffect(() => {
+    requestNotificationPermission();
     if (isNativeApp()) {
       StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
       StatusBar.setBackgroundColor({ color: "#0b8f3a" }).catch(() => {});

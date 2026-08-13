@@ -27,8 +27,9 @@ import {
   FaBell,
   FaStar,
   FaToggleOn,
-  FaToggleOff, FaSave, FaUserShield, FaChevronRight, FaSun, FaMoon, FaEdit, FaPhone,
+  FaToggleOff, FaSave, FaUserShield, FaChevronRight, FaSun, FaMoon, FaEdit, FaPhone, FaPowerOff
 } from "react-icons/fa";
+import { triggerNativeNotification } from "../utils/pushNotifications";
 import API from "../services/api";
 import Toast from "../components/Toast";
 import { performLogout } from "../utils/auth";
@@ -353,7 +354,13 @@ function CollectorDashboard() {
 
       setPickups(Array.isArray(rawPickups) ? rawPickups : []);
       setScrapItems(Array.isArray(rawScrapItems) ? rawScrapItems : []);
-      setNotifications(Array.isArray(rawNotifications) ? rawNotifications : []);
+      const notifArr = Array.isArray(rawNotifications) ? rawNotifications : [];
+      setNotifications(notifArr);
+      const unreadNotifs = notifArr.filter(n => n && !n.isRead);
+      if (unreadNotifs.length > 0) {
+        const latest = unreadNotifs[0];
+        triggerNativeNotification(latest.title || "New ScrapVex Alert", latest.message, latest._id);
+      }
       setReviews(Array.isArray(rawReviews) ? rawReviews : []);
       setWalletTransactions(Array.isArray(rawTx) ? rawTx : []);
 
@@ -865,29 +872,8 @@ function CollectorDashboard() {
             </div>
           </div>
 
-          {/* Right Action Controls: [Online Pill] -> [Bell] -> [Moon] */}
+          {/* Right Action Controls: [Bell] -> [Moon] */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            {/* Micro Online/Offline Status Pill */}
-            <button
-              onClick={toggleStatus}
-              style={{
-                background: user?.isOnline ? "#f0fdf4" : "#f8fafc",
-                border: `1px solid ${user?.isOnline ? "#bbf7d0" : "#e2e8f0"}`,
-                color: user?.isOnline ? "#16a34a" : "#64748b",
-                padding: "3px 8px",
-                borderRadius: "8px",
-                fontSize: "10px",
-                fontWeight: "800",
-                display: "flex",
-                alignItems: "center",
-                gap: "4px",
-                cursor: "pointer",
-                lineHeight: 1
-              }}
-            >
-              <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: user?.isOnline ? "#16a34a" : "#94a3b8" }} />
-              {user?.isOnline ? "Online" : "Offline"}
-            </button>
 
             {/* Notification Bell */}
             <button
@@ -995,6 +981,7 @@ function CollectorDashboard() {
         <div className="native-content" style={content}>
           {activeTab === "overview" && (
             <div className="fade-up">
+              <SwipeOnlineToggle isOnline={user?.isOnline} onToggle={toggleStatus} />
               <div style={{ padding: "0 0 20px 0" }}>
                 <div
                   style={{
@@ -4324,6 +4311,129 @@ const bottomLinkStyle = {
   padding: "4px 0",
   transition: "transform 0.15s ease",
   outline: "none"
+};
+
+const SwipeOnlineToggle = ({ isOnline, onToggle }) => {
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
+
+  const handleStart = (clientX) => {
+    setIsDragging(true);
+    startXRef.current = clientX;
+  };
+
+  const handleMove = (clientX) => {
+    if (!isDragging) return;
+    const deltaX = clientX - startXRef.current;
+    if (isOnline) {
+      if (deltaX <= 0 && deltaX >= -140) setDragOffset(deltaX);
+    } else {
+      if (deltaX >= 0 && deltaX <= 140) setDragOffset(deltaX);
+    }
+  };
+
+  const handleEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (!isOnline && dragOffset > 60) {
+      onToggle();
+    } else if (isOnline && dragOffset < -60) {
+      onToggle();
+    }
+    setDragOffset(0);
+  };
+
+  return (
+    <div
+      style={{
+        background: isOnline ? "linear-gradient(135deg, #0b8f3a 0%, #056627 100%)" : "var(--card-bg, #ffffff)",
+        border: `1.5px solid ${isOnline ? "#22c55e" : "var(--card-border, #cbd5e1)"}`,
+        borderRadius: "20px",
+        padding: "16px",
+        marginBottom: "20px",
+        boxShadow: isOnline ? "0 10px 25px rgba(11, 143, 58, 0.25)" : "var(--card-shadow, 0 4px 12px rgba(0,0,0,0.03))",
+        transition: "all 0.3s ease"
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+        <div>
+          <div style={{ fontSize: "15px", fontWeight: "900", color: isOnline ? "#ffffff" : "var(--text-main)", display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: isOnline ? "#22c55e" : "#ef4444", boxShadow: isOnline ? "0 0 10px #22c55e" : "none" }} />
+            {isOnline ? "ONLINE & READY FOR PICKUPS" : "YOU ARE OFFLINE"}
+          </div>
+          <div style={{ fontSize: "12px", color: isOnline ? "rgba(255,255,255,0.85)" : "var(--text-muted)", marginTop: "2px" }}>
+            {isOnline ? "Slide left to stop receiving new orders" : "Slide right to start accepting nearby pickups"}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={onToggle}
+          style={{
+            background: isOnline ? "rgba(255,255,255,0.22)" : "#0b8f3a",
+            color: "#ffffff",
+            border: "none",
+            borderRadius: "10px",
+            padding: "6px 12px",
+            fontSize: "11px",
+            fontWeight: "800",
+            cursor: "pointer",
+            flexShrink: 0
+          }}
+        >
+          {isOnline ? "GO OFFLINE" : "GO ONLINE"}
+        </button>
+      </div>
+
+      <div
+        onTouchStart={(e) => handleStart(e.touches[0].clientX)}
+        onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+        onTouchEnd={handleEnd}
+        onMouseDown={(e) => handleStart(e.clientX)}
+        onMouseMove={(e) => handleMove(e.clientX)}
+        onMouseUp={handleEnd}
+        onMouseLeave={handleEnd}
+        style={{
+          position: "relative",
+          height: "48px",
+          background: isOnline ? "rgba(0, 0, 0, 0.25)" : "var(--input-bg, #f1f5f9)",
+          borderRadius: "24px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: isOnline ? "flex-end" : "flex-start",
+          padding: "4px",
+          userSelect: "none",
+          cursor: "grab",
+          overflow: "hidden",
+          border: `1px solid ${isOnline ? "rgba(255,255,255,0.2)" : "var(--card-border, #cbd5e1)"}`
+        }}
+      >
+        <div style={{ position: "absolute", width: "100%", textAlign: "center", fontSize: "12px", fontWeight: "800", color: isOnline ? "#ffffff" : "var(--text-muted)", letterSpacing: "0.5px", pointerEvents: "none" }}>
+          {isOnline ? "◄ ◄ ◄ SWIPE LEFT TO GO OFFLINE" : "SWIPE RIGHT TO GO ONLINE ► ► ►"}
+        </div>
+        <div
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            background: isOnline ? "#ef4444" : "#0b8f3a",
+            color: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "16px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            transform: `translateX(${dragOffset}px)`,
+            transition: isDragging ? "none" : "transform 0.2s ease",
+            zIndex: 2,
+            flexShrink: 0
+          }}
+        >
+          {isOnline ? <FaPowerOff /> : <FaTruck />}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CollectorDashboard;
