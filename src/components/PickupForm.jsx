@@ -628,7 +628,7 @@ const Input = ({ icon, placeholder, value, onChange, type = "text", min = "" }) 
 const formBox = { padding: "16px", background: "#ffffff", borderRadius: "18px", width: "100%", boxSizing: "border-box" };
 const stepHeader = { display: "flex", justifyContent: "space-between", marginBottom: "20px" };
 const stepContent = { minHeight: "280px", position: "relative" };
-const stepTitle = { fontSize: "15px", fontWeight: "800", marginBottom: "16px", color: "#0f172a", borderLeft: "3.5px solid #0b8f3a", paddingLeft: "8px" };
+const stepTitle = { fontSize: "15px", fontWeight: "800", marginBottom: "16px", color: "var(--text-main, #0f172a)", borderLeft: "3.5px solid #0b8f3a", paddingLeft: "8px" };
 const locBtn = { position: "absolute", right: "8px", top: "8px", background: "#f0fdf4", border: "none", color: "#0b8f3a", width: "32px", height: "32px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" };
 const modeTabs = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px" };
 const totalBox = { margin: "16px 0", padding: "12px 14px", background: "#f0fdf4", borderRadius: "12px", border: "1.5px dashed #0b8f3a", display: "flex", justifyContent: "space-between", alignItems: "center" };

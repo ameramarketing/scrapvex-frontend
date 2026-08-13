@@ -67,14 +67,20 @@ function CollectorLogin() {
           width: 54px;
           height: 54px;
           border-radius: 14px;
-          background: #f0fdf4;
-          color: var(--primary);
+          background: var(--bg-subtle, #f0fdf4);
+          color: #0b8f3a;
           font-size: 22px;
           display: flex;
           align-items: center;
           justify-content: center;
           margin: 0 auto 12px;
-          border: 1.5px solid #dcfce7;
+          border: 1.5px solid var(--card-border, #dcfce7);
+        }
+        body.dark-mode .auth-logo-circle,
+        [data-theme="dark"] .auth-logo-circle {
+          background-color: #1a253d !important;
+          color: #0b8f3a !important;
+          border-color: rgba(255, 255, 255, 0.2) !important;
         }
         .auth-input-row {
           display: flex;

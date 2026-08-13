@@ -506,6 +506,43 @@ input:disabled, select:disabled, textarea:disabled {
 .badge-active   { background: var(--success-light);  color: var(--success);  border: 1px solid var(--success-border); }
 .badge-inactive { background: var(--bg-subtle);      color: var(--text-muted); border: 1px solid var(--card-border); }
 
+/* High-Contrast Badge Styling in Dark Mode */
+body.dark-mode .badge-pending,
+[data-theme="dark"] .badge-pending {
+  background: rgba(245, 158, 11, 0.25) !important;
+  color: #fbbf24 !important;
+  border: 1.5px solid #f59e0b !important;
+  font-weight: 800 !important;
+}
+
+body.dark-mode .badge-accepted,
+body.dark-mode .badge-confirmed,
+[data-theme="dark"] .badge-accepted,
+[data-theme="dark"] .badge-confirmed {
+  background: rgba(59, 130, 246, 0.25) !important;
+  color: #60a5fa !important;
+  border: 1.5px solid #3b82f6 !important;
+  font-weight: 800 !important;
+}
+
+body.dark-mode .badge-completed,
+body.dark-mode .badge-active,
+[data-theme="dark"] .badge-completed,
+[data-theme="dark"] .badge-active {
+  background: rgba(16, 185, 129, 0.25) !important;
+  color: #34d399 !important;
+  border: 1.5px solid #10b981 !important;
+  font-weight: 800 !important;
+}
+
+body.dark-mode .badge-cancelled,
+[data-theme="dark"] .badge-cancelled {
+  background: rgba(239, 68, 68, 0.25) !important;
+  color: #f87171 !important;
+  border: 1.5px solid #ef4444 !important;
+  font-weight: 800 !important;
+}
+
 /* ==========================================================
    SECTION HEADINGS
    ========================================================== */
