@@ -212,55 +212,72 @@ function PickupForm() {
   };
 
   return (
-    <div style={formBox}>
+    <div className="pickup-form-card" style={formBox}>
       <Toast show={toast.show} type={toast.type} message={toast.message} onClose={() => setToast({ ...toast, show: false })} />
 
       <style>{`
+        .pickup-form-card {
+          padding: 24px 20px;
+          background: var(--card-bg, #ffffff);
+          border-radius: 20px;
+          width: 100%;
+          box-sizing: border-box;
+          border: 1.5px solid var(--card-border, #e2e8f0);
+          box-shadow: var(--card-shadow, 0 10px 30px rgba(0,0,0,0.05));
+          transition: all 0.3s ease;
+        }
+
         .step-circle { 
-          width: 32px; 
-          height: 32px; 
+          width: 38px; 
+          height: 38px; 
           border-radius: 50%; 
-          border: 1.5px solid #e2e8f0; 
+          border: 2px solid #0b8f3a; 
           display: flex; 
           align-items: center; 
           justify-content: center; 
-          font-size: 12px; 
+          font-size: 15px; 
           margin: 0 auto 6px; 
-          background: #ffffff; 
-          color: #94a3b8;
+          background: var(--bg-subtle, #f1f5f9); 
+          color: #0b8f3a;
           transition: all 0.3s ease; 
+          box-shadow: 0 2px 6px rgba(11,143,58,0.1);
+        }
+        .step-circle svg {
+          width: 16px;
+          height: 16px;
         }
         .step-active { 
-          border-color: #0b8f3a; 
-          color: #0b8f3a; 
-          background: #f0fdf4; 
-          box-shadow: 0 0 0 3px rgba(11,143,58,0.15); 
+          border-color: #0b8f3a !important; 
+          color: #ffffff !important; 
+          background: #0b8f3a !important; 
+          box-shadow: 0 0 0 4px rgba(11,143,58,0.25) !important; 
           font-weight: bold;
         }
         .step-text {
-          font-size: 10px;
-          font-weight: 700;
-          color: #94a3b8;
+          font-size: 11px;
+          font-weight: 800;
+          color: var(--text-muted, #64748b);
           transition: 0.3s;
+          display: block;
         }
         .step-text.active {
-          color: #0f172a;
+          color: #0b8f3a !important;
         }
         .modern-input-row {
           display: flex;
           align-items: center;
           gap: 12px;
-          background: #f8fafc;
+          background: var(--input-bg, #f8fafc);
           padding: 12px 16px;
           border-radius: 12px;
           margin-bottom: 14px;
-          border: 1.5px solid #e2e8f0;
+          border: 1.5px solid var(--card-border, #e2e8f0);
           transition: all 0.2s ease;
         }
         .modern-input-row:focus-within {
-          border-color: #0b8f3a;
-          background: #ffffff;
-          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.1);
+          border-color: #0b8f3a !important;
+          background: var(--card-bg, #ffffff) !important;
+          box-shadow: 0 0 0 3px rgba(11, 143, 58, 0.15) !important;
         }
         .modern-input-field {
           border: none;
@@ -268,18 +285,18 @@ function PickupForm() {
           background: transparent;
           width: 100%;
           font-size: 14px;
-          color: #0f172a;
-          font-weight: 500;
+          color: var(--text-main, #0f172a);
+          font-weight: 600;
         }
         .modern-select-row {
           display: flex;
           align-items: center;
           gap: 12px;
-          background: #f8fafc;
+          background: var(--input-bg, #f8fafc);
           padding: 12px 16px;
           border-radius: 12px;
           margin-bottom: 14px;
-          border: 1.5px solid #e2e8f0;
+          border: 1.5px solid var(--card-border, #e2e8f0);
           position: relative;
         }
         .modern-select {
@@ -289,7 +306,7 @@ function PickupForm() {
           width: 100%;
           font-size: 14px;
           font-weight: 600;
-          color: #334155;
+          color: var(--text-main, #334155);
           cursor: pointer;
           appearance: auto;
           WebkitAppearance: auto;
@@ -305,7 +322,7 @@ function PickupForm() {
         .mode-tab-btn {
           padding: 10px;
           border-radius: 10px;
-          border: 1.5px solid #e2e8f0;
+          border: 1.5px solid var(--card-border, #e2e8f0);
           font-weight: 700;
           font-size: 13px;
           display: flex;
@@ -313,37 +330,37 @@ function PickupForm() {
           justify-content: center;
           gap: 8px;
           cursor: pointer;
-          background: #ffffff;
-          color: #64748b;
+          background: var(--card-bg, #ffffff);
+          color: var(--text-muted, #64748b);
           transition: all 0.2s ease;
         }
         .mode-tab-btn.active {
-          border-color: #0b8f3a;
-          background: #f0fdf4;
-          color: #0b8f3a;
+          border-color: #0b8f3a !important;
+          background: #f0fdf4 !important;
+          color: #0b8f3a !important;
         }
         .scrap-item-card {
           padding: 10px 12px;
           border-radius: 12px;
-          border: 1.5px solid #e2e8f0;
-          background: #ffffff;
+          border: 1.5px solid var(--card-border, #e2e8f0);
+          background: var(--card-bg, #ffffff);
           display: flex;
           justify-content: space-between;
           align-items: center;
           transition: all 0.2s ease;
         }
         .scrap-item-card.selected {
-          border-color: #0b8f3a;
-          background: #f0fdf4;
+          border-color: #0b8f3a !important;
+          background: #f0fdf4 !important;
         }
         .qty-counter-wrap {
           display: flex;
           align-items: center;
           gap: 10px;
-          background: #ffffff;
+          background: var(--card-bg, #ffffff);
           padding: 4px 8px;
           border-radius: 8px;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--card-border, #e2e8f0);
         }
         .qty-counter-btn {
           width: 22px;
@@ -364,11 +381,45 @@ function PickupForm() {
           font-size: 13px;
           min-width: 16px;
           text-align: center;
-          color: #0f172a;
+          color: var(--text-main, #0f172a);
         }
         select option { 
-          background: #ffffff !important; 
-          color: #0f172a !important; 
+          background: var(--card-bg, #ffffff) !important; 
+          color: var(--text-main, #0f172a) !important; 
+        }
+
+        body.dark-mode .pickup-form-card,
+        [data-theme="dark"] .pickup-form-card {
+          background-color: #152035 !important;
+          border-color: rgba(255, 255, 255, 0.15) !important;
+          color: #ffffff !important;
+        }
+
+        body.dark-mode .step-circle:not(.step-active),
+        [data-theme="dark"] .step-circle:not(.step-active) {
+          background-color: #1a253d !important;
+          border-color: #0b8f3a !important;
+          color: #0b8f3a !important;
+        }
+
+        body.dark-mode .step-text:not(.active),
+        [data-theme="dark"] .step-text:not(.active) {
+          color: #cbd5e1 !important;
+        }
+
+        body.dark-mode .modern-input-row,
+        body.dark-mode .modern-select-row,
+        [data-theme="dark"] .modern-input-row,
+        [data-theme="dark"] .modern-select-row {
+          background-color: #0e1626 !important;
+          border-color: rgba(255, 255, 255, 0.18) !important;
+        }
+
+        body.dark-mode .modern-input-field,
+        body.dark-mode .modern-select,
+        [data-theme="dark"] .modern-input-field,
+        [data-theme="dark"] .modern-select {
+          color: #ffffff !important;
         }
       `}</style>
 

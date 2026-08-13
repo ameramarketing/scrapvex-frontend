@@ -55,7 +55,7 @@ function BookPickup() {
   // ────────────────────────────────────────────────────────
   if (isMobile) {
     return (
-      <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "40px" }}>
+      <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", paddingBottom: "40px" }}>
         
         {/* COMPACT GREETING & PROFILE ACCESS */}
         <div style={mobileHeaderGreetingStyle}>
@@ -119,7 +119,7 @@ function BookPickup() {
             <h2 style={{ fontSize: "17px", fontWeight: "800", color: "#0f172a", margin: 0 }}>Request a Pickup</h2>
             <p style={{ fontSize: "12px", color: "#64748b", margin: "2px 0 0 0" }}>Fill details to assign verified collector</p>
           </div>
-          <div style={{ background: "#ffffff", borderRadius: "18px", border: "1px solid rgba(15,23,42,0.06)", boxShadow: "0 4px 12px rgba(0,0,0,0.02)" }}>
+          <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "18px", border: "1px solid var(--card-border, rgba(15,23,42,0.06))", boxShadow: "var(--card-shadow, 0 4px 12px rgba(0,0,0,0.02))" }}>
             <PickupForm />
           </div>
         </div>
@@ -368,11 +368,11 @@ const mobileHeroCta = {
 };
 
 const ratesPreviewCardStyle = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   padding: "16px",
   borderRadius: "18px",
-  border: "1px solid rgba(15,23,42,0.06)",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.02)"
+  border: "1px solid var(--card-border, rgba(15,23,42,0.06))",
+  boxShadow: "var(--card-shadow, 0 4px 12px rgba(0,0,0,0.02))"
 };
 
 const rateItemStyle = {
@@ -381,8 +381,8 @@ const rateItemStyle = {
   justifyContent: "center",
   padding: "12px",
   borderRadius: "12px",
-  background: "#f8fafc",
-  border: "1px solid #f1f5f9"
+  background: "var(--input-bg, #f8fafc)",
+  border: "1px solid var(--card-border, #f1f5f9)"
 };
 
 const viewAllRatesBtnStyle = {
@@ -399,10 +399,10 @@ const viewAllRatesBtnStyle = {
 };
 
 const mobileTrustCard = {
-  background: "#f0fdf4",
+  background: "var(--card-bg, #ffffff)",
   padding: "16px",
   borderRadius: "18px",
-  border: "1px solid #dcfce7",
+  border: "1.5px solid var(--card-border, #dcfce7)",
   display: "flex",
   gap: "14px",
   alignItems: "flex-start"
@@ -415,21 +415,21 @@ const trustIconStyle = {
   alignItems: "center",
   justifyContent: "center",
   padding: "8px",
-  background: "#ffffff",
+  background: "var(--bg-subtle, #f0fdf4)",
   borderRadius: "12px",
   boxShadow: "0 2px 8px rgba(11,143,58,0.1)"
 };
 
 const compactFeatureCard = {
-  background: "#ffffff",
+  background: "var(--card-bg, #ffffff)",
   padding: "12px 8px",
   borderRadius: "14px",
-  border: "1px solid rgba(15,23,42,0.05)",
+  border: "1px solid var(--card-border, rgba(15,23,42,0.05))",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   textAlign: "center",
-  boxShadow: "0 2px 6px rgba(0,0,0,0.01)"
+  boxShadow: "var(--card-shadow, 0 2px 6px rgba(0,0,0,0.01))"
 };
 
 export default BookPickup;
