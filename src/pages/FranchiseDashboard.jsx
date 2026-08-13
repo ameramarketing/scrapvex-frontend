@@ -866,23 +866,22 @@ const playBellSound = () => {
         @media (max-width: 768px) {
           .desktop-only { display: none !important; }
           .mobile-only { display: flex !important; }
-          .grid-3 { grid-template-columns: 1fr !important; gap: 12px !important; }
-          .grid-2 { grid-template-columns: 1fr !important; gap: 12px !important; }
-          .responsive-flex {
-            flex-direction: column !important;
-            gap: 15px !important;
-          }
-          .responsive-flex > div {
-            width: 100% !important;
-            flex: unset !important;
-          }
-          .mobile-pad-bottom {
-            padding-bottom: 120px !important;
-          }
+          .grid-3, .grid-2 { grid-template-columns: 1fr !important; gap: 10px !important; }
+          .kpi-card-container, .kpi-grid, .stat-grid-container { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+          .kpi-card { padding: 12px !important; flex-direction: row !important; align-items: center !important; gap: 10px !important; border-radius: 14px !important; }
+          .kpi-card > div:first-child { width: 36px !important; height: 36px !important; min-width: 36px !important; font-size: 16px !important; border-radius: 10px !important; flex-shrink: 0 !important; }
+          .kpi-card div:last-child div:first-child { font-size: 10px !important; }
+          .kpi-card div:last-child div:last-child { font-size: 18px !important; }
+          .responsive-flex { flex-direction: column !important; gap: 12px !important; }
+          .responsive-flex > div { width: 100% !important; flex: unset !important; }
+          .mobile-pad-bottom { padding-bottom: 110px !important; }
           .dashboard-root { height: auto !important; min-height: 100vh !important; }
-          .dashboard-main { overflow-y: visible !important; height: auto !important; }
-          .native-content { padding: 14px 12px 90px 12px !important; }
+          .dashboard-main { overflow-y: visible !important; height: auto !important; overflow-x: hidden !important; }
+          .native-content { padding: 10px 10px 90px 10px !important; max-width: 100vw !important; box-sizing: border-box !important; overflow-x: hidden !important; }
           table { display: block !important; overflow-x: auto !important; width: 100% !important; }
+          .card-premium, .card-bg { padding: 14px !important; border-radius: 16px !important; }
+          .scroll-chips { display: flex !important; overflow-x: auto !important; white-space: nowrap !important; gap: 8px !important; padding-bottom: 6px !important; -webkit-overflow-scrolling: touch !important; }
+          .scroll-chips::-webkit-scrollbar { display: none; }
         }
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>

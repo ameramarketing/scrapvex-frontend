@@ -1120,15 +1120,22 @@ const playBellSound = () => {
         @media (max-width: 768px) { 
           .desktop-only { display: none !important; }
           .mobile-only { display: flex !important; }
-          .grid-3, .grid-2 { grid-template-columns: 1fr !important; gap: 12px !important; }
-          .kpi-grid, .stat-grid-container { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-          .responsive-flex { flex-direction: column !important; gap: 15px !important; }
+          .grid-3, .grid-2 { grid-template-columns: 1fr !important; gap: 10px !important; }
+          .kpi-card-container, .kpi-grid, .stat-grid-container { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+          .kpi-card { padding: 12px !important; flex-direction: row !important; align-items: center !important; gap: 10px !important; border-radius: 14px !important; }
+          .kpi-card > div:first-child { width: 36px !important; height: 36px !important; min-width: 36px !important; font-size: 16px !important; border-radius: 10px !important; flex-shrink: 0 !important; }
+          .kpi-card div:last-child div:first-child { font-size: 10px !important; }
+          .kpi-card div:last-child div:last-child { font-size: 18px !important; }
+          .responsive-flex { flex-direction: column !important; gap: 12px !important; }
           .responsive-flex > div { width: 100% !important; flex: unset !important; }
           .mobile-pad-bottom { padding-bottom: 110px !important; }
           .dashboard-root { height: auto !important; min-height: 100vh !important; }
-          .dashboard-main { overflow-y: visible !important; height: auto !important; }
-          .native-content { padding: 14px 12px 90px 12px !important; }
+          .dashboard-main { overflow-y: visible !important; height: auto !important; overflow-x: hidden !important; }
+          .native-content { padding: 10px 10px 90px 10px !important; max-width: 100vw !important; box-sizing: border-box !important; overflow-x: hidden !important; }
           table { display: block !important; overflow-x: auto !important; width: 100% !important; }
+          .card-premium, .card-bg { padding: 14px !important; border-radius: 16px !important; }
+          .scroll-chips { display: flex !important; overflow-x: auto !important; white-space: nowrap !important; gap: 8px !important; padding-bottom: 6px !important; -webkit-overflow-scrolling: touch !important; }
+          .scroll-chips::-webkit-scrollbar { display: none; }
         }
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>
@@ -1443,7 +1450,7 @@ const playBellSound = () => {
           {activeTab === "overview" && (
             <>
               <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
+                <div className="kpi-card-container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
                   <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
                     <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaUsers /></div>
                     <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Total Users</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>{stats.totalUsers}</div></div>
@@ -1462,7 +1469,7 @@ const playBellSound = () => {
                   </div>
                 </div>
   
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
+                <div className="kpi-card-container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "16px" }}>
                   <div className="kpi-card" style={{ background: "var(--card-bg)", padding: "20px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)", display: "flex", alignItems: "center", gap: "16px" }}>
                     <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "rgba(22, 160, 133, 0.1)", color: "#16a085", display: "flex", justifyContent: "center", alignItems: "center", fontSize: "20px" }}><FaPercent /></div>
                     <div><div style={{ fontSize: "12px", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "bold" }}>Commission</div><div style={{ fontSize: "24px", fontWeight: "900", color: "var(--text-main)" }}>₹{accountingStats.totalCommission?.toFixed(2) || 0}</div></div>
@@ -1730,7 +1737,7 @@ const playBellSound = () => {
                   <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)" }}>Scrap Rates</h3> 
                   <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={()=>setShowItemModal(true)}><FaPlus/> Add Rate</button>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+                <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "12px" }}>
                   {filteredItems.map(it => (
                     <div key={it._id} style={{ background: "var(--bg-subtle)", border: "1px solid var(--glass-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                        <div>
