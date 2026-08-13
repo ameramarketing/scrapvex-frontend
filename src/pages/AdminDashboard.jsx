@@ -3316,12 +3316,7 @@ const playBellSound = () => {
       )}
 
       {/* MOBILE BOTTOM NAV */}
-      <div style={{...bottomNavStyle, minHeight: "65px", padding: "8px 10px", alignItems: "center", paddingBottom: "max(10px, env(safe-area-inset-bottom))"}} className="mobile-only">
-        <BottomLink icon={<FaInfoCircle size={20}/>} text="Overview" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
-        <BottomLink icon={<FaTruck size={20}/>} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
-        <BottomLink icon={<FaWallet size={20}/>} text="Wallet" active={activeTab === "wallet"} onClick={() => {setActiveTab("wallet"); fetchAllTransactions();}} />
-        <BottomLink icon={<FaBars size={20}/>} text="More" active={false} onClick={() => setIsMobileMenuOpen(true)} />
-      </div>
+      
 
     </div>
   );
