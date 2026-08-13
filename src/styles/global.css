@@ -1534,54 +1534,134 @@ body.dark-mode .skeleton-loader {
 }
 
 /* Fix text in dark mode globally */
-body.dark-mode, [data-theme="dark"] {
-  --bg-main: #0b1329 !important;
-  --bg-subtle: #131f3a !important;
-  --card-bg: #172445 !important;
+body.dark-mode, 
+[data-theme="dark"], 
+html[data-theme="dark"] {
+  --bg-main: #090d16 !important;
+  --bg-subtle: #121a2d !important;
+  --card-bg: #152035 !important;
   --card-border: rgba(255, 255, 255, 0.12) !important;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
-  --glass: rgba(23, 36, 69, 0.95) !important;
-  --glass-border: rgba(255, 255, 255, 0.15) !important;
-  --text-main: #f8fafc !important;
-  --text-muted: #cbd5e1 !important;
-  --text-light: #94a3b8 !important;
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+  --glass: rgba(18, 26, 45, 0.95) !important;
+  --glass-border: rgba(255, 255, 255, 0.12) !important;
+  --text-main: #ffffff !important;
+  --text-muted: #94a3b8 !important;
+  --text-light: #cbd5e1 !important;
   --primary-light: #164e28 !important;
-  background-color: #0b1329 !important;
-  color: #f8fafc !important;
+  background-color: #090d16 !important;
+  color: #ffffff !important;
 }
 
-/* Force dark root container background */
+/* Force dark background on all page root elements */
+body.dark-mode #root,
+body.dark-mode .app-shell,
 body.dark-mode .dashboard-root,
 body.dark-mode .dashboard-main,
-body.dark-mode .app-shell,
+body.dark-mode .native-content,
+body.dark-mode .page-wrapper,
+body.dark-mode .main-layout,
 body.dark-mode main,
+[data-theme="dark"] #root,
+[data-theme="dark"] .app-shell,
 [data-theme="dark"] .dashboard-root,
 [data-theme="dark"] .dashboard-main,
-[data-theme="dark"] .app-shell,
+[data-theme="dark"] .native-content,
+[data-theme="dark"] .page-wrapper,
+[data-theme="dark"] .main-layout,
 [data-theme="dark"] main {
-  background-color: #0b1329 !important;
-  color: #f8fafc !important;
+  background-color: #090d16 !important;
+  color: #ffffff !important;
 }
 
-/* Force dark card background */
+/* Override all hardcoded light background inline styles in Dark Mode */
+body.dark-mode [style*="background: #ffffff"],
+body.dark-mode [style*="background: #fff"],
+body.dark-mode [style*="background: white"],
+body.dark-mode [style*="background: #f8fafc"],
+body.dark-mode [style*="background: #f1f5f9"],
+body.dark-mode [style*="background: #f0f0f0"],
+body.dark-mode [style*="background: #e2e8f0"],
+body.dark-mode [style*="background:#ffffff"],
+body.dark-mode [style*="background:#fff"],
+body.dark-mode [style*="background:white"],
+body.dark-mode [style*="background:#f8fafc"],
+body.dark-mode [style*="background:#f1f5f9"],
+body.dark-mode [style*="background-color: #ffffff"],
+body.dark-mode [style*="background-color: #fff"],
+body.dark-mode [style*="background-color: white"],
+body.dark-mode [style*="background-color: #f8fafc"],
+body.dark-mode [style*="background-color: #f1f5f9"],
+[data-theme="dark"] [style*="background: #ffffff"],
+[data-theme="dark"] [style*="background: #fff"],
+[data-theme="dark"] [style*="background: white"],
+[data-theme="dark"] [style*="background: #f8fafc"],
+[data-theme="dark"] [style*="background: #f1f5f9"],
+[data-theme="dark"] [style*="background-color: #ffffff"],
+[data-theme="dark"] [style*="background-color: #fff"],
+[data-theme="dark"] [style*="background-color: white"],
+[data-theme="dark"] [style*="background-color: #f8fafc"] {
+  background-color: #121a2d !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Override all card elements in Dark Mode */
+body.dark-mode .card,
 body.dark-mode .card-premium,
 body.dark-mode .premium-card,
 body.dark-mode .card-bg,
 body.dark-mode .kpi-card,
 body.dark-mode .modal-content,
 body.dark-mode .modal-body,
+body.dark-mode .auth-card,
+body.dark-mode .rate-card,
+body.dark-mode .pickup-card,
+[data-theme="dark"] .card,
 [data-theme="dark"] .card-premium,
 [data-theme="dark"] .premium-card,
 [data-theme="dark"] .card-bg,
 [data-theme="dark"] .kpi-card,
 [data-theme="dark"] .modal-content,
-[data-theme="dark"] .modal-body {
-  background-color: #172445 !important;
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  color: #f8fafc !important;
+[data-theme="dark"] .modal-body,
+[data-theme="dark"] .auth-card,
+[data-theme="dark"] .rate-card,
+[data-theme="dark"] .pickup-card {
+  background-color: #152035 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
 }
 
-/* Ensure text elements inherit high contrast color */
+/* Override all light grey sub-containers */
+body.dark-mode [style*="background: #f8fffe"],
+body.dark-mode [style*="background: #eef8f1"],
+body.dark-mode [style*="background: #f5f5f5"],
+body.dark-mode [style*="background: var(--bg-subtle)"],
+[data-theme="dark"] [style*="background: #f8fffe"],
+[data-theme="dark"] [style*="background: #eef8f1"],
+[data-theme="dark"] [style*="background: #f5f5f5"],
+[data-theme="dark"] [style*="background: var(--bg-subtle)"] {
+  background-color: #1a253d !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Force dark styling on Header, Mobile Header, Mobile App Shell Nav Bar */
+body.dark-mode header,
+body.dark-mode .mobile-header,
+body.dark-mode .navbar,
+body.dark-mode .bottom-nav,
+body.dark-mode .app-shell-nav,
+[data-theme="dark"] header,
+[data-theme="dark"] .mobile-header,
+[data-theme="dark"] .navbar,
+[data-theme="dark"] .bottom-nav,
+[data-theme="dark"] .app-shell-nav {
+  background-color: #090d16 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+/* Ensure text elements inherit crisp white color */
 body.dark-mode p,
 body.dark-mode span,
 body.dark-mode div,
@@ -1595,6 +1675,7 @@ body.dark-mode label,
 body.dark-mode small,
 body.dark-mode strong,
 body.dark-mode b,
+body.dark-mode a,
 [data-theme="dark"] p,
 [data-theme="dark"] span,
 [data-theme="dark"] div,
@@ -1607,45 +1688,54 @@ body.dark-mode b,
 [data-theme="dark"] label,
 [data-theme="dark"] small,
 [data-theme="dark"] strong,
-[data-theme="dark"] b {
+[data-theme="dark"] b,
+[data-theme="dark"] a {
   color: inherit;
 }
 
-/* Override inline dark text colors (#2c3e50, #1e293b, #334155, #0f172a, #475569) in dark mode */
+/* Override inline dark text colors (#2c3e50, #1e293b, #334155, #0f172a, #475569, #000, black) in dark mode */
 body.dark-mode [style*="color: #2c3e50"],
 body.dark-mode [style*="color: #1e293b"],
 body.dark-mode [style*="color: #334155"],
 body.dark-mode [style*="color: #0f172a"],
 body.dark-mode [style*="color: #475569"],
+body.dark-mode [style*="color: #000000"],
+body.dark-mode [style*="color: #000"],
+body.dark-mode [style*="color: black"],
 body.dark-mode [style*="color:#2c3e50"],
 body.dark-mode [style*="color:#1e293b"],
 body.dark-mode [style*="color:#334155"],
 body.dark-mode [style*="color:#0f172a"],
 body.dark-mode [style*="color:#475569"],
+body.dark-mode [style*="color:#000000"],
+body.dark-mode [style*="color:#000"],
+body.dark-mode [style*="color:black"],
 [data-theme="dark"] [style*="color: #2c3e50"],
 [data-theme="dark"] [style*="color: #1e293b"],
 [data-theme="dark"] [style*="color: #334155"],
 [data-theme="dark"] [style*="color: #0f172a"],
-[data-theme="dark"] [style*="color: #475569"] {
-  color: #f8fafc !important;
+[data-theme="dark"] [style*="color: #475569"],
+[data-theme="dark"] [style*="color: #000000"],
+[data-theme="dark"] [style*="color: #000"] {
+  color: #ffffff !important;
 }
 
-/* Fix Inputs, Selects & Options in Dark Mode */
+/* Fix Inputs, Selects & Textareas in Dark Mode */
 body.dark-mode input,
 body.dark-mode select,
 body.dark-mode textarea,
 [data-theme="dark"] input,
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
+  background-color: #0e1626 !important;
+  color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 body.dark-mode select option,
 [data-theme="dark"] select option {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
+  background-color: #0e1626 !important;
+  color: #ffffff !important;
 }
 
 /* Fix Tables in Dark Mode */
@@ -1657,14 +1747,26 @@ body.dark-mode th,
 [data-theme="dark"] tr,
 [data-theme="dark"] td,
 [data-theme="dark"] th {
-  color: #f8fafc !important;
+  color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Fix Secondary Buttons in Dark Mode */
 body.dark-mode .btn-secondary,
 [data-theme="dark"] .btn-secondary {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
+  background-color: #152035 !important;
+  color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Green Primary buttons always maintain high contrast white text */
+.btn-primary, 
+.btn-premium, 
+button[style*="background: #0b8f3a"], 
+button[style*="background:#0b8f3a"], 
+button[style*="background: var(--primary)"],
+a[style*="background: #0b8f3a"],
+a[style*="background: var(--primary)"] {
+  color: #ffffff !important;
+  font-weight: 800 !important;
 }
