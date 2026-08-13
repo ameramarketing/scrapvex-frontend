@@ -954,7 +954,7 @@ const playBellSound = () => {
               }}
               title="Notifications"
             >
-              <FaBell size={15} />
+              <FaBell size={18} />
               {notifications.filter(n => !n.isRead).length > 0 && (
                 <span style={{
                   position: "absolute",
@@ -985,7 +985,7 @@ const playBellSound = () => {
               }}
               title="Toggle Dark Mode"
             >
-              {darkMode ? <FaSun size={15} color="#f59e0b" /> : <FaMoon size={15} />}
+              {darkMode ? <FaSun size={18} color="#f59e0b" /> : <FaMoon size={18} color="#475569" />}
             </button>
           </div>
 
