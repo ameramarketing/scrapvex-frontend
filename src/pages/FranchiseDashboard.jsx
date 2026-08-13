@@ -887,30 +887,117 @@ const playBellSound = () => {
 
       {/* MAIN */}
       <div style={main}>
-        <header style={header}>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <button style={menuBtn} className="mobile-only" onClick={() => setIsMobileMenuOpen(true)}><FaBars /></button>
-            <h2 className="native-header-title" style={headerTitle}>{activeTab.toUpperCase()}</h2>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <div style={{ position: "relative", display: "flex", gap: "10px" }}>
-              <button style={bellBtn} onClick={() => { setShowNotifPanel(!showNotifPanel); if (!showNotifPanel) markAllNotificationsRead(); }}>
-                <FaBell /> {notifications.filter(n => !n.isRead).length > 0 && <span style={badge}>{notifications.filter(n => !n.isRead).length}</span>}
-              </button>
-              <button style={logoutHeaderBtn} onClick={logout} title="Logout">
-                <FaSignOutAlt />
-              </button>
-              {showNotifPanel && (
-                <div style={notifPanel}>
-                  <h4 style={{ margin: "0 0 10px 0", color: "var(--text-main)" }}>Alerts</h4>
-                  {notifications.slice(0, 5).map(n => (
-                    <div key={n._id} style={notifRow}><strong>{n.title}</strong><br />{n.message}</div>
-                  ))}
-                  {notifications.length === 0 && <p style={muted}>No new alerts</p>}
-                </div>
-              )}
+        {/* HEADER (SAME AS COLLECTOR DASHBOARD) */}
+        <header style={{
+          background: "var(--card-bg, #ffffff)",
+          padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 10px 16px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid var(--card-border, #e2e8f0)",
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
+          width: "100%",
+          boxSizing: "border-box"
+        }}>
+          {/* Left Branding: ScrapVex FRANCHISE */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", flexShrink: 0 }} onClick={() => setActiveTab("overview")}>
+            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
+              <FaRecycle />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", lineHeight: "1.1" }}>
+              <span style={{ fontSize: "15px", fontWeight: "900", color: "var(--text-main, #0f172a)", letterSpacing: "-0.4px" }}>
+                ScrapVex
+              </span>
+              <span style={{ fontSize: "9px", fontWeight: "800", color: "#0b8f3a", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                FRANCHISE
+              </span>
             </div>
           </div>
+
+          {/* Right Action Controls: [City Pill] -> [Bell] -> [Moon] */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            {/* City Badge / Online Pill */}
+            <div style={{
+              background: "#f0fdf4",
+              border: "1px solid #bbf7d0",
+              color: "#0b8f3a",
+              padding: "4px 8px",
+              borderRadius: "8px",
+              fontSize: "10px",
+              fontWeight: "800",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px"
+            }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b8f3a" }} />
+              {JSON.parse(localStorage.getItem("user") || "{}").assignedCity || "Rajouri"}
+            </div>
+
+            {/* Notification Bell */}
+            <button
+              onClick={() => { setShowNotifPanel(!showNotifPanel); if (!showNotifPanel) markAllNotificationsRead(); }}
+              style={{
+                background: "var(--bg-main, #f1f5f9)",
+                border: "none",
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--text-main, #0f172a)",
+                cursor: "pointer",
+                position: "relative"
+              }}
+              title="Notifications"
+            >
+              <FaBell size={15} />
+              {notifications.filter(n => !n.isRead).length > 0 && (
+                <span style={{
+                  position: "absolute",
+                  top: "4px",
+                  right: "4px",
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  background: "#dc2626"
+                }} />
+              )}
+            </button>
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              style={{
+                background: "var(--bg-main, #f1f5f9)",
+                border: "none",
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--text-main, #0f172a)",
+                cursor: "pointer"
+              }}
+              title="Toggle Dark Mode"
+            >
+              {darkMode ? <FaSun size={15} color="#f59e0b" /> : <FaMoon size={15} />}
+            </button>
+          </div>
+
+          {showNotifPanel && (
+            <div style={notifPanel}>
+              <h4 style={{ margin: "0 0 10px 0", color: "var(--text-main)" }}>Alerts</h4>
+              {notifications.slice(0, 5).map(n => (
+                <div key={n._id} style={notifRow}><strong>{n.title}</strong><br />{n.message}</div>
+              ))}
+              {notifications.length === 0 && <p style={muted}>No new alerts</p>}
+            </div>
+          )}
         </header>
 
         <div className="native-content mobile-pad-bottom">
@@ -943,7 +1030,6 @@ const playBellSound = () => {
             </div>
           )}
 
-          
           {/* FRANCHISE ACCOUNT TAB */}
           {activeTab === "account" && (
             <div className="fade-up" style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "12px 14px 40px 14px" }}>
@@ -2671,14 +2757,29 @@ const playBellSound = () => {
           </div>
         </div>
       )}
-      {/* MOBILE BOTTOM NAV */}
-      <div style={bottomNavStyle} className="mobile-only">
-        <BottomLink icon={<FaInfoCircle size={20}/>} text="Home" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
-        <BottomLink icon={<FaTruck size={20}/>} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
-        <BottomLink icon={<FaChartLine size={20}/>} text="Accounting" active={activeTab === "accounting"} onClick={() => {setActiveTab("accounting"); fetchAccountingData();}} />
-        <BottomLink icon={<FaClipboardList size={20}/>} text="Inventory" active={activeTab === "inventory"} onClick={() => {setActiveTab("inventory"); fetchAccountingData();}} />
-        <BottomLink icon={<FaWallet size={20}/>} text="Wallet" active={activeTab === "wallet"} onClick={() => {setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions();}} />
-        <BottomLink icon={<FaBars size={20}/>} text="Menu" active={false} onClick={() => setIsMobileMenuOpen(true)} />
+
+      {/* MOBILE BOTTOM NAV (COLLECTOR NATIVE STYLE) */}
+      <div style={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: "60px",
+        background: "var(--card-bg, #ffffff)",
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        zIndex: 1500,
+        borderTop: "1px solid var(--card-border, #e2e8f0)",
+        boxShadow: "0 -4px 20px rgba(0,0,0,0.06)",
+        paddingBottom: "calc(env(safe-area-inset-bottom, 0px))"
+      }} className="mobile-only">
+        <BottomLink icon={<FaHome size={18} />} text="Home" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
+        <BottomLink icon={<FaTruck size={18} />} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
+        <BottomLink icon={<FaChartLine size={18} />} text="Accounting" active={activeTab === "accounting"} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }} />
+        <BottomLink icon={<FaBoxes size={18} />} text="Inventory" active={activeTab === "inventory"} onClick={() => { setActiveTab("inventory"); fetchAccountingData(); }} />
+        <BottomLink icon={<FaWallet size={18} />} text="Wallet" active={activeTab === "wallet"} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions(); }} />
+        <BottomLink icon={<FaUser size={18} />} text="Account" active={activeTab === "account"} onClick={() => setActiveTab("account")} />
       </div>
 
     </div>
@@ -2703,9 +2804,31 @@ const NavItem = ({ active, icon, text, onClick }) => (
 );
 
 const BottomLink = ({ icon, text, onClick, active }) => (
-  <div style={{ ...bottomLinkStyle, color: active ? "#0b8f3a" : "var(--text-muted)" }} onClick={onClick}>
-     {icon} <span style={{fontSize:"10px", marginTop:"2px"}}>{text}</span>
-  </div>
+  <button
+    type="button"
+    onClick={onClick}
+    style={{
+      background: "none",
+      border: "none",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      flex: 1,
+      height: "100%",
+      padding: "4px 0",
+      outline: "none",
+      color: active ? "#0b8f3a" : "#94a3b8"
+    }}
+  >
+    <div style={{ fontSize: "19px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {icon}
+    </div>
+    <span style={{ fontSize: "10px", fontWeight: active ? "700" : "500", marginTop: "2px", letterSpacing: "0.01em" }}>
+      {text}
+    </span>
+  </button>
 );
 
 const Modal = ({ title, children, onClose, wide }) => (
