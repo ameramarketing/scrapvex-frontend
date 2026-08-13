@@ -1067,7 +1067,7 @@ const playBellSound = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
                   width: "100%",
-                  padding: "12px 16px 12px 46px",
+                  padding: "12px 16px",
                   borderRadius: "12px",
                   border: "1.5px solid var(--card-border, #d1d5db)",
                   outline: "none",
@@ -1078,7 +1078,6 @@ const playBellSound = () => {
                   transition: "border-color 0.2s ease"
                 }}
               />
-              <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#0b8f3a", fontSize: "15px", pointerEvents: "none" }}>🔍</span>
               {searchQuery && (
                 <span 
                   onClick={() => setSearchQuery("")} 
@@ -1176,12 +1175,6 @@ const playBellSound = () => {
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <div style={{ ...iconSquareStyle, background: "#fef3c7", color: "#d97706" }}><FaTag /></div>
                       <span style={rowTextStyle}>City Scrap Rates</span>
-                    </div>
-                  </div>
-                  <div style={accountRowStyle} onClick={() => setActiveTab("users")}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                      <div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaUserCheck /></div>
-                      <span style={rowTextStyle}>Registered App Customers</span>
                     </div>
                   </div>
                 </div>
@@ -1440,22 +1433,58 @@ const playBellSound = () => {
           {/* OTHER TABS (Users, Collectors, Rates, Ads, Reviews) with same premium-card style... */}
           {activeTab === "rates" && (
             <div className="fade-up" style={{ padding: "16px 20px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Scrap Rates</h2>
-                <button className="btn-premium" onClick={() => setShowItemModal(true)}><FaPlus /> Add Rate</button>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
+                <div>
+                  <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Scrap Rates</h2>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "2px 0 0 0" }}>Manage item pricing and categories</p>
+                </div>
+                <button className="btn-premium" style={{ padding: "8px 14px", fontSize: "12px", borderRadius: "10px" }} onClick={() => setShowItemModal(true)}><FaPlus /> Add Rate</button>
               </div>
-              <div className="grid-3">
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "12px" }}>
                 {filteredItems.map(it => (
-                  <div key={it._id} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "var(--card-shadow)" }}>
-                    <div>
-                      <div style={{ fontWeight: "800", fontSize: "15px", color: "var(--text-main)" }}>{it.name}</div>
-                      <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>{it.category}</div>
+                  <div 
+                    key={it._id} 
+                    style={{ 
+                      background: "var(--card-bg, #ffffff)", 
+                      border: "1.5px solid var(--card-border, rgba(15,23,42,0.08))", 
+                      borderRadius: "16px", 
+                      padding: "14px 16px", 
+                      display: "flex", 
+                      justifyContent: "space-between", 
+                      alignItems: "center", 
+                      boxShadow: "var(--card-shadow, 0 4px 12px rgba(0,0,0,0.03))",
+                      boxSizing: "border-box",
+                      width: "100%",
+                      minWidth: 0
+                    }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0, paddingRight: "10px" }}>
+                      <div style={{ fontWeight: "800", fontSize: "14px", color: "var(--text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.name}</div>
+                      <div style={{ fontSize: "11px", color: "#0b8f3a", fontWeight: "700", marginTop: "3px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{it.category || "General"}</div>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                      <div style={{ fontWeight: "900", fontSize: "16px", color: "var(--primary)" }}>₹{it.price}<span style={{ fontSize: "12px", color: "var(--text-muted)", fontWeight: "normal" }}>/{it.unit}</span></div>
-                      <div style={{ display: "flex", gap: "6px" }}>
-                        <button className="btn-secondary" style={{ padding: "6px", height: "auto" }} onClick={() => { setEditingRate(it); setShowEditRateModal(true); }}><FaTools size={12} /></button>
-                        <button className="btn-danger" style={{ padding: "6px", height: "auto" }} onClick={() => handleDeleteItem(it._id, "rate")}><FaTrash size={12} /></button>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+                      <div style={{ fontWeight: "900", fontSize: "16px", color: "var(--text-main)" }}>
+                        ₹{it.price}<span style={{ fontSize: "11px", color: "var(--text-muted)", fontWeight: "600" }}>/{it.unit}</span>
+                      </div>
+                      <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                        <button 
+                          type="button"
+                          style={{ background: "rgba(59, 130, 246, 0.15)", color: "#3b82f6", border: "1px solid rgba(59, 130, 246, 0.3)", padding: "7px 9px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} 
+                          onClick={() => { setEditingRate(it); setShowEditRateModal(true); }}
+                          title="Edit Rate"
+                        >
+                          <FaTools size={13} />
+                        </button>
+                        <button 
+                          type="button"
+                          style={{ background: "rgba(239, 68, 68, 0.2)", color: "#ef4444", border: "1.5px solid #ef4444", padding: "7px 9px", borderRadius: "8px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }} 
+                          onClick={() => handleDeleteItem(it._id, "rate")}
+                          title="Delete Item"
+                        >
+                          <FaTrash size={13} style={{ color: "#ef4444" }} />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -1600,12 +1629,12 @@ const playBellSound = () => {
                   <h2 style={{ fontSize: "22px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>Accounting & Billing</h2>
                   <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: "4px 0 0 0" }}>Manage your purchases and sales</p>
                 </div>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button className="btn-secondary" onClick={() => setShowPurchaseModal(true)}>
-                    <FaPlus /> Record Purchase
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  <button className="btn-secondary" style={{ padding: "8px 12px", fontSize: "12px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "6px" }} onClick={() => setShowPurchaseModal(true)}>
+                    <FaPlus style={{ fontSize: "11px" }} /> Record Purchase
                   </button>
-                  <button className="btn-premium" onClick={() => setShowSaleModal(true)}>
-                    <FaPlus /> Create Sale Invoice
+                  <button className="btn-premium" style={{ padding: "8px 12px", fontSize: "12px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "6px" }} onClick={() => setShowSaleModal(true)}>
+                    <FaPlus style={{ fontSize: "11px" }} /> Create Sale Invoice
                   </button>
                 </div>
               </div>

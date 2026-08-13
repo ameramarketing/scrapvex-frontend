@@ -1182,24 +1182,9 @@ const playBellSound = () => {
             </div>
           </div>
 
-          {/* Right Action Controls: [Status Pill] -> [Bell] -> [Moon] */}
+          {/* Right Action Controls: [Bell] -> [Moon] */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <div style={{
-              background: "#f0fdf4",
-              border: "1px solid #bbf7d0",
-              color: "#0b8f3a",
-              padding: "4px 8px",
-              borderRadius: "8px",
-              fontSize: "10px",
-              fontWeight: "800",
-              display: "flex",
-              alignItems: "center",
-              gap: "4px"
-            }}>
-              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b8f3a" }} />
-              Superadmin
-            </div>
-
+            
             {/* Notification Bell */}
             <button
               type="button"
@@ -1302,7 +1287,7 @@ const playBellSound = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
                   width: "100%",
-                  padding: "12px 16px 12px 46px",
+                  padding: "12px 16px",
                   borderRadius: "12px",
                   border: "1.5px solid var(--card-border, #d1d5db)",
                   outline: "none",
@@ -1313,7 +1298,6 @@ const playBellSound = () => {
                   transition: "border-color 0.2s ease"
                 }}
               />
-              <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "#0b8f3a", fontSize: "15px", pointerEvents: "none" }}>🔍</span>
               {searchQuery && (
                 <span 
                   onClick={() => setSearchQuery("")} 
