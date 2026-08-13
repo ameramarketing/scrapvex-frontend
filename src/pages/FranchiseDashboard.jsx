@@ -2787,32 +2787,7 @@ const playBellSound = () => {
         </div>
       )}
 
-      {/* MOBILE BOTTOM NAV (COLLECTOR NATIVE STYLE) */}
-      <div style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        width: "100%",
-        height: "54px",
-        background: "var(--card-bg, #ffffff)",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        zIndex: 99999,
-        borderTop: "1px solid var(--card-border, #e2e8f0)",
-        boxShadow: "0 -4px 16px rgba(0,0,0,0.08)",
-        padding: "0 0 calc(env(safe-area-inset-bottom, 0px) + 1px) 0",
-        boxSizing: "border-box",
-        overflow: "hidden"
-      }} className="mobile-only">
-        <BottomLink icon={<FaHome />} text="Home" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
-        <BottomLink icon={<FaTruck />} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
-        <BottomLink icon={<FaChartLine />} text="Accounting" active={activeTab === "accounting"} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }} />
-        <BottomLink icon={<FaBoxes />} text="Inventory" active={activeTab === "inventory"} onClick={() => { setActiveTab("inventory"); fetchAccountingData(); }} />
-        <BottomLink icon={<FaWallet />} text="Wallet" active={activeTab === "wallet"} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions(); }} />
-        <BottomLink icon={<FaUser />} text="Account" active={activeTab === "account"} onClick={() => setActiveTab("account")} />
-      </div>
+      
 
     </div>
   );
