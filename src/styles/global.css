@@ -1694,6 +1694,24 @@ body.dark-mode [style*="background-color: #f1f5f9"],
   border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
+/* Purchase Bill Details Modal Dark Mode Styling */
+body.dark-mode .bill-inner-box,
+[data-theme="dark"] .bill-inner-box,
+body.dark-mode .bill-history-row,
+[data-theme="dark"] .bill-history-row {
+  background-color: #0b1329 !important;
+  background: #0b1329 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .bill-inner-box *,
+[data-theme="dark"] .bill-inner-box *,
+body.dark-mode .bill-history-row *,
+[data-theme="dark"] .bill-history-row * {
+  color: #ffffff !important;
+}
+
 /* Override all card elements in Dark Mode */
 body.dark-mode .card,
 body.dark-mode .card-premium,

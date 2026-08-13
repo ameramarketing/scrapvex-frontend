@@ -3199,7 +3199,7 @@ const playBellSound = () => {
             </div>
 
             {/* Current Bill */}
-            <div style={{background:"var(--input-bg, #f8fafc)", border:"1.5px solid var(--card-border, rgba(255,255,255,0.1))", borderRadius:"16px", padding:"16px", marginBottom:"16px"}}>
+            <div className="bill-inner-box" style={{background:"#f8fafc", border:"1.5px solid var(--card-border, rgba(255,255,255,0.1))", borderRadius:"16px", padding:"16px", marginBottom:"16px"}}>
               <div style={{display:"flex", justifyContent:"space-between", marginBottom:"12px"}}>
                 <div>
                   <div style={{fontWeight:"800", fontSize:"16px", color: "var(--text-main)"}}>{selectedPurchaseBill.supplierName}</div>
@@ -3245,7 +3245,7 @@ const playBellSound = () => {
               </div>
               <div style={{maxHeight:"200px", overflowY:"auto", display: "flex", flexDirection: "column", gap: "6px"}}>
                 {supplierPurchaseHistory.map((p) => (
-                  <div key={p._id} style={{display:"flex", justifyContent:"space-between", padding:"10px 12px", background: "var(--input-bg, #f8fafc)", border: "1px solid var(--card-border, rgba(255,255,255,0.1))", borderRadius:"10px", fontSize:"12px"}}>
+                  <div key={p._id} className="bill-history-row" style={{display:"flex", justifyContent:"space-between", padding:"10px 12px", background: "#f8fafc", border: "1px solid var(--card-border, rgba(255,255,255,0.1))", borderRadius:"10px", fontSize:"12px"}}>
                     <div>
                       <div style={{fontWeight:"700", color: "var(--text-main)"}}>#{p._id.slice(-6).toUpperCase()} • {p.items.length} item(s)</div>
                       <div style={{fontSize:"11px", color:"var(--text-muted)", marginTop: "2px"}}>{new Date(p.createdAt).toLocaleDateString()} | {p.paymentMethod || "Cash"}</div>
