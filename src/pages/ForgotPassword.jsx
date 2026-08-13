@@ -74,8 +74,14 @@ function ForgotPassword() {
       const { data } = await API.post("/auth/reset-password", { mobile, otp, role, newPassword });
       if (data.success) {
         showToast("success", "Password Reset Successfully!");
+        const redirectMap = {
+          franchise: "/franchise-login",
+          admin: "/admin-login",
+          collector: "/collector-login",
+          user: "/login"
+        };
         setTimeout(() => {
-          navigate(role === "collector" ? "/collector-login" : "/login");
+          navigate(redirectMap[role] || "/login");
         }, 1500);
       }
     } catch (error) {

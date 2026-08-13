@@ -218,10 +218,28 @@ function BookPickup() {
 
       {/* CTA SECTION */}
       <div className="container" style={{ paddingBottom: "80px" }}>
-        <div className="btn-premium" style={ctaBanner}>
-          <h2 style={{ color: "#fff", fontSize: "32px", marginBottom: "15px" }}>Ready to declutter?</h2>
-          <p style={{ color: "rgba(255,255,255,0.9)", marginBottom: "25px" }}>Join thousands of happy users recycling with us.</p>
-          <button className="btn-premium" style={{ background: "var(--card-bg)", color: "var(--primary)" }} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+        <div style={ctaBanner}>
+          <h2 style={{ color: "#ffffff", fontSize: "32px", fontWeight: "900", marginBottom: "12px", marginTop: 0 }}>Ready to declutter?</h2>
+          <p style={{ color: "rgba(255,255,255,0.9)", fontSize: "16px", marginBottom: "24px", marginTop: 0 }}>Join thousands of happy users recycling with us.</p>
+          <button 
+            type="button"
+            style={{ 
+              background: "#ffffff", 
+              color: "#0b8f3a", 
+              border: "none", 
+              padding: "14px 28px", 
+              borderRadius: "14px", 
+              fontSize: "15px", 
+              fontWeight: "900", 
+              cursor: "pointer", 
+              display: "inline-flex", 
+              alignItems: "center", 
+              gap: "8px", 
+              boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
+              transition: "transform 0.2s ease" 
+            }} 
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             Book Your Pickup Now <FaArrowRight />
           </button>
         </div>
@@ -284,7 +302,7 @@ const badgeWrap = { display: "flex", gap: "12px", flexWrap: "wrap", marginTop: "
 const pill = { background: "var(--card-bg)", padding: "10px 18px", borderRadius: "99px", boxShadow: "0 5px 15px rgba(0,0,0,0.05)", display: "flex", gap: "8px", alignItems: "center", fontSize: "13px", fontWeight: "600", color: "var(--text-main)", border: "1px solid var(--glass-border)" };
 const trustBoxInner = { display: "flex", gap: "30px", alignItems: "center", background: "var(--card-bg)" };
 const trustIcon = { fontSize: "50px", color: "var(--primary)" };
-const ctaBanner = { width: "100%", padding: "60px 20px", borderRadius: "30px", textAlign: "center", flexDirection: "column", background: "#0b8f3a", display: "flex", alignItems: "center", justifyContent: "center" };
+const ctaBanner = { width: "100%", padding: "50px 24px", borderRadius: "28px", textAlign: "center", flexDirection: "column", background: "linear-gradient(135deg, #0b8f3a 0%, #056627 100%)", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box", boxShadow: "0 15px 35px rgba(11, 143, 58, 0.25)" };
 
 /* ────────────────────────────────────────────────────────
    MOBILE INLINE STYLES

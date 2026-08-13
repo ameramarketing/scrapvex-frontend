@@ -166,7 +166,13 @@ function AdminLogin() {
             </button>
           </div>
 
-          <button type="submit" className="btn-premium" style={{ border: "none", marginTop: "10px" }} disabled={loading}>
+          <div style={{ textAlign: "right", marginTop: "-6px", marginBottom: "14px" }}>
+            <Link to="/forgot-password?role=admin" style={{ color: "#0b8f3a", fontSize: "12px", fontWeight: "700", textDecoration: "none" }}>
+              Forgot Password?
+            </Link>
+          </div>
+
+          <button type="submit" className="btn-premium" style={{ border: "none", marginTop: "4px" }} disabled={loading}>
             {loading ? <FaRecycle className="spin" /> : <>Access Console <FaArrowRight style={{ fontSize: "11px" }} /></>}
           </button>
         </form>
