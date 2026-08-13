@@ -2,7 +2,7 @@ import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import React, { useState, useEffect, useMemo } from "react";
 import {
   FaUsers, FaTruck, FaClock, FaCheckCircle, FaRupeeSign,
-  FaSignOutAlt, FaTrash, FaPlus, FaKey, FaBell, FaInfoCircle,
+  FaSignOutAlt, FaArrowLeft, FaTrash, FaPlus, FaKey, FaBell, FaInfoCircle,
   FaAd, FaTag, FaTools, FaStar, FaUserPlus, FaBars, FaTimes, FaCog,
   FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram, FaRecycle, FaWallet, FaHistory, FaArrowUp, FaArrowDown, FaChartLine,
   FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt,
@@ -1072,6 +1072,36 @@ const playBellSound = () => {
                   style={{ position: "absolute", right: "15px", top: "50%", transform: "translateY(-50%)", cursor: "pointer", color: "#999", fontWeight: "bold", fontSize: "14px" }}
                 >✕</span>
               )}
+            </div>
+          )}
+
+          
+          {/* TOP BACK BUTTON FOR ALL SUB-TABS */}
+          {activeTab !== "overview" && activeTab !== "account" && (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", padding: "0 4px" }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab("account")}
+                style={{
+                  background: "var(--card-bg, #ffffff)",
+                  border: "1.5px solid var(--card-border, #cbd5e1)",
+                  color: "var(--text-main, #0f172a)",
+                  padding: "8px 14px",
+                  borderRadius: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontSize: "13px",
+                  fontWeight: "800",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 5px rgba(0,0,0,0.02)"
+                }}
+              >
+                <FaArrowLeft /> Back to Menu
+              </button>
+              <span style={{ fontSize: "13px", fontWeight: "800", color: "#0b8f3a", background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "4px 10px", borderRadius: "8px", textTransform: "capitalize" }}>
+                {activeTab === "ads" ? "Banners" : activeTab === "dist-settings" ? "City Settings" : activeTab}
+              </span>
             </div>
           )}
 
