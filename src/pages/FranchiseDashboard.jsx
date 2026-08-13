@@ -2764,22 +2764,25 @@ const playBellSound = () => {
         bottom: 0,
         left: 0,
         right: 0,
-        height: "60px",
+        width: "100%",
+        height: "54px",
         background: "var(--card-bg, #ffffff)",
         display: "flex",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         alignItems: "center",
-        zIndex: 1500,
+        zIndex: 99999,
         borderTop: "1px solid var(--card-border, #e2e8f0)",
-        boxShadow: "0 -4px 20px rgba(0,0,0,0.06)",
-        paddingBottom: "calc(env(safe-area-inset-bottom, 0px))"
+        boxShadow: "0 -4px 16px rgba(0,0,0,0.08)",
+        padding: "0 0 calc(env(safe-area-inset-bottom, 0px) + 1px) 0",
+        boxSizing: "border-box",
+        overflow: "hidden"
       }} className="mobile-only">
-        <BottomLink icon={<FaHome size={18} />} text="Home" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
-        <BottomLink icon={<FaTruck size={18} />} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
-        <BottomLink icon={<FaChartLine size={18} />} text="Accounting" active={activeTab === "accounting"} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }} />
-        <BottomLink icon={<FaBoxes size={18} />} text="Inventory" active={activeTab === "inventory"} onClick={() => { setActiveTab("inventory"); fetchAccountingData(); }} />
-        <BottomLink icon={<FaWallet size={18} />} text="Wallet" active={activeTab === "wallet"} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions(); }} />
-        <BottomLink icon={<FaUser size={18} />} text="Account" active={activeTab === "account"} onClick={() => setActiveTab("account")} />
+        <BottomLink icon={<FaHome />} text="Home" active={activeTab === "overview"} onClick={() => setActiveTab("overview")} />
+        <BottomLink icon={<FaTruck />} text="Pickups" active={activeTab === "pickups"} onClick={() => setActiveTab("pickups")} />
+        <BottomLink icon={<FaChartLine />} text="Accounting" active={activeTab === "accounting"} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }} />
+        <BottomLink icon={<FaBoxes />} text="Inventory" active={activeTab === "inventory"} onClick={() => { setActiveTab("inventory"); fetchAccountingData(); }} />
+        <BottomLink icon={<FaWallet />} text="Wallet" active={activeTab === "wallet"} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions(); }} />
+        <BottomLink icon={<FaUser />} text="Account" active={activeTab === "account"} onClick={() => setActiveTab("account")} />
       </div>
 
     </div>
@@ -2815,17 +2818,30 @@ const BottomLink = ({ icon, text, onClick, active }) => (
       alignItems: "center",
       justifyContent: "center",
       cursor: "pointer",
-      flex: 1,
+      flex: "1 1 0px",
+      width: 0,
+      minWidth: 0,
       height: "100%",
-      padding: "4px 0",
+      padding: "2px 0",
       outline: "none",
-      color: active ? "#0b8f3a" : "#94a3b8"
+      color: active ? "#0b8f3a" : "#64748b"
     }}
   >
-    <div style={{ fontSize: "19px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center", height: "18px" }}>
       {icon}
     </div>
-    <span style={{ fontSize: "10px", fontWeight: active ? "700" : "500", marginTop: "2px", letterSpacing: "0.01em" }}>
+    <span style={{
+      fontSize: "9px",
+      fontWeight: active ? "800" : "600",
+      marginTop: "2px",
+      lineHeight: "1.1",
+      letterSpacing: "-0.2px",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      width: "100%",
+      textAlign: "center"
+    }}>
       {text}
     </span>
   </button>
