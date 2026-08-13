@@ -951,21 +951,23 @@ function CollectorDashboard() {
 
             {/* Logout Button */}
             <button
+              type="button"
+              onClick={async () => { await performLogout(); window.location.href = "/collector-login"; }}
               style={{
-                background: "none",
-                border: "none",
-                fontSize: "15px",
-                color: "#e74c3c",
-                cursor: "pointer",
-                padding: "5px",
+                background: "var(--bg-subtle, #f8fafc)",
+                border: "1.5px solid var(--card-border, #cbd5e1)",
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                cursor: "pointer",
+                flexShrink: 0
               }}
-              onClick={async () => { await performLogout(); window.location.href = "/collector-login"; }}
               title="Logout"
             >
-              <FaSignOutAlt />
+              <FaSignOutAlt style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "#ef4444" }} />
             </button>
           </div>
         </header>

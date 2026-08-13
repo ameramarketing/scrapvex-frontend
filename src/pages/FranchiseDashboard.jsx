@@ -1042,7 +1042,7 @@ const playBellSound = () => {
               }}
               title="Logout"
             >
-              <FaSignOutAlt style={{ width: "18px", height: "18px", color: "#e74c3c" }} />
+              <FaSignOutAlt style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "#ef4444" }} />
             </button>
           </div>
 
