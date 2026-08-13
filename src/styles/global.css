@@ -1717,12 +1717,36 @@ body.dark-mode a,
   color: inherit;
 }
 
-/* Override inline dark text colors (#2c3e50, #1e293b, #334155, #0f172a, #475569, #000, black) in dark mode */
+/* Force ALL card titles, item names, headings, and labels inside dark cards to be 100% Crisp White (#ffffff) */
+body.dark-mode [class*="-card"] div,
+body.dark-mode [class*="-card"] span,
+body.dark-mode [class*="-card"] p,
+body.dark-mode [class*="-card"] h1,
+body.dark-mode [class*="-card"] h2,
+body.dark-mode [class*="-card"] h3,
+body.dark-mode [class*="-card"] h4,
+body.dark-mode [class*="-card"] strong,
+[data-theme="dark"] [class*="-card"] div,
+[data-theme="dark"] [class*="-card"] span,
+[data-theme="dark"] [class*="-card"] p,
+[data-theme="dark"] [class*="-card"] h1,
+[data-theme="dark"] [class*="-card"] h2,
+[data-theme="dark"] [class*="-card"] h3,
+[data-theme="dark"] [class*="-card"] h4,
+[data-theme="dark"] [class*="-card"] strong {
+  color: #ffffff;
+}
+
+/* Force dark grey inline text colors (#2c3e50, #1e293b, #334155, #0f172a, #475569, #64748b, #94a3b8) to Crisp White in Dark Mode */
 body.dark-mode [style*="color: #2c3e50"],
 body.dark-mode [style*="color: #1e293b"],
 body.dark-mode [style*="color: #334155"],
 body.dark-mode [style*="color: #0f172a"],
 body.dark-mode [style*="color: #475569"],
+body.dark-mode [style*="color: #64748b"],
+body.dark-mode [style*="color: #94a3b8"],
+body.dark-mode [style*="color: #374151"],
+body.dark-mode [style*="color: #1f2937"],
 body.dark-mode [style*="color: #000000"],
 body.dark-mode [style*="color: #000"],
 body.dark-mode [style*="color: black"],
@@ -1731,6 +1755,10 @@ body.dark-mode [style*="color:#1e293b"],
 body.dark-mode [style*="color:#334155"],
 body.dark-mode [style*="color:#0f172a"],
 body.dark-mode [style*="color:#475569"],
+body.dark-mode [style*="color:#64748b"],
+body.dark-mode [style*="color:#94a3b8"],
+body.dark-mode [style*="color:#374151"],
+body.dark-mode [style*="color:#1f2937"],
 body.dark-mode [style*="color:#000000"],
 body.dark-mode [style*="color:#000"],
 body.dark-mode [style*="color:black"],
@@ -1739,8 +1767,21 @@ body.dark-mode [style*="color:black"],
 [data-theme="dark"] [style*="color: #334155"],
 [data-theme="dark"] [style*="color: #0f172a"],
 [data-theme="dark"] [style*="color: #475569"],
+[data-theme="dark"] [style*="color: #64748b"],
+[data-theme="dark"] [style*="color: #94a3b8"],
+[data-theme="dark"] [style*="color: #374151"],
+[data-theme="dark"] [style*="color: #1f2937"],
 [data-theme="dark"] [style*="color: #000000"],
-[data-theme="dark"] [style*="color: #000"] {
+[data-theme="dark"] [style*="color: #000"],
+[data-theme="dark"] [style*="color:#2c3e50"],
+[data-theme="dark"] [style*="color:#1e293b"],
+[data-theme="dark"] [style*="color:#334155"],
+[data-theme="dark"] [style*="color:#0f172a"],
+[data-theme="dark"] [style*="color:#475569"],
+[data-theme="dark"] [style*="color:#64748b"],
+[data-theme="dark"] [style*="color:#94a3b8"],
+[data-theme="dark"] [style*="color:#374151"],
+[data-theme="dark"] [style*="color:#1f2937"] {
   color: #ffffff !important;
 }
 

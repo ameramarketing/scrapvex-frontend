@@ -498,14 +498,15 @@ const mobileRateCardIcon = {
 };
 
 const mobileRateCardName = {
-  fontSize: "12px",
-  fontWeight: "700",
-  color: "#475569",
+  fontSize: "13px",
+  fontWeight: "800",
+  color: "var(--text-main, #0f172a)",
   marginBottom: "4px",
   minHeight: "34px",
   display: "flex",
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
+  textAlign: "center"
 };
 
 const mobileRateCardPrice = {
@@ -516,9 +517,9 @@ const mobileRateCardPrice = {
 };
 
 const mobileRateCardUnit = {
-  fontSize: "10px",
-  fontWeight: "600",
-  color: "#94a3b8"
+  fontSize: "11px",
+  fontWeight: "700",
+  color: "var(--text-muted, #64748b)"
 };
 
 const mobileNoteBox = {
