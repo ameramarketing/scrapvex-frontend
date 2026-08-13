@@ -625,7 +625,7 @@ const Input = ({ icon, placeholder, value, onChange, type = "text", min = "" }) 
 );
 
 /* INLINE STYLES */
-const formBox = { padding: "16px", background: "#ffffff", borderRadius: "18px", width: "100%", boxSizing: "border-box" };
+const formBox = { padding: "16px", background: "var(--card-bg, #ffffff)", border: "1.5px solid var(--card-border, rgba(15,23,42,0.06))", borderRadius: "18px", width: "100%", boxSizing: "border-box" };
 const stepHeader = { display: "flex", justifyContent: "space-between", marginBottom: "20px" };
 const stepContent = { minHeight: "280px", position: "relative" };
 const stepTitle = { fontSize: "15px", fontWeight: "800", marginBottom: "16px", color: "var(--text-main, #0f172a)", borderLeft: "3.5px solid #0b8f3a", paddingLeft: "8px" };

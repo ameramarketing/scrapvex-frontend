@@ -1826,6 +1826,68 @@ body.dark-mode [class*="-card"] strong,
   color: #ffffff;
 }
 
+/* Solid High-Contrast Auth Logo Circles across ALL Auth Pages */
+.auth-logo-circle,
+.login-logo-circle,
+.register-logo-circle,
+.forgot-logo-circle,
+[class*="-logo-circle"] {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 16px !important;
+  background-color: #0b8f3a !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 24px !important;
+  margin: 0 auto 12px !important;
+  border: 2px solid #08752f !important;
+  box-shadow: 0 4px 12px rgba(11, 143, 58, 0.25) !important;
+}
+
+.auth-logo-circle svg,
+.login-logo-circle svg,
+.register-logo-circle svg,
+.forgot-logo-circle svg,
+[class*="-logo-circle"] svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  font-size: 24px !important;
+}
+
+/* Mobile Drawer Link Item Text Contrast (Light & Dark Mode) */
+.mobile-drawer a,
+.mobile-drawer span,
+.mobile-drawer div,
+.drawer-link-item,
+[class*="drawer"] a,
+[class*="drawer"] span {
+  color: var(--text-main, #0f172a);
+}
+
+body.dark-mode .mobile-drawer,
+body.dark-mode .drawerSheet,
+[data-theme="dark"] .mobile-drawer,
+[data-theme="dark"] .drawerSheet,
+[data-theme="dark"] [style*="drawerSheet"] {
+  background-color: #111827 !important;
+}
+
+body.dark-mode .mobile-drawer a,
+body.dark-mode .mobile-drawer span,
+body.dark-mode .drawer-link-item,
+body.dark-mode [class*="drawer"] a,
+body.dark-mode [class*="drawer"] span,
+[data-theme="dark"] .mobile-drawer a,
+[data-theme="dark"] .mobile-drawer span,
+[data-theme="dark"] .drawer-link-item,
+[data-theme="dark"] [class*="drawer"] a,
+[data-theme="dark"] [class*="drawer"] span {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+}
+
 /* Force dark grey inline text colors (#2c3e50, #1e293b, #334155, #0f172a, #475569, #64748b, #94a3b8) to Crisp White in Dark Mode */
 body.dark-mode [style*="color: #2c3e50"],
 body.dark-mode [style*="color: #1e293b"],

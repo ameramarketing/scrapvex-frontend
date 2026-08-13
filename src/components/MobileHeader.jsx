@@ -526,13 +526,13 @@ const sheetHandle = {
 const sheetTitle = {
   fontSize: "17px",
   fontWeight: "800",
-  color: "#0f172a",
+  color: "var(--text-main, #0f172a)",
   margin: "0 0 4px 0"
 };
 
 const sheetSubtitle = {
   fontSize: "12px",
-  color: "#64748b",
+  color: "var(--text-muted, #64748b)",
   margin: "0 0 16px 0"
 };
 
@@ -644,9 +644,9 @@ const drawerLinkStyle = {
   padding: "12px 10px",
   borderRadius: "10px",
   textDecoration: "none",
-  color: "var(--text-muted)",
-  fontSize: "13px",
-  fontWeight: "700",
+  color: "var(--text-main, #0f172a)",
+  fontSize: "14px",
+  fontWeight: "800",
   transition: "background 0.2s"
 };
 
