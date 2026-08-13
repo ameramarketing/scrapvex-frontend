@@ -85,6 +85,12 @@ const playBellSound = () => {
     setDarkMode(!darkMode);
     localStorage.setItem("theme", newTheme);
     document.body.setAttribute("data-theme", newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+    if (!darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   };
 
   const [searchQuery, setSearchQuery] = useState("");

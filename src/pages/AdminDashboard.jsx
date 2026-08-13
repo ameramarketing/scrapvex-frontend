@@ -251,6 +251,12 @@ const playBellSound = () => {
     setDarkMode(!darkMode);
     localStorage.setItem("theme", nextTheme);
     document.documentElement.setAttribute("data-theme", nextTheme);
+    document.body.setAttribute("data-theme", nextTheme);
+    if (!darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
   };
   const [resetData, setResetData] = useState({ userId: "", newPassword: "", name: "" });
   

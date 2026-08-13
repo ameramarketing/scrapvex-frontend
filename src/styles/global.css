@@ -463,24 +463,23 @@ input:disabled, select:disabled, textarea:disabled {
   text-decoration: none !important;
 }
 
-.nav-link-glow::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--primary);
-  border-radius: 2px;
-  transition: width 0.25s ease;
-}
-
 .nav-link-glow:hover {
   color: var(--primary) !important;
+  text-shadow: 0 0 12px rgba(11, 143, 58, 0.45);
 }
 
-.nav-link-glow:hover::after {
-  width: 100%;
+/* ==========================================================
+   SOCIAL ICON GLOW — hover effect for footer social buttons
+   ========================================================== */
+.social-glow {
+  transition: all 0.25s ease !important;
+}
+
+.social-glow:hover {
+  color: var(--primary) !important;
+  box-shadow: 0 0 14px rgba(11, 143, 58, 0.55) !important;
+  border-color: rgba(11, 143, 58, 0.4) !important;
+  transform: translateY(-2px);
 }
 
 /* ==========================================================
@@ -1535,11 +1534,137 @@ body.dark-mode .skeleton-loader {
 }
 
 /* Fix text in dark mode globally */
-body.dark-mode {
-  color: var(--text-main);
+body.dark-mode, [data-theme="dark"] {
+  --bg-main: #0b1329 !important;
+  --bg-subtle: #131f3a !important;
+  --card-bg: #172445 !important;
+  --card-border: rgba(255, 255, 255, 0.12) !important;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  --glass: rgba(23, 36, 69, 0.95) !important;
+  --glass-border: rgba(255, 255, 255, 0.15) !important;
+  --text-main: #f8fafc !important;
+  --text-muted: #cbd5e1 !important;
+  --text-light: #94a3b8 !important;
+  --primary-light: #164e28 !important;
+  background-color: #0b1329 !important;
+  color: #f8fafc !important;
 }
+
+/* Force dark root container background */
+body.dark-mode .dashboard-root,
+body.dark-mode .dashboard-main,
+body.dark-mode .app-shell,
+body.dark-mode main,
+[data-theme="dark"] .dashboard-root,
+[data-theme="dark"] .dashboard-main,
+[data-theme="dark"] .app-shell,
+[data-theme="dark"] main {
+  background-color: #0b1329 !important;
+  color: #f8fafc !important;
+}
+
+/* Force dark card background */
+body.dark-mode .card-premium,
+body.dark-mode .premium-card,
+body.dark-mode .card-bg,
+body.dark-mode .kpi-card,
+body.dark-mode .modal-content,
+body.dark-mode .modal-body,
+[data-theme="dark"] .card-premium,
+[data-theme="dark"] .premium-card,
+[data-theme="dark"] .card-bg,
+[data-theme="dark"] .kpi-card,
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .modal-body {
+  background-color: #172445 !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #f8fafc !important;
+}
+
+/* Ensure text elements inherit high contrast color */
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode div,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode label,
+body.dark-mode small,
+body.dark-mode strong,
+body.dark-mode b,
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] label,
+[data-theme="dark"] small,
+[data-theme="dark"] strong,
+[data-theme="dark"] b {
+  color: inherit;
+}
+
+/* Override inline dark text colors (#2c3e50, #1e293b, #334155, #0f172a, #475569) in dark mode */
+body.dark-mode [style*="color: #2c3e50"],
+body.dark-mode [style*="color: #1e293b"],
+body.dark-mode [style*="color: #334155"],
+body.dark-mode [style*="color: #0f172a"],
+body.dark-mode [style*="color: #475569"],
+body.dark-mode [style*="color:#2c3e50"],
+body.dark-mode [style*="color:#1e293b"],
+body.dark-mode [style*="color:#334155"],
+body.dark-mode [style*="color:#0f172a"],
+body.dark-mode [style*="color:#475569"],
+[data-theme="dark"] [style*="color: #2c3e50"],
+[data-theme="dark"] [style*="color: #1e293b"],
+[data-theme="dark"] [style*="color: #334155"],
+[data-theme="dark"] [style*="color: #0f172a"],
+[data-theme="dark"] [style*="color: #475569"] {
+  color: #f8fafc !important;
+}
+
+/* Fix Inputs, Selects & Options in Dark Mode */
 body.dark-mode input,
 body.dark-mode select,
-body.dark-mode textarea {
-  color: var(--text-main) !important;
+body.dark-mode textarea,
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-mode select option,
+[data-theme="dark"] select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* Fix Tables in Dark Mode */
+body.dark-mode table,
+body.dark-mode tr,
+body.dark-mode td,
+body.dark-mode th,
+[data-theme="dark"] table,
+[data-theme="dark"] tr,
+[data-theme="dark"] td,
+[data-theme="dark"] th {
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Fix Secondary Buttons in Dark Mode */
+body.dark-mode .btn-secondary,
+[data-theme="dark"] .btn-secondary {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
