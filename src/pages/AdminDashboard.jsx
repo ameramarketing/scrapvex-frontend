@@ -1201,22 +1201,27 @@ const playBellSound = () => {
 
             {/* Dark Mode Toggle */}
             <button
+              type="button"
               onClick={toggleDarkMode}
               style={{
                 background: "var(--bg-subtle, #f8fafc)",
-                border: "1px solid var(--card-border, #e2e8f0)",
-                width: "36px",
-                height: "36px",
-                borderRadius: "10px",
+                border: "1.5px solid var(--card-border, #cbd5e1)",
+                width: "40px",
+                height: "40px",
+                borderRadius: "12px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "var(--text-main, #334155)",
-                cursor: "pointer"
+                cursor: "pointer",
+                flexShrink: 0
               }}
               title="Toggle Dark Mode"
             >
-              {darkMode ? <FaSun size={17} color="#f59e0b" /> : <FaMoon size={17} color="#475569" />}
+              {darkMode ? (
+                <FaSun style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "#f59e0b" }} />
+              ) : (
+                <FaMoon style={{ width: "22px", height: "22px", minWidth: "22px", minHeight: "22px", color: "var(--text-main, #334155)" }} />
+              )}
             </button>
           </div>
 
