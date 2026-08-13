@@ -498,49 +498,87 @@ input:disabled, select:disabled, textarea:disabled {
   white-space: nowrap;
 }
 
-.badge-pending  { background: var(--warning-light);  color: var(--warning);  border: 1px solid var(--warning-border); }
-.badge-confirmed{ background: var(--info-light);     color: var(--info);     border: 1px solid var(--info-border); }
-.badge-accepted { background: var(--info-light);     color: var(--info);     border: 1px solid var(--info-border); }
-.badge-completed{ background: var(--success-light);  color: var(--success);  border: 1px solid var(--success-border); }
-.badge-cancelled{ background: var(--danger-light);   color: var(--danger);   border: 1px solid var(--danger-border); }
-.badge-active   { background: var(--success-light);  color: var(--success);  border: 1px solid var(--success-border); }
-.badge-inactive { background: var(--bg-subtle);      color: var(--text-muted); border: 1px solid var(--card-border); }
+.badge-pending {
+  background: #fff7ed !important;
+  color: #c2410c !important;
+  border: 1.5px solid #ffedd5 !important;
+}
+.badge-confirmed,
+.badge-assigned,
+.badge-accepted {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1.5px solid #dbeafe !important;
+}
+.badge-completed,
+.badge-active {
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1.5px solid #dcfce7 !important;
+}
+.badge-cancelled,
+.badge-rejected {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1.5px solid #fee2e2 !important;
+}
+.badge-inactive {
+  background: var(--bg-subtle) !important;
+  color: var(--text-muted) !important;
+  border: 1.5px solid var(--card-border) !important;
+}
 
 /* High-Contrast Badge Styling in Dark Mode */
+body.dark-mode .badge-status.badge-pending,
 body.dark-mode .badge-pending,
+[data-theme="dark"] .badge-status.badge-pending,
 [data-theme="dark"] .badge-pending {
   background: rgba(245, 158, 11, 0.25) !important;
   color: #fbbf24 !important;
   border: 1.5px solid #f59e0b !important;
-  font-weight: 800 !important;
 }
 
+body.dark-mode .badge-status.badge-accepted,
+body.dark-mode .badge-status.badge-assigned,
+body.dark-mode .badge-status.badge-confirmed,
 body.dark-mode .badge-accepted,
+body.dark-mode .badge-assigned,
 body.dark-mode .badge-confirmed,
+[data-theme="dark"] .badge-status.badge-accepted,
+[data-theme="dark"] .badge-status.badge-assigned,
+[data-theme="dark"] .badge-status.badge-confirmed,
 [data-theme="dark"] .badge-accepted,
+[data-theme="dark"] .badge-assigned,
 [data-theme="dark"] .badge-confirmed {
   background: rgba(59, 130, 246, 0.25) !important;
   color: #60a5fa !important;
   border: 1.5px solid #3b82f6 !important;
-  font-weight: 800 !important;
 }
 
+body.dark-mode .badge-status.badge-completed,
+body.dark-mode .badge-status.badge-active,
 body.dark-mode .badge-completed,
 body.dark-mode .badge-active,
+[data-theme="dark"] .badge-status.badge-completed,
+[data-theme="dark"] .badge-status.badge-active,
 [data-theme="dark"] .badge-completed,
 [data-theme="dark"] .badge-active {
   background: rgba(16, 185, 129, 0.25) !important;
   color: #34d399 !important;
   border: 1.5px solid #10b981 !important;
-  font-weight: 800 !important;
 }
 
+body.dark-mode .badge-status.badge-cancelled,
+body.dark-mode .badge-status.badge-rejected,
 body.dark-mode .badge-cancelled,
-[data-theme="dark"] .badge-cancelled {
+body.dark-mode .badge-rejected,
+[data-theme="dark"] .badge-status.badge-cancelled,
+[data-theme="dark"] .badge-status.badge-rejected,
+[data-theme="dark"] .badge-cancelled,
+[data-theme="dark"] .badge-rejected {
   background: rgba(239, 68, 68, 0.25) !important;
   color: #f87171 !important;
   border: 1.5px solid #ef4444 !important;
-  font-weight: 800 !important;
 }
 
 /* ==========================================================
@@ -1754,9 +1792,9 @@ body.dark-mode a,
   color: inherit;
 }
 
-/* Force ALL card titles, item names, headings, and labels inside dark cards to be 100% Crisp White (#ffffff) */
+/* Force ALL card titles, item names, headings, and labels inside dark cards to be 100% Crisp White (#ffffff), excluding badge pills */
 body.dark-mode [class*="-card"] div,
-body.dark-mode [class*="-card"] span,
+body.dark-mode [class*="-card"] span:not(.badge-status),
 body.dark-mode [class*="-card"] p,
 body.dark-mode [class*="-card"] h1,
 body.dark-mode [class*="-card"] h2,
@@ -1764,7 +1802,7 @@ body.dark-mode [class*="-card"] h3,
 body.dark-mode [class*="-card"] h4,
 body.dark-mode [class*="-card"] strong,
 [data-theme="dark"] [class*="-card"] div,
-[data-theme="dark"] [class*="-card"] span,
+[data-theme="dark"] [class*="-card"] span:not(.badge-status),
 [data-theme="dark"] [class*="-card"] p,
 [data-theme="dark"] [class*="-card"] h1,
 [data-theme="dark"] [class*="-card"] h2,
