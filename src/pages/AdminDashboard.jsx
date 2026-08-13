@@ -5,7 +5,7 @@ import {
   FaSignOutAlt, FaTrash, FaPlus, FaKey, FaBell, FaInfoCircle,
   FaAd, FaTag, FaTools, FaStar, FaUserPlus, FaBars, FaTimes, FaCog,
   FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram, FaRecycle, FaWallet, FaHistory, FaArrowUp, FaArrowDown, FaChartLine,
-  FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt, FaBoxOpen, FaWhatsapp, FaMoon, FaSun
+  FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt, FaBoxOpen, FaWhatsapp, FaMoon, FaSun, FaShieldAlt
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
@@ -3588,3 +3588,29 @@ const bottomNavStyle = { position: "fixed", bottom: 0, left: 0, right: 0, backgr
 const bottomLinkStyle = { display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer" };
 
 export default AdminDashboard;
+
+const accountRowStyle = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "12px 14px",
+  borderBottom: "1px solid var(--card-border, #f1f5f9)",
+  cursor: "pointer"
+};
+
+const iconSquareStyle = {
+  width: "32px",
+  height: "32px",
+  borderRadius: "10px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "14px",
+  flexShrink: 0
+};
+
+const rowTextStyle = {
+  fontSize: "13px",
+  fontWeight: "800",
+  color: "var(--text-main, #0f172a)"
+};
