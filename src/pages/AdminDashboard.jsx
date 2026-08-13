@@ -226,6 +226,14 @@ const playBellSound = () => {
   const [selectedPickup, setSelectedPickup] = useState(null);
   const [editingRate, setEditingRate] = useState(null);
   const [toast, setToast] = useState({ show: false, type: "success", message: "" });
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
+
+  const toggleDarkMode = () => {
+    const nextTheme = !darkMode ? "dark" : "light";
+    setDarkMode(!darkMode);
+    localStorage.setItem("theme", nextTheme);
+    document.documentElement.setAttribute("data-theme", nextTheme);
+  };
   const [resetData, setResetData] = useState({ userId: "", newPassword: "", name: "" });
   
   // Form States
@@ -1112,34 +1120,115 @@ const playBellSound = () => {
 
       {/* MAIN */}
       <div style={main}>
-        <header style={{...header, padding: "16px 24px", background: "var(--card-bg)", borderBottom: "1px solid var(--card-border)", display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <button style={menuBtn} className="mobile-only" onClick={() => setIsMobileMenuOpen(true)}><FaBars /></button>
-            <h2 className="native-header-title" style={{...headerTitle, fontSize: "20px", fontWeight: "800", color: "var(--text-main)", letterSpacing: "-0.5px"}}>{activeTab.toUpperCase()}</h2>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <div style={{ position: "relative", display:"flex", gap:"15px", alignItems: "center" }}>
-              <div className="desktop-only" style={{ textAlign: "right", marginRight: "10px" }}>
-                <div style={{ fontSize: "14px", fontWeight: "bold", color: "var(--text-main)" }}>Admin User</div>
-                <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>Superadmin</div>
-              </div>
-              <button style={{...bellBtn, width: "40px", height: "40px", borderRadius: "50%", background: "var(--bg-subtle)", color: "var(--text-main)", border: "1px solid var(--glass-border)", display: "flex", justifyContent: "center", alignItems: "center"}} onClick={() => { setShowNotifPanel(!showNotifPanel); if(!showNotifPanel) markAllNotificationsRead(); }}>
-                <FaBell /> {notifications.filter(n => !n.isRead).length > 0 && <span style={badge}>{notifications.filter(n => !n.isRead).length}</span>}
-              </button>
-              <button style={{...logoutHeaderBtn, width: "40px", height: "40px", borderRadius: "50%", background: "#fee2e2", color: "#ef4444", border: "1px solid #fca5a5", display: "flex", justifyContent: "center", alignItems: "center"}} onClick={logout} title="Logout">
-                <FaSignOutAlt />
-              </button>
-              {showNotifPanel && (
-                <div style={notifPanel}>
-                  <h4 style={{margin: "0 0 10px 0", color: "var(--text-main)"}}>Alerts</h4>
-                  {notifications.slice(0, 5).map(n => (
-                    <div key={n._id} style={notifRow}><strong>{n.title}</strong><br/>{n.message}</div>
-                  ))}
-                  {notifications.length === 0 && <p style={muted}>No new alerts</p>}
-                </div>
-              )}
+        <header style={{
+          background: "var(--card-bg, #ffffff)",
+          padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 10px 16px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid var(--card-border, #e2e8f0)",
+          position: "sticky",
+          top: 0,
+          zIndex: 100,
+          boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
+          width: "100%",
+          boxSizing: "border-box"
+        }}>
+          {/* Left Branding: ScrapVex ADMIN */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", flexShrink: 0 }} onClick={() => setActiveTab("overview")}>
+            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
+              <FaRecycle />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", lineHeight: "1.1" }}>
+              <span style={{ fontSize: "15px", fontWeight: "900", color: "var(--text-main, #0f172a)", letterSpacing: "-0.4px" }}>
+                ScrapVex
+              </span>
+              <span style={{ fontSize: "9px", fontWeight: "800", color: "#0b8f3a", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                ADMIN
+              </span>
             </div>
           </div>
+
+          {/* Right Action Controls: [Status Pill] -> [Bell] -> [Moon] */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <div style={{
+              background: "#f0fdf4",
+              border: "1px solid #bbf7d0",
+              color: "#0b8f3a",
+              padding: "4px 8px",
+              borderRadius: "8px",
+              fontSize: "10px",
+              fontWeight: "800",
+              display: "flex",
+              alignItems: "center",
+              gap: "4px"
+            }}>
+              <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0b8f3a" }} />
+              Superadmin
+            </div>
+
+            {/* Notification Bell */}
+            <button
+              onClick={() => { setShowNotifPanel(!showNotifPanel); if (!showNotifPanel) markAllNotificationsRead(); }}
+              style={{
+                background: "var(--bg-subtle, #f8fafc)",
+                border: "1px solid var(--card-border, #e2e8f0)",
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--text-main, #334155)",
+                cursor: "pointer",
+                position: "relative"
+              }}
+              title="Notifications"
+            >
+              <FaBell size={17} />
+              {notifications.filter(n => !n.isRead).length > 0 && (
+                <span style={{
+                  position: "absolute",
+                  top: "4px",
+                  right: "4px",
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  background: "#dc2626"
+                }} />
+              )}
+            </button>
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={toggleDarkMode}
+              style={{
+                background: "var(--bg-subtle, #f8fafc)",
+                border: "1px solid var(--card-border, #e2e8f0)",
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--text-main, #334155)",
+                cursor: "pointer"
+              }}
+              title="Toggle Dark Mode"
+            >
+              {darkMode ? <FaSun size={17} color="#f59e0b" /> : <FaMoon size={17} color="#475569" />}
+            </button>
+          </div>
+
+          {showNotifPanel && (
+            <div style={notifPanel}>
+              <h4 style={{ margin: "0 0 10px 0", color: "var(--text-main)" }}>Alerts</h4>
+              {notifications.slice(0, 5).map(n => (
+                <div key={n._id} style={notifRow}><strong>{n.title}</strong><br />{n.message}</div>
+              ))}
+              {notifications.length === 0 && <p style={muted}>No new alerts</p>}
+            </div>
+          )}
         </header>
 
         <div className="native-content mobile-pad-bottom">
