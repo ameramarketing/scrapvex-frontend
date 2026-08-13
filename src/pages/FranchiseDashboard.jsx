@@ -5,7 +5,7 @@ import {
   FaAd, FaTag, FaTools, FaStar, FaUserPlus, FaBars, FaTimes, FaCog,
   FaEnvelope, FaPhone, FaMapMarkerAlt, FaFacebook, FaInstagram, FaRecycle, FaWallet, FaHistory, FaArrowUp, FaArrowDown, FaChartLine,
   FaFileInvoice, FaBuilding, FaIdCard, FaCar, FaUserCheck, FaMap, FaTicketAlt, FaPercent, FaShareAlt, FaRss, FaClipboardList, FaMoneyCheckAlt,
-  FaMoon, FaSun, FaEdit, FaUser, FaShieldAlt, FaHome, FaBoxes, FaSearch
+  FaMoon, FaSun, FaEdit, FaUser, FaShieldAlt, FaHome, FaBoxes, FaSearch, FaDownload, FaFileExcel, FaFilePdf, FaPhoneAlt
 } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
