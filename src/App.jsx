@@ -79,13 +79,21 @@ function App() {
     setShowSplash(false);
   };
 
-  // Initialize Native Features & Push Notifications
+  // Initialize Native Features & Push Notifications & Render Keep-Alive Ping
   React.useEffect(() => {
     requestNotificationPermission();
     if (isNativeApp()) {
       StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
       StatusBar.setBackgroundColor({ color: "#0b8f3a" }).catch(() => {});
     }
+
+    // Ping backend immediately on load and every 5 minutes to prevent Render sleep mode
+    const pingBackend = () => {
+      API.get("/settings", { hideLoader: true }).catch(() => {});
+    };
+    pingBackend();
+    const interval = setInterval(pingBackend, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   return (

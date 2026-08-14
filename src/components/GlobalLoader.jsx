@@ -20,6 +20,7 @@ function GlobalLoader() {
   useEffect(() => {
     let reqCount = 0;
     let timer = null;
+    let coldStartTimer = null;
 
     const reqInterceptor = API.interceptors.request.use((config) => {
       if (config.hideLoader) return config;
@@ -29,6 +30,11 @@ function GlobalLoader() {
           setLoading(true);
           setLoadingText("Fetching Data...");
         }, 150);
+
+        // If request takes more than 3.5s, server is waking up from sleep mode
+        coldStartTimer = setTimeout(() => {
+          setLoadingText("Waking up server... Please wait a few seconds ⚡");
+        }, 3500);
       }
       return config;
     });
@@ -39,6 +45,7 @@ function GlobalLoader() {
         reqCount = Math.max(0, reqCount - 1);
         if (reqCount === 0) {
           clearTimeout(timer);
+          clearTimeout(coldStartTimer);
           setLoading(false);
         }
         return response;
@@ -48,6 +55,7 @@ function GlobalLoader() {
         reqCount = Math.max(0, reqCount - 1);
         if (reqCount === 0) {
           clearTimeout(timer);
+          clearTimeout(coldStartTimer);
           setLoading(false);
         }
         return Promise.reject(error);
