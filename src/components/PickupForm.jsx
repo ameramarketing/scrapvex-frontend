@@ -109,8 +109,11 @@ function PickupForm() {
           const formattedAddress = `${road ? road + ", " : ""}${city} (GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)})`;
           update("address", formattedAddress);
           
-          // Clear the city so they are forced to explicitly select from the dropdown
-          update("city", "");
+          // Match city with available cities list if possible, or fallback to current city
+          if (city) {
+            const matchedCity = (cities || []).find(c => c.toLowerCase() === city.toLowerCase());
+            if (matchedCity) update("city", matchedCity.toLowerCase());
+          }
           
           if (postcode && postcode.length === 6) update("pincode", postcode);
 
@@ -285,8 +288,9 @@ function PickupForm() {
           background: transparent;
           width: 100%;
           font-size: 14px;
-          color: var(--text-main, #0f172a);
-          font-weight: 600;
+          color: #0f172a !important;
+          -webkit-text-fill-color: #0f172a !important;
+          font-weight: 700;
         }
         .modern-select-row {
           display: flex;
@@ -305,8 +309,9 @@ function PickupForm() {
           background: transparent;
           width: 100%;
           font-size: 14px;
-          font-weight: 600;
-          color: var(--text-main, #334155);
+          font-weight: 700;
+          color: #0f172a !important;
+          -webkit-text-fill-color: #0f172a !important;
           cursor: pointer;
           appearance: auto;
           WebkitAppearance: auto;
@@ -384,8 +389,8 @@ function PickupForm() {
           color: var(--text-main, #0f172a);
         }
         select option { 
-          background: var(--card-bg, #ffffff) !important; 
-          color: var(--text-main, #0f172a) !important; 
+          background: #ffffff !important; 
+          color: #0f172a !important; 
         }
 
         body.dark-mode .pickup-form-card,
@@ -419,6 +424,13 @@ function PickupForm() {
         body.dark-mode .modern-select,
         [data-theme="dark"] .modern-input-field,
         [data-theme="dark"] .modern-select {
+          color: #ffffff !important;
+          -webkit-text-fill-color: #ffffff !important;
+        }
+
+        body.dark-mode select option,
+        [data-theme="dark"] select option {
+          background-color: #0e1626 !important;
           color: #ffffff !important;
         }
       `}</style>

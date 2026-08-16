@@ -1,16 +1,15 @@
 import React from "react";
+import { getScrapItemImage } from "../utils/scrapImages";
 
 function RateCard({ icon, name, price }) {
+  const scrapImg = typeof icon === "string" && (icon.startsWith("http") || icon.startsWith("/") || icon.startsWith("data:")) ? icon : getScrapItemImage(name, "", null);
+
   return (
     <div style={card} className="rate-card hover-lift">
       
-      {/* ICON / REAL PHOTO */}
+      {/* REAL PHOTO THUMBNAIL */}
       <div style={iconBox}>
-        {typeof icon === "string" && (icon.startsWith("http") || icon.startsWith("/") || icon.startsWith("data:")) ? (
-          <img src={icon} alt={name} style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }} />
-        ) : (
-          icon
-        )}
+        <img src={scrapImg} alt={name} style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "12px", boxShadow: "0 3px 10px rgba(0,0,0,0.12)", margin: "0 auto 8px auto", display: "block" }} />
       </div>
 
       {/* NAME */}

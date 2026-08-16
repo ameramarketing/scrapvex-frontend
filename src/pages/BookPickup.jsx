@@ -80,8 +80,8 @@ function BookPickup() {
             <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
               <span style={heroPill}><FaLeaf style={{ fontSize: "10px" }} /> GO GREEN</span>
             </div>
-            <h1 style={mobileHeroTitle}>Sell your scrap.<br />We pick it up.</h1>
-            <p style={mobileHeroSub}>
+            <h1 style={{ ...mobileHeroTitle, color: "#ffffff" }}>Sell your scrap.<br />We pick it up.</h1>
+            <p style={{ ...mobileHeroSub, color: "#ffffff", opacity: 0.95 }}>
               Schedule environment-friendly pickup for household & commercial scrap with instant digital payout.
             </p>
             <button style={mobileHeroCta} onClick={handleScheduleClick}>

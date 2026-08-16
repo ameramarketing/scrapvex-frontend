@@ -92,9 +92,31 @@ function App() {
     const pingBackend = () => {
       API.get("/settings", { hideLoader: true }).catch(() => {});
     };
+
+    // Check background notifications every 25 seconds
+    const checkBackgroundNotifs = async () => {
+      try {
+        const { data } = await API.get("/notifications", { hideLoader: true });
+        if (data && data.success && Array.isArray(data.data)) {
+          const unread = data.data.filter(n => n && !n.isRead);
+          if (unread.length > 0) {
+            const latest = unread[0];
+            triggerNativeNotification(latest.title || "ScrapVex Notification", latest.message, latest._id);
+          }
+        }
+      } catch (e) {
+        // Silently ignore background notification fetch errors
+      }
+    };
+
     pingBackend();
+    checkBackgroundNotifs();
     const interval = setInterval(pingBackend, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+    const notifInterval = setInterval(checkBackgroundNotifs, 25 * 1000);
+    return () => {
+      clearInterval(interval);
+      clearInterval(notifInterval);
+    };
   }, []);
 
   return (

@@ -301,14 +301,11 @@ function Rates() {
                   const priceParts = priceStr.split("/");
                   const price = priceParts[0] || "";
                   const unit = priceParts[1] ? `per ${priceParts[1]}` : "";
+                  const itemImg = getScrapItemImage(item[0], category.title, typeof item[2] === "string" ? item[2] : null);
                   return (
                     <div key={i} style={mobileRateCard}>
                       <div style={mobileRateCardIcon}>
-                        {typeof item[2] === "string" && (item[2].startsWith("http") || item[2].startsWith("/")) ? (
-                          <img src={item[2]} alt={item[0]} style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }} />
-                        ) : (
-                          item[2]
-                        )}
+                        <img src={itemImg} alt={item[0]} style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }} />
                       </div>
                       <div style={mobileRateCardName}>{item[0]}</div>
                       <div style={mobileRateCardPrice}>{price}</div>
