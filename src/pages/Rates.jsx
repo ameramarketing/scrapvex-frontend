@@ -27,6 +27,7 @@ import Footer from "../components/Footer";
 import RateCard from "../components/RateCard";
 import API from "../services/api";
 import { isMobileEnvironment } from "../platform/platform";
+import { getScrapItemImage } from "../utils/scrapImages";
 
 function Rates() {
   const navigate = useNavigate();
@@ -202,7 +203,7 @@ function Rates() {
       groups[title].items.push([
         item.name,
         `₹${item.price}/${item.unit}`,
-        getItemIcon(item.name)
+        getScrapItemImage(item.name, item.category, item.imageUrl) || getItemIcon(item.name)
       ]);
     });
 
@@ -301,7 +302,13 @@ function Rates() {
                   const unit = priceParts[1] ? `per ${priceParts[1]}` : "";
                   return (
                     <div key={i} style={mobileRateCard}>
-                      <div style={mobileRateCardIcon}>{item[2]}</div>
+                      <div style={mobileRateCardIcon}>
+                        {typeof item[2] === "string" && (item[2].startsWith("http") || item[2].startsWith("/")) ? (
+                          <img src={item[2]} alt={item[0]} style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }} />
+                        ) : (
+                          item[2]
+                        )}
+                      </div>
                       <div style={mobileRateCardName}>{item[0]}</div>
                       <div style={mobileRateCardPrice}>{price}</div>
                       <div style={mobileRateCardUnit}>{unit}</div>

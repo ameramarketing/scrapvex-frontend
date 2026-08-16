@@ -4,9 +4,13 @@ function RateCard({ icon, name, price }) {
   return (
     <div style={card} className="rate-card hover-lift">
       
-      {/* ICON */}
+      {/* ICON / REAL PHOTO */}
       <div style={iconBox}>
-        {icon}
+        {typeof icon === "string" && (icon.startsWith("http") || icon.startsWith("/") || icon.startsWith("data:")) ? (
+          <img src={icon} alt={name} style={{ width: "48px", height: "48px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.12)" }} />
+        ) : (
+          icon
+        )}
       </div>
 
       {/* NAME */}

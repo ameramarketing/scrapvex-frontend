@@ -15,6 +15,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useTheme } from "../context/ThemeContext";
 import { triggerNativeNotification } from "../utils/pushNotifications";
+import { getScrapItemImage } from "../utils/scrapImages";
 
 function FranchiseDashboard() {
 
@@ -805,8 +806,11 @@ const playBellSound = () => {
     try {
       let ep = type === "rate" ? `/admin/scrap-items/${id}` : type === "ad" ? `/ads/${id}` : `/admin/${type}s/${id}`;
       const { data } = await API.delete(ep);
-      if (data?.success) {
+      if (data?.success || data === "" || data?.message === "Item deleted") {
         showToast("success", "Item deleted successfully!");
+        if (type === "rate") {
+          setScrapItems(prev => prev.filter(i => i._id !== id));
+        }
         fetchAdminData();
       } else {
         showToast("error", data?.message || "Failed to delete item");
@@ -1467,9 +1471,16 @@ const playBellSound = () => {
                       minWidth: 0
                     }}
                   >
-                    <div style={{ flex: 1, minWidth: 0, paddingRight: "10px" }}>
-                      <div style={{ fontWeight: "800", fontSize: "14px", color: "var(--text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.name}</div>
-                      <div style={{ fontSize: "11px", color: "#0b8f3a", fontWeight: "700", marginTop: "3px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{it.category || "General"}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: 1, minWidth: 0, paddingRight: "10px" }}>
+                      <img 
+                        src={getScrapItemImage(it.name, it.category, it.imageUrl)} 
+                        alt={it.name} 
+                        style={{ width: "38px", height: "38px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 6px rgba(0,0,0,0.1)", flexShrink: 0 }} 
+                      />
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontWeight: "800", fontSize: "14px", color: "var(--text-main)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.name}</div>
+                        <div style={{ fontSize: "11px", color: "#0b8f3a", fontWeight: "700", marginTop: "2px", textTransform: "uppercase", letterSpacing: "0.5px" }}>{it.category || "General"}</div>
+                      </div>
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>

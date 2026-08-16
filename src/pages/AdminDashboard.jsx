@@ -14,6 +14,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useTheme } from "../context/ThemeContext";
 import { triggerNativeNotification } from "../utils/pushNotifications";
+import { getScrapItemImage } from "../utils/scrapImages";
 
 function WhatsAppGatewayPanel() {
   const [waData, setWaData] = useState({ isReady: false, status: 'initializing', qrCodeUrl: null });
@@ -1001,12 +1002,22 @@ const playBellSound = () => {
   };
 
   const handleDeleteItem = async (id, type) => {
-    if (!window.confirm(`Delete this ${type}?`)) return;
+    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
     try {
       let ep = type === "rate" ? `/admin/scrap-items/${id}` : type === "ad" ? `/ads/${id}` : `/admin/${type}s/${id}`;
-      await API.delete(ep);
-      showToast("success", "Deleted"); fetchAdminData();
-    } catch (e) { showToast("error", "Failed"); }
+      const { data } = await API.delete(ep);
+      if (data?.success || data === "" || data?.message === "Item deleted") {
+        showToast("success", "Item deleted successfully!");
+        if (type === "rate") {
+          setScrapItems(prev => prev.filter(i => i._id !== id));
+        }
+        fetchAdminData();
+      } else {
+        showToast("error", data?.message || "Failed to delete item");
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Failed to delete item");
+    }
   };
 
   const numberToWords = (num) => {
@@ -1748,10 +1759,17 @@ const playBellSound = () => {
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
                   {filteredItems.map(it => (
-                    <div key={it._id} style={{ background: "var(--card-bg, #ffffff)", border: "1.5px solid var(--card-border, #cbd5e1)", borderRadius: "14px", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "10px", boxShadow: "0 2px 5px rgba(0,0,0,0.02)", width: "100%", boxSizing: "border-box" }}>
-                       <div style={{ flex: "1 1 0", minWidth: 0 }}>
-                          <div style={{ fontSize: "14px", fontWeight: "800", color: "var(--text-main)", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.name}</div>
-                          <span style={{ display: "inline-block", background: "#f0fdf4", color: "#0b8f3a", fontSize: "9px", fontWeight: "800", padding: "2px 6px", borderRadius: "6px", textTransform: "uppercase" }}>{it.category}</span>
+                    <div key={it._id} style={{ background: "var(--card-bg, #ffffff)", border: "1.5px solid var(--card-border, #cbd5e1)", borderRadius: "14px", padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "12px", boxShadow: "0 2px 5px rgba(0,0,0,0.02)", width: "100%", boxSizing: "border-box" }}>
+                       <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: "1 1 0", minWidth: 0 }}>
+                         <img 
+                           src={getScrapItemImage(it.name, it.category, it.imageUrl)} 
+                           alt={it.name} 
+                           style={{ width: "38px", height: "38px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 6px rgba(0,0,0,0.1)", flexShrink: 0 }} 
+                         />
+                         <div style={{ minWidth: 0 }}>
+                           <div style={{ fontSize: "14px", fontWeight: "800", color: "var(--text-main)", marginBottom: "2px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.name}</div>
+                           <span style={{ display: "inline-block", background: "#f0fdf4", color: "#0b8f3a", fontSize: "9px", fontWeight: "800", padding: "2px 6px", borderRadius: "6px", textTransform: "uppercase" }}>{it.category}</span>
+                         </div>
                        </div>
                        <div style={{ display: "flex", gap: "8px", alignItems: "center", flexShrink: 0 }}>
                           <strong style={{ color: "#0b8f3a", fontSize: "15px", fontWeight: "900" }}>₹{it.price}<small style={{ fontSize: "11px", color: "var(--text-muted)", fontWeight: "normal" }}>/{it.unit}</small></strong>
