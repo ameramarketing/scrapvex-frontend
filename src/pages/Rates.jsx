@@ -297,8 +297,9 @@ function Rates() {
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                 {category.items.map((item, i) => {
-                  const priceParts = item[1].split("/");
-                  const price = priceParts[0];
+                  const priceStr = item && item[1] ? String(item[1]) : "";
+                  const priceParts = priceStr.split("/");
+                  const price = priceParts[0] || "";
                   const unit = priceParts[1] ? `per ${priceParts[1]}` : "";
                   return (
                     <div key={i} style={mobileRateCard}>
