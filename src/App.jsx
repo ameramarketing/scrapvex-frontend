@@ -40,6 +40,7 @@ import NativeOfflineBanner from "./components/NativeOfflineBanner";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { requestNotificationPermission } from "./utils/pushNotifications";
 import { isNativeApp, isMobileEnvironment } from "./platform/platform";
+import API from "./services/api";
 
 function InitialHomeScreen() {
   const isCapacitor = typeof window !== "undefined" && (
