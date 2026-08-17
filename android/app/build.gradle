@@ -15,10 +15,19 @@ android {
             cruncherEnabled = false
         }
     }
+    signingConfigs {
+        release {
+            storeFile file('scrapvex-release.keystore')
+            storePassword 'ScrapVexRelease2026!'
+            keyAlias 'scrapvex'
+            keyPassword 'ScrapVexRelease2026!'
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
