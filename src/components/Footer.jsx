@@ -37,10 +37,11 @@ function Footer() {
               <a href={settings.instagramUrl} target="_blank" rel="noreferrer" className="social-glow" style={{borderRadius:"10px"}}><Social icon={<FaInstagram />} /></a>
             ) : <Social icon={<FaInstagram />} />}
             
-            {settings ? (
-              <a href={settings.linkedinUrl || "#"} target="_blank" rel="noreferrer" className="social-glow" style={{borderRadius:"10px"}}><Social icon={<FaLinkedinIn />} /></a>
+            {settings?.linkedinUrl && settings.linkedinUrl !== "#" ? (
+              <a href={settings.linkedinUrl} target="_blank" rel="noreferrer" className="social-glow" style={{borderRadius:"10px"}}><Social icon={<FaLinkedinIn />} /></a>
             ) : <Social icon={<FaLinkedinIn />} />}
-            <Social icon={<FaWhatsapp />} />
+
+            <a href={settings?.whatsappUrl || (settings?.whatsappNumber ? `https://wa.me/91${settings.whatsappNumber}` : "https://wa.me/918491028539")} target="_blank" rel="noreferrer" className="social-glow" style={{borderRadius:"10px"}}><Social icon={<FaWhatsapp />} /></a>
           </div>
         </div>
 

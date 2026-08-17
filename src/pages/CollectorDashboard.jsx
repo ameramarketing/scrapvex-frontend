@@ -29,7 +29,7 @@ import {
   FaToggleOn,
   FaToggleOff, FaSave, FaUserShield, FaChevronRight, FaSun, FaMoon, FaEdit, FaPhone, FaPowerOff
 } from "react-icons/fa";
-import { triggerNativeNotification } from "../utils/pushNotifications";
+import { triggerNativeNotification, requestNotificationPermission } from "../utils/pushNotifications";
 import API from "../services/api";
 import Toast from "../components/Toast";
 import { performLogout } from "../utils/auth";
@@ -120,6 +120,7 @@ function CollectorDashboard() {
   const [settings, setSettings] = useState({ upiId: "scrapvex@okaxis" });
 
   useEffect(() => {
+    requestNotificationPermission().catch(() => {});
     API.get("/settings").then(({ data }) => {
       if (data?.success) setSettings(data.data);
     });

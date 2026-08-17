@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import API from "../services/api";
 import { 
   FaShieldAlt, FaDatabase, FaExchangeAlt, FaCookieBite, 
   FaUserCheck, FaLock, FaUserSecret, FaClipboardList, FaArrowLeft
@@ -8,6 +9,22 @@ import {
 
 function PrivacyPolicy() {
   const navigate = useNavigate();
+  const [settings, setSettings] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedSettings");
+      return cached ? JSON.parse(cached) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    API.get("/settings", { hideLoader: true }).then(res => {
+      if (res.data?.success) {
+        setSettings(res.data.data);
+      }
+    }).catch(() => {});
+  }, []);
 
   return (
     <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", color: "var(--text-main, #0f172a)" }}>
@@ -187,9 +204,11 @@ function PrivacyPolicy() {
               <div style={{ fontWeight: "800", color: "var(--text-main, #0f172a)", marginBottom: "4px", fontSize: "13px" }}>
                 Grievance Officer Details
               </div>
-              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Name:</strong> Mr. Sameer Carpenter</div>
-              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Email:</strong> sameer@scrapvex.com</div>
-              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Support:</strong> support@scrapvex.com</div>
+              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Name:</strong> {settings?.grievanceOfficerName || "Amir Sohail"}</div>
+              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Email:</strong> {settings?.grievanceOfficerEmail || settings?.contactEmail || "grievance@scrapvex.com"}</div>
+              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Phone:</strong> {settings?.grievanceOfficerPhone || settings?.contactPhone || "+91 8491028539"}</div>
+              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Address:</strong> {settings?.grievanceOfficerAddress || settings?.officeAddress || "Main Market, Rajouri, Jammu & Kashmir - 185131"}</div>
+              <div style={{ marginTop: "4px" }}><strong style={{ color: "var(--text-main, #0f172a)" }}>General Support:</strong> {settings?.contactEmail || "support@scrapvex.com"}</div>
             </div>
           </div>
 

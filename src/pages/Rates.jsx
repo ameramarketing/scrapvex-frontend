@@ -96,18 +96,8 @@ function Rates() {
   const fetchRates = async () => {
     try {
       const { data } = await API.get(`/scrap-items?city=${selectedCity}`, { hideLoader: true });
-      if (data.success && data.data && data.data.length > 0) {
-        const apiMap = new Map(data.data.map(item => [item.name.toLowerCase(), item]));
-        const merged = DEFAULT_ITEMS.map(dItem => {
-          const found = apiMap.get(dItem.name.toLowerCase());
-          return found || dItem;
-        });
-        data.data.forEach(item => {
-          if (!merged.some(m => m.name.toLowerCase() === item.name.toLowerCase())) {
-            merged.push(item);
-          }
-        });
-        setItems(merged);
+      if (data.success && Array.isArray(data.data)) {
+        setItems(data.data);
       }
     } catch (error) {
       console.warn("Rates silent fetch error:", error);

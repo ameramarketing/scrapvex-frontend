@@ -13,7 +13,7 @@ import { performLogout } from "../utils/auth";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useTheme } from "../context/ThemeContext";
-import { triggerNativeNotification } from "../utils/pushNotifications";
+import { triggerNativeNotification, requestNotificationPermission } from "../utils/pushNotifications";
 import { getScrapItemImage } from "../utils/scrapImages";
 
 function WhatsAppGatewayPanel() {
@@ -227,6 +227,9 @@ const playBellSound = () => {
   const [showEditRateModal, setShowEditRateModal] = useState(false);
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [broadcastForm, setBroadcastForm] = useState({ title: "", message: "", target: "All" });
+  const [broadcastLoading, setBroadcastLoading] = useState(false);
   const [brandLogoFile, setBrandLogoFile] = useState(null);
   const [faviconFile, setFaviconFile] = useState(null);
   const [appIconFile, setAppIconFile] = useState(null);
@@ -328,6 +331,7 @@ const playBellSound = () => {
   const showToast = (type, message) => setToast({ show: true, type, message });
 
   useEffect(() => {
+    requestNotificationPermission().catch(() => {});
     const interval = setInterval(async () => {
       try {
         const resP = await API.get("/admin/pickups", { hideLoader: true });
@@ -624,6 +628,27 @@ const playBellSound = () => {
       if (data.success) setBroadcasts(data.broadcasts);
     } catch (e) { console.error(e); }
     finally { setLoading(false); }
+  };
+
+  const handleSendBroadcast = async (e) => {
+    e?.preventDefault();
+    if (!broadcastForm.title.trim() || !broadcastForm.message.trim()) {
+      return showToast("error", "Please provide broadcast title and message");
+    }
+    setBroadcastLoading(true);
+    try {
+      const { data } = await API.post("/broadcasts", broadcastForm);
+      if (data.success) {
+        showToast("success", data.message || "Broadcast sent successfully! 📢");
+        setShowBroadcastModal(false);
+        setBroadcastForm({ title: "", message: "", target: "All" });
+        fetchBroadcasts();
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Failed to send broadcast");
+    } finally {
+      setBroadcastLoading(false);
+    }
   };
 
   const fetchAuditLogs = async () => {
@@ -1082,7 +1107,7 @@ const playBellSound = () => {
       if (data?.success || data === "" || data?.message === "Item deleted") {
         showToast("success", "Item deleted successfully!");
         if (type === "rate") {
-          setScrapItems(prev => prev.filter(i => i._id !== id));
+          setItems(prev => prev.filter(i => i._id !== id));
         }
         fetchAdminData();
       } else {
@@ -1891,9 +1916,6 @@ const playBellSound = () => {
                       <label style={labelStyle}><FaPhone/> Business Phone</label>
                       <Input value={settings.contactPhone} onChange={v => setSettings({...settings, contactPhone: v})} />
                       
-                      <label style={labelStyle}><FaRupeeSign/> Platform UPI ID for Deposits</label>
-                      <Input value={settings.upiId || ""} onChange={v => setSettings({...settings, upiId: v})} />
-
                       <label style={labelStyle}><FaMapMarkerAlt/> Office Address</label>
                       <Input value={settings.officeAddress} onChange={v => setSettings({...settings, officeAddress: v})} />
 
@@ -1902,6 +1924,26 @@ const playBellSound = () => {
 
                       <label style={labelStyle}><FaInstagram/> Instagram URL</label>
                       <Input value={settings.instagramUrl} onChange={v => setSettings({...settings, instagramUrl: v})} />
+
+                      <label style={labelStyle}>🔗 LinkedIn Profile URL</label>
+                      <Input value={settings.linkedinUrl || ""} onChange={v => setSettings({...settings, linkedinUrl: v})} placeholder="https://linkedin.com/company/scrapvex" />
+
+                      <label style={labelStyle}>💬 WhatsApp Support Link / Number</label>
+                      <Input value={settings.whatsappUrl || ""} onChange={v => setSettings({...settings, whatsappUrl: v})} placeholder="https://wa.me/918491028539" />
+
+                      <h4 style={{ margin: "20px 0 12px 0", color: "var(--primary)", fontSize: "14px" }}>⚖️ Grievance Officer & Legal Compliance (Privacy Policy)</h4>
+                      
+                      <label style={labelStyle}>Grievance Officer Name</label>
+                      <Input value={settings.grievanceOfficerName || ""} onChange={v => setSettings({...settings, grievanceOfficerName: v})} placeholder="e.g. Amir Sohail" />
+
+                      <label style={labelStyle}>Grievance Officer Email</label>
+                      <Input value={settings.grievanceOfficerEmail || ""} onChange={v => setSettings({...settings, grievanceOfficerEmail: v})} placeholder="grievance@scrapvex.com" />
+
+                      <label style={labelStyle}>Grievance Officer Phone</label>
+                      <Input value={settings.grievanceOfficerPhone || ""} onChange={v => setSettings({...settings, grievanceOfficerPhone: v})} placeholder="+91 8491028539" />
+
+                      <label style={labelStyle}>Grievance Officer Address</label>
+                      <Input value={settings.grievanceOfficerAddress || ""} onChange={v => setSettings({...settings, grievanceOfficerAddress: v})} placeholder="Main Market, Rajouri, Jammu & Kashmir - 185131" />
                    </div>
                  </div>
                  <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
@@ -2502,20 +2544,22 @@ const playBellSound = () => {
           {activeTab === "broadcasts" && (
             <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>Push Broadcasts</h3> 
-                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px" }} onClick={() => {
-                  const title = prompt("Broadcast Title:");
-                  const message = prompt("Message Content:");
-                  const target = prompt("Target (Users/Collectors/Franchises):");
-                  if(title && message) API.post("/broadcasts", { title, message, target }).then(()=>fetchBroadcasts());
-                }}><FaPlus/> New Broadcast</button>
+                <div>
+                  <h3 style={{ margin: "0", fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>📢 Real-Time Push Broadcasts</h3>
+                  <small style={{ color: "var(--text-muted)", fontSize: "12px" }}>Send instant push alerts with sound to users, collectors, or franchises</small>
+                </div>
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "10px 18px", cursor: "pointer" }} onClick={() => {
+                  setBroadcastForm({ title: "", message: "", target: "All" });
+                  setShowBroadcastModal(true);
+                }}><FaPlus/> Send New Broadcast</button>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {broadcasts.map(b => (
                   <div key={b._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", border: "1px solid var(--glass-border)" }}>
-                    <div>
+                    <div style={{ flex: 1, marginRight: "16px" }}>
                       <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px", marginBottom: "4px" }}>{b.title}</div>
-                      <small style={{ color: "var(--text-muted)" }}>Target: <span style={{ fontWeight: "bold", color: "var(--primary)" }}>{b.target}</span> • {new Date(b.createdAt).toLocaleDateString()}</small>
+                      <div style={{ color: "var(--text-muted)", fontSize: "13px", marginBottom: "6px" }}>{b.message}</div>
+                      <small style={{ color: "var(--text-muted)" }}>Target: <span style={{ fontWeight: "bold", color: "var(--primary)", background: "rgba(11, 143, 58, 0.1)", padding: "2px 8px", borderRadius: "6px" }}>{b.target || "All"}</span> • {new Date(b.createdAt).toLocaleString()}</small>
                     </div>
                   </div>
                 ))}
@@ -3168,6 +3212,58 @@ const playBellSound = () => {
            <Input placeholder="e.g. Refund for pickup #123" value={walletForm.description} onChange={v=>setWalletForm({...walletForm, description: v})} />
            
            <button className="native-btn" style={saveBtnBig} onClick={handleUpdateWallet}>Apply Adjustment</button>
+        </Modal>
+      )}
+
+      {showBroadcastModal && (
+        <Modal title="📢 Send Real-Time Push Broadcast" onClose={() => setShowBroadcastModal(false)}>
+           <label style={labelStyle}>Target Audience</label>
+           <select 
+             className="native-input" 
+             style={{ ...inputStyle, marginBottom: "15px" }} 
+             value={broadcastForm.target} 
+             onChange={e => setBroadcastForm({ ...broadcastForm, target: e.target.value })}
+           >
+              <option value="All">🌍 Everyone (All Users, Collectors & Franchises)</option>
+              <option value="Users">👤 All Customers / Users Only</option>
+              <option value="Collectors">🚛 All Collectors / Drivers Only</option>
+              <option value="Franchises">🏢 All Regional Franchises Only</option>
+           </select>
+
+           <label style={labelStyle}>Broadcast Title</label>
+           <Input 
+             placeholder="e.g. ⚡ Special Rate Boost Today in J&K!" 
+             value={broadcastForm.title} 
+             onChange={v => setBroadcastForm({ ...broadcastForm, title: v })} 
+           />
+
+           <label style={labelStyle}>Notification Message Content</label>
+           <textarea 
+             className="native-input"
+             rows={4}
+             placeholder="Enter the push notification message that will ring on user devices..." 
+             style={{ ...inputStyle, width: "100%", boxSizing: "border-box", resize: "vertical", marginBottom: "15px", fontFamily: "inherit" }}
+             value={broadcastForm.message} 
+             onChange={e => setBroadcastForm({ ...broadcastForm, message: e.target.value })}
+           />
+
+           <div style={{ background: "rgba(11, 143, 58, 0.08)", padding: "12px 14px", borderRadius: "10px", border: "1px solid rgba(11, 143, 58, 0.2)", marginBottom: "18px" }}>
+              <div style={{ fontSize: "12px", color: "var(--primary)", fontWeight: "bold", display: "flex", alignItems: "center", gap: "6px" }}>
+                🔔 Instant Push Alert Engine
+              </div>
+              <p style={{ margin: "4px 0 0 0", fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.4 }}>
+                This broadcast will send real-time system push notifications with sound & vibration to all active target devices in background and foreground.
+              </p>
+           </div>
+
+           <button 
+             className="native-btn" 
+             style={{ ...saveBtnBig, opacity: broadcastLoading ? 0.7 : 1 }} 
+             disabled={broadcastLoading} 
+             onClick={handleSendBroadcast}
+           >
+             {broadcastLoading ? "Broadcasting to Devices..." : "🚀 Send Instant Broadcast"}
+           </button>
         </Modal>
       )}
 

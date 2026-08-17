@@ -14,7 +14,7 @@ import { performLogout } from "../utils/auth";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useTheme } from "../context/ThemeContext";
-import { triggerNativeNotification } from "../utils/pushNotifications";
+import { triggerNativeNotification, requestNotificationPermission } from "../utils/pushNotifications";
 import { getScrapItemImage } from "../utils/scrapImages";
 
 function FranchiseDashboard() {
@@ -176,6 +176,7 @@ const playBellSound = () => {
   const showToast = (type, message) => setToast({ show: true, type, message });
 
   useEffect(() => {
+    requestNotificationPermission().catch(() => {});
     const interval = setInterval(async () => {
       try {
         const resP = await API.get("/admin/pickups", { hideLoader: true });
@@ -809,7 +810,7 @@ const playBellSound = () => {
       if (data?.success || data === "" || data?.message === "Item deleted") {
         showToast("success", "Item deleted successfully!");
         if (type === "rate") {
-          setScrapItems(prev => prev.filter(i => i._id !== id));
+          setItems(prev => prev.filter(i => i._id !== id));
         }
         fetchAdminData();
       } else {

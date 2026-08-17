@@ -97,17 +97,18 @@ function App() {
       }).catch(() => {});
     };
 
-    // Check background notifications every 60 seconds, only if user is logged in
+    // Check background notifications every 12 seconds for real-time alerts
     const checkBackgroundNotifs = async () => {
       try {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         if (!token) return;
-        const { data } = await API.get("/notifications?limit=5", { hideLoader: true });
+        const { data } = await API.get("/notifications?limit=10", { hideLoader: true });
         if (data && data.success && Array.isArray(data.data)) {
           const unread = data.data.filter(n => n && !n.isRead);
           if (unread.length > 0) {
-            const latest = unread[0];
-            triggerNativeNotification(latest.title || "ScrapVex Notification", latest.message, latest._id);
+            for (const notif of unread.slice(0, 3)) {
+              triggerNativeNotification(notif.title || "ScrapVex Alert 🔔", notif.message, notif._id);
+            }
           }
         }
       } catch (e) {}
@@ -117,8 +118,8 @@ function App() {
     const interval = setInterval(pingBackend, 5 * 60 * 1000);
     const notifStartDelay = setTimeout(() => {
       checkBackgroundNotifs();
-    }, 10000);
-    const notifInterval = setInterval(checkBackgroundNotifs, 60 * 1000);
+    }, 2000);
+    const notifInterval = setInterval(checkBackgroundNotifs, 12 * 1000);
     return () => {
       clearInterval(interval);
       clearInterval(notifInterval);
