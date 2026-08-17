@@ -4,5 +4,6 @@ dist/
 .env.local
 npm-debug.log
 .DS_Store
-*.apk
-public/*.apk
+android/app/build/
+android/build/
+android/.gradle/
