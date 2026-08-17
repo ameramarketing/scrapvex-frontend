@@ -38,7 +38,7 @@ import MobileAppShell from "./components/MobileAppShell";
 import GlobalLoader from "./components/GlobalLoader";
 import NativeOfflineBanner from "./components/NativeOfflineBanner";
 import { StatusBar, Style } from "@capacitor/status-bar";
-import { requestNotificationPermission } from "./utils/pushNotifications";
+import { requestNotificationPermission, triggerNativeNotification } from "./utils/pushNotifications";
 import { isNativeApp, isMobileEnvironment } from "./platform/platform";
 import API from "./services/api";
 
