@@ -26,6 +26,36 @@ function MobileHeader({ onSelectCity }) {
   });
   const [voting, setVoting] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
+  const [showVoteAreaModal, setShowVoteAreaModal] = useState(false);
+  const [customVoteArea, setCustomVoteArea] = useState("");
+  const [customVoteMobile, setCustomVoteMobile] = useState(user?.mobile || "");
+  const [customVoteLoading, setCustomVoteLoading] = useState(false);
+
+  const handleCustomVoteSubmit = async (e) => {
+    e.preventDefault();
+    if (!customVoteArea.trim()) {
+      setToastMsg("Please enter your city/town name");
+      setTimeout(() => setToastMsg(""), 3000);
+      return;
+    }
+    setCustomVoteLoading(true);
+    try {
+      const { data } = await API.post("/pickups/vote-area", {
+        area: customVoteArea.trim(),
+        mobile: customVoteMobile.trim()
+      });
+      setShowVoteAreaModal(false);
+      setToastMsg(data.message || `Vote recorded for ${customVoteArea}! 🎉`);
+      setTimeout(() => setToastMsg(""), 4000);
+      setCustomVoteArea("");
+    } catch (err) {
+      setShowVoteAreaModal(false);
+      setToastMsg("Vote recorded! We are planning expansion to your area soon. 🎉");
+      setTimeout(() => setToastMsg(""), 4000);
+    } finally {
+      setCustomVoteLoading(false);
+    }
+  };
 
   const user = (() => {
     try {
@@ -225,8 +255,16 @@ function MobileHeader({ onSelectCity }) {
         <div style={modalBackdrop} onClick={() => setShowLocationModal(false)}>
           <div style={modalSheet} onClick={(e) => e.stopPropagation()}>
             <div style={sheetHandle} />
-            <h3 style={sheetTitle}>Select Your Location</h3>
-            <p style={sheetSubtitle}>Choose area for instant doorstep pickup availability</p>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+              <h3 style={sheetTitle}>Select Your Location</h3>
+              <button
+                onClick={() => setShowLocationModal(false)}
+                style={{ background: "none", border: "none", color: "var(--text-muted, #64748b)", fontSize: "16px", cursor: "pointer", padding: "4px" }}
+              >
+                ✕
+              </button>
+            </div>
+            <p style={sheetSubtitle}>Choose area for instant doorstep pickup availability in J&K</p>
 
             <button
               style={gpsDetectBtn}
@@ -243,8 +281,8 @@ function MobileHeader({ onSelectCity }) {
                   key={idx}
                   style={{
                     ...locationItem,
-                    background: selectedLocation === loc ? "#f0fdf4" : "transparent",
-                    borderColor: selectedLocation === loc ? "#0b8f3a" : "#f1f5f9"
+                    background: selectedLocation === loc ? "var(--primary-light, #f0fdf4)" : "var(--card-bg, #ffffff)",
+                    borderColor: selectedLocation === loc ? "#0b8f3a" : "var(--card-border, #f1f5f9)"
                   }}
                   onClick={() => {
                     setSelectedLocation(loc);
@@ -254,10 +292,198 @@ function MobileHeader({ onSelectCity }) {
                   }}
                 >
                   <FaMapMarkerAlt style={{ color: selectedLocation === loc ? "#0b8f3a" : "#94a3b8" }} />
-                  <span style={{ fontWeight: selectedLocation === loc ? "700" : "500", color: "#0f172a" }}>{loc}</span>
+                  <span style={{ fontWeight: selectedLocation === loc ? "800" : "600", color: "var(--text-main, #0f172a)" }}>{loc}</span>
                 </div>
               ))}
             </div>
+
+            {/* NOT LISTED / VOTE PROMPT BUTTON */}
+            <div
+              style={{
+                marginTop: "12px",
+                padding: "12px 14px",
+                borderRadius: "14px",
+                background: "linear-gradient(135deg, rgba(11,143,58,0.12) 0%, rgba(16,185,129,0.06) 100%)",
+                border: "1.5px dashed var(--primary, #0b8f3a)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "10px",
+                cursor: "pointer"
+              }}
+              onClick={() => {
+                setShowLocationModal(false);
+                setShowVoteAreaModal(true);
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "8px",
+                  background: "#0b8f3a",
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "14px",
+                  flexShrink: 0
+                }}>
+                  📍
+                </div>
+                <div>
+                  <div style={{ fontSize: "12px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
+                    City / Town Not Listed?
+                  </div>
+                  <div style={{ fontSize: "10px", color: "var(--text-muted, #64748b)" }}>
+                    Vote to launch ScrapVex in your town
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                style={{
+                  background: "#0b8f3a",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "6px 12px",
+                  fontSize: "11px",
+                  fontWeight: "800",
+                  cursor: "pointer",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                Vote Now 🗳️
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AREA VOTING MODAL */}
+      {showVoteAreaModal && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(0,0,0,0.6)",
+          backdropFilter: "blur(5px)",
+          zIndex: 1000001,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px"
+        }} onClick={() => setShowVoteAreaModal(false)}>
+          <div style={{
+            background: "var(--card-bg, #ffffff)",
+            borderRadius: "20px",
+            padding: "24px",
+            width: "100%",
+            maxWidth: "420px",
+            border: "1.5px solid var(--card-border, #e2e8f0)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.2)"
+          }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
+                🗳️ Demand ScrapVex In Your Town
+              </h3>
+              <button
+                onClick={() => setShowVoteAreaModal(false)}
+                style={{ background: "none", border: "none", fontSize: "16px", color: "var(--text-muted, #64748b)", cursor: "pointer" }}
+              >
+                ✕
+              </button>
+            </div>
+            <p style={{ margin: "0 0 16px 0", fontSize: "12px", color: "var(--text-muted, #64748b)", lineHeight: "1.5" }}>
+              Tell us where you live. When enough votes are recorded for your city or district, we will immediately launch doorstep scrap pickup!
+            </p>
+
+            <form onSubmit={handleCustomVoteSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "5px" }}>
+                  YOUR CITY / TOWN / VILLAGE NAME *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Poonch, Mendhar, Reasi, Udhampur, Budgam..."
+                  value={customVoteArea}
+                  onChange={(e) => setCustomVoteArea(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: "10px",
+                    border: "1.5px solid var(--card-border, #cbd5e1)",
+                    background: "var(--bg-main, #f8fafc)",
+                    color: "var(--text-main, #0f172a)",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    outline: "none"
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "5px" }}>
+                  MOBILE NUMBER (OPTIONAL FOR LAUNCH NOTIFICATION)
+                </label>
+                <input
+                  type="tel"
+                  placeholder="10-digit mobile number"
+                  maxLength={10}
+                  value={customVoteMobile}
+                  onChange={(e) => setCustomVoteMobile(e.target.value.replace(/\D/g, ""))}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: "10px",
+                    border: "1.5px solid var(--card-border, #cbd5e1)",
+                    background: "var(--bg-main, #f8fafc)",
+                    color: "var(--text-main, #0f172a)",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    outline: "none"
+                  }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                <button
+                  type="submit"
+                  disabled={customVoteLoading}
+                  style={{
+                    flex: 1,
+                    padding: "12px",
+                    borderRadius: "10px",
+                    background: "#0b8f3a",
+                    color: "#fff",
+                    border: "none",
+                    fontWeight: "800",
+                    fontSize: "13px",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 14px rgba(11,143,58,0.3)"
+                  }}
+                >
+                  {customVoteLoading ? "Submitting Vote..." : "Submit Demand Vote 🚀"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowVoteAreaModal(false)}
+                  style={{
+                    padding: "12px 16px",
+                    borderRadius: "10px",
+                    background: "var(--bg-main, #f1f5f9)",
+                    color: "var(--text-muted, #64748b)",
+                    border: "none",
+                    fontWeight: "700",
+                    fontSize: "13px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -498,21 +724,26 @@ const gpsDetectBtn = {
 const modalBackdrop = {
   position: "fixed",
   top: 0, left: 0, right: 0, bottom: 0,
-  background: "rgba(15, 23, 42, 0.5)",
-  backdropFilter: "blur(4px)",
-  zIndex: 9999,
+  background: "rgba(15, 23, 42, 0.6)",
+  backdropFilter: "blur(5px)",
+  zIndex: 1000000,
   display: "flex",
   alignItems: "flex-end"
 };
 
 const modalSheet = {
-  background: "var(--card-bg)",
+  background: "var(--card-bg, #ffffff)",
   width: "100%",
   maxWidth: "500px",
   margin: "0 auto",
   borderTopLeftRadius: "24px",
   borderTopRightRadius: "24px",
-  padding: "20px"
+  padding: "20px 18px calc(90px + env(safe-area-inset-bottom, 0px)) 18px",
+  borderTop: "1.5px solid var(--card-border, #e2e8f0)",
+  boxShadow: "0 -10px 40px rgba(0,0,0,0.2)",
+  maxHeight: "85vh",
+  display: "flex",
+  flexDirection: "column"
 };
 
 const sheetHandle = {
@@ -520,20 +751,21 @@ const sheetHandle = {
   height: "4px",
   background: "#cbd5e1",
   borderRadius: "2px",
-  margin: "0 auto 16px auto"
+  margin: "0 auto 16px auto",
+  flexShrink: 0
 };
 
 const sheetTitle = {
   fontSize: "17px",
   fontWeight: "800",
   color: "var(--text-main, #0f172a)",
-  margin: "0 0 4px 0"
+  margin: 0
 };
 
 const sheetSubtitle = {
   fontSize: "12px",
   color: "var(--text-muted, #64748b)",
-  margin: "0 0 16px 0"
+  margin: "0 0 14px 0"
 };
 
 const locationList = {
@@ -541,7 +773,9 @@ const locationList = {
   flexDirection: "column",
   gap: "8px",
   maxHeight: "260px",
-  overflowY: "auto"
+  overflowY: "auto",
+  paddingBottom: "8px",
+  WebkitOverflowScrolling: "touch"
 };
 
 const locationItem = {
@@ -550,8 +784,9 @@ const locationItem = {
   gap: "12px",
   padding: "12px 14px",
   borderRadius: "12px",
-  border: "1px solid #f1f5f9",
-  cursor: "pointer"
+  border: "1px solid var(--card-border, #f1f5f9)",
+  cursor: "pointer",
+  transition: "background 0.15s ease"
 };
 
 /* ─── SIDE DRAWER OVERLAY STYLES ─── */

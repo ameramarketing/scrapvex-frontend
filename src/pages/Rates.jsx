@@ -304,12 +304,63 @@ function Rates() {
             </div>
           </div>
 
-          <div style={{ textAlign: "right", marginBottom: "8px" }}>
+          {/* CITY NOT LISTED PROMINENT BANNER BUTTON */}
+          <div
+            style={{
+              margin: "8px 0 14px 0",
+              padding: "12px 14px",
+              borderRadius: "14px",
+              background: "linear-gradient(135deg, rgba(11,143,58,0.12) 0%, rgba(16,185,129,0.06) 100%)",
+              border: "1.5px dashed var(--primary, #0b8f3a)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "10px",
+              cursor: "pointer",
+              boxShadow: "0 2px 10px rgba(11,143,58,0.06)"
+            }}
+            onClick={() => setShowVoteModal(true)}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{
+                width: "34px",
+                height: "34px",
+                borderRadius: "10px",
+                background: "#0b8f3a",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "15px",
+                flexShrink: 0
+              }}>
+                📍
+              </div>
+              <div>
+                <div style={{ fontSize: "12px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
+                  City / Town Not Listed?
+                </div>
+                <div style={{ fontSize: "10px", color: "var(--text-muted, #64748b)" }}>
+                  Vote to launch ScrapVex in your town
+                </div>
+              </div>
+            </div>
             <button
-              onClick={() => setShowVoteModal(true)}
-              style={{ background: "none", border: "none", color: "#0b8f3a", fontSize: "11px", fontWeight: "700", cursor: "pointer", textDecoration: "underline" }}
+              type="button"
+              style={{
+                background: "#0b8f3a",
+                color: "#ffffff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "6px 12px",
+                fontSize: "11px",
+                fontWeight: "800",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                boxShadow: "0 2px 8px rgba(11,143,58,0.3)"
+              }}
             >
-              📍 City not listed? Demand ScrapVex in your area
+              Vote Now 🗳️
             </button>
           </div>
 
@@ -430,16 +481,70 @@ function Rates() {
 
       {/* SEARCH */}
       <div className="container" style={{ paddingBottom: "15px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+        {/* DESKTOP CITY NOT LISTED BANNER BUTTON */}
+        <div
+          style={{
+            margin: "0 0 16px 0",
+            padding: "16px 20px",
+            borderRadius: "16px",
+            background: "linear-gradient(135deg, rgba(11,143,58,0.1) 0%, rgba(16,185,129,0.05) 100%)",
+            border: "1.5px dashed var(--primary, #0b8f3a)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "15px",
+            cursor: "pointer",
+            boxShadow: "0 4px 16px rgba(11,143,58,0.06)"
+          }}
+          onClick={() => setShowVoteModal(true)}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{
+              width: "42px",
+              height: "42px",
+              borderRadius: "12px",
+              background: "#0b8f3a",
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "18px",
+              flexShrink: 0
+            }}>
+              📍
+            </div>
+            <div>
+              <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
+                Your City / Town Not Listed Above?
+              </div>
+              <div style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", marginTop: "2px" }}>
+                Cast a quick demand vote and help us launch fast doorstep pickup in your district!
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            style={{
+              background: "#0b8f3a",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "10px",
+              padding: "10px 18px",
+              fontSize: "13px",
+              fontWeight: "800",
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              boxShadow: "0 4px 12px rgba(11,143,58,0.3)"
+            }}
+          >
+            Demand In Your City 🗳️
+          </button>
+        </div>
+
+        <div style={{ marginBottom: "8px" }}>
           <label style={{ fontWeight: "bold", color: "var(--primary)" }}>
             <FaMapMarkerAlt /> Select Your City
           </label>
-          <button
-            onClick={() => setShowVoteModal(true)}
-            style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "13px", fontWeight: "700", cursor: "pointer", textDecoration: "underline" }}
-          >
-            🗳️ City not listed? Demand ScrapVex in your district
-          </button>
         </div>
 
         <div style={{ ...searchBox, width: "100%", marginBottom: "15px" }}>
