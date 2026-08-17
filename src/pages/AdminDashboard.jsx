@@ -968,9 +968,15 @@ const playBellSound = () => {
 
   const handleUpdateRate = async () => {
     try {
-      const { data } = await API.put(`/admin/scrap-items/${editingRate._id}`, { price: editingRate.price });
-      if (data.success) { showToast("success", "Rate Updated"); setShowEditRateModal(false); fetchAdminData(); }
-    } catch (e) { showToast("error", "Failed"); }
+      const { data } = await API.put(`/admin/scrap-items/${editingRate._id}`, {
+        name: editingRate.name,
+        price: Number(editingRate.price),
+        category: editingRate.category,
+        unit: editingRate.unit,
+        image: editingRate.image || ""
+      });
+      if (data.success) { showToast("success", "Rate Updated Successfully! ✅"); setShowEditRateModal(false); fetchAdminData(); }
+    } catch (e) { showToast("error", "Failed to update item"); }
   };
 
   const handleCreateUser = async () => {
@@ -2827,11 +2833,23 @@ const playBellSound = () => {
 
       {showItemModal && (
         <Modal title="Add New Rate" onClose={() => setShowItemModal(false)}>
-          <Input placeholder="Item Name" value={newItem.name} onChange={v => setNewItem({...newItem, name: v})} />
-          <Input placeholder="Price (₹)" type="number" value={newItem.price} onChange={v => setNewItem({...newItem, price: v})} />
-          <select className="native-input" style={inputStyle} value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})}>
-             <option value="kg">kg</option><option value="Pcs">Pcs</option><option value="Unit">Unit</option>
-          </select>
+          <label style={labelStyle}>Item Name</label>
+          <Input placeholder="e.g. Copper Wire / Split AC" value={newItem.name} onChange={v => setNewItem({...newItem, name: v})} />
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            <div>
+              <label style={labelStyle}>Price (₹)</label>
+              <Input placeholder="Price" type="number" value={newItem.price} onChange={v => setNewItem({...newItem, price: v})} />
+            </div>
+            <div>
+              <label style={labelStyle}>Unit</label>
+              <select className="native-input" style={inputStyle} value={newItem.unit} onChange={e => setNewItem({...newItem, unit: e.target.value})}>
+                 <option value="kg">per kg</option><option value="unit">per unit</option><option value="Pcs">per Pcs</option>
+              </select>
+            </div>
+          </div>
+
+          <label style={labelStyle}>Category</label>
           <select className="native-input" style={inputStyle} value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})}>
              <option value="Paper">📄 Paper</option>
              <option value="Plastic">🧴 Plastic</option>
@@ -2843,6 +2861,16 @@ const playBellSound = () => {
              <option value="Vehicles">🚗 Vehicles</option>
              <option value="Other">📦 Other</option>
           </select>
+
+          <label style={labelStyle}>Custom Image URL (Optional - leave empty for auto 3D image)</label>
+          <Input placeholder="https://example.com/image.png" value={newItem.image || ""} onChange={v => setNewItem({...newItem, image: v})} />
+          {newItem.image && (
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "6px 0 12px 0", padding: "8px 12px", background: "var(--bg-main, #f1f5f9)", borderRadius: "10px" }}>
+              <img src={newItem.image} alt="Preview" style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "8px" }} onError={(e) => { e.target.style.display = "none"; }} />
+              <span style={{ fontSize: "12px", color: "var(--text-muted, #64748b)" }}>Image Preview</span>
+            </div>
+          )}
+
           <button className="native-btn" style={saveBtnBig} onClick={handleCreateItem}>Add To System</button>
         </Modal>
       )}
@@ -2887,8 +2915,44 @@ const playBellSound = () => {
 
       {showEditRateModal && editingRate && (
         <Modal title={`Edit ${editingRate.name}`} onClose={() => setShowEditRateModal(false)}>
-           <label style={labelStyle}>Update Market Price (₹)</label>
-           <Input type="number" value={editingRate.price} onChange={v => setEditingRate({...editingRate, price: v})} />
+           <label style={labelStyle}>Item Name</label>
+           <Input value={editingRate.name || ""} onChange={v => setEditingRate({...editingRate, name: v})} />
+
+           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+             <div>
+               <label style={labelStyle}>Price (₹)</label>
+               <Input type="number" value={editingRate.price} onChange={v => setEditingRate({...editingRate, price: v})} />
+             </div>
+             <div>
+               <label style={labelStyle}>Unit</label>
+               <select className="native-input" style={inputStyle} value={editingRate.unit || "kg"} onChange={e => setEditingRate({...editingRate, unit: e.target.value})}>
+                  <option value="kg">per kg</option><option value="unit">per unit</option><option value="Pcs">per Pcs</option>
+               </select>
+             </div>
+           </div>
+
+           <label style={labelStyle}>Category</label>
+           <select className="native-input" style={inputStyle} value={editingRate.category || "Other"} onChange={e => setEditingRate({...editingRate, category: e.target.value})}>
+              <option value="Paper">📄 Paper</option>
+              <option value="Plastic">🧴 Plastic</option>
+              <option value="Metal">🔩 Metal</option>
+              <option value="Large Appliances">❄️ Large Appliances</option>
+              <option value="Small Appliances">🔌 Small Appliances</option>
+              <option value="IT-EWaste">💻 IT / E-Waste</option>
+              <option value="Battery">🔋 Battery</option>
+              <option value="Vehicles">🚗 Vehicles</option>
+              <option value="Other">📦 Other</option>
+           </select>
+
+           <label style={labelStyle}>Custom Image URL (Optional - leave empty for auto 3D image)</label>
+           <Input placeholder="https://example.com/item.png" value={editingRate.image || ""} onChange={v => setEditingRate({...editingRate, image: v})} />
+           {editingRate.image && (
+             <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "6px 0 12px 0", padding: "8px 12px", background: "var(--bg-main, #f1f5f9)", borderRadius: "10px" }}>
+               <img src={editingRate.image} alt="Preview" style={{ width: "40px", height: "40px", objectFit: "contain", borderRadius: "8px" }} onError={(e) => { e.target.style.display = "none"; }} />
+               <span style={{ fontSize: "12px", color: "var(--text-muted, #64748b)" }}>Image Preview</span>
+             </div>
+           )}
+
            <button className="native-btn" style={saveBtnBig} onClick={handleUpdateRate}>Save Changes</button>
         </Modal>
       )}

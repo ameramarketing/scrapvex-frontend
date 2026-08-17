@@ -197,7 +197,7 @@ function Rates() {
       groups[title].items.push([
         item.name,
         `₹${item.price}/${item.unit}`,
-        getScrapItemImage(item.name, item.category, item.imageUrl) || getItemIcon(item.name)
+        getScrapItemImage(item.name, item.category, item.image || item.imageUrl) || getItemIcon(item.name)
       ]);
     });
 
