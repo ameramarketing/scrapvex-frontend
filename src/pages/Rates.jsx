@@ -29,14 +29,34 @@ import API from "../services/api";
 import { isMobileEnvironment } from "../platform/platform";
 import { getScrapItemImage } from "../utils/scrapImages";
 
+const DEFAULT_ITEMS = [
+  { _id: "1", name: "Office Paper", category: "Paper", price: 14, unit: "kg" },
+  { _id: "2", name: "Newspaper", category: "Paper", price: 15, unit: "kg" },
+  { _id: "3", name: "Books", category: "Paper", price: 12, unit: "kg" },
+  { _id: "4", name: "Cardboard", category: "Paper", price: 8, unit: "kg" },
+  { _id: "5", name: "Iron / Loha", category: "Metal", price: 25, unit: "kg" },
+  { _id: "6", name: "Steel", category: "Metal", price: 42, unit: "kg" },
+  { _id: "7", name: "Copper / Tamba", category: "Metal", price: 505, unit: "kg" },
+  { _id: "8", name: "Brass / Peetal", category: "Metal", price: 325, unit: "kg" },
+  { _id: "9", name: "Aluminium", category: "Metal", price: 112, unit: "kg" },
+  { _id: "10", name: "Plastic", category: "Plastic", price: 5, unit: "kg" },
+  { _id: "11", name: "Pet Bottles", category: "Plastic", price: 10, unit: "kg" },
+  { _id: "12", name: "Semi Auto Washing Machine", category: "Appliances", price: 800, unit: "unit" },
+  { _id: "13", name: "Single Door Fridge", category: "Appliances", price: 1100, unit: "unit" },
+  { _id: "14", name: "AC 1.5 Ton", category: "Appliances", price: 4500, unit: "unit" },
+  { _id: "15", name: "Inverter Battery", category: "Appliances", price: 81, unit: "kg" },
+  { _id: "16", name: "Laptop", category: "Electronic", price: 500, unit: "unit" },
+  { _id: "17", name: "Computer CPU", category: "Electronic", price: 400, unit: "unit" }
+];
+
 function Rates() {
   const navigate = useNavigate();
   const isMobile = isMobileEnvironment();
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(DEFAULT_ITEMS);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [selectedCity, setSelectedCity] = useState("");
-  const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedCity, setSelectedCity] = useState("Rajouri");
+  const [cities, setCities] = useState(["Rajouri"]);
   const [activeCategory, setActiveCategory] = useState("All");
 
   useEffect(() => {
@@ -49,7 +69,7 @@ function Rates() {
 
   const fetchActiveCities = async () => {
     try {
-      const { data } = await API.get("/scrap-items/cities");
+      const { data } = await API.get("/scrap-items/cities", { hideLoader: true });
       if (data.success && data.cities.length > 0) {
         setCities(data.cities);
         setSelectedCity(data.cities[0]);
@@ -63,33 +83,12 @@ function Rates() {
     }
   };
 
-  const defaultItems = [
-    { _id: "1", name: "Office Paper", category: "Paper", price: 14, unit: "kg" },
-    { _id: "2", name: "Newspaper", category: "Paper", price: 15, unit: "kg" },
-    { _id: "3", name: "Books", category: "Paper", price: 12, unit: "kg" },
-    { _id: "4", name: "Cardboard", category: "Paper", price: 8, unit: "kg" },
-    { _id: "5", name: "Iron / Loha", category: "Metal", price: 25, unit: "kg" },
-    { _id: "6", name: "Steel", category: "Metal", price: 42, unit: "kg" },
-    { _id: "7", name: "Copper / Tamba", category: "Metal", price: 505, unit: "kg" },
-    { _id: "8", name: "Brass / Peetal", category: "Metal", price: 325, unit: "kg" },
-    { _id: "9", name: "Aluminium", category: "Metal", price: 112, unit: "kg" },
-    { _id: "10", name: "Plastic", category: "Plastic", price: 5, unit: "kg" },
-    { _id: "11", name: "Pet Bottles", category: "Plastic", price: 10, unit: "kg" },
-    { _id: "12", name: "Semi Auto Washing Machine", category: "Appliances", price: 800, unit: "unit" },
-    { _id: "13", name: "Single Door Fridge", category: "Appliances", price: 1100, unit: "unit" },
-    { _id: "14", name: "AC 1.5 Ton", category: "Appliances", price: 4500, unit: "unit" },
-    { _id: "15", name: "Inverter Battery", category: "Appliances", price: 81, unit: "kg" },
-    { _id: "16", name: "Laptop", category: "Electronic", price: 500, unit: "unit" },
-    { _id: "17", name: "Computer CPU", category: "Electronic", price: 400, unit: "unit" }
-  ];
-
   const fetchRates = async () => {
     try {
-      setLoading(true);
-      const { data } = await API.get(`/scrap-items?city=${selectedCity}`);
+      const { data } = await API.get(`/scrap-items?city=${selectedCity}`, { hideLoader: true });
       if (data.success && data.data && data.data.length > 0) {
         const apiMap = new Map(data.data.map(item => [item.name.toLowerCase(), item]));
-        const merged = defaultItems.map(dItem => {
+        const merged = DEFAULT_ITEMS.map(dItem => {
           const found = apiMap.get(dItem.name.toLowerCase());
           return found || dItem;
         });
@@ -99,14 +98,9 @@ function Rates() {
           }
         });
         setItems(merged);
-      } else {
-        setItems(defaultItems);
       }
     } catch (error) {
-      console.error("Rates error:", error);
-      setItems(defaultItems);
-    } finally {
-      setLoading(false);
+      console.warn("Rates silent fetch error:", error);
     }
   };
 

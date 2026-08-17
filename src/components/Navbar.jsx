@@ -135,8 +135,9 @@ function Navbar() {
           )}
 
           <a 
-            href={settings?.appDownloadLink && settings.appDownloadLink !== "#" ? settings.appDownloadLink : "/ScrapVex.apk"} 
-            download="ScrapVex.apk" 
+            href={settings?.appDownloadLink && settings.appDownloadLink !== "#" ? settings.appDownloadLink : "https://github.com/ameramarketing/scrapvex-frontend/releases/download/v1.0.0/ScrapVex.apk"} 
+            target="_blank"
+            rel="noopener noreferrer"
             style={downloadBtn} 
             className="hide-on-mobile logo-zoom"
           >
@@ -180,8 +181,9 @@ function Navbar() {
               </Link>
             ))}
             <a 
-              href={settings?.appDownloadLink && settings.appDownloadLink !== "#" ? settings.appDownloadLink : "/ScrapVex.apk"} 
-              download="ScrapVex.apk"
+              href={settings?.appDownloadLink && settings.appDownloadLink !== "#" ? settings.appDownloadLink : "https://github.com/ameramarketing/scrapvex-frontend/releases/download/v1.0.0/ScrapVex.apk"} 
+              target="_blank"
+              rel="noopener noreferrer"
               style={{...mobileNavLink, color: "var(--primary)"}} 
               className="nav-link-glow" 
               onClick={closeMenu}

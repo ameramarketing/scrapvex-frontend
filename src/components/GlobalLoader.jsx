@@ -1,40 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { FaRecycle } from "react-icons/fa";
 import API from "../services/api";
 
 function GlobalLoader() {
-  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [loadingText, setLoadingText] = useState("Loading ScrapVex...");
 
-  // Trigger brief loader on route changes
-  useEffect(() => {
-    setLoading(true);
-    setLoadingText("Opening Page...");
-    const timer = setTimeout(() => setLoading(false), 400);
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
-
-  // Intercept API requests to show loader if request takes > 150ms
+  // Intercept API requests to show loader only for long-running cold starts (> 2.5s)
   useEffect(() => {
     let reqCount = 0;
     let timer = null;
-    let coldStartTimer = null;
 
     const reqInterceptor = API.interceptors.request.use((config) => {
       if (config.hideLoader) return config;
       reqCount++;
       if (reqCount === 1) {
+        // Only show full loader if backend takes > 2500ms (e.g. Render server waking up)
         timer = setTimeout(() => {
           setLoading(true);
-          setLoadingText("Fetching Data...");
-        }, 150);
-
-        // If request takes more than 3.5s, server is waking up from sleep mode
-        coldStartTimer = setTimeout(() => {
           setLoadingText("Waking up server... Please wait a few seconds ⚡");
-        }, 3500);
+        }, 2500);
       }
       return config;
     });
@@ -45,7 +30,6 @@ function GlobalLoader() {
         reqCount = Math.max(0, reqCount - 1);
         if (reqCount === 0) {
           clearTimeout(timer);
-          clearTimeout(coldStartTimer);
           setLoading(false);
         }
         return response;
@@ -55,7 +39,6 @@ function GlobalLoader() {
         reqCount = Math.max(0, reqCount - 1);
         if (reqCount === 0) {
           clearTimeout(timer);
-          clearTimeout(coldStartTimer);
           setLoading(false);
         }
         return Promise.reject(error);
@@ -135,7 +118,7 @@ const iconStyle = {
 
 const titleStyle = {
   margin: "6px 0 0 0",
-  fontSize: "18px",
+  fontSize: "16px",
   fontWeight: "800",
   color: "var(--text-main, #0f172a)",
   letterSpacing: "-0.3px"

@@ -306,7 +306,7 @@ function MobileHeader({ onSelectCity }) {
                   <span>Contact Customer Support</span>
                 </Link>
 
-                <a href="/ScrapVex.apk" download="ScrapVex.apk" style={drawerLinkStyle} onClick={() => setShowDrawer(false)}>
+                <a href="https://github.com/ameramarketing/scrapvex-frontend/releases/download/v1.0.0/ScrapVex.apk" target="_blank" rel="noopener noreferrer" style={drawerLinkStyle} onClick={() => setShowDrawer(false)}>
                   <FaDownload style={{ color: "#0b8f3a", fontSize: "13px" }} />
                   <span>Download Mobile App</span>
                 </a>

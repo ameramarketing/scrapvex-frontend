@@ -93,10 +93,12 @@ function App() {
       API.get("/settings", { hideLoader: true }).catch(() => {});
     };
 
-    // Check background notifications every 25 seconds
+    // Check background notifications every 60 seconds, only if user is logged in
     const checkBackgroundNotifs = async () => {
       try {
-        const { data } = await API.get("/notifications", { hideLoader: true });
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (!token) return; // Don't poll if not logged in - avoids extra API calls
+        const { data } = await API.get("/notifications?limit=5", { hideLoader: true });
         if (data && data.success && Array.isArray(data.data)) {
           const unread = data.data.filter(n => n && !n.isRead);
           if (unread.length > 0) {
@@ -110,12 +112,16 @@ function App() {
     };
 
     pingBackend();
-    checkBackgroundNotifs();
     const interval = setInterval(pingBackend, 5 * 60 * 1000);
-    const notifInterval = setInterval(checkBackgroundNotifs, 25 * 1000);
+    // Start notification polling after 10s delay so page loads fully first
+    const notifStartDelay = setTimeout(() => {
+      checkBackgroundNotifs();
+    }, 10000);
+    const notifInterval = setInterval(checkBackgroundNotifs, 60 * 1000);
     return () => {
       clearInterval(interval);
       clearInterval(notifInterval);
+      clearTimeout(notifStartDelay);
     };
   }, []);
 

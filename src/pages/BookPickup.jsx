@@ -13,7 +13,12 @@ import { isMobileEnvironment } from "../platform/platform";
 function BookPickup() {
   const navigate = useNavigate();
   const isMobile = isMobileEnvironment();
-  const [rates, setRates] = useState([]);
+  const [rates, setRates] = useState([
+    { _id: "1", name: "Cardboard", price: 5, unit: "kg" },
+    { _id: "2", name: "Plastic", price: 5, unit: "kg" },
+    { _id: "3", name: "Mix plastic", price: 8, unit: "kg" },
+    { _id: "4", name: "Iron", price: 20, unit: "kg" }
+  ]);
   const [user, setUser] = useState(null);
 
   const baseURL = (API.defaults.baseURL || "").replace(/\/api$/, "") || "https://scrapvex-backend.onrender.com";
@@ -27,11 +32,10 @@ function BookPickup() {
       console.warn("Failed to parse user storage", e);
     }
 
-    // Fetch scrap rates preview
-    API.get("/scrap-items")
+    // Fetch scrap rates preview in background
+    API.get("/scrap-items", { hideLoader: true })
       .then(({ data }) => {
-        if (data.success && data.data) {
-          // Filter 4 popular items to display as preview (e.g. Iron, Newspaper, Plastic, Copper)
+        if (data.success && data.data && data.data.length > 0) {
           const popular = data.data.filter(item => 
             ["iron", "newspaper", "plastic", "copper", "brass", "cardboard"].some(p => 
               item.name.toLowerCase().includes(p)
