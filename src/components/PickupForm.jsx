@@ -91,46 +91,65 @@ function PickupForm() {
   const getLiveLocation = () => {
     if (!navigator.geolocation) return showToast("error", "GPS Geolocation is not supported by your device");
     setLocationLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        update("lat", lat);
-        update("lng", lng);
 
-        try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-          const data = await res.json();
-          const addr = data.address;
-          const road = addr?.road || addr?.suburb || addr?.neighbourhood || addr?.residential || "";
-          const city = addr?.city || addr?.town || addr?.village || addr?.county || "Rajouri";
-          const postcode = addr?.postcode || "185131";
+    const onLocationSuccess = async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      update("lat", lat);
+      update("lng", lng);
 
-          const formattedAddress = `${road ? road + ", " : ""}${city} (GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)})`;
-          update("address", formattedAddress);
-          
-          // Match city with available cities list if possible, or fallback to current city
-          if (city) {
-            const matchedCity = (cities || []).find(c => c.toLowerCase() === city.toLowerCase());
-            if (matchedCity) update("city", matchedCity.toLowerCase());
-          }
-          
-          if (postcode && postcode.length === 6) update("pincode", postcode);
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+        const data = await res.json();
+        const addr = data.address;
+        const road = addr?.road || addr?.suburb || addr?.neighbourhood || addr?.residential || "";
+        const city = addr?.city || addr?.town || addr?.village || addr?.county || "Rajouri";
+        const postcode = addr?.postcode || "185131";
 
-          showToast("success", "Live GPS Location Pinned! 📍");
-        } catch (err) {
-          console.error("Geocoding error", err);
-          update("address", `Live GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
-          showToast("success", "Live GPS Coordinates Pinned! 📍");
-        } finally {
-          setLocationLoading(false);
+        const formattedAddress = `${road ? road + ", " : ""}${city} (GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)})`;
+        update("address", formattedAddress);
+        
+        if (city) {
+          const matchedCity = (cities || []).find(c => c.toLowerCase() === city.toLowerCase());
+          if (matchedCity) update("city", matchedCity.toLowerCase());
         }
-      },
-      (err) => {
+        
+        if (postcode && postcode.length === 6) update("pincode", postcode);
+
+        showToast("success", "Live GPS Location Detected! 📍");
+      } catch (err) {
+        console.error("Geocoding error", err);
+        update("address", `Live GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+        showToast("success", "GPS Coordinates Pinned! 📍");
+      } finally {
         setLocationLoading(false);
-        showToast("error", "Could not detect live GPS. Please check location permissions.");
+      }
+    };
+
+    // Try high accuracy first, if timeout or error, fallback to standard network location
+    navigator.geolocation.getCurrentPosition(
+      onLocationSuccess,
+      (highAccErr) => {
+        if (highAccErr.code === 1) {
+          // Permission explicitly denied
+          setLocationLoading(false);
+          return showToast("error", "Location access denied. Please enable Location in your phone Settings ⚙️");
+        }
+        // Fallback to low-accuracy network location
+        navigator.geolocation.getCurrentPosition(
+          onLocationSuccess,
+          (coarseErr) => {
+            setLocationLoading(false);
+            if (coarseErr.code === 1) {
+              showToast("error", "Please allow Location permission in your phone settings.");
+            } else {
+              showToast("error", "Could not fetch GPS. Please type your address manually.");
+            }
+          },
+          { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 }
+        );
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
     );
   };
 
