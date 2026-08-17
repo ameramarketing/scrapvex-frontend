@@ -87,10 +87,37 @@ function Navbar() {
     return "/dashboard";
   };
 
+  const [dismissAnnouncement, setDismissAnnouncement] = useState(false);
   const closeMenu = () => setOpen(false);
 
   return (
-    <header style={{...headerWrap, background: scrolled ? "var(--glass)" : "var(--card-bg)", borderBottom: scrolled ? "1px solid var(--glass-border)" : "none", boxShadow: scrolled ? "0 10px 30px rgba(0,0,0,0.08)" : "none"}}>
+    <>
+      {settings?.announcementText && !dismissAnnouncement && (
+        <div style={{
+          background: "linear-gradient(90deg, #0b8f3a 0%, #15803d 100%)",
+          color: "#ffffff",
+          padding: "6px 16px",
+          fontSize: "12px",
+          fontWeight: "700",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          textAlign: "center",
+          position: "relative",
+          zIndex: 9999
+        }}>
+          <div style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            📢 {settings.announcementText}
+          </div>
+          <button
+            onClick={() => setDismissAnnouncement(true)}
+            style={{ background: "none", border: "none", color: "#ffffff", cursor: "pointer", fontSize: "14px", marginLeft: "12px", padding: 0 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+      <header style={{...headerWrap, background: scrolled ? "var(--glass)" : "var(--card-bg)", borderBottom: scrolled ? "1px solid var(--glass-border)" : "none", boxShadow: scrolled ? "0 10px 30px rgba(0,0,0,0.08)" : "none"}}>
       <div className="container" style={navInner}>
         {/* LOGO */}
         <Link to="/" style={logo} onClick={closeMenu} className="logo-zoom">
@@ -207,11 +234,9 @@ function Navbar() {
             )}
          </div>
 
-         <div style={overlayFooter}>
-            <p>© 2026 Scrapvex. Smart Recycling.</p>
-         </div>
       </div>
     </header>
+    </>
   );
 }
 

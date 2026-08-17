@@ -604,6 +604,79 @@ const playBellSound = () => {
                       <button style={primaryBtnStyle} onClick={() => setActiveTab("book")}>Book First Pickup</button>
                    </div>
                  )}
+
+                 {/* REFER & EARN BONUS CARD */}
+                 <div className="fade-up premium-card" style={{
+                   marginTop: "24px",
+                   padding: "20px",
+                   borderRadius: "20px",
+                   background: "var(--card-bg, #ffffff)",
+                   border: "1.5px solid var(--card-border, #e2e8f0)",
+                   boxShadow: "0 10px 30px rgba(0,0,0,0.04)"
+                 }}>
+                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
+                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                       <div style={{
+                         width: "44px",
+                         height: "44px",
+                         borderRadius: "12px",
+                         background: "#fef3c7",
+                         color: "#d97706",
+                         display: "flex",
+                         alignItems: "center",
+                         justifyContent: "center",
+                         fontSize: "22px"
+                       }}>
+                         🎁
+                       </div>
+                       <div>
+                         <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>
+                           Refer & Earn ₹50 Cash Bonus
+                         </h4>
+                         <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "var(--text-muted, #64748b)" }}>
+                           Share your code with friends and family across J&K
+                         </p>
+                       </div>
+                     </div>
+
+                     <div style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%", maxWidth: "340px" }}>
+                       <div style={{
+                         flex: 1,
+                         padding: "8px 12px",
+                         borderRadius: "10px",
+                         background: "var(--bg-main, #f8fafc)",
+                         border: "1.5px dashed #0b8f3a",
+                         color: "#0b8f3a",
+                         fontWeight: "800",
+                         fontSize: "13px",
+                         textAlign: "center",
+                         letterSpacing: "1px"
+                       }}>
+                         {"SCRAP-" + (user.mobile || "VEX").slice(-6)}
+                       </div>
+                       <a
+                         href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Sell your household scrap at the highest rates with ScrapVex! Use my referral code *SCRAP-${(user.mobile || "VEX").slice(-6)}* for ₹50 wallet bonus! Book pickup: https://scrapvex.in`)}`}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         style={{
+                           padding: "8px 14px",
+                           borderRadius: "10px",
+                           background: "#25D366",
+                           color: "#fff",
+                           fontWeight: "700",
+                           fontSize: "12px",
+                           textDecoration: "none",
+                           display: "flex",
+                           alignItems: "center",
+                           gap: "6px",
+                           whiteSpace: "nowrap"
+                         }}
+                       >
+                         WhatsApp Share 🚀
+                       </a>
+                     </div>
+                   </div>
+                 </div>
                </>
              )}
 

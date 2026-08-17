@@ -189,6 +189,36 @@ function MyPickups() {
                       </div>
                     )}
 
+                    {/* 4-DIGIT COMPLETION SECURITY CODE */}
+                    {["Pending", "Assigned", "Accepted", "On The Way"].includes(item.status) && (
+                      <div style={{
+                        background: "var(--primary-light, #f0fdf4)",
+                        border: "1.5px dashed #0b8f3a",
+                        borderRadius: "10px",
+                        padding: "8px 10px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center"
+                      }}>
+                        <div>
+                          <span style={{ fontSize: "10px", fontWeight: "800", color: "#166534", display: "block" }}>🔐 PICKUP COMPLETION OTP</span>
+                          <span style={{ fontSize: "9px", color: "var(--text-muted, #64748b)" }}>Share with collector after weighing</span>
+                        </div>
+                        <div style={{
+                          fontSize: "15px",
+                          fontWeight: "900",
+                          letterSpacing: "2px",
+                          color: "#0b8f3a",
+                          background: "var(--card-bg, #ffffff)",
+                          padding: "3px 8px",
+                          borderRadius: "6px",
+                          border: "1px solid #bbf7d0"
+                        }}>
+                          {item.verificationCode || item._id.slice(-4).toUpperCase()}
+                        </div>
+                      </div>
+                    )}
+
                     {/* ACTION BUTTONS (TRACK STATUS vs VIEW ITEMS) */}
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
                       <span style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", fontWeight: "600" }}>
@@ -467,6 +497,37 @@ function MyPickups() {
                 <div style={cardBody}>
                   <h3 style={{ margin: "10px 0", color: "var(--text-main)" }}>{item.scrapType}</h3>
                   <p style={{ ...detailText, color: "var(--text-muted)" }}><FaMapMarkerAlt /> {item.address}</p>
+
+                  {/* 4-DIGIT COMPLETION SECURITY CODE */}
+                  {["Pending", "Assigned", "Accepted", "On The Way"].includes(item.status) && (
+                    <div style={{
+                      background: "var(--primary-light, #f0fdf4)",
+                      border: "1.5px dashed #0b8f3a",
+                      borderRadius: "10px",
+                      padding: "10px 14px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      margin: "12px 0"
+                    }}>
+                      <div>
+                        <span style={{ fontSize: "11px", fontWeight: "800", color: "#166534", display: "block" }}>🔐 PICKUP COMPLETION OTP</span>
+                        <span style={{ fontSize: "10px", color: "var(--text-muted, #64748b)" }}>Share with collector after scrap is weighed</span>
+                      </div>
+                      <div style={{
+                        fontSize: "17px",
+                        fontWeight: "900",
+                        letterSpacing: "2px",
+                        color: "#0b8f3a",
+                        background: "var(--card-bg, #ffffff)",
+                        padding: "4px 10px",
+                        borderRadius: "8px",
+                        border: "1px solid #bbf7d0"
+                      }}>
+                        {item.verificationCode || item._id.slice(-4).toUpperCase()}
+                      </div>
+                    </div>
+                  )}
                   
                   {item.status === "Completed" && (
                     <>

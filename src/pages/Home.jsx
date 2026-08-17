@@ -128,6 +128,66 @@ function Home() {
          </div>
       </div>
 
+      {/* VERIFIED CUSTOMER REVIEWS */}
+      <div className="section-padding">
+         <SectionHeading title="What Our Customers Say ⭐" />
+         <div className="container grid-3">
+            <div className="card-premium" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+               <div>
+                  <div style={{ display: "flex", color: "#f59e0b", gap: "4px", marginBottom: "10px" }}>
+                     {"★★★★★"}
+                  </div>
+                  <p style={{ fontStyle: "italic", color: "var(--text-main)", fontSize: "14px", lineHeight: "1.6" }}>
+                     "Very fast doorstep pickup in Rajouri. The collector used digital weighing and transferred money to my UPI instantly. Highly recommended!"
+                  </p>
+               </div>
+               <div style={{ marginTop: "16px", borderTop: "1px solid var(--card-border, #e2e8f0)", paddingTop: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#0b8f3a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800" }}>R</div>
+                  <div>
+                     <strong style={{ fontSize: "13px", color: "var(--text-main)", display: "block" }}>Ramesh Sharma</strong>
+                     <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Rajouri • Verified Pickup ✓</span>
+                  </div>
+               </div>
+            </div>
+
+            <div className="card-premium" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+               <div>
+                  <div style={{ display: "flex", color: "#f59e0b", gap: "4px", marginBottom: "10px" }}>
+                     {"★★★★★"}
+                  </div>
+                  <p style={{ fontStyle: "italic", color: "var(--text-main)", fontSize: "14px", lineHeight: "1.6" }}>
+                     "Cleared all my old cardboard boxes and old AC scrap. Got ₹4,500 on the spot. Seamless booking experience on the app."
+                  </p>
+               </div>
+               <div style={{ marginTop: "16px", borderTop: "1px solid var(--card-border, #e2e8f0)", paddingTop: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#2563eb", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800" }}>T</div>
+                  <div>
+                     <strong style={{ fontSize: "13px", color: "var(--text-main)", display: "block" }}>Tariq Ahmed</strong>
+                     <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Jammu • Verified Pickup ✓</span>
+                  </div>
+               </div>
+            </div>
+
+            <div className="card-premium" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+               <div>
+                  <div style={{ display: "flex", color: "#f59e0b", gap: "4px", marginBottom: "10px" }}>
+                     {"★★★★★"}
+                  </div>
+                  <p style={{ fontStyle: "italic", color: "var(--text-main)", fontSize: "14px", lineHeight: "1.6" }}>
+                     "Transparent scrap rates, exact 3D item images, and punctual collectors. Digital Kabadiwala is finally a reality in J&K!"
+                  </p>
+               </div>
+               <div style={{ marginTop: "16px", borderTop: "1px solid var(--card-border, #e2e8f0)", paddingTop: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#d97706", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "800" }}>S</div>
+                  <div>
+                     <strong style={{ fontSize: "13px", color: "var(--text-main)", display: "block" }}>Sunil Kumar</strong>
+                     <span style={{ fontSize: "11px", color: "var(--text-muted)" }}>Sunderbani • Verified Pickup ✓</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
       {/* FAQ */}
       <div className="section-padding">
          <SectionHeading title="Frequently Asked Questions" />

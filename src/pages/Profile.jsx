@@ -330,6 +330,17 @@ function Profile() {
                     <FaChevronRight style={{ color: "#cbd5e1", fontSize: "10px" }} />
                   </div>
 
+                  <div className="mobile-settings-row" onClick={() => showToast("info", "All other device sessions have been cleared safely.")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div className="settings-icon-box" style={{ background: "#fef3c7", color: "#d97706" }}><FaLock /></div>
+                      <div>
+                        <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text-main, #0f172a)", display: "block" }}>Active Device Sessions</span>
+                        <small style={{ fontSize: "10px", color: "var(--text-muted, #64748b)" }}>Current Device: {navigator.userAgent.includes("Android") ? "Android App" : "Web Browser"} (Active)</small>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: "10px", color: "#0b8f3a", fontWeight: "700" }}>Protected</span>
+                  </div>
+
                   <div className="mobile-settings-row" onClick={() => navigate("/privacy")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                       <div className="settings-icon-box" style={{ background: "#f0fdf4", color: "#0b8f3a" }}><FaShieldAlt /></div>

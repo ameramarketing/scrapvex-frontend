@@ -222,6 +222,24 @@ const playBellSound = () => {
   const [reportSupplierName, setReportSupplierName] = useState("");
   const [reportBuyerName, setReportBuyerName] = useState("");
   
+  // AREA EXPANSION DEMAND VOTES
+  const [areaVotes, setAreaVotes] = useState([]);
+  const [areaVotesLoading, setAreaVotesLoading] = useState(false);
+
+  const fetchAreaVotes = async () => {
+    setAreaVotesLoading(true);
+    try {
+      const { data } = await API.get("/admin/area-votes");
+      if (data.success) {
+        setAreaVotes(data.summary || []);
+      }
+    } catch (e) {
+      console.error("Failed to fetch area votes", e);
+    } finally {
+      setAreaVotesLoading(false);
+    }
+  };
+  
   const initialSaleState = { 
     irn: "", ackNo: "", ackDate: "",
     buyerName: "", buyerContact: "", buyerAddress: "", buyerGSTIN: "", buyerPAN: "", buyerState: "Jammu & Kashmir", buyerStateCode: "01",
@@ -1095,6 +1113,7 @@ const playBellSound = () => {
         <NavItem active={activeTab === "users"} icon={<FaUsers />} text="Users" onClick={() => {setActiveTab("users"); setIsMobileMenuOpen(false);}} />
         <NavItem active={activeTab === "collectors"} icon={<FaTools />} text="Collectors" onClick={() => {setActiveTab("collectors"); setIsMobileMenuOpen(false);}} />
         <NavItem active={activeTab === "franchises"} icon={<FaMapMarkerAlt />} text="Franchises" onClick={() => {setActiveTab("franchises"); setIsMobileMenuOpen(false);}} />
+        <NavItem active={activeTab === "area-votes"} icon={<FaMapMarkerAlt />} text="Area Demand" onClick={() => {setActiveTab("area-votes"); fetchAreaVotes(); setIsMobileMenuOpen(false);}} />
       </NavGroup>
 
       <NavGroup title="FINANCE">
@@ -1612,7 +1631,94 @@ const playBellSound = () => {
                    {filteredPickups.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No pickups found.</div>}
                 </div>
              </div>
-          )}
+           )}
+
+           {/* AREA EXPANSION DEMAND VOTES TAB */}
+           {activeTab === "area-votes" && (
+             <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "12px" }}>
+                   <div>
+                      <h3 style={{ margin: 0, fontSize: "18px", color: "var(--text-main)", textTransform: "uppercase" }}>
+                        🗺️ Area Expansion Demand & City Votes
+                      </h3>
+                      <p style={{ margin: "4px 0 0 0", fontSize: "12px", color: "var(--text-muted)" }}>
+                        Demanded locations submitted by customers where ScrapVex franchise is not yet active
+                      </p>
+                   </div>
+                   <button
+                     className="btn-premium"
+                     onClick={fetchAreaVotes}
+                     style={{ padding: "8px 16px", borderRadius: "10px", fontSize: "12px" }}
+                   >
+                     {areaVotesLoading ? "Refreshing..." : "🔄 Refresh Votes"}
+                   </button>
+                </div>
+
+                <div className="table-responsive" style={{ overflowX: "auto" }}>
+                   <table className="custom-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead>
+                         <tr style={{ background: "var(--bg-subtle)", textAlign: "left" }}>
+                            <th style={{ padding: "12px 16px", fontSize: "12px", color: "var(--text-muted)" }}>RANK</th>
+                            <th style={{ padding: "12px 16px", fontSize: "12px", color: "var(--text-muted)" }}>DEMANDED AREA / CITY</th>
+                            <th style={{ padding: "12px 16px", fontSize: "12px", color: "var(--text-muted)" }}>TOTAL VOTES</th>
+                            <th style={{ padding: "12px 16px", fontSize: "12px", color: "var(--text-muted)" }}>LATEST DEMAND DATE</th>
+                            <th style={{ padding: "12px 16px", fontSize: "12px", color: "var(--text-muted)" }}>REGISTERED VOTERS</th>
+                            <th style={{ padding: "12px 16px", fontSize: "12px", color: "var(--text-muted)" }}>ACTION</th>
+                         </tr>
+                      </thead>
+                      <tbody>
+                         {areaVotes.map((av, index) => (
+                           <tr key={av.area} style={{ borderBottom: "1px solid var(--glass-border)" }}>
+                              <td style={{ padding: "14px 16px", fontWeight: "900", color: index === 0 ? "#eab308" : index === 1 ? "#94a3b8" : index === 2 ? "#b45309" : "var(--text-muted)" }}>
+                                 #{index + 1}
+                              </td>
+                              <td style={{ padding: "14px 16px", fontWeight: "800", color: "var(--text-main)", fontSize: "14px" }}>
+                                 📍 {av.area}
+                              </td>
+                              <td style={{ padding: "14px 16px" }}>
+                                 <span style={{
+                                   padding: "4px 10px",
+                                   borderRadius: "20px",
+                                   background: "var(--primary-light)",
+                                   color: "var(--primary)",
+                                   fontWeight: "900",
+                                   fontSize: "13px"
+                                 }}>
+                                    🔥 {av.count} Votes
+                                 </span>
+                              </td>
+                              <td style={{ padding: "14px 16px", fontSize: "12px", color: "var(--text-muted)" }}>
+                                 {new Date(av.latestVote).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                              </td>
+                              <td style={{ padding: "14px 16px", fontSize: "12px", color: "var(--text-muted)" }}>
+                                 {av.voters?.length > 0 ? (
+                                   <span>{av.voters.slice(0, 3).map(v => v.mobile).filter(Boolean).join(", ") || "Anonymous App Users"} {av.voters.length > 3 ? `+${av.voters.length - 3} more` : ""}</span>
+                                 ) : "App Users"}
+                              </td>
+                              <td style={{ padding: "14px 16px" }}>
+                                 <button
+                                   className="btn-premium"
+                                   onClick={() => {
+                                     setActiveTab("franchises");
+                                     setShowFranchiseModal(true);
+                                   }}
+                                   style={{ padding: "6px 12px", borderRadius: "8px", fontSize: "11px" }}
+                                 >
+                                    Launch Franchise 🚀
+                                 </button>
+                              </td>
+                           </tr>
+                         ))}
+                      </tbody>
+                   </table>
+                   {areaVotes.length === 0 && !areaVotesLoading && (
+                     <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>
+                        No user area votes recorded yet.
+                     </div>
+                   )}
+                </div>
+             </div>
+           )}
 
           {activeTab === "settings" && (
              <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>

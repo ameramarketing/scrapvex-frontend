@@ -80,6 +80,8 @@ function App() {
     setShowSplash(false);
   };
 
+  const [appSettings, setAppSettings] = useState(null);
+
   // Initialize Native Features & Push Notifications & Render Keep-Alive Ping
   React.useEffect(() => {
     requestNotificationPermission();
@@ -88,16 +90,18 @@ function App() {
       StatusBar.setBackgroundColor({ color: "#0b8f3a" }).catch(() => {});
     }
 
-    // Ping backend immediately on load and every 5 minutes to prevent Render sleep mode
+    // Fetch settings for maintenance mode check
     const pingBackend = () => {
-      API.get("/settings", { hideLoader: true }).catch(() => {});
+      API.get("/settings", { hideLoader: true }).then(res => {
+        if (res.data?.success) setAppSettings(res.data.data);
+      }).catch(() => {});
     };
 
     // Check background notifications every 60 seconds, only if user is logged in
     const checkBackgroundNotifs = async () => {
       try {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-        if (!token) return; // Don't poll if not logged in - avoids extra API calls
+        if (!token) return;
         const { data } = await API.get("/notifications?limit=5", { hideLoader: true });
         if (data && data.success && Array.isArray(data.data)) {
           const unread = data.data.filter(n => n && !n.isRead);
@@ -106,14 +110,11 @@ function App() {
             triggerNativeNotification(latest.title || "ScrapVex Notification", latest.message, latest._id);
           }
         }
-      } catch (e) {
-        // Silently ignore background notification fetch errors
-      }
+      } catch (e) {}
     };
 
     pingBackend();
     const interval = setInterval(pingBackend, 5 * 60 * 1000);
-    // Start notification polling after 10s delay so page loads fully first
     const notifStartDelay = setTimeout(() => {
       checkBackgroundNotifs();
     }, 10000);
@@ -125,10 +126,56 @@ function App() {
     };
   }, []);
 
+  const loggedUser = (() => {
+    try { return JSON.parse(localStorage.getItem("user") || "{}"); } catch(e) { return {}; }
+  })();
+
+  const isMaintenanceActive = appSettings?.isMaintenanceMode && loggedUser.role !== "admin" && !window.location.pathname.startsWith("/admin");
+
   return (
     <ThemeProvider>
       {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       <NativeOfflineBanner />
+      {isMaintenanceActive ? (
+        <div style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "24px",
+          textAlign: "center",
+          background: "var(--bg-main, #f8fafc)",
+          color: "var(--text-main, #0f172a)"
+        }}>
+          <div style={{
+            background: "var(--card-bg, #ffffff)",
+            border: "1.5px solid var(--card-border, #e2e8f0)",
+            borderRadius: "24px",
+            padding: "36px 24px",
+            maxWidth: "460px",
+            width: "100%",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.08)"
+          }}>
+            <div style={{ fontSize: "56px", marginBottom: "16px" }}>🛠️</div>
+            <h2 style={{ fontSize: "22px", fontWeight: "900", margin: "0 0 10px 0" }}>Under Scheduled Maintenance</h2>
+            <p style={{ fontSize: "14px", color: "var(--text-muted, #64748b)", lineHeight: "1.6", margin: "0 0 20px 0" }}>
+              {appSettings?.maintenanceMessage || "ScrapVex is undergoing scheduled upgrades to serve you better in Jammu & Kashmir. We will be back shortly!"}
+            </p>
+            <div style={{
+              padding: "12px",
+              background: "var(--primary-light, #f0fdf4)",
+              border: "1px solid #bbf7d0",
+              borderRadius: "12px",
+              fontSize: "13px",
+              fontWeight: "700",
+              color: "#166534"
+            }}>
+              📞 Urgent Queries? Call: {appSettings?.contactPhone || "8491028539"}
+            </div>
+          </div>
+        </div>
+      ) : (
       <BrowserRouter>
         <GlobalLoader />
         <NavbarWrapper />
@@ -259,6 +306,7 @@ function App() {
         </MobileAppShell>
         <FloatingActions />
       </BrowserRouter>
+      )}
     </ThemeProvider>
   );
 }

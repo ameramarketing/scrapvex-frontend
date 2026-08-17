@@ -21,6 +21,10 @@ function PickupForm() {
   const [settings, setSettings] = useState({ minAmount: 300 });
   const [locationLoading, setLocationLoading] = useState(false);
   const [activeCities, setActiveCities] = useState([]);
+  const [showVoteModal, setShowVoteModal] = useState(false);
+  const [voteAreaName, setVoteAreaName] = useState("");
+  const [voteMobile, setVoteMobile] = useState("");
+  const [voteLoading, setVoteLoading] = useState(false);
 
   const [form, setForm] = useState({
     name: "", phone: "", otp: "", address: "", city: "", pincode: "",
@@ -29,6 +33,27 @@ function PickupForm() {
 
   const showToast = (type, message) => setToast({ show: true, type, message });
   const update = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
+
+  const handleVoteSubmit = async (e) => {
+    e?.preventDefault();
+    if (!voteAreaName.trim()) return showToast("error", "Please enter your city/area name");
+    setVoteLoading(true);
+    try {
+      const { data } = await API.post("/pickups/vote-area", {
+        area: voteAreaName.trim(),
+        mobile: voteMobile || form.phone || ""
+      });
+      if (data.success) {
+        showToast("success", `Vote recorded for ${voteAreaName}! We will notify you once active! 🚀`);
+        setShowVoteModal(false);
+        setVoteAreaName("");
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Failed to submit area request");
+    } finally {
+      setVoteLoading(false);
+    }
+  };
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -532,6 +557,17 @@ function PickupForm() {
               </div>
               <Input icon={<FaMapMarkerAlt />} placeholder="Pincode" value={form.pincode} onChange={v => update("pincode", v.replace(/\D/g, "").slice(0, 6))} />
             </div>
+
+            <div style={{ marginTop: "4px", marginBottom: "12px", textAlign: "right" }}>
+              <button
+                type="button"
+                onClick={() => setShowVoteModal(true)}
+                style={{ background: "none", border: "none", color: "#0b8f3a", fontSize: "11px", fontWeight: "700", cursor: "pointer", textDecoration: "underline" }}
+              >
+                📍 City not listed? Vote to bring ScrapVex to your town
+              </button>
+            </div>
+
             <button className="btn-premium full-width-mobile" style={{ height: "46px", border: "none" }} onClick={nextAddress}>
               Continue <FaChevronRight style={{ fontSize: "11px" }} />
             </button>
@@ -553,13 +589,18 @@ function PickupForm() {
                   { label: "4PM - 6PM", hour: 16 }
                 ].map(slot => {
                   const isToday = form.date === new Date().toISOString().split("T")[0];
-                  const isPast = isToday && new Date().getHours() >= slot.hour;
-                  return <option key={slot.label} value={slot.label} disabled={isPast}>{slot.label} {isPast ? "(Passed)" : ""}</option>
+                  const currentHour = new Date().getHours();
+                  const isPassed = isToday && currentHour >= slot.hour;
+                  return (
+                    <option key={slot.label} value={slot.label} disabled={isPassed}>
+                      {slot.label} {isPassed ? "(Passed)" : ""}
+                    </option>
+                  );
                 })}
               </select>
             </div>
-            <button className="btn-premium full-width-mobile" style={{ height: "46px", border: "none" }} onClick={nextSchedule}>
-              Choose Items <FaChevronRight style={{ fontSize: "11px" }} />
+            <button className="btn-premium full-width-mobile" style={{ height: "46px", border: "none", marginTop: "10px" }} onClick={nextSchedule}>
+              Continue <FaChevronRight style={{ fontSize: "11px" }} />
             </button>
           </div>
         )}
@@ -636,6 +677,126 @@ function PickupForm() {
           </div>
         )}
       </div>
+
+      {/* AREA VOTE / EXPANSION REQUEST MODAL */}
+      {showVoteModal && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.65)",
+          backdropFilter: "blur(4px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 99999,
+          padding: "16px"
+        }}>
+          <div style={{
+            background: "var(--card-bg, #ffffff)",
+            border: "1.5px solid var(--card-border, #e2e8f0)",
+            borderRadius: "20px",
+            padding: "24px",
+            maxWidth: "380px",
+            width: "100%",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "22px" }}>🗳️</span>
+                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Request Your City</h3>
+              </div>
+              <button
+                onClick={() => setShowVoteModal(false)}
+                style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "var(--text-muted, #94a3b8)" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: "12px", color: "var(--text-muted, #64748b)", marginTop: 0, marginBottom: "16px", lineHeight: "1.5" }}>
+              Tell us where you want ScrapVex services! We launch new franchises based on user demand votes.
+            </p>
+
+            <form onSubmit={handleVoteSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-main, #334155)", marginBottom: "4px", display: "block" }}>City / Town / Tehsil Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Poonch, Anantnag, Doda, etc."
+                  value={voteAreaName}
+                  onChange={(e) => setVoteAreaName(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: "10px",
+                    border: "1.5px solid var(--card-border, #cbd5e1)",
+                    background: "var(--bg-main, #f8fafc)",
+                    color: "var(--text-main, #0f172a)",
+                    fontSize: "13px",
+                    boxSizing: "border-box"
+                  }}
+                  autoFocus
+                  required
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-main, #334155)", marginBottom: "4px", display: "block" }}>Your Mobile Number (Optional)</label>
+                <input
+                  type="tel"
+                  placeholder="Enter 10-digit mobile"
+                  value={voteMobile}
+                  onChange={(e) => setVoteMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                  style={{
+                    width: "100%",
+                    padding: "10px 14px",
+                    borderRadius: "10px",
+                    border: "1.5px solid var(--card-border, #cbd5e1)",
+                    background: "var(--bg-main, #f8fafc)",
+                    color: "var(--text-main, #0f172a)",
+                    fontSize: "13px",
+                    boxSizing: "border-box"
+                  }}
+                />
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", marginTop: "8px" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowVoteModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: "10px",
+                    borderRadius: "10px",
+                    border: "1px solid var(--card-border, #cbd5e1)",
+                    background: "transparent",
+                    color: "var(--text-main, #64748b)",
+                    fontWeight: "700",
+                    cursor: "pointer"
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={voteLoading}
+                  className="btn-premium"
+                  style={{
+                    flex: 1.5,
+                    padding: "10px",
+                    borderRadius: "10px",
+                    border: "none",
+                    fontWeight: "700",
+                    cursor: "pointer"
+                  }}
+                >
+                  {voteLoading ? "Recording..." : "Vote for City 🚀"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
