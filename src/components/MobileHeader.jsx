@@ -13,6 +13,21 @@ import { performLogout } from "../utils/auth";
 function MobileHeader({ onSelectCity }) {
   const navigate = useNavigate();
   const { isDarkMode, toggleDarkMode } = useTheme();
+
+  const user = (() => {
+    try {
+      const u = localStorage.getItem("user");
+      return u ? JSON.parse(u) : null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  const defaultLocation = user?.area || user?.address || user?.assignedCity || "Rajouri Town, J&K";
+  const [selectedLocation, setSelectedLocation] = useState(() => {
+    return localStorage.getItem("user_selected_location") || defaultLocation;
+  });
+
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -56,20 +71,6 @@ function MobileHeader({ onSelectCity }) {
       setCustomVoteLoading(false);
     }
   };
-
-  const user = (() => {
-    try {
-      const u = localStorage.getItem("user");
-      return u ? JSON.parse(u) : null;
-    } catch (e) {
-      return null;
-    }
-  })();
-
-  const defaultLocation = user?.area || user?.address || user?.assignedCity || "Rajouri Town, J&K";
-  const [selectedLocation, setSelectedLocation] = useState(() => {
-    return localStorage.getItem("user_selected_location") || defaultLocation;
-  });
 
   useEffect(() => {
     const fetchActiveCities = async () => {
