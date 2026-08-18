@@ -30,14 +30,11 @@ import { isMobileEnvironment } from "../platform/platform";
 import { getScrapItemImage } from "../utils/scrapImages";
 
 const DEFAULT_ITEMS = [
-  { _id: "1", name: "Office Paper", category: "Paper", price: 14, unit: "kg" },
   { _id: "2", name: "Newspaper", category: "Paper", price: 15, unit: "kg" },
   { _id: "3", name: "Books", category: "Paper", price: 12, unit: "kg" },
   { _id: "4", name: "Cardboard", category: "Paper", price: 8, unit: "kg" },
   { _id: "5", name: "Iron / Loha", category: "Metal", price: 25, unit: "kg" },
   { _id: "6", name: "Steel", category: "Metal", price: 42, unit: "kg" },
-  { _id: "7", name: "Copper / Tamba", category: "Metal", price: 505, unit: "kg" },
-  { _id: "8", name: "Brass / Peetal", category: "Metal", price: 325, unit: "kg" },
   { _id: "9", name: "Aluminium", category: "Metal", price: 112, unit: "kg" },
   { _id: "10", name: "Plastic", category: "Plastic", price: 5, unit: "kg" },
   { _id: "11", name: "Pet Bottles", category: "Plastic", price: 10, unit: "kg" },
