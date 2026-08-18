@@ -4,7 +4,7 @@ import API from "../services/api";
 
 function GlobalLoader() {
   const [loading, setLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Loading ScrapVex...");
+  const [loadingText, setLoadingText] = useState("Loading...");
 
   // Intercept API requests to show loader only for long-running cold starts (> 2.5s)
   useEffect(() => {
@@ -15,10 +15,10 @@ function GlobalLoader() {
       if (config.hideLoader) return config;
       reqCount++;
       if (reqCount === 1) {
-        // Only show full loader if backend takes > 2500ms (e.g. Render server waking up)
+        // Show clean loader if backend takes > 2500ms
         timer = setTimeout(() => {
           setLoading(true);
-          setLoadingText("Waking up server... Please wait a few seconds ⚡");
+          setLoadingText("Loading...");
         }, 2500);
       }
       return config;

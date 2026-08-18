@@ -185,17 +185,25 @@ function Navbar() {
         </div>
       </div>
 
-      {/* MOBILE OVERLAY MENU */}
-      {open && <div style={backdrop} onClick={closeMenu} />}
-      <div style={{...mobileOverlay, transform: open ? "translateX(0)" : "translateX(110%)", background: "var(--card-bg)"}}>
-         <div style={overlayHeader}>
+      {/* MOBILE OVERLAY MENU - ONLY RENDERED ON MOBILE WHEN OPEN */}
+      {open && <div style={backdrop} onClick={closeMenu} className="show-on-mobile" />}
+      {open && (
+        <div 
+          className="show-on-mobile mobile-overlay-panel"
+          style={{
+            ...mobileOverlay, 
+            transform: open ? "translateX(0)" : "translateX(110%)", 
+            background: "var(--card-bg)"
+          }}
+        >
+          <div style={overlayHeader}>
             <div style={logo} className="logo-zoom">
-               <FaRecycle /> <span>Scrapvex</span>
+              <FaRecycle /> <span>Scrapvex</span>
             </div>
             <button style={closeBtn} onClick={closeMenu} className="social-glow"><FaTimes /></button>
-         </div>
+          </div>
 
-         <div style={mobileLinks}>
+          <div style={mobileLinks}>
             {user && (
               <Link to={getDashboardPath()} onClick={closeMenu} style={mobileNavLink} className="nav-link-glow">
                 <FaUserShield /> Dashboard
@@ -208,7 +216,7 @@ function Navbar() {
             ))}
             <a 
               href={settings?.appDownloadLink && settings.appDownloadLink !== "#" ? settings.appDownloadLink : "/ScrapVex.apk"} 
-              download="ScrapVex.apk"
+              download="ScrapVex.apk" 
               style={{...mobileNavLink, color: "var(--primary)"}} 
               className="nav-link-glow" 
               onClick={closeMenu}
@@ -232,9 +240,9 @@ function Navbar() {
                 Logout
               </button>
             )}
-         </div>
-
-      </div>
+          </div>
+        </div>
+      )}
     </header>
     </>
   );

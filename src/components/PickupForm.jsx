@@ -87,11 +87,12 @@ function PickupForm() {
     setLoading(true);
     setOtpChannel(channel);
     try {
-      const { data } = await API.post("/auth/send-booking-otp", { mobile: form.phone, channel }, { timeout: 10000 });
+      const { data } = await API.post("/auth/send-booking-otp", { mobile: form.phone, channel });
       setOtpSent(true);
       showToast("success", data.message || `OTP sent via ${channel.toUpperCase()}!`);
     } catch (e) {
-      showToast("error", e.response?.data?.message || e.message || "Failed to send OTP. Check number.");
+      const msg = e.response?.data?.message || e.customMessage || e.message || "Failed to send OTP. Check number.";
+      showToast("error", msg);
     } finally {
       setLoading(false);
     }
@@ -107,7 +108,7 @@ function PickupForm() {
         setStep(2);
       }
     } catch (e) {
-      showToast("error", e.response?.data?.message || "Invalid OTP");
+      showToast("error", e.response?.data?.message || e.customMessage || "Invalid OTP");
     } finally {
       setLoading(false);
     }

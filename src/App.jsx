@@ -71,7 +71,10 @@ function NavbarWrapper() {
 
 function App() {
   const [showSplash, setShowSplash] = React.useState(() => {
-    // Show splash once per session or on app load
+    // Show splash ONLY on mobile / native app, NEVER on desktop / laptop / tablet (> 768px)
+    if (typeof window === "undefined") return false;
+    const isMobile = isNativeApp() || window.innerWidth <= 768 || window.location.search.includes("app=true");
+    if (!isMobile) return false;
     const sessionSeen = sessionStorage.getItem("splash_seen");
     return !sessionSeen;
   });

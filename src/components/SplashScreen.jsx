@@ -10,7 +10,7 @@ function SplashScreen({ onFinish }) {
       innerTimer = setTimeout(() => {
         if (onFinish) onFinish();
       }, 500); // 500ms fade out
-    }, 1500); // 1.5s display
+    }, 2000); // 2s display
 
     return () => {
       clearTimeout(timer);
@@ -23,25 +23,18 @@ function SplashScreen({ onFinish }) {
       style={{
         ...splashContainer,
         opacity: fade ? 0 : 1,
-        transform: fade ? "scale(1.03)" : "scale(1)"
+        transform: fade ? "scale(1.02)" : "scale(1)"
       }}
     >
-      {/* Full Uncropped High-Res Splash Image */}
-      <div style={imageContainer}>
-        <img
-          src="/08_Splash_Screen.png"
-          alt="ScrapVex Splash Screen"
-          style={fullSplashImage}
-          onError={(e) => {
-            e.target.src = "/01_Primary_Logo.png";
-          }}
-        />
-      </div>
-
-      {/* Tagline */}
-      <div style={bottomProgressWrap}>
-        <span style={taglineText}>Jammu & Kashmir Ka Pehla Digital Kabadiwala</span>
-      </div>
+      {/* Full High-Res Portrait Splash Screen Image */}
+      <img
+        src="/splash_screen.png"
+        alt="ScrapVex Splash Screen"
+        style={fullSplashImage}
+        onError={(e) => {
+          e.target.src = "/splash.png";
+        }}
+      />
     </div>
   );
 }
@@ -52,73 +45,22 @@ const splashContainer = {
   left: 0,
   right: 0,
   bottom: 0,
-  zIndex: 99999,
-  background: "#0b1320", // Sleek dark matching theme
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between",
-  transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-  fontFamily: "var(--font-main, system-ui, sans-serif)",
-  padding: 0,
-  overflow: "hidden"
-};
-
-const imageContainer = {
-  flex: 1,
-  width: "100%",
-  height: "100%",
+  zIndex: 999999,
+  background: "#f8fafc",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+  padding: 0,
   overflow: "hidden"
 };
 
 const fullSplashImage = {
   width: "100%",
   height: "100%",
-  maxHeight: "100vh",
-  objectFit: "contain", // GUARANTEES 100% UNCROPPED FULL PHOTO
+  objectFit: "cover",
+  objectPosition: "center",
   display: "block"
-};
-
-const bottomProgressWrap = {
-  position: "absolute",
-  bottom: "30px",
-  left: "50%",
-  transform: "translateX(-50%)",
-  width: "80%",
-  maxWidth: "280px",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  gap: "10px",
-  zIndex: 10
-};
-
-const loaderTrack = {
-  width: "100%",
-  height: "5px",
-  background: "rgba(255,255,255,0.2)",
-  borderRadius: "3px",
-  overflow: "hidden"
-};
-
-const loaderBar = {
-  height: "100%",
-  width: "100%",
-  background: "linear-gradient(90deg, #0b8f3a, #2ecc71)",
-  borderRadius: "3px",
-  animation: "splashProgress 2.5s ease-in-out forwards"
-};
-
-const taglineText = {
-  color: "#ffffff",
-  fontSize: "12px",
-  fontWeight: "600",
-  letterSpacing: "0.5px",
-  opacity: 0.9,
-  textShadow: "0 2px 4px rgba(0,0,0,0.5)"
 };
 
 export default SplashScreen;
