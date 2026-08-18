@@ -19,7 +19,7 @@ const SCRAP_3D_IMAGES = {
   // Metals
   iron:                  "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774026230932117325.png?alt=media",
   steel:                 "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774946668951374498.png?alt=media",
-  aluminum_can:          "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2Fe401bcd4-5d9e-4344-9f0c-2144cf251c31_1777451511.jpeg?alt=media",
+  aluminum_can:          "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Canned%20food/3D/canned_food_3d.png",
   aluminum:              "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774692613048045928.png?alt=media",
   brass:                 "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774946957580843945.png?alt=media",
   copper:                "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774026436574343077.png?alt=media",
@@ -69,106 +69,105 @@ export const getScrapItemImage = (name = "", category = "", itemImageUrl = null)
   const n = (name || "").toLowerCase().trim();
   const c = (category || "").toLowerCase().trim();
 
-  // 1. SPECIFIC ITEM NAME MATCHES (Priority over category)
-
-  // Footwear & Shoes
-  if (n.includes("shoe") || n.includes("joot") || n.includes("chappal") || n.includes("footwear") || n.includes("rubber shoes") || n.includes("rubber / shoes")) {
+  // 1. Footwear & Shoes
+  if (n.includes("shoe") || n.includes("joot") || n.includes("chappal") || n.includes("footwear")) {
     return SCRAP_3D_IMAGES.rubber_shoes;
   }
 
-  // Tyres / Wheels
+  // 2. Tyres / Wheels
   if (n.includes("tyre") || n.includes("tire") || n.includes("wheel")) {
     return SCRAP_3D_IMAGES.tyre;
   }
 
-  // Gym Equipment
-  if (n.includes("gym") || n.includes("dumbbell") || n.includes("weight") || n.includes("exercise") || n.includes("fitness")) {
+  // 3. Gym Equipment
+  if (n.includes("gym") || n.includes("dumbbell") || n.includes("fitness") || n.includes("weight")) {
     return SCRAP_3D_IMAGES.gym_equipment;
   }
 
-  // Mix Plastic / Bucket
-  if (n.includes("mix plastic") || n.includes("bucket") || n.includes("balti")) {
-    return SCRAP_3D_IMAGES.mix_plastic;
-  }
-
-  // Phones & Mobiles
-  if (n.includes("android") || n.includes("smartphone")) {
-    return SCRAP_3D_IMAGES.android_phone;
-  }
+  // 4. Phones, Tablets & Mobiles
   if (n.includes("simple phone") || n.includes("basic phone") || n.includes("keypad") || n.includes("telephone") || n.includes("landline")) {
     return SCRAP_3D_IMAGES.simple_phone;
   }
-  if (n.includes("tablet") || n.includes("ipad") || n.includes("tab")) {
+  if (n.includes("android") || n.includes("smartphone")) {
+    return SCRAP_3D_IMAGES.android_phone;
+  }
+  if (n.includes("tablet") || n.includes("ipad") || /\btab\b/.test(n)) {
     return SCRAP_3D_IMAGES.tablet_phone;
   }
   if (n.includes("phone") || n.includes("mobile")) {
     return SCRAP_3D_IMAGES.android_phone;
   }
 
-  // Paper & Cardboard
-  if (n.includes("newspaper") || n.includes("raddi") || n.includes("news") || n.includes("akhbar")) return SCRAP_3D_IMAGES.newspaper;
-  if (n.includes("cardboard") || n.includes("gatta") || n.includes("box") || n.includes("dabba") || n.includes("carton")) return SCRAP_3D_IMAGES.cardboard;
+  // 5. Paper & Cardboard
+  if (n.includes("newspaper") || n.includes("raddi") || n.includes("akhbar")) return SCRAP_3D_IMAGES.newspaper;
+  if (n.includes("cardboard") || n.includes("gatta") || n.includes("carton") || n.includes("card board")) return SCRAP_3D_IMAGES.cardboard;
   if (n.includes("book") || n.includes("copy") || n.includes("notebook") || n.includes("magazine")) return SCRAP_3D_IMAGES.book;
-  if (n.includes("office paper") || n.includes("paper") || n.includes("a4") || n.includes("a3") || n.includes("white paper")) return SCRAP_3D_IMAGES.office_paper;
+  if (n.includes("office paper") || n.includes("white paper") || n.includes("a4 paper") || n.includes("a3 paper") || (n.includes("paper") && !n.includes("newspaper"))) return SCRAP_3D_IMAGES.office_paper;
 
-  // Clothes & Garments
-  if (n.includes("cloth") || n.includes("kapda") || n.includes("garment") || n.includes("textile") || n.includes("shirt")) return SCRAP_3D_IMAGES.clothes;
+  // 6. Clothes & Garments (avoid matching 'clothes press')
+  if ((n.includes("cloth") || n.includes("kapda") || n.includes("garment") || n.includes("textile") || n.includes("shirt")) && !n.includes("press") && !n.includes("iron")) return SCRAP_3D_IMAGES.clothes;
 
-  // Glass
-  if (n.includes("glass") || n.includes("shisha") || n.includes("bottle glass")) return SCRAP_3D_IMAGES.glass;
+  // 7. Glass
+  if (n.includes("glass") || n.includes("shisha")) return SCRAP_3D_IMAGES.glass;
 
-  // Standard Plastics
-  if (n.includes("pet bottle") || n.includes("pet bottles") || n.includes("plastic") || n.includes("bottle") || n.includes("jar") || n.includes("drum") || n.includes("fiber") || n.includes("poly")) {
-    return SCRAP_3D_IMAGES.plastic;
+  // 8. Aluminium Can / Tin Can / Soda Can
+  if (n.includes("aluminium can") || n.includes("aluminum can") || n.includes("tin can") || n.includes("soda can") || n.includes("cold drink can") || (/\bcan\b/.test(n) && (n.includes("aluminium") || n.includes("aluminum") || n.includes("tin") || n.includes("drink")))) {
+    return SCRAP_3D_IMAGES.aluminum_can;
   }
 
-  // Metals - Specific matches first
-  if (n.includes("can") && (n.includes("tin") || n.includes("aluminium") || n.includes("aluminum") || n.includes("cold drink") || n.includes("soda"))) return SCRAP_3D_IMAGES.aluminum_can;
-  if (n.includes("copper") || n.includes("tamba") || n.includes("taamba") || n.includes("wire copper")) return SCRAP_3D_IMAGES.copper;
-  if (n.includes("brass") || n.includes("peetal") || n.includes("pital")) return SCRAP_3D_IMAGES.brass;
-  if (n.includes("aluminium") || n.includes("aluminum") || n.includes("cooker") || n.includes("kadhai") || n.includes("alumnium")) return SCRAP_3D_IMAGES.aluminum;
-  if (n.includes("steel") || n.includes("stainless") || n.includes("bartan") || n.includes("sink")) return SCRAP_3D_IMAGES.steel;
-
-  // Specific appliance matches BEFORE generic metal/iron check
-  if (n.includes("metal appliances heavy") || (n.includes("stabiliser") && n.includes("inverter"))) return SCRAP_3D_IMAGES.inverter;
-  if (n.includes("metal appliances medium") || n.includes("metal appliances light") || (n.includes("ceiling fan") && n.includes("motor"))) return SCRAP_3D_IMAGES.fan_motor;
-  if (n.includes("iron cooler") || (n.includes("cooler") && n.includes("motor"))) return SCRAP_3D_IMAGES.cooler;
-
-  if (n.includes("iron") || n.includes("loha") || n.includes("girder") || n.includes("sariya") || n.includes("tmt") || n.includes("metal")) return SCRAP_3D_IMAGES.iron;
-  if (n.includes("tin") || n.includes("lead") || n.includes("zinc")) return SCRAP_3D_IMAGES.iron;
-
-  // Large Appliances
-  if (n.includes("window ac") || n.includes("window / split") || n.includes("window ac / split") || n.includes("inverter window") || n.includes("indoor+outdoor") || n.includes("indoor + outdoor")) return SCRAP_3D_IMAGES.window_ac;
-  if (n.includes("ac") || n.includes("air conditioner") || n.includes("split ac") || n.includes("inverter ac") || n.includes("indoor")) return SCRAP_3D_IMAGES.split_ac;
-
-  if (n.includes("side by side") || n.includes("double door fridge")) return SCRAP_3D_IMAGES.fridge_double_door;
-  if (n.includes("fridge") || n.includes("refrigerator") || n.includes("freezer") || n.includes("single door")) return SCRAP_3D_IMAGES.fridge_single_door;
-
+  // 9. Washing Machines (BEFORE any AC check)
   if (n.includes("front load") || n.includes("front-load")) return SCRAP_3D_IMAGES.washing_front;
   if (n.includes("top load") || n.includes("top-load")) return SCRAP_3D_IMAGES.washing_top;
-  if (n.includes("semi automatic") || n.includes("semi auto") || n.includes("double drum")) return SCRAP_3D_IMAGES.washing_semi;
-  if (n.includes("washing") || n.includes("washer") || n.includes("laundry")) return SCRAP_3D_IMAGES.washing_top;
+  if (n.includes("semi auto") || n.includes("semi automatic") || n.includes("double drum")) return SCRAP_3D_IMAGES.washing_semi;
+  if (n.includes("fully auto") || n.includes("fully automatic")) return SCRAP_3D_IMAGES.washing_top;
+  if (n.includes("washing machine") || n.includes("washer") || n.includes("laundry")) return SCRAP_3D_IMAGES.washing_top;
+
+  // 10. Large Appliances - AC, Fridge, Microwave
+  if (n.includes("window ac") || n.includes("window / split") || n.includes("window ac / split") || n.includes("inverter window")) return SCRAP_3D_IMAGES.window_ac;
+  if (/\bac\b/.test(n) || n.includes("air conditioner") || n.includes("split ac") || n.includes("indoor")) return SCRAP_3D_IMAGES.split_ac;
+
+  if (n.includes("side by side") || n.includes("double door fridge") || n.includes("double door")) return SCRAP_3D_IMAGES.fridge_double_door;
+  if (n.includes("single door") || n.includes("fridge") || n.includes("refrigerator") || n.includes("freezer")) return SCRAP_3D_IMAGES.fridge_single_door;
 
   if (n.includes("microwave") || n.includes("oven") || n.includes("otg")) return SCRAP_3D_IMAGES.microwave;
-  if (n.includes("fan") || n.includes("motor") || n.includes("pump") || n.includes("ceiling fan") || n.includes("exhaust")) return SCRAP_3D_IMAGES.fan_motor;
+
+  // 11. Coolers & Desert Coolers (BEFORE generic motor check)
   if (n.includes("cooler")) return SCRAP_3D_IMAGES.cooler;
+
+  // 12. Small Appliances
+  if (n.includes("metal appliances heavy") || n.includes("heavy") || n.includes("stabiliser") || n.includes("stabilizer")) return SCRAP_3D_IMAGES.inverter;
+  if (n.includes("metal appliances") || n.includes("medium") || n.includes("light") || n.includes("ceiling fan") || n.includes("fan") || n.includes("motor") || n.includes("pump")) return SCRAP_3D_IMAGES.fan_motor;
+  if (n.includes("plastic appliances") || n.includes("mixer") || n.includes("vaccum") || n.includes("induction")) return SCRAP_3D_IMAGES.cooler;
   if (n.includes("geyser") || n.includes("water heater")) return SCRAP_3D_IMAGES.geyser;
+  if (/\bups\b/.test(n)) return SCRAP_3D_IMAGES.ups;
 
-  // Electronics & E-Waste
-  if (n.includes("battery") || n.includes("inverter battery") || n.includes("car battery") || n.includes("lead battery")) return SCRAP_3D_IMAGES.battery;
-  if (n.includes("inverter") || n.includes("stabilizer") || n.includes("stabiliser")) return SCRAP_3D_IMAGES.inverter;
-  if (n.includes("ups")) return SCRAP_3D_IMAGES.ups;
+  // 13. Metals
+  if (n.includes("copper") || n.includes("tamba") || n.includes("taamba")) return SCRAP_3D_IMAGES.copper;
+  if (n.includes("brass") || n.includes("peetal") || n.includes("pital")) return SCRAP_3D_IMAGES.brass;
+  if (n.includes("aluminium") || n.includes("aluminum")) return SCRAP_3D_IMAGES.aluminum;
+  if (n.includes("steel") || n.includes("stainless") || n.includes("bartan")) return SCRAP_3D_IMAGES.steel;
+  if (n.includes("iron")) return SCRAP_3D_IMAGES.iron;
+  if (n.includes("tin") || n.includes("lead") || n.includes("zinc")) return SCRAP_3D_IMAGES.iron;
+
+  // 14. Plastics & Buckets
+  if (n.includes("mix plastic") || n.includes("bucket") || n.includes("balti")) return SCRAP_3D_IMAGES.mix_plastic;
+  if (n.includes("pet bottle") || n.includes("pet bottles") || n.includes("plastic") || n.includes("bottle") || n.includes("drum") || n.includes("poly") || n.includes("fiber")) return SCRAP_3D_IMAGES.plastic;
+
+  // 15. Electronics & E-Waste
+  if (n.includes("battery") || n.includes("inverter battery") || n.includes("car battery")) return SCRAP_3D_IMAGES.battery;
+  if (n.includes("inverter")) return SCRAP_3D_IMAGES.inverter;
   if (n.includes("laptop") || n.includes("macbook") || n.includes("notebook")) return SCRAP_3D_IMAGES.laptop;
-  if (n.includes("cpu") || n.includes("computer") || n.includes("desktop") || n.includes("tower")) return SCRAP_3D_IMAGES.cpu;
+  if (n.includes("cpu") || n.includes("computer cpu") || n.includes("desktop tower")) return SCRAP_3D_IMAGES.cpu;
   if (n.includes("crt tv") || n.includes("old tv") || n.includes("box tv")) return SCRAP_3D_IMAGES.crt_tv;
-  if (n.includes("tv") || n.includes("television") || n.includes("led") || n.includes("lcd") || n.includes("monitor") || n.includes("printer") || n.includes("scanner") || n.includes("e-waste") || n.includes("electronic")) return SCRAP_3D_IMAGES.printer_tv;
+  if (n.includes("crt monitor") || (n.includes("monitor") && n.includes("crt"))) return SCRAP_3D_IMAGES.crt_tv;
+  if (n.includes("tv") || n.includes("television") || n.includes("led") || n.includes("lcd") || n.includes("monitor") || n.includes("printer") || n.includes("scanner") || n.includes("fax")) return SCRAP_3D_IMAGES.printer_tv;
 
-  // Vehicles
+  // 16. Vehicles
   if (n.includes("scooty") || n.includes("scooter") || n.includes("activa") || n.includes("jupiter")) return SCRAP_3D_IMAGES.scooty;
   if (n.includes("bike") || n.includes("motorcycle") || n.includes("splendor") || n.includes("pulsar") || n.includes("bullet")) return SCRAP_3D_IMAGES.bike;
   if (n.includes("car") || n.includes("gaddi") || n.includes("vehicle") || n.includes("auto") || n.includes("truck") || n.includes("van") || n.includes("jeeto")) return SCRAP_3D_IMAGES.car;
 
-  // Fallback by Category
+  // Category fallback
   if (c.includes("paper")) return SCRAP_3D_IMAGES.office_paper;
   if (c.includes("plastic")) return SCRAP_3D_IMAGES.plastic;
   if (c.includes("metal")) return SCRAP_3D_IMAGES.iron;
@@ -178,4 +177,3 @@ export const getScrapItemImage = (name = "", category = "", itemImageUrl = null)
 
   return SCRAP_3D_IMAGES.default;
 };
-
