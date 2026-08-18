@@ -45,15 +45,14 @@ export const requestNotificationPermission = async () => {
       if (perm.display !== "granted") {
         await LocalNotifications.requestPermissions();
       }
-      // Create high-priority notification channel for Android 8.0+
+      // Create high-priority notification channel for Android 8.0+ (Play Store / APK friendly)
       try {
         await LocalNotifications.createChannel({
           id: "scrapvex_alerts",
           name: "ScrapVex Real-Time Alerts",
           description: "Instant alerts for pickup bookings, OTPs, and status updates",
-          importance: 5, // MAX importance (Pop-up + Sound + Vibration)
+          importance: 5, // MAX importance (Heads-up Status Banner + Sound + Vibration)
           visibility: 1,
-          sound: "beep.wav",
           vibration: true,
           lights: true,
           lightColor: "#0b8f3a"
@@ -77,7 +76,7 @@ export const triggerNativeNotification = async (title, body, notifId = null) => 
     const idStr = String(notifId);
     if (notifiedIds.has(idStr)) return;
     notifiedIds.add(idStr);
-    if (notifiedIds.size > 100) {
+    if (notifiedIds.size > 200) {
       const first = Array.from(notifiedIds)[0];
       notifiedIds.delete(first);
     }
@@ -89,16 +88,16 @@ export const triggerNativeNotification = async (title, body, notifId = null) => 
   // 2. Trigger native Android Local Notification (Heads-up Status Bar Banner)
   if (isNativeApp()) {
     try {
-      const numId = notifId ? Math.abs(hashCode(String(notifId))) : Math.floor(Math.random() * 1000000);
+      const numId = notifId ? (Math.abs(hashCode(String(notifId))) % 2147483647) : Math.floor(Math.random() * 1000000);
       await LocalNotifications.schedule({
         notifications: [
           {
             title: title || "ScrapVex Alert 🔔",
             body: body || "You have a new update on ScrapVex.",
             id: numId,
-            schedule: { at: new Date(Date.now() + 100) }, // Trigger immediately
+            schedule: { at: new Date(Date.now() + 50) }, // Trigger immediately
             channelId: "scrapvex_alerts",
-            smallIcon: "res://drawable/ic_launcher_foreground",
+            smallIcon: "ic_launcher",
             iconColor: "#0b8f3a",
             actionTypeId: "",
             extra: { notifId }

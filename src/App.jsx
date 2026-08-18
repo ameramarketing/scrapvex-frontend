@@ -37,6 +37,7 @@ import Navbar from "./components/Navbar";
 import MobileAppShell from "./components/MobileAppShell";
 import GlobalLoader from "./components/GlobalLoader";
 import NativeOfflineBanner from "./components/NativeOfflineBanner";
+import { App as CapApp } from "@capacitor/app";
 import { StatusBar, Style } from "@capacitor/status-bar";
 import { requestNotificationPermission, triggerNativeNotification } from "./utils/pushNotifications";
 import { isNativeApp, isMobileEnvironment } from "./platform/platform";
@@ -82,7 +83,7 @@ function App() {
 
   const [appSettings, setAppSettings] = useState(null);
 
-  // Initialize Native Features & Push Notifications & Render Keep-Alive Ping
+  // Initialize Native Features & Push Notifications & 2-Second Real-Time Notification Poller
   React.useEffect(() => {
     requestNotificationPermission();
     if (isNativeApp()) {
@@ -97,7 +98,7 @@ function App() {
       }).catch(() => {});
     };
 
-    // Check background notifications every 12 seconds for real-time alerts
+    // Check background notifications every 2 seconds for instant real-time alerts
     const checkBackgroundNotifs = async () => {
       try {
         const token = localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -106,7 +107,7 @@ function App() {
         if (data && data.success && Array.isArray(data.data)) {
           const unread = data.data.filter(n => n && !n.isRead);
           if (unread.length > 0) {
-            for (const notif of unread.slice(0, 3)) {
+            for (const notif of unread.slice(0, 5)) {
               triggerNativeNotification(notif.title || "ScrapVex Alert 🔔", notif.message, notif._id);
             }
           }
@@ -116,14 +117,29 @@ function App() {
 
     pingBackend();
     const interval = setInterval(pingBackend, 5 * 60 * 1000);
-    const notifStartDelay = setTimeout(() => {
-      checkBackgroundNotifs();
-    }, 2000);
-    const notifInterval = setInterval(checkBackgroundNotifs, 12 * 1000);
+    
+    // Immediate check + 2-second real-time loop
+    checkBackgroundNotifs();
+    const notifInterval = setInterval(checkBackgroundNotifs, 2000);
+
+    // Also trigger immediate check whenever app returns to foreground / is resumed
+    let appStateListener = null;
+    if (isNativeApp()) {
+      try {
+        appStateListener = CapApp.addListener("appStateChange", ({ isActive }) => {
+          if (isActive) {
+            checkBackgroundNotifs();
+          }
+        });
+      } catch (e) {}
+    }
+
     return () => {
       clearInterval(interval);
       clearInterval(notifInterval);
-      clearTimeout(notifStartDelay);
+      if (appStateListener && typeof appStateListener.remove === "function") {
+        appStateListener.remove();
+      }
     };
   }, []);
 
