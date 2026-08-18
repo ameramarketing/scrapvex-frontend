@@ -40,6 +40,7 @@ const SCRAP_3D_IMAGES = {
 
   // Small Appliances / E-Waste
   inverter:              "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774073229020860513.png?alt=media",
+  dvd_player:            "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Dvd/3D/dvd_3d.png",
   ups:                   "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774073159759392848.png?alt=media",
   battery:               "https://firebasestorage.googleapis.com/v0/b/scrapuncle-452708.firebasestorage.app/o/products%2F1774073296925281212.png?alt=media",
   gym_equipment:         "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Person%20lifting%20weights/Default/3D/person_lifting_weights_3d_default.png",
@@ -135,8 +136,9 @@ export const getScrapItemImage = (name = "", category = "", itemImageUrl = null)
   if (n.includes("cooler")) return SCRAP_3D_IMAGES.cooler;
 
   // 12. Small Appliances
-  if (n.includes("metal appliances heavy") || n.includes("heavy") || n.includes("stabiliser") || n.includes("stabilizer")) return SCRAP_3D_IMAGES.inverter;
-  if (n.includes("metal appliances") || n.includes("medium") || n.includes("light") || n.includes("ceiling fan") || n.includes("fan") || n.includes("motor") || n.includes("pump")) return SCRAP_3D_IMAGES.fan_motor;
+  if (n.includes("metal appliances heavy") || (n.includes("heavy") && n.includes("appliances")) || n.includes("stabiliser") || n.includes("stabilizer")) return SCRAP_3D_IMAGES.inverter;
+  if (n.includes("metal appliances light") || n.includes("dvd") || n.includes("vcr") || n.includes("bluray") || n.includes("clothes press") || n.includes("set top box")) return SCRAP_3D_IMAGES.dvd_player;
+  if (n.includes("metal appliances medium") || n.includes("ceiling fan") || n.includes("fan") || n.includes("motor") || n.includes("pump")) return SCRAP_3D_IMAGES.fan_motor;
   if (n.includes("plastic appliances") || n.includes("mixer") || n.includes("vaccum") || n.includes("induction")) return SCRAP_3D_IMAGES.cooler;
   if (n.includes("geyser") || n.includes("water heater")) return SCRAP_3D_IMAGES.geyser;
   if (/\bups\b/.test(n)) return SCRAP_3D_IMAGES.ups;
