@@ -28,11 +28,11 @@ function SplashScreen({ onFinish }) {
     >
       {/* Full High-Res Portrait Splash Screen Image */}
       <img
-        src="/splash_screen.png"
+        src="/splash screen.png"
         alt="ScrapVex Splash Screen"
         style={fullSplashImage}
         onError={(e) => {
-          e.target.src = "/splash.png";
+          e.target.src = "/splash_screen.png";
         }}
       />
     </div>

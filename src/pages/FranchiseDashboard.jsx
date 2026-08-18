@@ -595,6 +595,31 @@ const playBellSound = () => {
     updateActiveDraft({ items: updated });
   };
 
+  const openEditPurchase = (purchase) => {
+    if (!purchase) return;
+    const newId = Date.now();
+    const draftData = {
+      id: newId,
+      _id: purchase._id,
+      supplierId: purchase.supplierId || purchase.supplier?._id || "",
+      supplierName: purchase.supplierName || "Supplier",
+      supplierContact: purchase.supplierContact || "",
+      notes: purchase.notes || "",
+      items: (purchase.items || []).map(it => ({
+        scrapItem: it.scrapItem?._id || it.scrapItem || it._id || "",
+        name: it.name || it.scrapItem?.name || "Scrap Item",
+        quantity: parseFloat(it.quantity) || 0,
+        rate: parseFloat(it.rate) || 0,
+        amount: parseFloat(it.amount) || ((parseFloat(it.quantity) || 0) * (parseFloat(it.rate) || 0))
+      })),
+      paymentStatus: purchase.paymentStatus || "Paid",
+      paymentMethod: purchase.paymentMethod || "Cash"
+    };
+    setPurchaseDrafts(prev => [...prev, draftData]);
+    setActiveDraftId(newId);
+    setShowPurchaseModal(true);
+  };
+
   const handleConvertPickupToPurchase = (pickup) => {
     const newId = Date.now();
     const draftData = {
@@ -796,10 +821,21 @@ const playBellSound = () => {
   };
 
   const handleAssignPickup = async (collectorId) => {
+    if (!selectedPickup) return;
+    const collectorObj = collectors.find(c => c._id === collectorId);
     try {
+      // Optimistic instant UI update
+      setPickups(prev => prev.map(p => p._id === selectedPickup._id ? { ...p, status: "assigned", collector: collectorObj, collectorName: collectorObj?.name || "Collector" } : p));
+      setShowAssignModal(false);
       const { data } = await API.post("/admin/assign-pickup", { pickupId: selectedPickup._id, collectorId });
-      if (data.success) { showToast("success", "Assigned!"); setShowAssignModal(false); fetchAdminData(); }
-    } catch (e) { showToast("error", "Failed"); }
+      if (data.success) { 
+        showToast("success", `Pickup assigned to ${collectorObj?.name || "Collector"}! 🚚`); 
+        fetchAdminData(); 
+      }
+    } catch (e) { 
+      showToast("error", e.response?.data?.message || "Failed to assign pickup"); 
+      fetchAdminData();
+    }
   };
 
   const handleDeleteItem = async (id, type) => {
@@ -3029,7 +3065,7 @@ const smBtn = { border: "1px solid var(--glass-border)", background: "var(--card
 const smDelBtn = { background: "#fff5f5", color: "#dc3545", padding: "8px", border: "none", borderRadius: "10px", cursor: "pointer" };
 const saveBtnBig = { background: "#0b8f3a", color: "#fff", border: "none", width: "100%", padding: "15px", borderRadius: "15px", fontWeight: "bold", fontSize: "15px", cursor: "pointer", marginTop: "15px", boxShadow: "0 10px 20px rgba(11, 143, 58, 0.2)" };
 
-const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(5px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000, padding: "20px" };
+const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999999, padding: "20px" };
 const modalBox = { background: "var(--card-bg)", padding: "25px 25px 35px 25px", borderRadius: "30px", width: "100%", maxWidth: "450px", maxHeight: "90vh", overflowY: "auto" };
 const inputStyle = { width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid var(--glass-border)", background: "var(--bg-main)", color: "var(--text-main)", marginBottom: "15px", boxSizing: "border-box", outline: "none", fontSize: "14px", transition: "0.3s" };
 

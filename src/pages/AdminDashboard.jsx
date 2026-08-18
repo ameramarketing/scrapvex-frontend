@@ -1093,10 +1093,21 @@ const playBellSound = () => {
   };
 
   const handleAssignPickup = async (collectorId) => {
+    if (!selectedPickup) return;
+    const collectorObj = collectors.find(c => c._id === collectorId);
     try {
+      // Optimistic instant UI update
+      setPickups(prev => prev.map(p => p._id === selectedPickup._id ? { ...p, status: "assigned", collector: collectorObj, collectorName: collectorObj?.name || "Collector" } : p));
+      setShowAssignModal(false);
       const { data } = await API.post("/admin/assign-pickup", { pickupId: selectedPickup._id, collectorId });
-      if (data.success) { showToast("success", "Assigned!"); setShowAssignModal(false); fetchAdminData(); }
-    } catch (e) { showToast("error", "Failed"); }
+      if (data.success) { 
+        showToast("success", `Pickup assigned to ${collectorObj?.name || "Collector"}! 🚚`); 
+        fetchAdminData(); 
+      }
+    } catch (e) { 
+      showToast("error", e.response?.data?.message || "Failed to assign pickup"); 
+      fetchAdminData();
+    }
   };
 
   const handleDeleteItem = async (id, type) => {
@@ -3635,19 +3646,41 @@ const playBellSound = () => {
             <label style={{fontSize:"12px", fontWeight:"bold", color: "var(--text-muted)", display:"block", marginBottom:"8px"}}>Items (Qty aur Rate edit karein):</label>
             {editPurchaseData.items.map((item, idx) => (
               <div key={idx} style={{display:"flex", gap:"8px", marginBottom:"8px", alignItems:"center"}}>
-                <span style={{flex:1, fontSize:"12px", fontWeight:"bold"}}>{item.name}</span>
-                <input className="native-input" style={{...inputStyle, marginBottom:0, width:"70px"}}
+                <span style={{flex:1, fontSize:"12px", fontWeight:"bold"}}>{item.name || item.scrapItem?.name || "Item"}</span>
+                <input 
+                  className="native-input" 
+                  type="number"
+                  placeholder="Qty/Kg"
+                  style={{...inputStyle, marginBottom:0, width:"75px"}}
+                  value={item.quantity ?? ""}
                   onChange={e => {
+                    const val = e.target.value;
                     const updated = [...editPurchaseData.items];
-                    updated[idx] = {...updated[idx], quantity: e.target.value, amount: parseFloat(e.target.value || 0) * parseFloat(updated[idx].rate || 0)};
+                    updated[idx] = {
+                      ...updated[idx], 
+                      quantity: val, 
+                      amount: (parseFloat(val) || 0) * (parseFloat(updated[idx].rate) || 0)
+                    };
                     setEditPurchaseData({...editPurchaseData, items: updated});
-                  }} />
-                <input className="native-input" style={{...inputStyle, marginBottom:0, width:"70px"}}
+                  }} 
+                />
+                <input 
+                  className="native-input" 
+                  type="number"
+                  placeholder="Rate"
+                  style={{...inputStyle, marginBottom:0, width:"75px"}}
+                  value={item.rate ?? ""}
                   onChange={e => {
+                    const val = e.target.value;
                     const updated = [...editPurchaseData.items];
-                    updated[idx] = {...updated[idx], rate: e.target.value, amount: parseFloat(updated[idx].quantity || 0) * parseFloat(e.target.value || 0)};
+                    updated[idx] = {
+                      ...updated[idx], 
+                      rate: val, 
+                      amount: (parseFloat(updated[idx].quantity) || 0) * (parseFloat(val) || 0)
+                    };
                     setEditPurchaseData({...editPurchaseData, items: updated});
-                  }} />
+                  }} 
+                />
                 <span style={{fontSize:"12px", color:"#0b8f3a", fontWeight:"bold", minWidth:"60px"}}>₹{item.amount?.toFixed(0)}</span>
               </div>
             ))}
@@ -3992,7 +4025,7 @@ const smBtn = { border: "1px solid var(--glass-border)", background: "var(--card
 const smDelBtn = { background: "#fff5f5", color: "#dc3545", padding: "8px", border: "none", borderRadius: "10px", cursor: "pointer" };
 const saveBtnBig = { background: "#0b8f3a", color: "#fff", border: "none", width: "100%", padding: "15px", borderRadius: "15px", fontWeight: "bold", fontSize: "15px", cursor: "pointer", marginTop: "15px", boxShadow: "0 10px 20px rgba(11, 143, 58, 0.2)" };
 
-const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(5px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000, padding: "20px" };
+const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 999999, padding: "20px" };
 const modalBox = { background: "var(--card-bg)", padding: "25px 25px 35px 25px", borderRadius: "30px", width: "100%", maxWidth: "450px", maxHeight: "90vh", overflowY: "auto" };
 const inputStyle = { width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid var(--glass-border)", background: "var(--bg-main)", color: "var(--text-main)", marginBottom: "15px", boxSizing: "border-box", outline: "none", fontSize: "14px", transition:"0.3s" };
 

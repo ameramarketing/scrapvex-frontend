@@ -33,15 +33,11 @@ export default function NativePageTransition({ children }) {
     <div
       style={{
         opacity: transitioning ? 0.4 : 1,
-        transform: transitioning ? "translateY(5px)" : "translateY(0px)",
-        transition: "opacity 0.15s ease-in-out, transform 0.15s ease-out",
+        transition: "opacity 0.15s ease-in-out",
         height: "100%",
         width: "100%",
       }}
     >
-      {/* We map the children's display over the displayLocation state to crossfade. 
-          React Router usually handles this automatically if you wrap Routes, 
-          but for simplicity in AppShell we just fade the container itself. */}
       {children}
     </div>
   );
