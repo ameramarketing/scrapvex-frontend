@@ -83,11 +83,18 @@ export const getScrapItemImage = (name = "", category = "", itemImageUrl = null)
   if (str.includes("brass") || str.includes("peetal") || str.includes("pital")) return SCRAP_3D_IMAGES.brass;
   if (str.includes("aluminium") || str.includes("aluminum") || str.includes("cooker") || str.includes("kadhai") || str.includes("alumnium")) return SCRAP_3D_IMAGES.aluminum;
   if (str.includes("steel") || str.includes("stainless") || str.includes("bartan") || str.includes("sink")) return SCRAP_3D_IMAGES.steel;
+
+  // Specific appliance matches BEFORE generic metal/iron check
+  if (str.includes("metal appliances heavy") || (str.includes("stabiliser") && str.includes("inverter"))) return SCRAP_3D_IMAGES.inverter;
+  if (str.includes("metal appliances medium") || str.includes("metal appliances light") || (str.includes("ceiling fan") && str.includes("motor"))) return SCRAP_3D_IMAGES.fan_motor;
+  if (str.includes("iron cooler") || (str.includes("cooler") && str.includes("motor"))) return SCRAP_3D_IMAGES.cooler;
+  if (str.includes("gym") || str.includes("dumbbell") || str.includes("exercise")) return SCRAP_3D_IMAGES.iron;
+
   if (str.includes("iron") || str.includes("loha") || str.includes("girder") || str.includes("sariya") || str.includes("tmt") || str.includes("metal")) return SCRAP_3D_IMAGES.iron;
   if (str.includes("tin") || str.includes("lead") || str.includes("zinc")) return SCRAP_3D_IMAGES.iron;
 
   // Large Appliances
-  if (str.includes("window ac") || str.includes("window / split")) return SCRAP_3D_IMAGES.window_ac;
+  if (str.includes("window ac") || str.includes("window / split") || str.includes("window ac / split") || str.includes("inverter window") || str.includes("indoor+outdoor") || str.includes("indoor + outdoor")) return SCRAP_3D_IMAGES.window_ac;
   if (str.includes("ac") || str.includes("air conditioner") || str.includes("split ac") || str.includes("inverter ac") || str.includes("indoor")) return SCRAP_3D_IMAGES.split_ac;
 
   if (str.includes("side by side") || str.includes("double door fridge")) return SCRAP_3D_IMAGES.fridge_double_door;
