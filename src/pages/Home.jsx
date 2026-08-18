@@ -219,7 +219,7 @@ function Home() {
          <div className="container" style={{display: "flex", flexWrap: "wrap", gap: "40px"}}>
             <div style={{flex: 1, minWidth: "300px", display: "flex", flexDirection: "column", gap: "20px"}}>
               <Card icon={<FaPhoneAlt />} title="Call Us" text="+91 8491028539" />
-              <Card icon={<FaEnvelope />} title="Email" text="support@scrapvex.com" />
+              <Card icon={<FaEnvelope />} title="Email" text="support@scrapvex.in" />
               <Card icon={<FaMapMarkerAlt />} title="Location" text="Rajouri, Jammu & Kashmir" />
             </div>
             <div style={{flex: 1, minWidth: "300px", padding: "30px"}} className="card-premium">

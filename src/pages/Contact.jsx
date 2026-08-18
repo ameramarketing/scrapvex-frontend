@@ -182,8 +182,8 @@ function Contact() {
             <div style={{ ...iconPillStyle, background: "#eff6ff", color: "#2563eb" }}><FaEnvelope /></div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: "13px", fontWeight: "800", color: "var(--text-main, #0f172a)" }}>Email Support</div>
-              <a href={`mailto:${settings?.contactEmail || "support@scrapvex.com"}`} style={{ fontSize: "13px", fontWeight: "800", color: "#2563eb", textDecoration: "none", display: "block", marginTop: "2px" }}>
-                {settings?.contactEmail || "support@scrapvex.com"}
+              <a href={`mailto:${settings?.contactEmail || "support@scrapvex.in"}`} style={{ fontSize: "13px", fontWeight: "800", color: "#2563eb", textDecoration: "none", display: "block", marginTop: "2px" }}>
+                {settings?.contactEmail || "support@scrapvex.in"}
               </a>
               <span style={{ fontSize: "11px", color: "var(--text-muted, #64748b)" }}>Quick response within 24 hours</span>
             </div>

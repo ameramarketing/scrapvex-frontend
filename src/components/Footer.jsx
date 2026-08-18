@@ -74,7 +74,7 @@ function Footer() {
           <h3 style={title}>Get In Touch</h3>
           <div style={infoCol}>
              <InfoRow icon={<FaPhoneAlt />} text="+91 8491028539" />
-             <InfoRow icon={<FaEnvelope />} text="support@scrapvex.com" />
+             <InfoRow icon={<FaEnvelope />} text={settings?.contactEmail || "support@scrapvex.in"} />
              <InfoRow icon={<FaMapMarkerAlt />} text="Rajouri, J&K, India" />
           </div>
         </div>

@@ -201,14 +201,18 @@ function PrivacyPolicy() {
               color: "var(--text-muted, #64748b)",
               lineHeight: 1.6
             }}>
-              <div style={{ fontWeight: "800", color: "var(--text-main, #0f172a)", marginBottom: "4px", fontSize: "13px" }}>
-                Grievance Officer Details
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "13px", color: "var(--text-muted, #475569)" }}>
+                <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Name:</strong> {settings?.grievanceOfficerName || "Amir Sohail"}</div>
+                <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Designation:</strong> Grievance Redressal Officer</div>
+                <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Address:</strong> {settings?.grievanceOfficerAddress || "Main Market, Rajouri, Jammu & Kashmir - 185131"}</div>
+                <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Phone:</strong> {settings?.grievanceOfficerPhone || "+91 8491028539"}</div>
+                <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Email:</strong> {settings?.grievanceOfficerEmail || settings?.contactEmail || "support@scrapvex.in"}</div>
+                
+                <div style={{ marginTop: "8px", paddingTop: "8px", borderTop: "1px dashed var(--card-border, #cbd5e1)" }}>
+                  <div><strong style={{ color: "var(--text-main, #0f172a)" }}>General Inquiries:</strong> info@scrapvex.in</div>
+                  <div style={{ marginTop: "4px" }}><strong style={{ color: "var(--text-main, #0f172a)" }}>General Support:</strong> {settings?.contactEmail || "support@scrapvex.in"}</div>
+                </div>
               </div>
-              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Name:</strong> {settings?.grievanceOfficerName || "Amir Sohail"}</div>
-              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Email:</strong> {settings?.grievanceOfficerEmail || settings?.contactEmail || "grievance@scrapvex.com"}</div>
-              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Phone:</strong> {settings?.grievanceOfficerPhone || settings?.contactPhone || "+91 8491028539"}</div>
-              <div><strong style={{ color: "var(--text-main, #0f172a)" }}>Address:</strong> {settings?.grievanceOfficerAddress || settings?.officeAddress || "Main Market, Rajouri, Jammu & Kashmir - 185131"}</div>
-              <div style={{ marginTop: "4px" }}><strong style={{ color: "var(--text-main, #0f172a)" }}>General Support:</strong> {settings?.contactEmail || "support@scrapvex.com"}</div>
             </div>
           </div>
 

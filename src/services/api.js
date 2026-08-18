@@ -95,17 +95,23 @@ API.interceptors.response.use(
       // Removed alert(msg) per production rules
     }
 
-    // Auto-logout on 401/403 for non-login endpoints
+    // Auto-logout on 401/403 for non-login and non-public endpoints
+    // Public endpoints (scrap-items, price-history, cities, etc.) should NOT trigger logout
+    const publicEndpoints = ["scrap-items", "price-history", "cities", "pickups/vote-area", "settings"];
+    const isPublicEndpoint = publicEndpoints.some(ep => url.includes(ep));
+
     if (
       error.response &&
       (error.response.status === 401 || error.response.status === 403) &&
-      !url.includes("login")
+      !url.includes("login") &&
+      !isPublicEndpoint
     ) {
       await clearAuthData();
       eraseCookie("token");
       eraseCookie("user");
       eraseCookie("role");
-      window.location.href = "/";
+      // Redirect to login page instead of home to avoid confusing redirects on public pages
+      window.location.href = "/login";
     }
 
     // Map custom messages to propagate to UI Toast components

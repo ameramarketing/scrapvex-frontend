@@ -629,26 +629,32 @@ function Rates() {
       <>
         {/* PRICE TREND 30-DAY MODAL */}
         {trendItem && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.65)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 99999,
-            padding: "16px"
-          }}>
-            <div style={{
-              background: "var(--card-bg, #ffffff)",
-              border: "1.5px solid var(--card-border, #e2e8f0)",
-              borderRadius: "20px",
-              padding: "24px",
-              maxWidth: "440px",
-              width: "100%",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
-            }}>
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.65)",
+              backdropFilter: "blur(4px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 99999,
+              padding: "16px"
+            }}
+            onClick={() => setTrendItem(null)}
+          >
+            <div
+              style={{
+                background: "var(--card-bg, #ffffff)",
+                border: "1.5px solid var(--card-border, #e2e8f0)",
+                borderRadius: "20px",
+                padding: "24px",
+                maxWidth: "440px",
+                width: "100%",
+                boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <img
@@ -771,26 +777,32 @@ function Rates() {
 
         {/* AREA VOTE / EXPANSION REQUEST MODAL */}
         {showVoteModal && (
-          <div style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.65)",
-            backdropFilter: "blur(4px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 99999,
-            padding: "16px"
-          }}>
-            <div style={{
-              background: "var(--card-bg, #ffffff)",
-              border: "1.5px solid var(--card-border, #e2e8f0)",
-              borderRadius: "20px",
-              padding: "24px",
-              maxWidth: "380px",
-              width: "100%",
-              boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
-            }}>
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.65)",
+              backdropFilter: "blur(4px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 99999,
+              padding: "16px"
+            }}
+            onClick={() => setShowVoteModal(false)}
+          >
+            <div
+              style={{
+                background: "var(--card-bg, #ffffff)",
+                border: "1.5px solid var(--card-border, #e2e8f0)",
+                borderRadius: "20px",
+                padding: "24px",
+                maxWidth: "380px",
+                width: "100%",
+                boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <span style={{ fontSize: "22px" }}>🗳️</span>
@@ -945,7 +957,8 @@ const mobileRateCard = {
   width: "100%",
   boxSizing: "border-box",
   minWidth: 0,
-  overflow: "hidden"
+  overflow: "hidden",
+  cursor: "pointer"
 };
 
 const mobileRateCardIcon = {
