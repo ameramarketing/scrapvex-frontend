@@ -52,6 +52,10 @@ function Footer() {
             <FooterLink to="/" text="Home" />
             <FooterLink to="/rates" text="Scrap Rates" />
             <FooterLink to="/book" text="Book Pickup" />
+            <a href="/ScrapVex.apk" download="ScrapVex.apk" style={linkItem} className="nav-link-glow">
+              <FaArrowRight style={{ fontSize: "10px", color: "#0b8f3a" }} />
+              Download Android App (APK)
+            </a>
             <FooterLink to="/terms" text="Terms & Conditions" />
             <FooterLink to="/about" text="About Us" />
           </div>

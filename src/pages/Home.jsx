@@ -4,7 +4,7 @@ import {
   FaTruck, FaMoneyBillWave, FaBolt, FaUsers, FaRecycle,
   FaCalendarCheck, FaChevronDown, FaChevronUp, FaHome,
   FaBuilding, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaArrowRight,
-  FaPlusCircle
+  FaPlusCircle, FaAndroid, FaDownload
 } from "react-icons/fa";
 
 import Footer from "../components/Footer";
@@ -51,13 +51,21 @@ function Home() {
             Sell paper, plastic, metal, iron & e-waste online with fair rates and instant payment.
           </p>
 
-          <div style={heroActions} className="text-center-mobile">
+          <div style={{ ...heroActions, flexWrap: "wrap" }} className="text-center-mobile">
             <button className="btn-premium full-width-mobile" onClick={() => navigate("/rates")}>
               View Rates <FaArrowRight />
             </button>
             <button className="btn-secondary full-width-mobile hide-on-mobile" onClick={() => navigate("/book")}>
               Book Pickup
             </button>
+            <a 
+              href="/ScrapVex.apk" 
+              download="ScrapVex.apk" 
+              className="btn-premium full-width-mobile" 
+              style={{ background: "#0b8f3a", textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "8px", boxShadow: "0 4px 14px rgba(11,143,58,0.3)" }}
+            >
+              <FaAndroid style={{ fontSize: "17px" }} /> Download Android App
+            </a>
           </div>
         </div>
 
