@@ -241,11 +241,63 @@ function Home() {
                 <input type="email" placeholder="Your Email" required style={inputStyle} value={contactForm.email} onChange={e => setContactForm({...contactForm, email: e.target.value})} />
                 <input type="text" placeholder="Phone Number" required pattern="[0-9]{10}" title="Phone number must be exactly 10 digits" maxLength="10" style={inputStyle} value={contactForm.phone} onChange={e => setContactForm({...contactForm, phone: e.target.value.replace(/\D/g, '')})} />
                 <input type="text" placeholder="Subject" required style={inputStyle} value={contactForm.subject} onChange={e => setContactForm({...contactForm, subject: e.target.value})} />
-                <textarea placeholder="Your Message" required style={{...inputStyle, minHeight: "120px", resize: "vertical"}} value={contactForm.message} onChange={e => setContactForm({...contactForm, message: e.target.value})}></textarea>
+                 <textarea placeholder="Your Message" required style={{...inputStyle, minHeight: "120px", resize: "vertical"}} value={contactForm.message} onChange={e => setContactForm({...contactForm, message: e.target.value})}></textarea>
                 <button type="submit" className="btn-premium" style={{width: "100%", padding: "15px"}}>Send Message</button>
               </form>
             </div>
          </div>
+      </div>
+
+      {/* SEO REGIONAL COVERAGE & KEYWORDS HUB (ENTERPRISE RANKING BOOST) */}
+      <div style={{ background: "var(--card-bg)", borderTop: "1px solid var(--glass-border)", padding: "40px 0" }}>
+        <div className="container">
+          <div style={{ textAlign: "center", marginBottom: "30px" }}>
+            <span style={{ fontSize: "12px", fontWeight: "800", color: "var(--primary)", textTransform: "uppercase", letterSpacing: "1.5px" }}>
+              🌐 J&K Doorstep Recycling Network
+            </span>
+            <h2 style={{ fontSize: "22px", fontWeight: "900", margin: "8px 0", color: "var(--text-main)" }}>
+              Online Kabadiwala & Scrap Pickup Across Jammu & Kashmir
+            </h2>
+            <p style={{ fontSize: "14px", color: "var(--text-muted)", maxWidth: "750px", margin: "0 auto", lineHeight: "1.6" }}>
+              ScrapVex provides certified doorstep scrap collection, accurate digital weighing scale, and instant UPI/Cash payments for homes, shops, offices, and industries across all key districts of J&K.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+            <div style={{ background: "var(--bg-main)", padding: "20px", borderRadius: "18px", border: "1px solid var(--glass-border)" }}>
+              <h3 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main)", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                📍 Primary Service Locations
+              </h3>
+              <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: "1.7", margin: 0 }}>
+                <strong>Rajouri</strong> (Jawahar Nagar, Kheora, Panja, Tariq Bridge, Dhanidhar), <strong>Jammu City</strong> (Gandhi Nagar, Channi Himmat, Talab Tillo, Janipur, Bahu Fort), <strong>Poonch</strong>, <strong>Reasi</strong>, <strong>Udhampur</strong>, <strong>Srinagar</strong>, <strong>Kathua</strong>, <strong>Samba</strong>, <strong>Akhnoor</strong>, <strong>Sunderbani</strong>, <strong>Nowshera</strong>, <strong>Mendhar</strong>, <strong>Thanamandi</strong>, <strong>Surankote</strong>, <strong>Doda</strong>, <strong>Ramban</strong>.
+              </p>
+            </div>
+
+            <div style={{ background: "var(--bg-main)", padding: "20px", borderRadius: "18px", border: "1px solid var(--glass-border)" }}>
+              <h3 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main)", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                ♻️ High-Demand Scrap Items
+              </h3>
+              <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: "1.7", margin: 0 }}>
+                <strong>Paper & Raddi:</strong> Newspaper, Books, Cardboard / Gatta Boxes, Office Files.<br />
+                <strong>Metals:</strong> Iron (Loha), Steel, Copper (Tamba), Brass (Peetal), Aluminium.<br />
+                <strong>Electronics & E-Waste:</strong> Split & Window ACs, Inverter Batteries, Refrigerators, Laptops, CPUs, TVs.<br />
+                <strong>Vehicles:</strong> Old Bikes, Scooters, Cars, Metal Chassis.
+              </p>
+            </div>
+
+            <div style={{ background: "var(--bg-main)", padding: "20px", borderRadius: "18px", border: "1px solid var(--glass-border)" }}>
+              <h3 style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main)", marginBottom: "10px", display: "flex", alignItems: "center", gap: "8px" }}>
+                ⚡ Why ScrapVex Ranks #1
+              </h3>
+              <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: "1.7", margin: 0 }}>
+                ✓ <strong>100% Free Doorstep Pickup</strong> — No hidden charges.<br />
+                ✓ <strong>ISO-Calibrated Digital Scales</strong> — Precision to the last gram.<br />
+                ✓ <strong>Daily Transparent Market Rates</strong> — Guaranteed highest price in J&K.<br />
+                ✓ <strong>Instant Cash / UPI Wallet Payment</strong> — Received on the spot.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <style>{`
