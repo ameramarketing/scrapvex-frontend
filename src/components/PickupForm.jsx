@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { 
   FaUser, FaPhoneAlt, FaLock, FaMapMarkerAlt, FaCalendarAlt, FaClock, 
   FaRecycle, FaGift, FaCheckCircle, FaChevronRight, FaInfoCircle, 
-  FaPlus, FaMinus, FaCrosshairs, FaCheck 
+  FaPlus, FaMinus, FaCrosshairs, FaCheck, FaWhatsapp 
 } from "react-icons/fa";
 import Toast from "./Toast";
 import API from "../services/api";
@@ -500,31 +500,32 @@ function PickupForm() {
                 <button
                   type="button"
                   className="btn-premium full-width-mobile"
-                  style={{ background: "#25D366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", border: "none", height: "46px" }}
+                  style={{ background: "#25D366", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", border: "none", height: "48px", fontSize: "15px", fontWeight: "800", boxShadow: "0 4px 14px rgba(37, 211, 102, 0.35)" }}
                   onClick={() => sendOtp("whatsapp")}
                   disabled={loading}
                 >
-                  {loading ? <FaRecycle className="spin" /> : <>Get OTP on WhatsApp</>}
-                </button>
-                <button
-                  type="button"
-                  className="btn-premium full-width-mobile"
-                  style={{ background: "#0b8f3a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", border: "none", height: "46px" }}
-                  onClick={() => sendOtp("sms")}
-                  disabled={loading}
-                >
-                  {loading ? <FaRecycle className="spin" /> : <>Get OTP via SMS</>}
+                  {loading ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "20px" }} /> Get OTP on WhatsApp</>}
                 </button>
               </div>
             ) : (
               <div style={{ marginTop: "15px" }}>
                 <p style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px" }}>
-                  {otpChannel === "whatsapp" ? "💬 OTP code sent to your WhatsApp inbox" : "📩 OTP code sent via SMS"} on <b>+91 {form.phone}</b>.
+                  💬 Verification OTP code sent to your WhatsApp inbox on <b>+91 {form.phone}</b>.
                 </p>
                 <Input icon={<FaLock />} placeholder="Enter 6-Digit Code" value={form.otp} onChange={v => update("otp", v.replace(/\D/g, "").slice(0, 6))} />
                 <button className="btn-premium full-width-mobile" style={{ marginTop: "10px", height: "46px", border: "none" }} onClick={verifyOtp} disabled={loading}>
                   {loading ? <FaRecycle className="spin" /> : "Verify & Continue"}
                 </button>
+                <div style={{ textAlign: "center", marginTop: "10px" }}>
+                  <button
+                    type="button"
+                    onClick={() => sendOtp("whatsapp")}
+                    disabled={loading}
+                    style={{ background: "none", border: "none", color: "#0b8f3a", fontSize: "12px", fontWeight: "700", cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    🔄 Resend OTP on WhatsApp
+                  </button>
+                </div>
               </div>
             )}
           </div>
