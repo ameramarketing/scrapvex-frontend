@@ -37,7 +37,7 @@ function BookPickup() {
       .then(({ data }) => {
         if (data.success && data.data && data.data.length > 0) {
           const popular = data.data.filter(item => 
-            ["iron", "newspaper", "plastic", "cardboard", "steel", "aluminium"].some(p => 
+            ["iron", "newspaper", "plastic", "copper", "brass", "cardboard"].some(p => 
               item.name.toLowerCase().includes(p)
             )
           );
