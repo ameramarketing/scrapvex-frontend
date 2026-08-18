@@ -10,6 +10,10 @@ import {
 function About() {
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    document.title = "About ScrapVex | J&K's #1 Digital Kabadiwala & Recycling Platform";
+  }, []);
+
   return (
     <div style={{ background: "var(--bg-main, #f8fafc)", minHeight: "100vh", color: "var(--text-main, #0f172a)" }}>
       

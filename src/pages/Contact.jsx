@@ -21,6 +21,7 @@ function Contact() {
   const [toast, setToast] = useState({ show: false, type: "success", text: "" });
 
   useEffect(() => {
+    document.title = "Contact ScrapVex | Doorstep Scrap Dealer Helpline Rajouri J&K";
     API.get("/settings")
       .then(res => {
         if (res.data.success) setSettings(res.data.data);

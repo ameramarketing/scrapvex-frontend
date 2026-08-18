@@ -113,7 +113,9 @@ function Rates() {
   const [trendLoading, setTrendLoading] = useState(false);
 
   useEffect(() => {
+    document.title = "Scrap Rates Today | ScrapVex Online Kabadiwala Rajouri J&K";
     fetchActiveCities();
+    fetchRates();
   }, []);
 
   useEffect(() => {

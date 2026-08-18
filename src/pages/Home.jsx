@@ -20,6 +20,10 @@ function Home() {
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
+  React.useEffect(() => {
+    document.title = "ScrapVex | Online Kabadiwala in Rajouri & Doorstep Scrap Pickup in J&K";
+  }, []);
+
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     try {

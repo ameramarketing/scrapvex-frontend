@@ -24,6 +24,7 @@ function BookPickup() {
   const baseURL = (API.defaults.baseURL || "").replace(/\/api$/, "") || "https://scrapvex-backend.onrender.com";
 
   useEffect(() => {
+    document.title = "Book Doorstep Scrap Pickup Online | ScrapVex Rajouri J&K";
     // Get user details if logged in
     try {
       const u = localStorage.getItem("user");
