@@ -17,18 +17,24 @@ import { triggerNativeNotification, requestNotificationPermission } from "../uti
 import { getScrapItemImage } from "../utils/scrapImages";
 
 function WhatsAppGatewayPanel() {
-  const [waData, setWaData] = useState({ isReady: false, status: 'initializing', qrCodeUrl: null });
+  const [waData, setWaData] = useState({ isReady: false, status: 'Initializing...', qrCodeUrl: null, qrCooldownRemaining: 0 });
   const [loading, setLoading] = useState(true);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
+  const [cooldownSec, setCooldownSec] = useState(0);
 
-  const fetchWaData = async (reinit = false) => {
+  const fetchWaData = async () => {
     try {
-      setLoading(true);
-      const url = reinit ? "/auth/whatsapp-qr?reinit=true" : "/auth/whatsapp-qr";
-      const { data } = await API.get(url, { hideLoader: true });
+      const { data } = await API.get("/auth/whatsapp-qr", { hideLoader: true });
       if (data.success) {
-        setWaData({ isReady: data.isReady, status: data.status, qrCodeUrl: data.qrCodeUrl });
+        setWaData({
+          isReady: data.isReady,
+          status: data.status,
+          qrCodeUrl: data.qrCodeUrl,
+          qrCooldownRemaining: data.qrCooldownRemaining || 0
+        });
+        setCooldownSec(Math.ceil((data.qrCooldownRemaining || 0) / 1000));
       }
     } catch (err) {
       setError(err.response?.data?.message || err.message);
@@ -37,20 +43,7 @@ function WhatsAppGatewayPanel() {
     }
   };
 
-  const handleDisconnect = async () => {
-    if (!window.confirm("Are you sure you want to disconnect the current WhatsApp and link a new number?")) return;
-    setDisconnecting(true);
-    try {
-      await API.post("/auth/whatsapp-disconnect", {}, { hideLoader: true });
-      setWaData({ isReady: false, status: "Generating QR...", qrCodeUrl: null });
-      setTimeout(() => fetchWaData(), 2000);
-    } catch (err) {
-      alert("Failed to disconnect: " + (err.response?.data?.message || err.message));
-    } finally {
-      setDisconnecting(false);
-    }
-  };
-
+  // Auto-poll every 4 seconds ONLY when not connected
   useEffect(() => {
     fetchWaData();
     const interval = setInterval(() => {
@@ -59,31 +52,77 @@ function WhatsAppGatewayPanel() {
     return () => clearInterval(interval);
   }, [waData.isReady]);
 
+  // Cooldown countdown
+  useEffect(() => {
+    if (cooldownSec <= 0) return;
+    const t = setInterval(() => setCooldownSec(s => Math.max(0, s - 1)), 1000);
+    return () => clearInterval(t);
+  }, [cooldownSec]);
+
+  const handleRefreshQR = async () => {
+    if (cooldownSec > 0) return;
+    setRefreshing(true);
+    setError(null);
+    try {
+      const { data } = await API.get("/auth/whatsapp-qr?reinit=true", { hideLoader: true });
+      if (data.cooldown) {
+        setCooldownSec(Math.ceil((data.remainingMs || 30000) / 1000));
+        setError(`QR refresh locked. Wait ${Math.ceil((data.remainingMs || 30000) / 1000)}s to prevent duplicate connections.`);
+      } else {
+        setTimeout(() => fetchWaData(), 3000);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    if (!window.confirm("⚠️ Are you sure you want to DISCONNECT the current WhatsApp and link a NEW number?\n\nDo this ONLY if you want to change the WhatsApp Business number. Current session will be PERMANENTLY deleted.")) return;
+    setDisconnecting(true);
+    setError(null);
+    try {
+      await API.post("/auth/whatsapp-disconnect", {}, { hideLoader: true });
+      setWaData({ isReady: false, status: "Generating QR...", qrCodeUrl: null, qrCooldownRemaining: 0 });
+      setTimeout(() => fetchWaData(), 3000);
+    } catch (err) {
+      setError("Failed to disconnect: " + (err.response?.data?.message || err.message));
+    } finally {
+      setDisconnecting(false);
+    }
+  };
+
   return (
     <div style={{ background: "#0f172a", borderRadius: "24px", border: "1px solid var(--glass-border)", padding: "32px", boxShadow: "0 15px 35px rgba(0,0,0,0.15)", minHeight: "560px", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
       <div style={{ width: "52px", height: "52px", borderRadius: "16px", background: "rgba(37, 211, 102, 0.15)", color: "#25D366", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", marginBottom: "16px" }}>
         <FaWhatsapp />
       </div>
-      <h1 style={{ fontSize: "22px", color: "#10b981", margin: "0 0 8px 0" }}>⚡ Official WhatsApp OTP & Notification Engine</h1>
-      <p style={{ fontSize: "14px", color: "#94a3b8", margin: "0 0 20px 0", maxWidth: "500px" }}>
-        Scan the QR code once with your <b>ScrapVex WhatsApp Business</b> number. The session will be saved permanently in MongoDB and will never require scanning again.
+      <h1 style={{ fontSize: "22px", color: "#10b981", margin: "0 0 8px 0" }}>⚡ WhatsApp OTP & Notification Engine</h1>
+      <p style={{ fontSize: "13px", color: "#94a3b8", margin: "0 0 20px 0", maxWidth: "500px" }}>
+        Scan QR <b>once</b> with your <b>ScrapVex WhatsApp Business</b> number. Session saves permanently in MongoDB — <b>never needs scanning again</b> unless you change the number.
       </p>
-      
+
       <div style={{ display: "inline-block", padding: "6px 16px", borderRadius: "999px", fontWeight: "bold", fontSize: "13px", marginBottom: "20px", background: waData.isReady ? '#065f46' : '#854d0e', color: waData.isReady ? '#34d399' : '#fde047' }}>
-        {waData.isReady ? '🟢 CONNECTED & READY' : '⏳ ' + (waData.status || '').toUpperCase()}
+        {waData.isReady ? '🟢 CONNECTED & READY — OTPs & Notifications Active' : '⏳ ' + (waData.status || '').toUpperCase()}
       </div>
 
-      {error && <div style={{ color: "#ef4444", marginBottom: "16px", fontSize: "13px" }}>{error}</div>}
+      {error && <div style={{ color: "#ef4444", marginBottom: "16px", fontSize: "13px", background: "#1e0000", padding: "10px 16px", borderRadius: "10px", maxWidth: "400px" }}>{error}</div>}
 
       {waData.isReady ? (
         <div style={{ width: "100%", maxWidth: "500px" }}>
           <div style={{ padding: "24px", background: "#052e16", border: "1.5px solid #166534", borderRadius: "18px", color: "#4ade80", fontWeight: "bold", margin: "10px 0 20px 0" }}>
             <div style={{ fontSize: "20px", marginBottom: "8px" }}>🎉 Connected Successfully!</div>
             <p style={{ fontSize: "13px", color: "#86efac", margin: 0, fontWeight: "500" }}>
-              All customer OTPs, order updates, and PDF bills will automatically be delivered from this WhatsApp number.
+              All customer OTPs, order updates, and notifications will automatically be delivered from your linked WhatsApp Business number. Session is permanently saved — no need to scan again.
             </p>
           </div>
-          
+
+          <div style={{ background: "#1e293b", border: "1px solid #334155", borderRadius: "12px", padding: "14px 16px", fontSize: "12px", color: "#94a3b8", marginBottom: "20px", textAlign: "left" }}>
+            <b style={{ color: "#f59e0b" }}>⚠️ Only click below if you want to CHANGE your WhatsApp Business number.</b><br/>
+            Disconnecting will clear the saved session. You will need to scan a new QR code.
+          </div>
+
           <button
             onClick={handleDisconnect}
             disabled={disconnecting}
@@ -96,10 +135,11 @@ function WhatsAppGatewayPanel() {
               fontSize: "13px",
               fontWeight: "800",
               cursor: "pointer",
-              boxShadow: "0 4px 14px rgba(220, 38, 38, 0.4)"
+              boxShadow: "0 4px 14px rgba(220, 38, 38, 0.4)",
+              opacity: disconnecting ? 0.7 : 1
             }}
           >
-            {disconnecting ? "Disconnecting..." : "🔌 Change WhatsApp Number / Scan New QR"}
+            {disconnecting ? "Disconnecting..." : "🔌 Change WhatsApp Number / Link New Number"}
           </button>
         </div>
       ) : (
@@ -118,12 +158,27 @@ function WhatsAppGatewayPanel() {
             1. Open <b>WhatsApp Business</b> on your phone.<br/>
             2. Tap <b>Settings (or ⋮)</b> &gt; <b>Linked Devices</b>.<br/>
             3. Tap <b>"Link a Device"</b> and scan the QR code above.<br/>
-            4. <i>That's it! Session is saved permanently.</i>
+            4. <i>Done! Session is saved permanently in MongoDB.</i><br/>
+            <b style={{ color: "#f59e0b" }}>⚠️ Do NOT scan multiple times — wait for connection confirmation.</b>
           </div>
 
           <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-            <button onClick={() => fetchWaData(true)} style={{ background: "#3b82f6", color: "#fff", border: "none", padding: "10px 18px", borderRadius: "10px", fontSize: "13px", fontWeight: "bold", cursor: "pointer" }}>
-              🔄 Refresh QR
+            <button
+              onClick={handleRefreshQR}
+              disabled={refreshing || cooldownSec > 0}
+              style={{
+                background: cooldownSec > 0 ? "#374151" : "#3b82f6",
+                color: "#fff",
+                border: "none",
+                padding: "10px 18px",
+                borderRadius: "10px",
+                fontSize: "13px",
+                fontWeight: "bold",
+                cursor: cooldownSec > 0 ? "not-allowed" : "pointer",
+                opacity: cooldownSec > 0 ? 0.7 : 1
+              }}
+            >
+              {refreshing ? "Refreshing..." : cooldownSec > 0 ? `⏳ Wait ${cooldownSec}s` : "🔄 Refresh QR"}
             </button>
           </div>
         </div>
