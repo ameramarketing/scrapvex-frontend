@@ -13,7 +13,7 @@ function RateCard({ icon, name, price }) {
       </div>
 
       {/* NAME */}
-      <h3 style={title}>
+      <h3 style={{ ...title, color: "#000000", fontWeight: "800" }} className="rate-card-title">
         {name}
       </h3>
 
@@ -23,7 +23,7 @@ function RateCard({ icon, name, price }) {
       </p>
 
       {/* SUBTEXT */}
-      <span style={smallText}>
+      <span style={{ ...smallText, color: "#64748b" }}>
         Live Rate
       </span>
 
