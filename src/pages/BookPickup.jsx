@@ -404,8 +404,8 @@ const rateItemStyle = {
   justifyContent: "center",
   padding: "12px",
   borderRadius: "12px",
-  background: "var(--input-bg, #f8fafc)",
-  border: "1px solid var(--card-border, #f1f5f9)"
+  background: "var(--bg-subtle, #f8fafc)",
+  border: "1px solid var(--card-border, rgba(15,23,42,0.06))"
 };
 
 const viewAllRatesBtnStyle = {

@@ -453,14 +453,14 @@ function Rates() {
                   const unit = priceParts[1] ? `per ${priceParts[1]}` : "";
                   const itemImg = getScrapItemImage(item[0], category.title, typeof item[2] === "string" ? item[2] : null);
                   return (
-                    <div key={i} style={{ ...mobileRateCard, background: "#ffffff" }} className="mobile-rate-card" onClick={() => handleOpenTrend(item)}>
+                    <div key={i} style={mobileRateCard} onClick={() => handleOpenTrend(item)}>
                       <div style={mobileRateCardIcon}>
                         <img src={itemImg} alt={item[0]} style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "10px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }} />
                       </div>
-                      <div style={{ ...mobileRateCardName, color: "#000000", fontWeight: "800" }} className="mobile-rate-card-name">{item[0]}</div>
+                      <div style={mobileRateCardName}>{item[0]}</div>
                       <div style={mobileRateCardPrice}>{price}</div>
-                      <div style={{ ...mobileRateCardUnit, color: "#475569" }}>{unit}</div>
-                      <span style={{ fontSize: "9px", color: "#0b8f3a", fontWeight: "800", marginTop: "2px" }}>📈 View 30D Trend</span>
+                      <div style={mobileRateCardUnit}>{unit}</div>
+                      <span style={{ fontSize: "9px", color: "#0b8f3a", fontWeight: "700", marginTop: "2px" }}>📈 View 30D Trend</span>
                     </div>
                   );
                 })}

@@ -81,15 +81,6 @@ body.dark-mode {
   --primary-light: #163d23;
 }
 
-body.dark-mode .mobile-rate-card-name,
-body.dark-mode .rate-card-title,
-body.dark-mode .rate-card h3,
-body.dark-mode .scrap-item-card-title,
-[data-theme="dark"] .mobile-rate-card-name,
-[data-theme="dark"] .rate-card-title {
-  color: #000000 !important;
-}
-
 /* ==========================================================
    RESET & BASE
    ========================================================== */
