@@ -228,7 +228,9 @@ function PickupForm() {
           subtotal: (items.find(it => it.name === name)?.price || 0) * qty
         })),
         amount: total,
-        latitude: form.lat, longitude: form.lng, notes: `Mode: ${form.mode.toUpperCase()}`
+        latitude: form.lat, longitude: form.lng, notes: `Mode: ${form.mode.toUpperCase()}`,
+        isBulk: (total >= 5000 || Object.values(form.selectedItems).reduce((a, b) => a + b, 0) >= 100),
+        estimatedWeight: Object.values(form.selectedItems).reduce((a, b) => a + b, 0)
       };
       const { data } = await API.post("/pickups/create", pickupData);
       if (data.success) {

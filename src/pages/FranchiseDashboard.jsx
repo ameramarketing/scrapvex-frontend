@@ -100,6 +100,37 @@ const playBellSound = () => {
   const [franchiseDepositForm, setFranchiseDepositForm] = useState({ amount: "", upiRefNo: "" });
   const [submittingDeposit, setSubmittingDeposit] = useState(false);
   const [walletForm, setWalletForm] = useState({ userId: "", amount: "", type: "credit", description: "" });
+  
+  // Franchise Business & GST Legal Profile State
+  const [showGSTModal, setShowGSTModal] = useState(false);
+  const [savingGSTProfile, setSavingGSTProfile] = useState(false);
+  const initialFranchiseUser = (() => {
+    try { return JSON.parse(localStorage.getItem("user") || "{}"); } catch (e) { return {}; }
+  })();
+  const [gstProfileForm, setGstProfileForm] = useState({
+    legalFirmName: initialFranchiseUser.legalFirmName || "",
+    gstin: initialFranchiseUser.gstin || "",
+    businessAddress: initialFranchiseUser.businessAddress || initialFranchiseUser.address || "",
+    stateCode: initialFranchiseUser.stateCode || "01",
+    tradeLicenseNo: initialFranchiseUser.tradeLicenseNo || ""
+  });
+
+  const handleSaveGSTProfile = async () => {
+    setSavingGSTProfile(true);
+    try {
+      const res = await API.put("/auth/profile", gstProfileForm);
+      if (res.data?.success) {
+        showToast("success", "🏢 Business & GST Profile Saved!");
+        const updated = { ...initialFranchiseUser, ...gstProfileForm };
+        localStorage.setItem("user", JSON.stringify(updated));
+        setShowGSTModal(false);
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Failed to update GST profile");
+    } finally {
+      setSavingGSTProfile(false);
+    }
+  };
 
   const [accountingStats, setAccountingStats] = useState({ totalPurchaseAmount: 0, todayPurchaseAmount: 0, totalSaleAmount: 0, todaySaleAmount: 0, overallProfit: 0, todayProfit: 0, stockValue: 0 });
   const [inventory, setInventory] = useState([]);
@@ -1235,6 +1266,12 @@ const playBellSound = () => {
                   FINANCE & PAYOUTS
                 </span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => setShowGSTModal(true)}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#ecfdf5", color: "#059669" }}><FaBuilding /></div>
+                      <span style={rowTextStyle}>Business & GST Legal Profile</span>
+                    </div>
+                  </div>
                   <div style={accountRowStyle} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#0b8f3a" }}><FaWallet /></div>
@@ -2237,6 +2274,63 @@ const playBellSound = () => {
             <input type="file" onChange={e => setAdFile(e.target.files[0])} />
           </div>
           <button className="native-btn" style={saveBtnBig} onClick={handleCreateAd}>Publish Banner</button>
+        </Modal>
+      )}
+
+      {showGSTModal && (
+        <Modal title="🏢 Business & GST Legal Profile" onClose={() => setShowGSTModal(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <div>
+              <label style={labelStyle}>Legal Firm / Business Name</label>
+              <Input 
+                placeholder="e.g. M/S Sharma Scrap Traders" 
+                value={gstProfileForm.legalFirmName} 
+                onChange={v => setGstProfileForm({ ...gstProfileForm, legalFirmName: v })} 
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>GSTIN Number (15 Digits)</label>
+              <Input 
+                placeholder="e.g. 01AAAAA0000A1Z5" 
+                value={gstProfileForm.gstin} 
+                onChange={v => setGstProfileForm({ ...gstProfileForm, gstin: v.toUpperCase() })} 
+              />
+            </div>
+            <div>
+              <label style={labelStyle}>Registered Godown / Office Address</label>
+              <Input 
+                placeholder="e.g. Plot 14, Transport Nagar, Jammu" 
+                value={gstProfileForm.businessAddress} 
+                onChange={v => setGstProfileForm({ ...gstProfileForm, businessAddress: v })} 
+              />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div>
+                <label style={labelStyle}>State Code</label>
+                <Input 
+                  placeholder="01 (J&K)" 
+                  value={gstProfileForm.stateCode} 
+                  onChange={v => setGstProfileForm({ ...gstProfileForm, stateCode: v })} 
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>Trade License / MSME No</label>
+                <Input 
+                  placeholder="Optional Reg No" 
+                  value={gstProfileForm.tradeLicenseNo} 
+                  onChange={v => setGstProfileForm({ ...gstProfileForm, tradeLicenseNo: v })} 
+                />
+              </div>
+            </div>
+            <button 
+              className="native-btn" 
+              style={{ ...saveBtnBig, opacity: savingGSTProfile ? 0.7 : 1 }} 
+              disabled={savingGSTProfile} 
+              onClick={handleSaveGSTProfile}
+            >
+              {savingGSTProfile ? "Saving Profile..." : "💾 Save Business & GST Profile"}
+            </button>
+          </div>
         </Modal>
       )}
 
