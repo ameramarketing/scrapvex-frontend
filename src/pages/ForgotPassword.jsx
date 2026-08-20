@@ -49,10 +49,11 @@ function ForgotPassword() {
 
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
-    if (otp.length !== 6) return showToast("error", "Enter 6 digit OTP");
+    const cleanOtp = otp.toString().trim();
+    if (cleanOtp.length !== 6) return showToast("error", "Enter 6 digit OTP");
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/verify-otp", { mobile, otp });
+      const { data } = await API.post("/auth/verify-otp", { mobile: mobile.trim(), otp: cleanOtp, role });
       if (data.success) {
         setStep(3);
         showToast("success", "OTP Verified!");
@@ -66,12 +67,13 @@ function ForgotPassword() {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    const cleanOtp = otp.toString().trim();
     if (newPassword.length < 6) return showToast("error", "Password must be at least 6 characters");
     if (newPassword !== confirmPassword) return showToast("error", "Passwords do not match!");
 
     setLoading(true);
     try {
-      const { data } = await API.post("/auth/reset-password", { mobile, otp, role, newPassword });
+      const { data } = await API.post("/auth/reset-password", { mobile: mobile.trim(), otp: cleanOtp, role, newPassword });
       if (data.success) {
         showToast("success", "Password Reset Successfully!");
         const redirectMap = {
@@ -85,7 +87,7 @@ function ForgotPassword() {
         }, 1500);
       }
     } catch (error) {
-      showToast("error", "Failed to reset password");
+      showToast("error", error.response?.data?.message || "Failed to reset password");
     } finally {
       setLoading(false);
     }
