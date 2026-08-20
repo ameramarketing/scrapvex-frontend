@@ -1728,9 +1728,16 @@ const playBellSound = () => {
                     </thead>
                     <tbody>
                       {filteredPickups.map(p => (
-                        <tr key={p._id} style={{ borderBottom: "1px solid var(--glass-border)" }}>
+                        <tr key={p._id} style={{ borderBottom: "1px solid var(--glass-border)", background: (p.isBulk || (p.weight && p.weight >= 100)) ? "rgba(245, 158, 11, 0.05)" : "transparent" }}>
                           <td style={{ padding: "12px 8px" }}>
-                            <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px" }}>{p.scrapType}</div>
+                            <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                              {p.scrapType}
+                              {(p.isBulk || (p.weight && p.weight >= 100)) && (
+                                <span style={{ background: "#fef3c7", color: "#b45309", border: "1px solid #fde68a", padding: "2px 8px", borderRadius: "8px", fontSize: "10px", fontWeight: "900" }}>
+                                  📦 BULK ORDER
+                                </span>
+                              )}
+                            </div>
                             <div style={{ color: "var(--text-muted)", fontSize: "12px" }}>{p.name} • {p.mobile}</div>
                           </td>
                           <td style={{ padding: "12px 8px", fontSize: "13px", color: "var(--text-main)" }}>{p.address}</td>
@@ -1752,10 +1759,17 @@ const playBellSound = () => {
                 </div>
                 <div className="mobile-only" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                    {filteredPickups.map(p => (
-                     <div key={p._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", border: "1px solid var(--glass-border)" }}>
+                     <div key={p._id} style={{ background: (p.isBulk || (p.weight && p.weight >= 100)) ? "#fffbeb" : "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", border: (p.isBulk || (p.weight && p.weight >= 100)) ? "1.5px solid #fde68a" : "1px solid var(--glass-border)" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
                            <div>
-                              <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>{p.scrapType}</div>
+                              <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                                {p.scrapType}
+                                {(p.isBulk || (p.weight && p.weight >= 100)) && (
+                                  <span style={{ background: "#fef3c7", color: "#b45309", border: "1px solid #fde68a", padding: "2px 6px", borderRadius: "6px", fontSize: "10px", fontWeight: "900" }}>
+                                    📦 BULK
+                                  </span>
+                                )}
+                              </div>
                               <div style={{ color: "var(--text-muted)", fontSize: "13px" }}>{p.name} • {p.mobile}</div>
                            </div>
                            <span className={`badge-status badge-${p.status.toLowerCase()}`}>{p.status}</span>

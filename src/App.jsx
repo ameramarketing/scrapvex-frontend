@@ -24,6 +24,7 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import Wallet from "./pages/Wallet";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import InvoiceView from "./pages/InvoiceView";
 
 import Onboarding from "./pages/Onboarding";
 import SplashScreen from "./components/SplashScreen";
@@ -216,6 +217,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/invoice-view/:id" element={<InvoiceView />} />
 
             {/* USER ROUTES */}
             <Route
