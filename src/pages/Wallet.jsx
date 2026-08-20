@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaWallet, FaArrowUp, FaArrowDown, FaMobileAlt, FaUniversity, FaHistory, FaCheckCircle, FaClock, FaExclamationTriangle, FaRecycle } from "react-icons/fa";
+import { FaWallet, FaArrowUp, FaArrowDown, FaMobileAlt, FaUniversity, FaHistory, FaCheckCircle, FaClock, FaExclamationTriangle, FaRecycle, FaWhatsapp, FaSms, FaLock } from "react-icons/fa";
 import API from "../services/api";
 import Toast from "../components/Toast";
 
@@ -13,6 +13,7 @@ function Wallet() {
   const [submitting, setSubmitting] = useState(false);
   const [withdrawOtpSent, setWithdrawOtpSent] = useState(false);
   const [withdrawOtp, setWithdrawOtp] = useState("");
+  const [withdrawChannel, setWithdrawChannel] = useState("whatsapp");
   const [demoOtp, setDemoOtp] = useState("");
 
   // Form states
@@ -59,19 +60,21 @@ function Wallet() {
     }
   };
 
-  const handleSendWithdrawalOTP = async (e) => {
-    e.preventDefault();
+  const handleSendWithdrawalOTP = async (e, selectedChannel = "whatsapp") => {
+    if (e) e.preventDefault();
     if (balance < Number(withdrawForm.amount)) return showToast("error", "Insufficient balance");
     if (Number(withdrawForm.amount) < 100) return showToast("error", "Min withdrawal ₹100");
     setSubmitting(true);
+    setWithdrawChannel(selectedChannel);
     try {
       const { data } = await API.post("/wallet/withdraw/otp", {
         amount: Number(withdrawForm.amount),
         upiId: withdrawForm.upi,
-        name: withdrawForm.name
+        name: withdrawForm.name,
+        channel: selectedChannel
       });
       if (data.success) {
-        showToast("success", "Security OTP sent to your WhatsApp!");
+        showToast("success", data.message || `Security OTP sent via ${selectedChannel.toUpperCase()}!`);
         setWithdrawOtpSent(true);
       }
     } catch (error) {
@@ -266,14 +269,31 @@ function Wallet() {
                    <span style={{...inputIcon, color: "var(--primary)"}}>₹</span>
                    <input type="number" placeholder="Amount (Min ₹100)" required value={withdrawForm.amount} onChange={e=>setWithdrawForm({...withdrawForm, amount: e.target.value})} style={{...input, color: "var(--text-main)"}} />
                  </div>
-                 
                  <div style={{ background: "rgba(11, 143, 58, 0.05)", borderLeft: "3px solid var(--primary)", padding: "12px", borderRadius: "12px", fontSize: "11px", color: "var(--text-muted)", lineHeight: "1.4", marginBottom: "15px" }}>
-                   <strong>🔒 Withdrawal Protection:</strong> A verification OTP will be sent to your registered mobile to ensure only you can withdraw funds.
-                 </div>
+                    <strong>🔒 Withdrawal Protection:</strong> A verification OTP will be sent to your registered mobile to ensure only you can withdraw funds.
+                  </div>
 
-                 <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                   {submitting ? <FaRecycle className="spin" /> : "Verify & Send Security OTP"}
-                 </button>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <button 
+                      type="button" 
+                      className="btn-premium" 
+                      disabled={submitting} 
+                      style={{ width:"100%", background: "#25D366", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", border: "none", height: "46px" }}
+                      onClick={(e) => handleSendWithdrawalOTP(e, "whatsapp")}
+                    >
+                      {submitting ? <FaRecycle className="spin" /> : <><FaWhatsapp style={{ fontSize: "16px" }} /> Get OTP on WhatsApp</>}
+                    </button>
+
+                    <button 
+                      type="button" 
+                      className="btn-premium" 
+                      disabled={submitting} 
+                      style={{ width:"100%", background: "#0b8f3a", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", border: "none", height: "46px" }}
+                      onClick={(e) => handleSendWithdrawalOTP(e, "sms")}
+                    >
+                      {submitting ? <FaRecycle className="spin" /> : <><FaSms style={{ fontSize: "16px" }} /> Get OTP via SMS</>}
+                    </button>
+                  </div>
                </>
              ) : (
                <>
@@ -297,17 +317,30 @@ function Wallet() {
                    />
                  </div>
 
-                 <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%"}}>
-                   {submitting ? <FaRecycle className="spin" /> : "Confirm & Withdraw Funds"}
-                 </button>
+                 <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-muted)", margin: "0 0 14px 0" }}>
+                    {withdrawChannel === "sms" ? "📱 OTP sent via SMS" : "💬 OTP sent to your WhatsApp"}
+                  </p>
 
-                 <button 
-                   type="button"
-                   style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "12px", cursor: "pointer", marginTop: "10px", width: "100%", textAlign: "center" }} 
-                   onClick={() => { setWithdrawOtpSent(false); setWithdrawOtp(""); }}
-                 >
-                   ← Edit Transfer Details
-                 </button>
+                  <button type="submit" className="btn-premium" disabled={submitting} style={{width:"100%", height: "46px", border: "none"}}>
+                    {submitting ? <FaRecycle className="spin" /> : "Confirm & Withdraw Funds"}
+                  </button>
+
+                  <div style={{ display: "flex", justifyContent: "space-between", marginTop: "12px" }}>
+                    <button 
+                      type="button"
+                      style={{ background: "none", border: "none", color: "var(--primary)", fontSize: "12px", fontWeight: "700", cursor: "pointer" }} 
+                      onClick={(e) => handleSendWithdrawalOTP(e, withdrawChannel)}
+                    >
+                      Resend OTP
+                    </button>
+                    <button 
+                      type="button"
+                      style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "12px", fontWeight: "600", cursor: "pointer" }} 
+                      onClick={() => { setWithdrawOtpSent(false); setWithdrawOtp(""); }}
+                    >
+                      ← Edit Transfer Details
+                    </button>
+                  </div>
                </>
              )}
           </form>
