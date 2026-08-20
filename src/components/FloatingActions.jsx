@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaWhatsapp } from 'react-icons/fa';
 
 const FloatingActions = () => {
   const location = useLocation();
@@ -22,20 +22,75 @@ const FloatingActions = () => {
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
   };
 
-  const allowedPaths = ['/', '/rates', '/book', '/terms', '/about', '/privacy'];
+  const allowedPaths = ['/', '/rates', '/book', '/terms', '/about', '/privacy', '/contact'];
   const isAllowedPage = allowedPaths.includes(location.pathname);
 
-  if (!isAllowedPage || !showActions) return null;
+  if (!isAllowedPage) return null;
 
   return (
-    <div className="floating-actions desktop-only">
-      <button className="action-btn btn-up" onClick={scrollToTop} title="Scroll to Top">
-        <FaArrowUp />
-      </button>
-      <button className="action-btn btn-down" onClick={scrollToBottom} title="Scroll to Bottom (Footer)">
-        <FaArrowDown />
-      </button>
+    <>
+      {/* 🟢 FLOATING WHATSAPP CHATBOT BUTTON (Always visible for easy customer help) */}
+      <a
+        href="https://wa.me/918491028539?text=Hi%20ScrapVex,%20mujhe%20kabaad%20bechna%20hai"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="floating-whatsapp-btn"
+        title="Chat on WhatsApp"
+        aria-label="Chat on WhatsApp with ScrapVex Assistant"
+      >
+        <FaWhatsapp />
+      </a>
+
+      {showActions && (
+        <div className="floating-actions desktop-only">
+          <button className="action-btn btn-up" onClick={scrollToTop} title="Scroll to Top">
+            <FaArrowUp />
+          </button>
+          <button className="action-btn btn-down" onClick={scrollToBottom} title="Scroll to Bottom (Footer)">
+            <FaArrowDown />
+          </button>
+        </div>
+      )}
+
       <style>{`
+        .floating-whatsapp-btn {
+          position: fixed;
+          bottom: 25px;
+          left: 25px;
+          width: 54px;
+          height: 54px;
+          background: #25D366;
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 30px;
+          box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+          z-index: 9999;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          text-decoration: none;
+          animation: pulseGreen 2.5s infinite;
+        }
+
+        .floating-whatsapp-btn:hover {
+          transform: scale(1.15) translateY(-3px);
+          box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+          color: white;
+        }
+
+        @keyframes pulseGreen {
+          0% {
+            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6);
+          }
+          70% {
+            box-shadow: 0 0 0 14px rgba(37, 211, 102, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+          }
+        }
+
         .floating-actions {
           position: fixed;
           bottom: 30px;
@@ -113,7 +168,7 @@ const FloatingActions = () => {
           }
         }
       `}</style>
-    </div>
+    </>
   );
 };
 
