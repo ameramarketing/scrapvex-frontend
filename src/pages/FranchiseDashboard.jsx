@@ -919,6 +919,7 @@ const playBellSound = () => {
       <NavItem active={activeTab === "rates"} icon={<FaTag />} text="Scrap Rates" onClick={() => { setActiveTab("rates"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "collectors"} icon={<FaTools />} text="Collectors" onClick={() => { setActiveTab("collectors"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "wallet"} icon={<FaWallet />} text="Wallet" onClick={() => { setActiveTab("wallet"); fetchWalletStats(); fetchAllTransactions(); setIsMobileMenuOpen(false); }} />
+      <NavItem active={activeTab === "account"} icon={<FaBuilding />} text="🏢 Business & GST Profile" onClick={() => { setActiveTab("account"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "support"} icon={<FaTicketAlt />} text="Support" onClick={() => { setActiveTab("support"); fetchTickets(); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "reviews"} icon={<FaStar />} text="Reviews" onClick={() => { setActiveTab("reviews"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "dist-settings"} icon={<FaCog />} text="City Settings" onClick={() => { setActiveTab("dist-settings"); fetchDistSettings(); setIsMobileMenuOpen(false); }} />
@@ -1009,8 +1010,17 @@ const playBellSound = () => {
           width: "100%",
           boxSizing: "border-box"
         }}>
-          {/* Left Branding: ScrapVex FRANCHISE */}
+          {/* Left Branding: Mobile Hamburger + ScrapVex FRANCHISE */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+            <button 
+              type="button" 
+              onClick={() => setIsMobileMenuOpen(true)} 
+              className="mobile-only"
+              style={{ background: "none", border: "none", color: "var(--text-main, #0f172a)", cursor: "pointer", padding: "6px", display: "flex", alignItems: "center", justifyContent: "center" }}
+              title="Open Navigation Menu"
+            >
+              <FaBars style={{ width: "20px", height: "20px", color: "var(--text-main, #0f172a)" }} />
+            </button>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
               <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
                 <FaRecycle />
@@ -3030,7 +3040,29 @@ const playBellSound = () => {
         </div>
       )}
 
-      
+      {/* MOBILE BOTTOM NAVIGATION BAR */}
+      <div className="mobile-only" style={bottomNavStyle}>
+        <div style={bottomLinkStyle} onClick={() => setActiveTab("overview")}>
+          <FaHome size={18} color={activeTab === "overview" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
+          <span style={{ fontSize: "10px", fontWeight: activeTab === "overview" ? "800" : "600", color: activeTab === "overview" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Home</span>
+        </div>
+        <div style={bottomLinkStyle} onClick={() => setActiveTab("pickups")}>
+          <FaTruck size={18} color={activeTab === "pickups" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
+          <span style={{ fontSize: "10px", fontWeight: activeTab === "pickups" ? "800" : "600", color: activeTab === "pickups" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Pickups</span>
+        </div>
+        <div style={bottomLinkStyle} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }}>
+          <FaChartLine size={18} color={activeTab === "accounting" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
+          <span style={{ fontSize: "10px", fontWeight: activeTab === "accounting" ? "800" : "600", color: activeTab === "accounting" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Accounts</span>
+        </div>
+        <div style={bottomLinkStyle} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); }}>
+          <FaWallet size={18} color={activeTab === "wallet" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
+          <span style={{ fontSize: "10px", fontWeight: activeTab === "wallet" ? "800" : "600", color: activeTab === "wallet" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Wallet</span>
+        </div>
+        <div style={bottomLinkStyle} onClick={() => setActiveTab("account")}>
+          <FaBuilding size={18} color={activeTab === "account" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
+          <span style={{ fontSize: "10px", fontWeight: activeTab === "account" ? "800" : "600", color: activeTab === "account" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Profile/GST</span>
+        </div>
+      </div>
 
     </div>
   );
