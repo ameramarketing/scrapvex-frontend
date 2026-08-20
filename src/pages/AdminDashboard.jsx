@@ -1988,12 +1988,41 @@ const playBellSound = () => {
                       <label style={labelStyle}><FaRupeeSign/> Optional Service / Handling Fee (₹)</label>
                       <Input type="number" value={settings.serviceCharge || 0} onChange={v => setSettings({...settings, serviceCharge: v})} placeholder="Set 0 for Free Pickup" />
 
-                      <h4 style={{ margin: "15px 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>📞 Contact & Social Links</h4>
+                      <h4 style={{ margin: "15px 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>🔔 Master Admin Real-Time Alert Channels</h4>
+                      <p style={{ margin: "0 0 12px 0", fontSize: "11px", color: "var(--text-muted)", lineHeight: "1.4" }}>
+                        Configure where Master Admin receives instant WhatsApp alerts for New Bookings, UTR Deposits, Withdrawals, Cancellations & Partner Registrations.
+                      </p>
 
-                      <label style={labelStyle}><FaEnvelope/> Business Email</label>
+                      <label style={labelStyle}>Admin Alert WhatsApp Number (10-Digit)</label>
+                      <Input 
+                        value={settings.adminNotificationWhatsapp || settings.contactPhone || ""} 
+                        onChange={v => setSettings({...settings, adminNotificationWhatsapp: v.replace(/\D/g, "").slice(0, 10)})} 
+                        placeholder="e.g. 8491028539" 
+                      />
+
+                      <label style={labelStyle}>Admin Master Notification Email</label>
+                      <Input 
+                        value={settings.adminNotificationEmail || settings.contactEmail || ""} 
+                        onChange={v => setSettings({...settings, adminNotificationEmail: v})} 
+                        placeholder="e.g. support@scrapvex.in" 
+                      />
+
+                      <label style={labelStyle}>Real-Time WhatsApp Alerts Status</label>
+                      <select 
+                        style={{ ...inputStyle, cursor: "pointer", fontWeight: "bold", background: settings.adminAlertsEnabled !== false ? "#eef8f1" : "#fff5f5", color: settings.adminAlertsEnabled !== false ? "#0b8f3a" : "#dc3545" }} 
+                        value={settings.adminAlertsEnabled !== false ? "true" : "false"} 
+                        onChange={e => setSettings({...settings, adminAlertsEnabled: e.target.value === "true"})}
+                      >
+                        <option value="true">🟢 ENABLED (Receive all instant WhatsApp alerts)</option>
+                        <option value="false">🔴 PAUSED (Mute WhatsApp business alerts)</option>
+                      </select>
+
+                      <h4 style={{ margin: "20px 0 15px 0", color: "var(--primary)", fontSize: "14px" }}>📞 Public Contact & Social Links</h4>
+
+                      <label style={labelStyle}><FaEnvelope/> Public Business Email</label>
                       <Input value={settings.contactEmail} onChange={v => setSettings({...settings, contactEmail: v})} />
                       
-                      <label style={labelStyle}><FaPhone/> Business Phone</label>
+                      <label style={labelStyle}><FaPhone/> Public Helpline Phone</label>
                       <Input value={settings.contactPhone} onChange={v => setSettings({...settings, contactPhone: v})} />
                       
                       <label style={labelStyle}><FaMapMarkerAlt/> Office Address</label>
@@ -2008,7 +2037,7 @@ const playBellSound = () => {
                       <label style={labelStyle}>🔗 LinkedIn Profile URL</label>
                       <Input value={settings.linkedinUrl || ""} onChange={v => setSettings({...settings, linkedinUrl: v})} placeholder="https://linkedin.com/company/scrapvex" />
 
-                      <label style={labelStyle}>💬 WhatsApp Support Link / Number</label>
+                      <label style={labelStyle}>💬 Public WhatsApp Support Link</label>
                       <Input value={settings.whatsappUrl || ""} onChange={v => setSettings({...settings, whatsappUrl: v})} placeholder="https://wa.me/918491028539" />
 
                       <h4 style={{ margin: "20px 0 12px 0", color: "var(--primary)", fontSize: "14px" }}>⚖️ Grievance Officer & Legal Compliance (Privacy Policy)</h4>
