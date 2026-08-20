@@ -203,8 +203,76 @@ const playBellSound = () => {
   const [newItem, setNewItem] = useState({ name: "", price: "", unit: "kg", category: "Other" });
   const [newUser, setNewUser] = useState({ name: "", mobile: "", email: "", password: "" });
   const [newCollector, setNewCollector] = useState({ name: "", mobile: "", email: "", password: "", area: "" });
+  const [newSupplier, setNewSupplier] = useState({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", category: "Individual" });
+  const [newBuyer, setNewBuyer] = useState({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", state: "Jammu & Kashmir", stateCode: "01" });
 
   const showToast = (type, message) => setToast({ show: true, type, message });
+
+  const fetchSuppliers = async () => {
+    try {
+      const { data } = await API.get("/suppliers");
+      if (data?.success) setSuppliers(data.suppliers || []);
+    } catch (e) {
+      console.warn("Failed to fetch suppliers:", e.message);
+    }
+  };
+
+  const fetchBuyers = async () => {
+    try {
+      const { data } = await API.get("/buyers");
+      if (data?.success) setBuyers(data.buyers || []);
+    } catch (e) {
+      console.warn("Failed to fetch buyers:", e.message);
+    }
+  };
+
+  const handleSaveSupplier = async (e) => {
+    e?.preventDefault();
+    if (!newSupplier.name || !newSupplier.contact) return showToast("error", "Name aur Mobile Number zaroori hai");
+    try {
+      if (newSupplier._id) {
+        const { data } = await API.put(`/suppliers/${newSupplier._id}`, newSupplier);
+        if (data?.success) {
+          showToast("success", "Seller details updated!");
+          fetchSuppliers();
+          setShowSupplierModal(false);
+        }
+      } else {
+        const { data } = await API.post("/suppliers", newSupplier);
+        if (data?.success) {
+          showToast("success", "New Seller (Supplier) saved!");
+          fetchSuppliers();
+          setShowSupplierModal(false);
+        }
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Failed to save seller");
+    }
+  };
+
+  const handleSaveBuyer = async (e) => {
+    e?.preventDefault();
+    if (!newBuyer.name || !newBuyer.contact) return showToast("error", "Name aur Mobile Number zaroori hai");
+    try {
+      if (newBuyer._id) {
+        const { data } = await API.put(`/buyers/${newBuyer._id}`, newBuyer);
+        if (data?.success) {
+          showToast("success", "Buyer details updated!");
+          fetchBuyers();
+          setShowBuyerModal(false);
+        }
+      } else {
+        const { data } = await API.post("/buyers", newBuyer);
+        if (data?.success) {
+          showToast("success", "New Buyer / Mill saved!");
+          fetchBuyers();
+          setShowBuyerModal(false);
+        }
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Failed to save buyer");
+    }
+  };
 
   useEffect(() => {
     requestNotificationPermission().catch(() => {});
@@ -335,6 +403,8 @@ const playBellSound = () => {
       fetchReviews().catch(() => {});
       fetchWalletStats().catch(() => {});
       fetchAccountingData().catch(() => {});
+      fetchSuppliers().catch(() => {});
+      fetchBuyers().catch(() => {});
     } catch (error) {
       console.error("fetchAdminData error:", error);
     } finally {
@@ -915,6 +985,8 @@ const playBellSound = () => {
       <NavItem active={activeTab === "pickups"} icon={<FaTruck />} text="Pickups" onClick={() => { setActiveTab("pickups"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "accounting"} icon={<FaChartLine />} text="Accounting" onClick={() => { setActiveTab("accounting"); fetchAccountingData(); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "inventory"} icon={<FaClipboardList />} text="Inventory" onClick={() => { setActiveTab("inventory"); fetchAccountingData(); setIsMobileMenuOpen(false); }} />
+      <NavItem active={activeTab === "suppliers"} icon={<FaUsers />} text="Sellers (Suppliers)" onClick={() => { setActiveTab("suppliers"); fetchSuppliers(); setIsMobileMenuOpen(false); }} />
+      <NavItem active={activeTab === "buyers"} icon={<FaBuilding />} text="Buyers (Mills)" onClick={() => { setActiveTab("buyers"); fetchBuyers(); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "reports"} icon={<FaChartLine />} text="📊 Reports" onClick={() => { setActiveTab("reports"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "rates"} icon={<FaTag />} text="Scrap Rates" onClick={() => { setActiveTab("rates"); setIsMobileMenuOpen(false); }} />
       <NavItem active={activeTab === "collectors"} icon={<FaTools />} text="Collectors" onClick={() => { setActiveTab("collectors"); setIsMobileMenuOpen(false); }} />
@@ -2188,6 +2260,83 @@ const playBellSound = () => {
             </div>
           )}
 
+          {activeTab === "suppliers" && (
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
+                <div>
+                  <h2 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>🏢 Managed Sellers (Suppliers & B2B)</h2>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "4px 0 0 0" }}>Local scrap dealers, shops, and B2B corporate entities</p>
+                </div>
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "10px" }} onClick={() => { setNewSupplier({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", category: "Individual" }); setShowSupplierModal(true); }}>
+                  <FaPlus /> Add New Seller
+                </button>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+                {suppliers.map(s => (
+                  <div key={s._id} style={{ background: "var(--bg-subtle)", border: "1px solid var(--card-border, rgba(0,0,0,0.06))", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div>
+                      <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main)", marginBottom: "4px" }}>{s.name}</div>
+                      <span style={{ display: "inline-block", background: s.category === "Business" ? "#e0e7ff" : "#ecfdf5", color: s.category === "Business" ? "#3730a3" : "#065f46", fontSize: "10px", fontWeight: "bold", padding: "2px 8px", borderRadius: "6px", marginBottom: "6px", textTransform: "uppercase" }}>
+                        {s.category || "Individual"}
+                      </span>
+                      <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>📞 {s.contact}</div>
+                      {s.email && <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>✉️ {s.email}</div>}
+                      {s.gstin && <div style={{ fontSize: "11px", fontWeight: "700", color: "#0b8f3a", marginTop: "2px" }}>GST: {s.gstin}</div>}
+                      {s.address && <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "2px" }}>📍 {s.address}</div>}
+                    </div>
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <button className="btn-secondary" style={{ padding: "6px 10px", borderRadius: "8px", border: "1px solid var(--card-border)" }} onClick={() => { setNewSupplier(s); setShowSupplierModal(true); }}>
+                        <FaTools size={12} />
+                      </button>
+                      <button style={{ padding: "6px 10px", borderRadius: "8px", border: "1px solid #fca5a5", background: "#fee2e2", color: "#ef4444", cursor: "pointer" }} onClick={() => handleDeleteItem(s._id, "supplier")}>
+                        <FaTrash size={12} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {suppliers.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No sellers registered yet. Click '+ Add New Seller' to create one.</div>}
+            </div>
+          )}
+
+          {activeTab === "buyers" && (
+            <div className="card-premium fade-up" style={{ background: "var(--card-bg)", padding: "24px", borderRadius: "var(--radius-xl)", border: "1px solid var(--card-border)", boxShadow: "var(--card-shadow)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexWrap: "wrap", gap: "10px" }}>
+                <div>
+                  <h2 style={{ fontSize: "20px", fontWeight: "900", color: "var(--text-main)", margin: 0 }}>🏭 Managed Buyers (Mills & Recyclers)</h2>
+                  <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "4px 0 0 0" }}>Paper mills, smelting plants, plastic recyclers, and large corporate buyers</p>
+                </div>
+                <button className="btn-premium" style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 16px", borderRadius: "10px" }} onClick={() => { setNewBuyer({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", state: "Jammu & Kashmir", stateCode: "01" }); setShowBuyerModal(true); }}>
+                  <FaPlus /> Add New Buyer
+                </button>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+                {buyers.map(b => (
+                  <div key={b._id} style={{ background: "var(--bg-subtle)", border: "1px solid var(--card-border, rgba(0,0,0,0.06))", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div>
+                      <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--text-main)", marginBottom: "4px" }}>{b.name}</div>
+                      <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>📞 {b.contact}</div>
+                      {b.email && <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>✉️ {b.email}</div>}
+                      {b.gstin && <div style={{ fontSize: "11px", fontWeight: "700", color: "#0b8f3a", marginTop: "2px" }}>GST: {b.gstin} {b.pan ? `| PAN: ${b.pan}` : ""}</div>}
+                      <div style={{ fontSize: "11px", color: "var(--text-muted)", marginTop: "2px" }}>📍 {b.address || "J&K"} ({b.stateCode || "01"})</div>
+                    </div>
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <button className="btn-secondary" style={{ padding: "6px 10px", borderRadius: "8px", border: "1px solid var(--card-border)" }} onClick={() => { setNewBuyer(b); setShowBuyerModal(true); }}>
+                        <FaTools size={12} />
+                      </button>
+                      <button style={{ padding: "6px 10px", borderRadius: "8px", border: "1px solid #fca5a5", background: "#fee2e2", color: "#ef4444", cursor: "pointer" }} onClick={() => handleDeleteItem(b._id, "buyer")}>
+                        <FaTrash size={12} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {buyers.length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No buyers/mills registered yet. Click '+ Add New Buyer' to save one.</div>}
+            </div>
+          )}
+
           {activeTab === "support" && (
             <div className="fade-up" style={{ padding: "16px 20px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
@@ -2284,6 +2433,95 @@ const playBellSound = () => {
             <input type="file" onChange={e => setAdFile(e.target.files[0])} />
           </div>
           <button className="native-btn" style={saveBtnBig} onClick={handleCreateAd}>Publish Banner</button>
+        </Modal>
+      )}
+
+      {showSupplierModal && (
+        <Modal title={newSupplier._id ? "✏️ Edit Seller / Supplier" : "➕ Add New Seller (Supplier)"} onClose={() => setShowSupplierModal(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div>
+              <label style={labelStyle}>Supplier / Entity Name *</label>
+              <Input placeholder="e.g. Gupta Metal Traders / Shop" value={newSupplier.name} onChange={v => setNewSupplier({ ...newSupplier, name: v })} />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div>
+                <label style={labelStyle}>Mobile Number *</label>
+                <Input placeholder="10-digit mobile" value={newSupplier.contact} onChange={v => setNewSupplier({ ...newSupplier, contact: v })} />
+              </div>
+              <div>
+                <label style={labelStyle}>Category</label>
+                <select className="native-input" style={{ ...inputStyle, marginBottom: 0 }} value={newSupplier.category} onChange={e => setNewSupplier({ ...newSupplier, category: e.target.value })}>
+                  <option value="Individual">Individual / Household</option>
+                  <option value="Business">Business / Corporate (B2B)</option>
+                </select>
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div>
+                <label style={labelStyle}>Email (For Auto PDF Invoices)</label>
+                <Input placeholder="e.g. accounts@firm.com" value={newSupplier.email || ""} onChange={v => setNewSupplier({ ...newSupplier, email: v })} />
+              </div>
+              <div>
+                <label style={labelStyle}>GSTIN Number</label>
+                <Input placeholder="15-digit GSTIN (if B2B)" value={newSupplier.gstin || ""} onChange={v => setNewSupplier({ ...newSupplier, gstin: v.toUpperCase() })} />
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>Address / Godown Location</label>
+              <Input placeholder="Full Address" value={newSupplier.address || ""} onChange={v => setNewSupplier({ ...newSupplier, address: v })} />
+            </div>
+            <button className="native-btn" style={saveBtnBig} onClick={handleSaveSupplier}>
+              💾 Save Seller Details
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {showBuyerModal && (
+        <Modal title={newBuyer._id ? "✏️ Edit Buyer / Mill" : "➕ Add New Buyer (Mill / Recycler)"} onClose={() => setShowBuyerModal(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div>
+              <label style={labelStyle}>Buyer / Factory / Mill Name *</label>
+              <Input placeholder="e.g. Shivalik Paper Mills Ltd." value={newBuyer.name} onChange={v => setNewBuyer({ ...newBuyer, name: v })} />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div>
+                <label style={labelStyle}>Contact Number *</label>
+                <Input placeholder="Mobile / Landline" value={newBuyer.contact} onChange={v => setNewBuyer({ ...newBuyer, contact: v })} />
+              </div>
+              <div>
+                <label style={labelStyle}>Official Email</label>
+                <Input placeholder="e.g. billing@mill.com" value={newBuyer.email || ""} onChange={v => setNewBuyer({ ...newBuyer, email: v })} />
+              </div>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div>
+                <label style={labelStyle}>GSTIN Number</label>
+                <Input placeholder="15-digit GSTIN" value={newBuyer.gstin || ""} onChange={v => setNewBuyer({ ...newBuyer, gstin: v.toUpperCase() })} />
+              </div>
+              <div>
+                <label style={labelStyle}>PAN Number</label>
+                <Input placeholder="10-digit PAN" value={newBuyer.pan || ""} onChange={v => setNewBuyer({ ...newBuyer, pan: v.toUpperCase() })} />
+              </div>
+            </div>
+            <div>
+              <label style={labelStyle}>Mill / Factory Address</label>
+              <Input placeholder="Registered Plant Address" value={newBuyer.address || ""} onChange={v => setNewBuyer({ ...newBuyer, address: v })} />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div>
+                <label style={labelStyle}>State</label>
+                <Input placeholder="Jammu & Kashmir" value={newBuyer.state || "Jammu & Kashmir"} onChange={v => setNewBuyer({ ...newBuyer, state: v })} />
+              </div>
+              <div>
+                <label style={labelStyle}>State Code</label>
+                <Input placeholder="01" value={newBuyer.stateCode || "01"} onChange={v => setNewBuyer({ ...newBuyer, stateCode: v })} />
+              </div>
+            </div>
+            <button className="native-btn" style={saveBtnBig} onClick={handleSaveBuyer}>
+              💾 Save Buyer Details
+            </button>
+          </div>
         </Modal>
       )}
 
@@ -2599,6 +2837,39 @@ const playBellSound = () => {
       {showSaleModal && (
         <Modal title="Create GST E-Invoice" onClose={() => setShowSaleModal(false)}>
           <div style={{ maxHeight: "70vh", overflowY: "auto", paddingRight: "10px" }}>
+            
+            {/* Buyer Select / Auto-fill */}
+            <div style={{ marginBottom: "14px" }}>
+              <label style={labelStyle}>Select Saved Buyer / Mill (Auto-Fill)</label>
+              <select 
+                className="native-input" 
+                style={inputStyle}
+                onChange={e => {
+                  const selected = buyers.find(b => b._id === e.target.value);
+                  if (selected) {
+                    setNewSale({
+                      ...newSale,
+                      buyerName: selected.name,
+                      buyerContact: selected.contact,
+                      buyerEmail: selected.email || "",
+                      buyerAddress: selected.address || "",
+                      buyerGSTIN: selected.gstin || "",
+                      buyerPAN: selected.pan || "",
+                      buyerState: selected.state || "Jammu & Kashmir",
+                      buyerStateCode: selected.stateCode || "01"
+                    });
+                  }
+                }}
+              >
+                <option value="">-- Select Saved Buyer / Mill (Auto-fill) --</option>
+                {buyers.map(b => (
+                  <option key={b._id} value={b._id}>
+                    🏭 {b.name} ({b.contact}) {b.gstin ? `[GST: ${b.gstin}]` : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <h4 style={{ marginTop: 0 }}>Buyer (Bill To)</h4>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
               <Input placeholder="Buyer Name" value={newSale.buyerName} onChange={v => setNewSale({ ...newSale, buyerName: v })} />
@@ -2686,21 +2957,73 @@ const playBellSound = () => {
               if (!draft) return null;
               return (
                 <>
-                  <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
-                    <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>Select Collector (Supplier)</label>
-                      <select className="native-input" style={inputStyle} value={draft.supplierId}
-                        onChange={e => {
-                          const collector = collectors.find(c => c._id === e.target.value);
-                          updateActiveDraft({ supplierId: e.target.value, supplierName: collector?.name || "", supplierContact: collector?.mobile || "" });
-                        }}>
-                        <option value="">Choose Collector</option>
-                        {collectors.map(c => <option key={c._id} value={c._id}>{c.name} ({c.mobile})</option>)}
-                      </select>
+                  {/* Smart Supplier / Seller Selector */}
+                  <div style={{ marginBottom: "12px" }}>
+                    <label style={labelStyle}>Select Saved Seller / Corporate B2B / Collector</label>
+                    <select className="native-input" style={inputStyle} value={draft.supplierId ? `supp_${draft.supplierId}` : ""}
+                      onChange={e => {
+                        const val = e.target.value;
+                        if (val.startsWith("supp_")) {
+                          const supp = suppliers.find(s => s._id === val.replace("supp_", ""));
+                          updateActiveDraft({
+                            supplierId: supp?._id || "",
+                            supplierName: supp?.name || "",
+                            supplierContact: supp?.contact || "",
+                            supplierEmail: supp?.email || "",
+                            supplierGSTIN: supp?.gstin || "",
+                            supplierAddress: supp?.address || ""
+                          });
+                        } else if (val.startsWith("coll_")) {
+                          const collector = collectors.find(c => c._id === val.replace("coll_", ""));
+                          updateActiveDraft({
+                            supplierId: collector?._id || "",
+                            supplierName: collector?.name || "",
+                            supplierContact: collector?.mobile || "",
+                            supplierEmail: collector?.email || "",
+                            supplierGSTIN: "",
+                            supplierAddress: collector?.area || ""
+                          });
+                        } else {
+                          updateActiveDraft({
+                            supplierId: "",
+                            supplierName: "",
+                            supplierContact: "",
+                            supplierEmail: "",
+                            supplierGSTIN: "",
+                            supplierAddress: ""
+                          });
+                        }
+                      }}>
+                      <option value="">-- Choose Saved Seller (Auto-Fill) or Type Below --</option>
+                      <optgroup label="🏢 Saved Sellers (Dealers / B2B Corporate)">
+                        {suppliers.map(s => <option key={s._id} value={`supp_${s._id}`}>{s.name} ({s.contact}) {s.gstin ? `[GST: ${s.gstin}]` : ""}</option>)}
+                      </optgroup>
+                      <optgroup label="🛵 Registered Collectors">
+                        {collectors.map(c => <option key={c._id} value={`coll_${c._id}`}>{c.name} ({c.mobile})</option>)}
+                      </optgroup>
+                      <option value="">✍️ Type Walk-in / New Customer</option>
+                    </select>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
+                    <div>
+                      <label style={labelStyle}>Supplier / Firm Name *</label>
+                      <Input placeholder="e.g. Gupta Traders / Customer" value={draft.supplierName} onChange={v => updateActiveDraft({ supplierName: v })} />
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <label style={labelStyle}>Contact</label>
-                      <input className="native-input" style={inputStyle} disabled value={draft.supplierContact} readOnly />
+                    <div>
+                      <label style={labelStyle}>Contact Number *</label>
+                      <Input placeholder="10-digit Mobile" value={draft.supplierContact} onChange={v => updateActiveDraft({ supplierContact: v })} />
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
+                    <div>
+                      <label style={labelStyle}>Email (For Auto PDF Invoice)</label>
+                      <Input placeholder="e.g. info@company.com" value={draft.supplierEmail || ""} onChange={v => updateActiveDraft({ supplierEmail: v })} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>GSTIN (If B2B Client)</label>
+                      <Input placeholder="Optional GSTIN" value={draft.supplierGSTIN || ""} onChange={v => updateActiveDraft({ supplierGSTIN: v.toUpperCase() })} />
                     </div>
                   </div>
 
