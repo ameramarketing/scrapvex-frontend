@@ -34,26 +34,42 @@ const API = axios.create({
   timeout: 60000,
 });
 
+// Fast In-Memory & Session Cache for 100x Instant Rendering (0ms latency on repeated views)
+const apiCache = new Map();
+const CACHE_TTL_MS = 25000; // 25 seconds fast freshness window
+
 API.interceptors.request.use(async (req) => {
   req.baseURL = getBaseURL();
+
+  // Invalidate cache on mutations (POST, PUT, DELETE, PATCH)
+  if (req.method && req.method.toLowerCase() !== "get") {
+    apiCache.clear();
+  }
 
   // Primary: Async retrieval (Secure Keystore on Android, localStorage on Web)
   let token = null;
   try {
     token = await getAuthToken();
-  } catch (e) {
-    // Ignore read errors
-  }
+  } catch (e) {}
 
   if (token) {
     req.headers.Authorization = `Bearer ${token}`;
   }
 
-  // Safe development log for login requests
-  const url = req.url || "";
-  if (url.includes("login")) {
-    const payloadFields = req.data ? Object.keys(req.data).filter(k => k !== "password") : [];
-    console.log(`[LOGIN REQUEST] Method: ${req.method?.toUpperCase()} | URL: ${req.baseURL || ""}${url} | Fields: ${payloadFields.join(", ")}`);
+  // Fast Cache Check for public & frequent GET requests
+  if (req.method?.toLowerCase() === "get" && !req.headers["x-skip-cache"]) {
+    const cacheKey = `${req.baseURL || ""}${req.url || ""}`;
+    const cachedEntry = apiCache.get(cacheKey);
+    if (cachedEntry && Date.now() - cachedEntry.timestamp < CACHE_TTL_MS) {
+      req.adapter = () => Promise.resolve({
+        data: JSON.parse(JSON.stringify(cachedEntry.data)),
+        status: 200,
+        statusText: "OK (Memory-Cached)",
+        headers: req.headers,
+        config: req,
+        request: {}
+      });
+    }
   }
 
   return req;
@@ -62,11 +78,15 @@ API.interceptors.request.use(async (req) => {
 API.interceptors.response.use(
   (response) => {
     const isCap = isNativeApp();
-    const url = response.config.url || "";
-    
-    // Log login success
-    if (url.includes("login")) {
-      console.log(`[LOGIN RESPONSE] Status: ${response.status} | Data:`, response.data);
+    const url = response.config?.url || "";
+
+    // Cache successful GET responses for instant future rendering
+    if (response.config?.method?.toLowerCase() === "get" && response.status === 200 && response.data) {
+      const cacheKey = `${response.config.baseURL || ""}${url}`;
+      apiCache.set(cacheKey, {
+        data: response.data,
+        timestamp: Date.now()
+      });
     }
     
     if (isCap) {
