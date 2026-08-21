@@ -1,34 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
-/* Pages */
+/* Instant Core Pages */
 import Home from "./pages/Home";
 import Rates from "./pages/Rates";
 import Login from "./pages/Login";
 import BookPickup from "./pages/BookPickup";
 import UserDashboard from "./pages/UserDashboard";
-import CollectorDashboard from "./pages/CollectorDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import FranchiseDashboard from "./pages/FranchiseDashboard";
-import TermsConditions from "./pages/TermsConditions";
+import Onboarding from "./pages/Onboarding";
+import SplashScreen from "./components/SplashScreen";
+import Notifications from "./pages/Notifications";
 import MyPickups from "./pages/MyPickups";
 import Profile from "./pages/Profile";
+import Wallet from "./pages/Wallet";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/AdminLogin";
 import FranchiseLogin from "./pages/FranchiseLogin";
 import CollectorLogin from "./pages/CollectorLogin";
 import CollectorRegister from "./pages/CollectorRegister";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import Wallet from "./pages/Wallet";
+import TermsConditions from "./pages/TermsConditions";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import InvoiceView from "./pages/InvoiceView";
 
-import Onboarding from "./pages/Onboarding";
-import SplashScreen from "./components/SplashScreen";
-import Notifications from "./pages/Notifications";
+/* Lazy-Loaded Heavy Portals & Views */
+const AdminDashboard = React.lazy(() => import("./pages/AdminDashboard"));
+const FranchiseDashboard = React.lazy(() => import("./pages/FranchiseDashboard"));
+const CollectorDashboard = React.lazy(() => import("./pages/CollectorDashboard"));
+const InvoiceView = React.lazy(() => import("./pages/InvoiceView"));
 
 /* Components */
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -202,7 +203,12 @@ function App() {
         <GlobalLoader />
         <NavbarWrapper />
         <MobileAppShell>
-          <Routes>
+          <React.Suspense fallback={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
+              <div style={{ width: '36px', height: '36px', border: '3px solid #0b8f3a', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            </div>
+          }>
+            <Routes>
             {/* PUBLIC ROUTES */}
             <Route path="/" element={<InitialHomeScreen />} />
             <Route path="/onboarding" element={<Onboarding />} />
@@ -326,6 +332,7 @@ function App() {
               element={<NotFound />}
             />
           </Routes>
+          </React.Suspense>
         </MobileAppShell>
         <FloatingActions />
       </BrowserRouter>
