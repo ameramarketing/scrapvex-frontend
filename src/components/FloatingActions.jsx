@@ -29,9 +29,9 @@ const FloatingActions = () => {
 
   return (
     <>
-      {/* 🟢 FLOATING WHATSAPP CHATBOT BUTTON (Always visible for easy customer help) */}
+      {/* 🟢 FLOATING WHATSAPP CHATBOT BUTTON (Meta Official Cloud Number) */}
       <a
-        href="https://wa.me/918491028539?text=Hi"
+        href="https://wa.me/919086373867?text=Hi"
         target="_blank"
         rel="noopener noreferrer"
         className="floating-whatsapp-btn"
