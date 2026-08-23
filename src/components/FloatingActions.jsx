@@ -31,7 +31,7 @@ const FloatingActions = () => {
     <>
       {/* 🟢 FLOATING WHATSAPP CHATBOT BUTTON (Always visible for easy customer help) */}
       <a
-        href="https://wa.me/918491028539?text=Hi%20ScrapVex,%20mujhe%20kabaad%20bechna%20hai"
+        href="https://wa.me/918491028539?text=Hi"
         target="_blank"
         rel="noopener noreferrer"
         className="floating-whatsapp-btn"
@@ -55,7 +55,7 @@ const FloatingActions = () => {
       <style>{`
         .floating-whatsapp-btn {
           position: fixed;
-          bottom: 25px;
+          bottom: 30px;
           left: 25px;
           width: 54px;
           height: 54px;
@@ -163,6 +163,13 @@ const FloatingActions = () => {
         }
 
         @media (max-width: 768px) {
+          .floating-whatsapp-btn {
+            bottom: 92px !important; /* Raised above mobile bottom navbar */
+            left: 18px !important;
+            width: 48px;
+            height: 48px;
+            font-size: 26px;
+          }
           .floating-actions {
             display: none !important;
           }
