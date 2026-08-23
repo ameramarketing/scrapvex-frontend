@@ -513,16 +513,23 @@ const playBellSound = () => {
       if (dataUsers.users) setAllUsers(dataUsers.users);
       if (dataFranchises.franchises) setFranchises(dataFranchises.franchises);
       
-      fetchAds();
-      fetchSettings();
-      fetchNotifications();
-      fetchReviews();
-      fetchWalletStats();
-      fetchAccountingData(); // Fetch accounting stats for overview
-      fetchBuyers();
-      fetchSuppliers();
+      // Render Dashboard immediately without waiting for secondary data
+      setLoading(false);
+
+      // Fetch supplementary widgets and tabs asynchronously in background
+      Promise.allSettled([
+        fetchAds(),
+        fetchSettings(),
+        fetchNotifications(),
+        fetchReviews(),
+        fetchWalletStats(),
+        fetchAccountingData(),
+        fetchBuyers(),
+        fetchSuppliers()
+      ]).catch(() => {});
     } catch (error) {
       showToast("error", "Failed to load some data. Check connection.");
+      setLoading(false);
     } finally {
       setLoading(false);
     }

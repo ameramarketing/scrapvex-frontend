@@ -134,12 +134,14 @@ export async function clearAuthData() {
 export async function performLogout() {
   try {
     const token = await getAuthToken();
+    // 1. Immediately clear client storage so UI redirects instantly with 0ms lag
+    await clearAuthData();
+    // 2. Fire server session cleanup in background (non-blocking)
     if (token) {
-      await API.post("/auth/logout"); // server removes this sessionId
+      API.post("/auth/logout", {}, { hideLoader: true }).catch(() => {});
     }
   } catch (e) {
-    // Swallow network errors so logout always clears client state
-    console.warn("[Auth] Server logout call failed (clearing client state anyway):", e?.message);
+    console.warn("[Auth] Logout cleanup error:", e?.message);
+    await clearAuthData();
   }
-  await clearAuthData();
 }
