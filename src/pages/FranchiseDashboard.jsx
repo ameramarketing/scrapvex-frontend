@@ -185,10 +185,12 @@ const playBellSound = () => {
     notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash"
   };
   const [newSale, setNewSale] = useState(initialSaleState);
+  const [editingSaleId, setEditingSaleId] = useState(null);
   const [saleItemInput, setSaleItemInput] = useState({ scrapItem: "", name: "", hsnCode: "47071000", quantity: "", rate: "", cgstRate: "2.5", sgstRate: "2.5" });
   const [purchaseItemInput, setPurchaseItemInput] = useState({ scrapItem: "", name: "", quantity: "", rate: "" });
 
   const openCreateSaleModal = async () => {
+    setEditingSaleId(null);
     try {
       const res = await API.get("/billing/sales/next-invoice-number");
       if (res.data?.success) {
@@ -200,6 +202,40 @@ const playBellSound = () => {
       setNewSale({ ...initialSaleState, invoiceNumber: "808" });
     }
     setShowSaleModal(true);
+  };
+
+  const openEditSaleModal = (sale) => {
+    setEditingSaleId(sale._id);
+    setNewSale({
+      invoiceNumber: sale.invoiceNumber || "",
+      date: sale.createdAt ? new Date(sale.createdAt).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+      transporter: sale.transporter || "",
+      grNo: sale.grNo || "",
+      placeOfSupply: sale.placeOfSupply || "Jammu & Kashmir (01)",
+      freight: sale.freight || "",
+      freightPaymentType: sale.freightPaymentType || "Paid",
+      irn: sale.irn || "", ackNo: sale.ackNo || "", ackDate: sale.ackDate || "",
+      buyerName: sale.buyerName || "", buyerContact: sale.buyerContact || "", buyerAddress: sale.buyerAddress || "", buyerGSTIN: sale.buyerGSTIN || "", buyerPAN: sale.buyerPAN || "", buyerState: sale.buyerState || "Jammu & Kashmir", buyerStateCode: sale.buyerStateCode || "01",
+      consigneeName: sale.consigneeName || "", consigneeAddress: sale.consigneeAddress || "", consigneeGSTIN: sale.consigneeGSTIN || "", consigneePAN: sale.consigneePAN || "", consigneeState: sale.consigneeState || "Jammu & Kashmir", consigneeStateCode: sale.consigneeStateCode || "01",
+      eWayBillNo: sale.eWayBillNo || "", dispatchDocNo: sale.dispatchDocNo || "", dispatchedThrough: sale.dispatchedThrough || "", motorVehicleNo: sale.motorVehicleNo || "", deliveryNote: sale.deliveryNote || "", deliveryNoteDate: sale.deliveryNoteDate || "", referenceNo: sale.referenceNo || "", buyersOrderNo: sale.buyersOrderNo || "", destination: sale.destination || "", termsOfDelivery: sale.termsOfDelivery || "",
+      notes: sale.notes || "", items: sale.items || [], paymentStatus: sale.paymentStatus || "Paid", paymentMethod: sale.paymentMethod || "Cash"
+    });
+    setShowSaleModal(true);
+  };
+
+  const handleDeleteSale = async (saleId, invNumber) => {
+    if (!window.confirm(`Kya aap Invoice #${invNumber || ""} delete karna chahte hain? Is sale ka scrap stock warehouse inventory me wapas add ho jayega.`)) {
+      return;
+    }
+    try {
+      const res = await API.delete(`/billing/sales/${saleId}`);
+      if (res.data?.success) {
+        showToast("success", `Invoice #${invNumber || ""} deleted & inventory stock restored!`);
+        fetchAccountingData();
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Failed to delete sale invoice");
+    }
   };
 
   const handleExportGSTR1CSV = () => {
@@ -934,24 +970,41 @@ const playBellSound = () => {
   const handleCreateSale = async () => {
     if (!newSale.buyerName || newSale.items.length === 0) return showToast("error", "Add buyer and items");
 
-    const totalTaxableAmount = newSale.items.reduce((acc, item) => acc + item.amount, 0);
-    const totalCGST = newSale.items.reduce((acc, item) => acc + item.cgstAmount, 0);
-    const totalSGST = newSale.items.reduce((acc, item) => acc + item.sgstAmount, 0);
-    const totalAmount = totalTaxableAmount + totalCGST + totalSGST;
+    const totalTaxableAmount = newSale.items.reduce((acc, item) => acc + (parseFloat(item.amount) || 0), 0);
+    const totalCGST = newSale.items.reduce((acc, item) => acc + (parseFloat(item.cgstAmount) || 0), 0);
+    const totalSGST = newSale.items.reduce((acc, item) => acc + (parseFloat(item.sgstAmount) || 0), 0);
+    const totalIGST = newSale.items.reduce((acc, item) => acc + (parseFloat(item.igstAmount) || 0), 0);
+    const totalAmount = totalTaxableAmount + totalCGST + totalSGST + totalIGST;
 
     try {
-      const { data } = await API.post("/billing/sales", { ...newSale, totalTaxableAmount, totalCGST, totalSGST, totalAmount });
-      if (data.success) {
-        showToast("success", "Sale Recorded Successfully!");
-        setShowSaleModal(false);
-        setNewSale(initialSaleState);
-        fetchAccountingData();
-        if (data.sale) {
-          setSelectedInvoice(data.sale);
-          setShowInvoiceModal(true);
+      if (editingSaleId) {
+        const { data } = await API.put(`/billing/sales/${editingSaleId}`, { ...newSale, totalTaxableAmount, totalCGST, totalSGST, totalIGST, totalAmount });
+        if (data.success) {
+          showToast("success", "Sale Invoice Updated Successfully!");
+          setShowSaleModal(false);
+          setEditingSaleId(null);
+          setNewSale(initialSaleState);
+          fetchAccountingData();
+          if (data.sale) {
+            setSelectedInvoice(data.sale);
+            setShowInvoiceModal(true);
+          }
+        }
+      } else {
+        const { data } = await API.post("/billing/sales", { ...newSale, totalTaxableAmount, totalCGST, totalSGST, totalIGST, totalAmount });
+        if (data.success) {
+          showToast("success", "Sale Recorded Successfully!");
+          setShowSaleModal(false);
+          setEditingSaleId(null);
+          setNewSale(initialSaleState);
+          fetchAccountingData();
+          if (data.sale) {
+            setSelectedInvoice(data.sale);
+            setShowInvoiceModal(true);
+          }
         }
       }
-    } catch (e) { showToast("error", "Failed to record sale"); }
+    } catch (e) { showToast("error", e.response?.data?.message || "Failed to save sale invoice"); }
   };
 
   // ─── Multi-Draft Helpers ───
@@ -2237,15 +2290,19 @@ const playBellSound = () => {
                   <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Sales</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {filteredSales.map(sale => (
-                      <div key={sale._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", border: "1px solid var(--card-border)" }}>
+                      <div key={sale._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", border: "1px solid var(--card-border)" }}>
                         <div>
-                          <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{sale.buyerName} <span style={{ color: "var(--text-muted)", fontSize: "12px", fontWeight: "normal" }}>({sale.buyerContact})</span></div>
-                          <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>INV: {sale.invoiceNumber || "N/A"} • {new Date(sale.createdAt).toLocaleDateString()}</div>
+                          <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>{sale.buyerName} <span style={{ color: "var(--text-muted)", fontSize: "12px", fontWeight: "normal" }}>({sale.buyerContact || "No Contact"})</span></div>
+                          <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>INV: <strong style={{ color: "#d32f2f" }}>#{sale.invoiceNumber || "N/A"}</strong> • {new Date(sale.createdAt).toLocaleDateString("en-IN")} • {sale.items?.length || 0} items</div>
+                          {sale.motorVehicleNo && <div style={{ fontSize: "11px", color: "#166534", marginTop: "2px" }}>🚚 Vehicle: {sale.motorVehicleNo}</div>}
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
-                          <span className="badge-status badge-completed">Paid</span>
-                          <div style={{ fontWeight: "800", color: "var(--success)" }}>+₹{sale.totalAmount}</div>
-                          <button className="btn-secondary" style={{ fontSize: "11px", padding: "4px 8px", height: "auto" }} onClick={() => { setSelectedInvoice(sale); setShowInvoiceModal(true); }}>View Invoice</button>
+                          <div style={{ fontWeight: "900", fontSize: "16px", color: "var(--success)" }}>+₹{(sale.totalAmount || 0).toFixed(2)}</div>
+                          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: "flex-end" }}>
+                            <button className="btn-secondary" style={{ fontSize: "11px", padding: "5px 10px", height: "auto", display: "flex", alignItems: "center", gap: "4px" }} onClick={() => { setSelectedInvoice(sale); setShowInvoiceModal(true); }}>📄 View</button>
+                            <button className="btn-secondary" style={{ fontSize: "11px", padding: "5px 10px", height: "auto", background: "#fef3c7", color: "#92400e", borderColor: "#fde68a", display: "flex", alignItems: "center", gap: "4px" }} onClick={() => openEditSaleModal(sale)}>✏️ Edit</button>
+                            <button className="btn-secondary" style={{ fontSize: "11px", padding: "5px 10px", height: "auto", background: "#fee2e2", color: "#ef4444", borderColor: "#fca5a5", display: "flex", alignItems: "center", gap: "4px" }} onClick={() => handleDeleteSale(sale._id, sale.invoiceNumber)}>🗑️ Delete</button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -3262,7 +3319,7 @@ const playBellSound = () => {
       )}
 
       {showSaleModal && (
-        <Modal title="Create GST E-Invoice" onClose={() => setShowSaleModal(false)}>
+        <Modal title={editingSaleId ? `✏️ Edit Sale Invoice #${newSale.invoiceNumber || ""}` : "Create GST E-Invoice"} onClose={() => { setShowSaleModal(false); setEditingSaleId(null); }}>
           <div style={{ maxHeight: "70vh", overflowY: "auto", paddingRight: "10px" }}>
             
             {/* INVOICE NUMBER & DATE HEADER */}
@@ -3417,7 +3474,9 @@ const playBellSound = () => {
               </div>
             )}
 
-            <button className="native-btn" style={saveBtnBig} onClick={handleCreateSale}>Generate E-Invoice</button>
+            <button className="native-btn" style={saveBtnBig} onClick={handleCreateSale}>
+              {editingSaleId ? "💾 Save & Update Invoice" : "Generate E-Invoice"}
+            </button>
           </div>
         </Modal>
       )}
