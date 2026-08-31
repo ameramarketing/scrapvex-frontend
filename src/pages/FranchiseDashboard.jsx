@@ -1035,43 +1035,15 @@ const playBellSound = () => {
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR (Desktop Only) */}
       <div style={sidebar} className="desktop-only">
         <div style={logo}><FaRecycle style={{ marginRight: "10px", fontSize: "28px" }} /> Scrapvex</div>
         <nav style={nav}><NavContent /></nav>
       </div>
 
-      {/* MOBILE DRAWER */}
-      <div 
-        style={{
-          ...mobileMenuOverlay,
-          opacity: isMobileMenuOpen ? 1 : 0,
-          visibility: isMobileMenuOpen ? "visible" : "hidden",
-          transition: "opacity 0.3s ease, visibility 0.3s ease"
-        }} 
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        <div 
-          style={{
-            ...mobileSidebar,
-            transform: isMobileMenuOpen ? "translateX(0)" : "translateX(-100%)",
-            transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-          }} 
-          onClick={e => e.stopPropagation()}
-        >
-          <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px", paddingBottom: "15px", borderBottom: "1px solid rgba(255,255,255,0.15)"}}>
-             <div style={{...logo, marginBottom: 0, fontSize: "22px", justifyContent: "flex-start"}}><FaRecycle style={{ marginRight: "10px" }} /> Scrapvex</div>
-             <button style={{background: "none", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: "5px"}} onClick={() => setIsMobileMenuOpen(false)}>
-                <FaTimes size={20} />
-             </button>
-          </div>
-          <NavContent />
-        </div>
-      </div>
-
       {/* MAIN */}
       <div style={main} className="franchise-main-content">
-        {/* HEADER (SAME AS COLLECTOR DASHBOARD) */}
+        {/* HEADER */}
         <header style={{
           background: "var(--card-bg, #ffffff)",
           padding: "calc(10px + env(safe-area-inset-top, 0px)) 16px 10px 16px",
@@ -1086,17 +1058,8 @@ const playBellSound = () => {
           width: "100%",
           boxSizing: "border-box"
         }}>
-          {/* Left Branding: Mobile Hamburger + ScrapVex FRANCHISE */}
+          {/* Left Branding: ScrapVex FRANCHISE */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-            <button 
-              type="button" 
-              onClick={() => setIsMobileMenuOpen(true)} 
-              className="mobile-only"
-              style={{ background: "none", border: "none", color: "var(--text-main, #0f172a)", cursor: "pointer", padding: "6px", display: "flex", alignItems: "center", justifyContent: "center" }}
-              title="Open Navigation Menu"
-            >
-              <FaBars style={{ width: "20px", height: "20px", color: "var(--text-main, #0f172a)" }} />
-            </button>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }} onClick={() => setActiveTab("overview")}>
               <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "rgba(11,143,58,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0b8f3a", fontSize: "17px" }}>
                 <FaRecycle />
@@ -1325,10 +1288,10 @@ const playBellSound = () => {
                 </div>
               </div>
 
-              {/* MANAGEMENT SECTION */}
+              {/* OPERATIONS & COLLECTORS SECTION */}
               <div>
                 <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>
-                  OPERATIONS MANAGEMENT
+                  OPERATIONS & TERRITORY
                 </span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => setActiveTab("collectors")}>
@@ -1343,13 +1306,46 @@ const playBellSound = () => {
                       <span style={rowTextStyle}>City Scrap Rates</span>
                     </div>
                   </div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("dist-settings"); fetchDistSettings(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#f1f5f9", color: "#475569" }}><FaCog /></div>
+                      <span style={rowTextStyle}>City Operational Settings</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* FINANCE SECTION */}
+              {/* B2B MILL & SELLER DIRECTORY */}
               <div>
                 <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>
-                  FINANCE & PAYOUTS
+                  B2B NETWORK & DIRECTORY
+                </span>
+                <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("suppliers"); fetchSuppliers(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaUsers /></div>
+                      <span style={rowTextStyle}>Sellers & Suppliers ({suppliers.length})</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("buyers"); fetchBuyers(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#fdf2f8", color: "#db2777" }}><FaBuilding /></div>
+                      <span style={rowTextStyle}>Buyers (Mills & Bulk) ({buyers.length})</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("inventory"); fetchAccountingData(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#fff7ed", color: "#ea580c" }}><FaBoxes /></div>
+                      <span style={rowTextStyle}>Warehouse Inventory Stock</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FINANCE & REPORTS SECTION */}
+              <div>
+                <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>
+                  FINANCE, BILLING & REPORTS
                 </span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
                   <div style={accountRowStyle} onClick={() => setShowGSTModal(true)}>
@@ -1370,19 +1366,31 @@ const playBellSound = () => {
                       <span style={rowTextStyle}>Accounting & Profit Statements</span>
                     </div>
                   </div>
+                  <div style={accountRowStyle} onClick={() => setActiveTab("reports")}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#f0fdf4", color: "#16a34a" }}><FaChartLine /></div>
+                      <span style={rowTextStyle}>📊 Profit & Loss Reports / Analytics</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* APP & HELP SECTION */}
               <div>
                 <span style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", display: "block", marginBottom: "6px", letterSpacing: "0.5px" }}>
-                  APP & SUPPORT
+                  SUPPORT & REVIEWS
                 </span>
                 <div style={{ background: "var(--card-bg, #ffffff)", borderRadius: "14px", border: "1px solid var(--card-border, #e2e8f0)", overflow: "hidden" }}>
-                  <div style={accountRowStyle} onClick={() => { setActiveTab("tickets"); fetchTickets(); }}>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("support"); fetchTickets(); }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <div style={{ ...iconSquareStyle, background: "#eff6ff", color: "#2563eb" }}><FaTicketAlt /></div>
-                      <span style={rowTextStyle}>Raise Support Ticket</span>
+                      <span style={rowTextStyle}>Support Tickets & Helpdesk</span>
+                    </div>
+                  </div>
+                  <div style={accountRowStyle} onClick={() => { setActiveTab("reviews"); fetchReviews(); }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ ...iconSquareStyle, background: "#fef9c3", color: "#ca8a04" }}><FaStar /></div>
+                      <span style={rowTextStyle}>Customer Reviews & Ratings</span>
                     </div>
                   </div>
                   <div style={accountRowStyle} onClick={() => navigate("/privacy")}>
