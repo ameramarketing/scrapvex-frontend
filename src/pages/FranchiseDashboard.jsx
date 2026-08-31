@@ -612,11 +612,15 @@ const playBellSound = () => {
     const sgstAmount = (taxableAmount * sgstR) / 100;
     const amount = taxableAmount + cgstAmount + sgstAmount;
 
+    const foundItem = items.find(i => i._id === saleItemInput.scrapItem) || 
+                      inventory.find(inv => (inv.scrapItem?._id || inv.scrapItem) === saleItemInput.scrapItem)?.scrapItem;
+    const resolvedName = saleItemInput.name || foundItem?.name || itemInfo?.name || "Scrap Material";
+
     setNewSale({
       ...newSale,
       items: [...newSale.items, {
         scrapItem: saleItemInput.scrapItem,
-        name: itemInfo?.name || "",
+        name: resolvedName,
         hsnCode: saleItemInput.hsnCode,
         quantity: qty,
         rate: rate,
@@ -2894,17 +2898,59 @@ const playBellSound = () => {
             </div>
 
             <div style={{ border: "1px solid #eee", padding: "15px", borderRadius: "12px", marginBottom: "15px", background: "#f8f9fa" }}>
-              <h4 style={{ margin: "0 0 10px 0", fontSize: "14px" }}>Add Items to Sale</h4>
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: "10px" }}>
-                <select style={{ ...inputStyle, marginBottom: 0 }} value={saleItemInput.scrapItem} onChange={e => setSaleItemInput({ ...saleItemInput, scrapItem: e.target.value })}>
-                  <option value="">Select Item</option>
-                  {inventory.filter(i => i.quantityAvailable > 0).map(i => (
-                    <option key={i.scrapItem?._id} value={i.scrapItem?._id}>{i.scrapItem?.name} (Avail: {i.quantityAvailable})</option>
-                  ))}
+                <select 
+                  style={{ ...inputStyle, marginBottom: 0 }} 
+                  value={saleItemInput.scrapItem} 
+                  onChange={e => {
+                    const selectedId = e.target.value;
+                    if (!selectedId) {
+                      setSaleItemInput({ ...saleItemInput, scrapItem: "", name: "" });
+                      return;
+                    }
+                    const foundItem = items.find(i => i._id === selectedId) || 
+                                      inventory.find(inv => (inv.scrapItem?._id || inv.scrapItem) === selectedId)?.scrapItem;
+                    const itemName = foundItem?.name || "";
+                    let defaultHsn = "47071000";
+                    const n = itemName.toLowerCase();
+                    if (n.includes("iron") || n.includes("loha") || n.includes("metal") || n.includes("steel")) defaultHsn = "72041000";
+                    else if (n.includes("plastic") || n.includes("bottle") || n.includes("pet")) defaultHsn = "39151000";
+                    else if (n.includes("copper") || n.includes("taamba")) defaultHsn = "74040012";
+                    else if (n.includes("brass") || n.includes("peetal")) defaultHsn = "74040022";
+                    else if (n.includes("aluminium")) defaultHsn = "76020010";
+                    else if (n.includes("paper") || n.includes("raddi") || n.includes("book") || n.includes("gatta") || n.includes("cardboard")) defaultHsn = "47071000";
+                    else if (n.includes("ewaste") || n.includes("battery") || n.includes("electronic")) defaultHsn = "85480000";
+
+                    setSaleItemInput({
+                      ...saleItemInput,
+                      scrapItem: selectedId,
+                      name: itemName,
+                      rate: foundItem?.price || saleItemInput.rate || "",
+                      hsnCode: defaultHsn
+                    });
+                  }}
+                >
+                  <option value="">-- Select Scrap Item --</option>
+                  {inventory.filter(i => (i.quantityAvailable || 0) > 0).length > 0 && (
+                    <optgroup label="📦 Warehouse Inventory Stock">
+                      {inventory.filter(i => (i.quantityAvailable || 0) > 0).map(i => (
+                        <option key={i.scrapItem?._id || i._id} value={i.scrapItem?._id || i._id}>
+                          📦 {i.scrapItem?.name || "Stock Item"} (In Stock: {i.quantityAvailable} kg)
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  <optgroup label="🏷️ All Scrap Categories & Rates">
+                    {items.map(i => (
+                      <option key={i._id} value={i._id}>
+                        {i.name} ({i.category}) - ₹{i.price}/kg
+                      </option>
+                    ))}
+                  </optgroup>
                 </select>
                 <Input type="text" placeholder="HSN/SAC" value={saleItemInput.hsnCode} onChange={v => setSaleItemInput({ ...saleItemInput, hsnCode: v })} />
-                <Input type="number" placeholder="Qty" value={saleItemInput.quantity} onChange={v => setSaleItemInput({ ...saleItemInput, quantity: v })} />
-                <Input type="number" placeholder="Rate/Unit" value={saleItemInput.rate} onChange={v => setSaleItemInput({ ...saleItemInput, rate: v })} />
+                <Input type="number" placeholder="Qty (kg)" value={saleItemInput.quantity} onChange={v => setSaleItemInput({ ...saleItemInput, quantity: v })} />
+                <Input type="number" placeholder="Rate/kg (₹)" value={saleItemInput.rate} onChange={v => setSaleItemInput({ ...saleItemInput, rate: v })} />
                 <Input type="number" placeholder="CGST %" value={saleItemInput.cgstRate} onChange={v => setSaleItemInput({ ...saleItemInput, cgstRate: v })} />
                 <Input type="number" placeholder="SGST %" value={saleItemInput.sgstRate} onChange={v => setSaleItemInput({ ...saleItemInput, sgstRate: v })} />
               </div>
