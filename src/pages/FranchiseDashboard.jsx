@@ -108,10 +108,16 @@ const playBellSound = () => {
     try { return JSON.parse(localStorage.getItem("user") || "{}"); } catch (e) { return {}; }
   })();
   const [gstProfileForm, setGstProfileForm] = useState({
-    legalFirmName: initialFranchiseUser.legalFirmName || "",
-    gstin: initialFranchiseUser.gstin || "",
-    businessAddress: initialFranchiseUser.businessAddress || initialFranchiseUser.address || "",
+    legalFirmName: initialFranchiseUser.legalFirmName || "A.M KAMALAK SCRAP DEALER",
+    gstin: initialFranchiseUser.gstin || "01EMRPM6848D1ZT",
+    businessAddress: initialFranchiseUser.businessAddress || initialFranchiseUser.address || "Kheora Rajouri",
     stateCode: initialFranchiseUser.stateCode || "01",
+    secondaryPhone: initialFranchiseUser.secondaryPhone || "9086823081",
+    dealsIn: initialFranchiseUser.dealsIn || "All Kinds of Scrap Except Single Use Plastic",
+    bankName: initialFranchiseUser.bankName || "Jammu & Kashmir Bank KHEORA RAJOURI",
+    bankAccountNo: initialFranchiseUser.bankAccountNo || "0804010100000234",
+    bankIfsc: initialFranchiseUser.bankIfsc || "JAKA0KHEORA",
+    invoiceStartNumber: initialFranchiseUser.invoiceStartNumber || 808,
     tradeLicenseNo: initialFranchiseUser.tradeLicenseNo || ""
   });
 
@@ -131,6 +137,11 @@ const playBellSound = () => {
       setSavingGSTProfile(false);
     }
   };
+
+  // Monthly GST CA Export States
+  const [selectedGSTMonth, setSelectedGSTMonth] = useState(new Date().getMonth() + 1);
+  const [selectedGSTYear, setSelectedGSTYear] = useState(new Date().getFullYear());
+  const [exportingGST, setExportingGST] = useState(false);
 
   const [accountingStats, setAccountingStats] = useState({ totalPurchaseAmount: 0, todayPurchaseAmount: 0, totalSaleAmount: 0, todaySaleAmount: 0, overallProfit: 0, todayProfit: 0, stockValue: 0 });
   const [inventory, setInventory] = useState([]);
@@ -154,6 +165,13 @@ const playBellSound = () => {
   const [supplierTotalAmount, setSupplierTotalAmount] = useState(0);
 
   const initialSaleState = {
+    invoiceNumber: "808",
+    date: new Date().toISOString().split("T")[0],
+    transporter: "",
+    grNo: "",
+    placeOfSupply: "Jammu & Kashmir (01)",
+    freight: "",
+    freightPaymentType: "Paid",
     irn: "", ackNo: "", ackDate: "",
     buyerName: "", buyerContact: "", buyerAddress: "", buyerGSTIN: "", buyerPAN: "", buyerState: "Jammu & Kashmir", buyerStateCode: "01",
     consigneeName: "", consigneeAddress: "", consigneeGSTIN: "", consigneePAN: "", consigneeState: "Jammu & Kashmir", consigneeStateCode: "01",
@@ -163,6 +181,259 @@ const playBellSound = () => {
   const [newSale, setNewSale] = useState(initialSaleState);
   const [saleItemInput, setSaleItemInput] = useState({ scrapItem: "", name: "", hsnCode: "47071000", quantity: "", rate: "", cgstRate: "2.5", sgstRate: "2.5" });
   const [purchaseItemInput, setPurchaseItemInput] = useState({ scrapItem: "", name: "", quantity: "", rate: "" });
+
+  const openCreateSaleModal = async () => {
+    try {
+      const res = await API.get("/billing/sales/next-invoice-number");
+      if (res.data?.success) {
+        setNewSale({ ...initialSaleState, invoiceNumber: String(res.data.invoiceNumber || "808") });
+      } else {
+        setNewSale({ ...initialSaleState, invoiceNumber: "808" });
+      }
+    } catch (e) {
+      setNewSale({ ...initialSaleState, invoiceNumber: "808" });
+    }
+    setShowSaleModal(true);
+  };
+
+  const handleExportGSTR1CSV = () => {
+    const monthSales = sales.filter(s => {
+      if (!s.createdAt) return false;
+      const d = new Date(s.createdAt);
+      return (d.getMonth() + 1) === parseInt(selectedGSTMonth) && d.getFullYear() === parseInt(selectedGSTYear);
+    });
+
+    if (monthSales.length === 0) {
+      return showToast("info", `Month ${selectedGSTMonth}/${selectedGSTYear} mein koi sales records nahi mile`);
+    }
+
+    const headers = [
+      "Invoice No",
+      "Invoice Date",
+      "Financial Year",
+      "Buyer Name",
+      "Buyer GSTIN",
+      "Place of Supply",
+      "Vehicle No",
+      "HSN/SAC",
+      "Item Description",
+      "Quantity (KG)",
+      "Rate per KG (Rs)",
+      "Taxable Amount (Rs)",
+      "CGST Rate (%)",
+      "CGST Amount (Rs)",
+      "SGST Rate (%)",
+      "SGST Amount (Rs)",
+      "Total Invoice Value (Rs)"
+    ];
+
+    const rows = [];
+    monthSales.forEach(sale => {
+      const invNo = sale.invoiceNumber || (sale._id || "").slice(-6).toUpperCase();
+      const invDate = sale.createdAt ? new Date(sale.createdAt).toLocaleDateString("en-IN") : "";
+      const fy = sale.financialYear || "2026-27";
+      const bName = `"${(sale.buyerName || '').replace(/"/g, '""')}"`;
+      const bGstin = sale.buyerGSTIN || "Unregistered";
+      const pos = sale.placeOfSupply || "Jammu & Kashmir (01)";
+      const veh = sale.motorVehicleNo || "-";
+
+      (sale.items || []).forEach(it => {
+        rows.push([
+          invNo,
+          invDate,
+          fy,
+          bName,
+          bGstin,
+          pos,
+          veh,
+          it.hsnCode || "47071000",
+          `"${(it.name || 'Scrap Material').replace(/"/g, '""')}"`,
+          it.quantity || 0,
+          it.rate || 0,
+          (it.amount || 0).toFixed(2),
+          "2.5%",
+          (it.cgstAmount || 0).toFixed(2),
+          "2.5%",
+          (it.sgstAmount || 0).toFixed(2),
+          (sale.totalAmount || 0).toFixed(2)
+        ]);
+      });
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `ScrapVex_GSTR1_Sales_Report_${selectedGSTMonth}_${selectedGSTYear}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("success", "📊 GSTR-1 Excel / CSV Sheet Downloaded!");
+  };
+
+  const handleExportMonthlyCombinedPDF = async () => {
+    const monthSales = sales.filter(s => {
+      if (!s.createdAt) return false;
+      const d = new Date(s.createdAt);
+      return (d.getMonth() + 1) === parseInt(selectedGSTMonth) && d.getFullYear() === parseInt(selectedGSTYear);
+    });
+
+    if (monthSales.length === 0) {
+      return showToast("info", `Month ${selectedGSTMonth}/${selectedGSTYear} mein koi sales invoices nahi hain`);
+    }
+
+    try {
+      setExportingGST(true);
+      showToast("info", `Generating Combined PDF for ${monthSales.length} invoices...`);
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+      const tempContainer = document.createElement("div");
+      tempContainer.style.position = "absolute";
+      tempContainer.style.left = "-9999px";
+      tempContainer.style.width = "780px";
+      tempContainer.style.background = "#fff";
+      document.body.appendChild(tempContainer);
+
+      const franchiseUser = JSON.parse(localStorage.getItem("user") || "{}");
+      const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || "A.M KAMALAK SCRAP DEALER";
+      const firmGst = franchiseUser?.gstin || "01EMRPM6848D1ZT";
+      const firmAddr = franchiseUser?.businessAddress || "Kheora Rajouri";
+      const firmPhone = franchiseUser?.secondaryPhone || franchiseUser?.mobile || "9906063614, 9086823081";
+      const dealsInText = franchiseUser?.dealsIn || "All Kinds of Scrap Except Single Use Plastic";
+      const bankName = franchiseUser?.bankName || "Jammu & Kashmir Bank KHEORA RAJOURI";
+      const bankAccountNo = franchiseUser?.bankAccountNo || "0804010100000234";
+      const bankIfsc = franchiseUser?.bankIfsc || "JAKA0KHEORA";
+
+      for (let i = 0; i < monthSales.length; i++) {
+        const sale = monthSales[i];
+        const invNo = sale.invoiceNumber || (sale._id || "").slice(-6).toUpperCase();
+        const invDate = sale.createdAt ? new Date(sale.createdAt).toLocaleDateString("en-IN") : "";
+        const grandTotal = sale.totalAmount || 0;
+        const taxableVal = sale.totalTaxableAmount || (grandTotal / 1.05);
+        const cgstVal = sale.totalCGST || (taxableVal * 0.025);
+        const sgstVal = sale.totalSGST || (taxableVal * 0.025);
+
+        tempContainer.innerHTML = `
+          <div style="padding: 24px; border: 1.5px solid #000; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #000; background: #fff; box-sizing: border-box; width: 780px; min-height: 1050px;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1.5px solid #000; padding-bottom: 4px; font-size: 11px;">
+              <span>GSTIN: ${firmGst}</span>
+              <span style="font-size: 14px; font-weight: 900; letter-spacing: 1px;">TAX INVOICE</span>
+              <span>Mob. No. ${firmPhone}</span>
+            </div>
+            <div style="text-align: center; margin-top: 6px;">
+              <div style="font-family: 'Times New Roman', Georgia, serif; font-size: 26px; font-weight: 900; text-transform: uppercase;">${firmName}</div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin: 3px 0;">
+                <span style="color: #d32f2f; font-weight: 900; font-size: 20px; font-family: monospace;">${invNo}</span>
+                <span style="font-style: italic; font-weight: 700; font-size: 11px; flex: 1; text-align: center;">Deals In:- ${dealsInText}</span>
+                <span style="width: 50px;"></span>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 6px;">Address: ${firmAddr}</div>
+            </div>
+            
+            <div style="border: 1px solid #000; margin-bottom: 6px;">
+              <div style="display: flex; border-bottom: 1px solid #000; padding: 4px 6px;">
+                <div style="flex: 1.5; border-right: 1px solid #000; padding-right: 6px;"><strong>Transporter:</strong> ${sale.transporter || "-"}</div>
+                <div style="flex: 1; padding-left: 6px;"><strong>Dated:</strong> ${invDate}</div>
+              </div>
+              <div style="display: flex; border-bottom: 1px solid #000; padding: 4px 6px;">
+                <div style="flex: 1.5; border-right: 1px solid #000; padding-right: 6px;"><strong>Vehicle No:</strong> ${sale.motorVehicleNo || "-"}</div>
+                <div style="flex: 1; padding-left: 6px;"><strong>Place of Supply:</strong> ${sale.placeOfSupply || "Jammu & Kashmir (01)"}</div>
+              </div>
+              <div style="display: flex; padding: 4px 6px;">
+                <div style="flex: 1.5; border-right: 1px solid #000; padding-right: 6px;"><strong>Freight Rs.:</strong> ${sale.freight ? "₹" + sale.freight : "-"}</div>
+                <div style="flex: 1; padding-left: 6px;"><strong>To Pay / Paid:</strong> ${sale.freightPaymentType || "Paid"}</div>
+              </div>
+            </div>
+
+            <div style="display: flex; border: 1px solid #000; margin-bottom: 6px;">
+              <div style="flex: 1; border-right: 1px solid #000; padding: 6px;">
+                <strong style="text-decoration: underline;">Billing Address</strong><br/>
+                <strong>Address:</strong> ${sale.buyerName}, ${sale.buyerAddress || ""}<br/>
+                <strong>GSTIN:</strong> ${sale.buyerGSTIN || "Unregistered"}<br/>
+                <strong>State:</strong> ${sale.buyerState || "J&K"}
+              </div>
+              <div style="flex: 1; padding: 6px;">
+                <strong style="text-decoration: underline;">Shipping Address</strong><br/>
+                <strong>Address:</strong> ${sale.consigneeAddress || "Same"}<br/>
+                <strong>Gstin:</strong> ${sale.consigneeGSTIN || "Same"}
+              </div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 6px;">
+              <thead>
+                <tr style="background: #f1f5f9; border-bottom: 1px solid #000; font-size: 10px;">
+                  <th style="border: 1px solid #000; padding: 4px; width: 5%;">Sr.</th>
+                  <th style="border: 1px solid #000; padding: 4px; text-align: left; width: 30%;">Particulars</th>
+                  <th style="border: 1px solid #000; padding: 4px; width: 10%;">HSN</th>
+                  <th style="border: 1px solid #000; padding: 4px; width: 8%;">UOM</th>
+                  <th style="border: 1px solid #000; padding: 4px; width: 10%;">Qty.</th>
+                  <th style="border: 1px solid #000; padding: 4px; width: 10%;">Rate</th>
+                  <th style="border: 1px solid #000; padding: 4px; width: 12%;">Amount</th>
+                  <th style="border: 1px solid #000; padding: 4px; width: 15%;">Tax Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${(sale.items || []).map((it, idx) => `
+                  <tr style="font-size: 10px;">
+                    <td style="border: 1px solid #000; padding: 4px; text-align: center;">${idx + 1}</td>
+                    <td style="border: 1px solid #000; padding: 4px;"><strong>${it.name}</strong></td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align: center;">${it.hsnCode || "-"}</td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align: center;">kg</td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align: right;">${it.quantity}</td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align: right;">${it.rate}</td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align: right;">${it.amount}</td>
+                    <td style="border: 1px solid #000; padding: 4px; text-align: right;">${((it.cgstAmount || 0) + (it.sgstAmount || 0)).toFixed(2)}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+
+            <div style="display: flex; border: 1px solid #000; margin-bottom: 6px;">
+              <div style="flex: 1.2; border-right: 1px solid #000; padding: 6px;">
+                <div><strong>Total Invoice Value (in figure):</strong> ₹${grandTotal.toFixed(2)}/-</div>
+                <div style="margin-top: 4px;"><strong>Total Invoice Value (in words):</strong> <em>${numberToWords(Math.round(grandTotal))} Rupees Only</em></div>
+              </div>
+              <div style="flex: 1; padding: 6px; font-size: 10px;">
+                <div style="display: flex; justify-content: space-between;"><span>Total Amount Before Tax:</span> <strong>₹${taxableVal.toFixed(2)}</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span>CGST (2.5%):</span> <strong>₹${cgstVal.toFixed(2)}</strong></div>
+                <div style="display: flex; justify-content: space-between;"><span>SGST (2.5%):</span> <strong>₹${sgstVal.toFixed(2)}</strong></div>
+                <div style="display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 3px; font-weight: bold; font-size: 11px;"><span>Total Amount After Tax:</span> <span>₹${grandTotal.toFixed(2)}</span></div>
+              </div>
+            </div>
+
+            <div style="display: flex; border: 1px solid #000; padding: 6px; align-items: flex-end;">
+              <div style="flex: 1.3; font-size: 10px;">
+                <strong>Bank Name & Branch:-</strong> ${bankName}<br/>
+                <strong>Bank Account No:-</strong> ${bankAccountNo}<br/>
+                <strong>IFSC Code:-</strong> ${bankIfsc}
+              </div>
+              <div style="flex: 1; text-align: right;">
+                <strong>For ${firmName}</strong>
+                <div style="height: 35px;"></div>
+                <strong style="border-top: 1px solid #000; padding-top: 3px; display: inline-block;">Authorised Signatory</strong>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const canvas = await html2canvas(tempContainer, { scale: 2, backgroundColor: "#ffffff" });
+        const imgData = canvas.toDataURL("image/png");
+        if (i > 0) pdf.addPage();
+        const pdfWidth = 210;
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      }
+
+      document.body.removeChild(tempContainer);
+      pdf.save(`ScrapVex_All_Invoices_${selectedGSTMonth}_${selectedGSTYear}.pdf`);
+      showToast("success", `✅ All ${monthSales.length} Invoices Combined PDF Downloaded!`);
+    } catch (e) {
+      console.error(e);
+      showToast("error", "Failed to generate monthly PDF bundle");
+    } finally {
+      setExportingGST(false);
+    }
+  };
 
   // NEW ERP MODULES STATES
   const [tickets, setTickets] = useState([]);
@@ -1850,8 +2121,61 @@ const playBellSound = () => {
                   <button className="btn-secondary" style={{ padding: "8px 12px", fontSize: "12px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "6px" }} onClick={() => setShowPurchaseModal(true)}>
                     <FaPlus style={{ fontSize: "11px" }} /> Record Purchase
                   </button>
-                  <button className="btn-premium" style={{ padding: "8px 12px", fontSize: "12px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "6px" }} onClick={() => setShowSaleModal(true)}>
+                  <button className="btn-premium" style={{ padding: "8px 12px", fontSize: "12px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "6px" }} onClick={openCreateSaleModal}>
                     <FaPlus style={{ fontSize: "11px" }} /> Create Sale Invoice
+                  </button>
+                </div>
+              </div>
+
+              {/* MONTHLY GST FILING & CA EXPORT CENTER */}
+              <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", border: "1.5px solid #86efac", borderRadius: "16px", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#166534", fontWeight: "900", fontSize: "16px" }}>
+                    📊 CA GST Filing & Monthly Invoices Export
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#15803d", marginTop: "4px" }}>
+                    Select month to export GSTR-1 Excel sheet or 1-click combined PDF of all sale bills for your CA
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
+                  <select 
+                    className="native-input" 
+                    style={{ padding: "8px 12px", borderRadius: "10px", border: "1.5px solid #16a34a", background: "#fff", fontWeight: "700", fontSize: "13px", color: "#166534" }}
+                    value={selectedGSTMonth}
+                    onChange={e => setSelectedGSTMonth(parseInt(e.target.value))}
+                  >
+                    {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((m, idx) => (
+                      <option key={idx + 1} value={idx + 1}>{m}</option>
+                    ))}
+                  </select>
+
+                  <select 
+                    className="native-input" 
+                    style={{ padding: "8px 12px", borderRadius: "10px", border: "1.5px solid #16a34a", background: "#fff", fontWeight: "700", fontSize: "13px", color: "#166534" }}
+                    value={selectedGSTYear}
+                    onChange={e => setSelectedGSTYear(parseInt(e.target.value))}
+                  >
+                    {[2025, 2026, 2027, 2028].map(y => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+
+                  <button 
+                    className="native-btn"
+                    style={{ background: "#16a34a", color: "#fff", border: "none", padding: "9px 16px", borderRadius: "10px", fontWeight: "800", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", boxShadow: "0 4px 12px rgba(22, 163, 74, 0.25)" }}
+                    onClick={handleExportGSTR1CSV}
+                  >
+                    <FaDownload /> 📥 GSTR-1 Excel / CSV
+                  </button>
+
+                  <button 
+                    className="native-btn"
+                    style={{ background: "#0b8f3a", color: "#fff", border: "none", padding: "9px 16px", borderRadius: "10px", fontWeight: "800", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", opacity: exportingGST ? 0.7 : 1, boxShadow: "0 4px 12px rgba(11, 143, 58, 0.25)" }}
+                    disabled={exportingGST}
+                    onClick={handleExportMonthlyCombinedPDF}
+                  >
+                    <FaFileInvoice /> {exportingGST ? "Generating..." : "📑 All Monthly Bills (Combined PDF)"}
                   </button>
                 </div>
               </div>
@@ -2569,49 +2893,99 @@ const playBellSound = () => {
 
       {showGSTModal && (
         <Modal title="🏢 Business & GST Legal Profile" onClose={() => setShowGSTModal(false)}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px", maxHeight: "75vh", overflowY: "auto", paddingRight: "6px" }}>
             <div>
-              <label style={labelStyle}>Legal Firm / Business Name</label>
+              <label style={labelStyle}>Legal Firm / Business Name *</label>
               <Input 
-                placeholder="e.g. M/S Sharma Scrap Traders" 
+                placeholder="e.g. A.M KAMALAK SCRAP DEALER" 
                 value={gstProfileForm.legalFirmName} 
                 onChange={v => setGstProfileForm({ ...gstProfileForm, legalFirmName: v })} 
               />
             </div>
-            <div>
-              <label style={labelStyle}>GSTIN Number (15 Digits)</label>
-              <Input 
-                placeholder="e.g. 01AAAAA0000A1Z5" 
-                value={gstProfileForm.gstin} 
-                onChange={v => setGstProfileForm({ ...gstProfileForm, gstin: v.toUpperCase() })} 
-              />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <div>
+                <label style={labelStyle}>GSTIN Number (15 Digits) *</label>
+                <Input 
+                  placeholder="e.g. 01EMRPM6848D1ZT" 
+                  value={gstProfileForm.gstin} 
+                  onChange={v => setGstProfileForm({ ...gstProfileForm, gstin: v.toUpperCase() })} 
+                />
+              </div>
+              <div>
+                <label style={labelStyle}>Contact Mobiles</label>
+                <Input 
+                  placeholder="e.g. 9906063614, 9086823081" 
+                  value={gstProfileForm.secondaryPhone} 
+                  onChange={v => setGstProfileForm({ ...gstProfileForm, secondaryPhone: v })} 
+                />
+              </div>
             </div>
             <div>
-              <label style={labelStyle}>Registered Godown / Office Address</label>
+              <label style={labelStyle}>Registered Godown / Office Address *</label>
               <Input 
-                placeholder="e.g. Plot 14, Transport Nagar, Jammu" 
+                placeholder="e.g. Kheora Rajouri" 
                 value={gstProfileForm.businessAddress} 
                 onChange={v => setGstProfileForm({ ...gstProfileForm, businessAddress: v })} 
               />
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-              <div>
-                <label style={labelStyle}>State Code</label>
-                <Input 
-                  placeholder="01 (J&K)" 
-                  value={gstProfileForm.stateCode} 
-                  onChange={v => setGstProfileForm({ ...gstProfileForm, stateCode: v })} 
-                />
+            <div>
+              <label style={labelStyle}>Deals In (Description on Bill)</label>
+              <Input 
+                placeholder="e.g. All Kinds of Scrap Except Single Use Plastic" 
+                value={gstProfileForm.dealsIn} 
+                onChange={v => setGstProfileForm({ ...gstProfileForm, dealsIn: v })} 
+              />
+            </div>
+
+            {/* Bank Details Section for Invoices */}
+            <div style={{ background: "#f8fafc", padding: "14px", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: "12px", fontWeight: "800", color: "#0f172a", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                🏦 Bank Details (Printed on Invoices)
               </div>
-              <div>
-                <label style={labelStyle}>Trade License / MSME No</label>
-                <Input 
-                  placeholder="Optional Reg No" 
-                  value={gstProfileForm.tradeLicenseNo} 
-                  onChange={v => setGstProfileForm({ ...gstProfileForm, tradeLicenseNo: v })} 
-                />
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div>
+                  <label style={labelStyle}>Bank Name & Branch</label>
+                  <Input 
+                    placeholder="e.g. Jammu & Kashmir Bank KHEORA RAJOURI" 
+                    value={gstProfileForm.bankName} 
+                    onChange={v => setGstProfileForm({ ...gstProfileForm, bankName: v })} 
+                  />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                  <div>
+                    <label style={labelStyle}>Bank Account Number</label>
+                    <Input 
+                      placeholder="e.g. 0804010100000234" 
+                      value={gstProfileForm.bankAccountNo} 
+                      onChange={v => setGstProfileForm({ ...gstProfileForm, bankAccountNo: v })} 
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>IFSC Code</label>
+                    <Input 
+                      placeholder="e.g. JAKA0KHEORA" 
+                      value={gstProfileForm.bankIfsc} 
+                      onChange={v => setGstProfileForm({ ...gstProfileForm, bankIfsc: v.toUpperCase() })} 
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Sequence Start Number */}
+            <div style={{ background: "#f0fdf4", padding: "14px", borderRadius: "12px", border: "1px solid #bbf7d0" }}>
+              <label style={{ ...labelStyle, color: "#166534", fontWeight: "800" }}>Next Starting Invoice Sequence Number (Bill Book Sync)</label>
+              <Input 
+                type="number"
+                placeholder="e.g. 808" 
+                value={gstProfileForm.invoiceStartNumber} 
+                onChange={v => setGstProfileForm({ ...gstProfileForm, invoiceStartNumber: v })} 
+              />
+              <small style={{ color: "#15803d", fontSize: "11px", display: "block", marginTop: "4px" }}>
+                Aapka pichla bill #807 tha. Naye bills #808 se start honge aur Financial Year change par auto-track honge.
+              </small>
+            </div>
+
             <button 
               className="native-btn" 
               style={{ ...saveBtnBig, opacity: savingGSTProfile ? 0.7 : 1 }} 
@@ -2880,6 +3254,27 @@ const playBellSound = () => {
         <Modal title="Create GST E-Invoice" onClose={() => setShowSaleModal(false)}>
           <div style={{ maxHeight: "70vh", overflowY: "auto", paddingRight: "10px" }}>
             
+            {/* INVOICE NUMBER & DATE HEADER */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "14px", background: "#f0fdf4", padding: "12px 14px", borderRadius: "12px", border: "1px solid #bbf7d0" }}>
+              <div>
+                <label style={{ ...labelStyle, color: "#166534", fontWeight: "800" }}>Invoice Sequence Number *</label>
+                <Input 
+                  placeholder="e.g. 808" 
+                  value={newSale.invoiceNumber} 
+                  onChange={v => setNewSale({ ...newSale, invoiceNumber: v })} 
+                />
+                <small style={{ color: "#15803d", fontSize: "11px", fontWeight: "700" }}>Bill Book Sequence (#808)</small>
+              </div>
+              <div>
+                <label style={{ ...labelStyle, color: "#166534", fontWeight: "800" }}>Invoice Date</label>
+                <Input 
+                  type="date" 
+                  value={newSale.date || new Date().toISOString().split("T")[0]} 
+                  onChange={v => setNewSale({ ...newSale, date: v })} 
+                />
+              </div>
+            </div>
+
             {/* Buyer Select / Auto-fill */}
             <div style={{ marginBottom: "14px" }}>
               <label style={labelStyle}>Select Saved Buyer / Mill (Auto-Fill)</label>
@@ -2898,7 +3293,10 @@ const playBellSound = () => {
                       buyerGSTIN: selected.gstin || "",
                       buyerPAN: selected.pan || "",
                       buyerState: selected.state || "Jammu & Kashmir",
-                      buyerStateCode: selected.stateCode || "01"
+                      buyerStateCode: selected.stateCode || "01",
+                      consigneeName: selected.name,
+                      consigneeAddress: selected.address || "",
+                      consigneeGSTIN: selected.gstin || ""
                     });
                   }
                 }}
@@ -2914,10 +3312,10 @@ const playBellSound = () => {
 
             <h4 style={{ marginTop: 0 }}>Buyer (Bill To)</h4>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
-              <Input placeholder="Buyer Name" value={newSale.buyerName} onChange={v => setNewSale({ ...newSale, buyerName: v })} />
-              <Input placeholder="Address" value={newSale.buyerAddress} onChange={v => setNewSale({ ...newSale, buyerAddress: v })} />
-              <Input placeholder="GSTIN/UIN" value={newSale.buyerGSTIN} onChange={v => setNewSale({ ...newSale, buyerGSTIN: v })} />
-              <Input placeholder="PAN/IT No" value={newSale.buyerPAN} onChange={v => setNewSale({ ...newSale, buyerPAN: v })} />
+              <Input placeholder="Buyer Name *" value={newSale.buyerName} onChange={v => setNewSale({ ...newSale, buyerName: v })} />
+              <Input placeholder="Address (e.g. Jai Datti Trading Co, Sainik Colony)" value={newSale.buyerAddress} onChange={v => setNewSale({ ...newSale, buyerAddress: v })} />
+              <Input placeholder="GSTIN/UIN (e.g. 01AMSPG9859M1ZA)" value={newSale.buyerGSTIN} onChange={v => setNewSale({ ...newSale, buyerGSTIN: v })} />
+              <Input placeholder="State (e.g. Jammu & Kashmir)" value={newSale.buyerState} onChange={v => setNewSale({ ...newSale, buyerState: v })} />
             </div>
 
             <h4>Consignee (Ship To) - Leave blank if same</h4>
@@ -2925,14 +3323,15 @@ const playBellSound = () => {
               <Input placeholder="Consignee Name" value={newSale.consigneeName} onChange={v => setNewSale({ ...newSale, consigneeName: v })} />
               <Input placeholder="Address" value={newSale.consigneeAddress} onChange={v => setNewSale({ ...newSale, consigneeAddress: v })} />
               <Input placeholder="GSTIN/UIN" value={newSale.consigneeGSTIN} onChange={v => setNewSale({ ...newSale, consigneeGSTIN: v })} />
+              <Input placeholder="State" value={newSale.consigneeState} onChange={v => setNewSale({ ...newSale, consigneeState: v })} />
             </div>
 
-            <h4>Dispatch & Transport Details</h4>
+            <h4>Logistics, Vehicle & Transport Details</h4>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
-              <Input placeholder="e-Way Bill No" value={newSale.eWayBillNo} onChange={v => setNewSale({ ...newSale, eWayBillNo: v })} />
-              <Input placeholder="Motor Vehicle No" value={newSale.motorVehicleNo} onChange={v => setNewSale({ ...newSale, motorVehicleNo: v })} />
-              <Input placeholder="Destination" value={newSale.destination} onChange={v => setNewSale({ ...newSale, destination: v })} />
-              <Input placeholder="IRN (Optional)" value={newSale.irn} onChange={v => setNewSale({ ...newSale, irn: v })} />
+              <Input placeholder="Vehicle No (e.g. JK02BS 3673)" value={newSale.motorVehicleNo} onChange={v => setNewSale({ ...newSale, motorVehicleNo: v })} />
+              <Input placeholder="Transporter Name" value={newSale.transporter} onChange={v => setNewSale({ ...newSale, transporter: v })} />
+              <Input placeholder="Place of Supply (e.g. Jammu & Kashmir)" value={newSale.placeOfSupply} onChange={v => setNewSale({ ...newSale, placeOfSupply: v })} />
+              <Input placeholder="Freight Rs. (Optional)" value={newSale.freight} onChange={v => setNewSale({ ...newSale, freight: v })} />
             </div>
 
             <div style={{ border: "1px solid #eee", padding: "15px", borderRadius: "12px", marginBottom: "15px", background: "#f8f9fa" }}>
@@ -3267,17 +3666,23 @@ const playBellSound = () => {
 
       {showInvoiceModal && selectedInvoice && (() => {
         const franchiseUser = JSON.parse(localStorage.getItem("user") || "{}");
-        const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || "ScrapVex Authorized Regional Hub";
-        const firmGst = franchiseUser?.gstin || "01AAAAA0000A1Z5";
-        const firmAddr = franchiseUser?.businessAddress || franchiseUser?.address || franchiseUser?.assignedCity || "Jammu & Kashmir";
-        const firmPhone = franchiseUser?.mobile || "8491028539";
+        const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || "A.M KAMALAK SCRAP DEALER";
+        const firmGst = franchiseUser?.gstin || "01EMRPM6848D1ZT";
+        const firmAddr = franchiseUser?.businessAddress || franchiseUser?.address || "Kheora Rajouri";
+        const firmPhone = franchiseUser?.secondaryPhone || franchiseUser?.mobile || "9906063614, 9086823081";
+        const dealsInText = franchiseUser?.dealsIn || "All Kinds of Scrap Except Single Use Plastic";
+        const bankName = franchiseUser?.bankName || "Jammu & Kashmir Bank KHEORA RAJOURI";
+        const bankAccountNo = franchiseUser?.bankAccountNo || "0804010100000234";
+        const bankIfsc = franchiseUser?.bankIfsc || "JAKA0KHEORA";
+
         const invNo = selectedInvoice.invoiceNumber || `INV-${(selectedInvoice._id || Date.now().toString()).slice(-6).toUpperCase()}`;
         const invDate = selectedInvoice.createdAt ? new Date(selectedInvoice.createdAt).toLocaleDateString("en-IN") : new Date().toLocaleDateString("en-IN");
         const itemsList = selectedInvoice.items || [];
-        const taxableVal = selectedInvoice.totalTaxableAmount || itemsList.reduce((acc, it) => acc + (it.amount || 0), 0) || selectedInvoice.totalAmount || 0;
-        const cgstVal = selectedInvoice.totalCGST || 0;
-        const sgstVal = selectedInvoice.totalSGST || 0;
-        const grandTotal = selectedInvoice.totalAmount || (taxableVal + cgstVal + sgstVal);
+        const taxableVal = selectedInvoice.totalTaxableAmount || itemsList.reduce((acc, it) => acc + (it.amount || 0), 0) || (selectedInvoice.totalAmount / 1.05) || 0;
+        const cgstVal = selectedInvoice.totalCGST || (taxableVal * 0.025) || 0;
+        const sgstVal = selectedInvoice.totalSGST || (taxableVal * 0.025) || 0;
+        const igstVal = selectedInvoice.totalIGST || 0;
+        const grandTotal = selectedInvoice.totalAmount || (taxableVal + cgstVal + sgstVal + igstVal);
 
         const handleDownloadSalePDF = async () => {
           const element = document.getElementById("invoice-print-area");
@@ -3321,13 +3726,10 @@ const playBellSound = () => {
               <head>
                 <title>Tax Invoice - ${invNo}</title>
                 <style>
-                  @page { size: A4 portrait; margin: 12mm; }
-                  body { font-family: 'Segoe UI', Arial, sans-serif; color: #111; margin: 0; padding: 20px; font-size: 12px; background: #fff; }
-                  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-                  th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
-                  th { background: #f8fafc; font-weight: 700; }
-                  .text-right { text-align: right; }
-                  .text-center { text-align: center; }
+                  @page { size: A4 portrait; margin: 8mm; }
+                  body { font-family: 'Segoe UI', Arial, sans-serif; color: #000; margin: 0; padding: 10px; font-size: 11px; background: #fff; }
+                  table { width: 100%; border-collapse: collapse; }
+                  th, td { border: 1px solid #000; padding: 4px; text-align: left; }
                 </style>
               </head>
               <body>
@@ -3345,16 +3747,16 @@ const playBellSound = () => {
 
         return (
           <Modal title="GST Tax Invoice Preview" onClose={() => setShowInvoiceModal(false)} wide>
-            <div className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8f9fa", padding: "14px 18px", borderRadius: "14px", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+            <div className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8f9fa", padding: "12px 16px", borderRadius: "12px", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
               <div style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>
-                📄 Official GST Tax Invoice (#{invNo})
+                📄 GST Tax Invoice (#{invNo})
               </div>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <button 
                   className="native-btn" 
-                  style={{ background: "#25D366", color: "#fff", border: "none", padding: "8px 14px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}
+                  style={{ background: "#25D366", color: "#fff", border: "none", padding: "8px 14px", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
                   onClick={() => {
-                    const text = `🧾 *ScrapVex Official GST Tax Invoice*\nInvoice No: ${invNo}\nBuyer: ${selectedInvoice.buyerName}\nAmount: ₹${grandTotal}\nDate: ${invDate}`;
+                    const text = `🧾 *ScrapVex Official GST Tax Invoice*\nInvoice No: ${invNo}\nBuyer: ${selectedInvoice.buyerName}\nAmount: ₹${grandTotal.toFixed(2)}\nDate: ${invDate}`;
                     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
                   }}
                 >
@@ -3362,14 +3764,14 @@ const playBellSound = () => {
                 </button>
                 <button 
                   className="native-btn" 
-                  style={{ background: "#0b8f3a", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}
+                  style={{ background: "#0b8f3a", color: "#fff", border: "none", padding: "8px 14px", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
                   onClick={handleDownloadSalePDF}
                 >
                   <FaDownload /> 📥 Download PDF
                 </button>
                 <button 
                   className="native-btn" 
-                  style={{ background: "#4f46e5", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}
+                  style={{ background: "#4f46e5", color: "#fff", border: "none", padding: "8px 14px", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
                   onClick={handlePrintSaleInvoice}
                 >
                   <FaFileInvoice /> 🖨️ Print
@@ -3377,103 +3779,175 @@ const playBellSound = () => {
               </div>
             </div>
 
-            <div id="invoice-print-area" style={{ padding: "30px", background: "#ffffff", color: "#0f172a", fontFamily: "'Inter', Arial, sans-serif", fontSize: "12px", border: "1px solid #e2e8f0", borderRadius: "12px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "2px solid #0f172a", paddingBottom: "16px", marginBottom: "20px" }}>
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#0b8f3a", fontSize: "20px", fontWeight: "900", marginBottom: "4px" }}>
-                    <FaRecycle /> ScrapVex
-                  </div>
-                  <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "900", color: "#0f172a" }}>TAX INVOICE</h1>
-                  <div style={{ marginTop: "4px", fontSize: "12px", color: "#475569" }}>Invoice No: <strong style={{ color: "#0f172a" }}>{invNo}</strong></div>
-                  <div style={{ fontSize: "12px", color: "#475569" }}>Date: <strong style={{ color: "#0f172a" }}>{invDate}</strong></div>
-                  {selectedInvoice.eWayBillNo && <div style={{ fontSize: "11px", color: "#475569" }}>e-Way Bill: {selectedInvoice.eWayBillNo}</div>}
-                  {selectedInvoice.motorVehicleNo && <div style={{ fontSize: "11px", color: "#475569" }}>Vehicle: {selectedInvoice.motorVehicleNo}</div>}
+            {/* EXACT BILL BOOK A4 SINGLE-PAGE REPLICA */}
+            <div id="invoice-print-area" style={{ padding: "18px 22px", background: "#ffffff", color: "#000000", fontFamily: "'Segoe UI', Arial, sans-serif", fontSize: "11px", border: "1.5px solid #000000", borderRadius: "0px", boxSizing: "border-box" }}>
+              
+              {/* TOP HEADER: GSTIN | TAX INVOICE | MOBILES */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1.5px solid #000", paddingBottom: "4px", fontSize: "11px", fontWeight: "bold" }}>
+                <span>GSTIN: <strong>{firmGst}</strong></span>
+                <span style={{ fontSize: "14px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px" }}>TAX INVOICE</span>
+                <span>Mob. No. <strong>{firmPhone}</strong></span>
+              </div>
+
+              {/* FIRM HEADING & RED INVOICE NUMBER */}
+              <div style={{ textAlign: "center", marginTop: "4px" }}>
+                <h1 style={{ margin: "2px 0", fontFamily: "'Times New Roman', Georgia, serif", fontSize: "26px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "0.5px", color: "#000" }}>
+                  {firmName}
+                </h1>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "2px 0" }}>
+                  <span style={{ color: "#d32f2f", fontWeight: "900", fontSize: "20px", fontFamily: "monospace" }}>
+                    {invNo}
+                  </span>
+                  <span style={{ fontStyle: "italic", fontWeight: "700", fontSize: "11px", flex: 1, textAlign: "center" }}>
+                    Deals In:- {dealsInText}
+                  </span>
+                  <span style={{ width: "40px" }}></span>
                 </div>
-                <div style={{ textAlign: "right", maxWidth: "260px" }}>
-                  <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#0f172a" }}>{firmName}</h2>
-                  <p style={{ margin: "4px 0", color: "#475569", fontSize: "11px", lineHeight: "1.4" }}>
-                    {firmAddr}<br />
-                    <strong>GSTIN:</strong> {firmGst}<br />
-                    <strong>Phone:</strong> {firmPhone}
-                  </p>
+                <div style={{ fontSize: "11px", fontWeight: "700", borderBottom: "1.5px solid #000", paddingBottom: "4px", marginBottom: "6px" }}>
+                  Address: {firmAddr}
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px", background: "#f8fafc", padding: "14px", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <div>
-                  <strong style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To (Buyer):</strong>
-                  <h3 style={{ margin: "4px 0 2px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>{selectedInvoice.buyerName}</h3>
-                  <div style={{ margin: 0, color: "#475569", fontSize: "11px", lineHeight: "1.4" }}>
-                    {selectedInvoice.buyerAddress || "Jammu & Kashmir"}<br />
-                    <strong>GSTIN:</strong> {selectedInvoice.buyerGSTIN || "Unregistered"}<br />
-                    {selectedInvoice.buyerContact && <span><strong>Phone:</strong> {selectedInvoice.buyerContact}</span>}
+              {/* LOGISTICS & TRANSPORT 3-ROW GRID */}
+              <div style={{ border: "1px solid #000", marginBottom: "6px" }}>
+                <div style={{ display: "flex", borderBottom: "1px solid #000", padding: "4px 8px" }}>
+                  <div style={{ flex: 1.5, borderRight: "1px solid #000", paddingRight: "6px" }}>
+                    <strong>Transporter:</strong> {selectedInvoice.transporter || "________________"}
+                  </div>
+                  <div style={{ flex: 1, paddingLeft: "6px" }}>
+                    <strong>Dated:</strong> {invDate}
                   </div>
                 </div>
-                <div>
-                  <strong style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Shipped To (Consignee):</strong>
-                  <h3 style={{ margin: "4px 0 2px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>{selectedInvoice.consigneeName || selectedInvoice.buyerName}</h3>
-                  <div style={{ margin: 0, color: "#475569", fontSize: "11px", lineHeight: "1.4" }}>
-                    {selectedInvoice.consigneeAddress || selectedInvoice.buyerAddress || "Same as billing address"}<br />
-                    <strong>GSTIN:</strong> {selectedInvoice.consigneeGSTIN || selectedInvoice.buyerGSTIN || "Unregistered"}
+                <div style={{ display: "flex", borderBottom: "1px solid #000", padding: "4px 8px" }}>
+                  <div style={{ flex: 1.5, borderRight: "1px solid #000", paddingRight: "6px" }}>
+                    <strong>Vehicle No:</strong> {selectedInvoice.motorVehicleNo || "________________"}
+                  </div>
+                  <div style={{ flex: 1, paddingLeft: "6px" }}>
+                    <strong>Place of Supply:</strong> {selectedInvoice.placeOfSupply || "Jammu & Kashmir (01)"}
+                  </div>
+                </div>
+                <div style={{ display: "flex", padding: "4px 8px" }}>
+                  <div style={{ flex: 1.5, borderRight: "1px solid #000", paddingRight: "6px" }}>
+                    <strong>Freight Rs.:</strong> {selectedInvoice.freight ? `₹${selectedInvoice.freight}` : "________________"}
+                  </div>
+                  <div style={{ flex: 1, paddingLeft: "6px" }}>
+                    <strong>To Pay / Paid:</strong> {selectedInvoice.freightPaymentType || "Paid"}
                   </div>
                 </div>
               </div>
 
-              <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
-                <thead style={{ background: "#f1f5f9" }}>
-                  <tr>
-                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "left" }}>Description of Scrap Goods</th>
-                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center" }}>HSN/SAC</th>
-                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center" }}>Qty (kg)</th>
-                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right" }}>Rate (₹)</th>
-                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right" }}>Amount (₹)</th>
+              {/* BILLING & SHIPPING ADDRESS 2-COLUMN GRID */}
+              <div style={{ display: "flex", border: "1px solid #000", marginBottom: "6px" }}>
+                <div style={{ flex: 1, borderRight: "1px solid #000", padding: "6px 8px", lineHeight: "1.4" }}>
+                  <strong style={{ textDecoration: "underline", fontSize: "11px" }}>Billing Address</strong><br/>
+                  <strong>Address:</strong> {selectedInvoice.buyerName}{selectedInvoice.buyerAddress ? `, ${selectedInvoice.buyerAddress}` : ""}<br/>
+                  <strong>GSTIN:</strong> {selectedInvoice.buyerGSTIN || "Unregistered"}<br/>
+                  <strong>State:</strong> {selectedInvoice.buyerState || "J&K (01)"}
+                </div>
+                <div style={{ flex: 1, padding: "6px 8px", lineHeight: "1.4" }}>
+                  <strong style={{ textDecoration: "underline", fontSize: "11px" }}>Shipping Address</strong><br/>
+                  <strong>Address:</strong> {selectedInvoice.consigneeAddress || "Same"}<br/>
+                  <strong>GSTIN:</strong> {selectedInvoice.consigneeGSTIN || selectedInvoice.buyerGSTIN || "Same"}<br/>
+                  <strong>State:</strong> {selectedInvoice.consigneeState || selectedInvoice.buyerState || "J&K (01)"}
+                </div>
+              </div>
+
+              {/* ITEMIZED PARTICULARS TABLE */}
+              <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #000", marginBottom: "6px", fontSize: "10px" }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", borderBottom: "1px solid #000" }}>
+                    <th style={{ border: "1px solid #000", padding: "4px", width: "4%", textAlign: "center" }}>Sr.</th>
+                    <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "left", width: "28%" }}>Particulars</th>
+                    <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", width: "8%" }}>HSN</th>
+                    <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", width: "6%" }}>UOM</th>
+                    <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", width: "8%" }}>Qty.</th>
+                    <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", width: "8%" }}>Rate</th>
+                    <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", width: "12%" }}>Amount</th>
+                    <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", width: "8%" }}>SGST (2.5%)</th>
+                    <th style={{ border: "1px solid #000", padding: "4px", textAlign: "center", width: "8%" }}>CGST (2.5%)</th>
+                    <th style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", width: "10%" }}>Total (₹)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {itemsList.map((it, idx) => (
-                    <tr key={idx}>
-                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", fontWeight: "600" }}>{it.name || "Scrap Material"}</td>
-                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center", color: "#475569" }}>{it.hsnCode || "47071000"}</td>
-                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center" }}>{it.quantity}</td>
-                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right" }}>₹{it.rate}</td>
-                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", fontWeight: "700" }}>₹{it.amount}</td>
-                    </tr>
-                  ))}
+                  {itemsList.map((it, idx) => {
+                    const itTaxable = it.amount || ((it.quantity || 0) * (it.rate || 0)) || 0;
+                    const itCgst = it.cgstAmount || (itTaxable * 0.025) || 0;
+                    const itSgst = it.sgstAmount || (itTaxable * 0.025) || 0;
+                    const itTotal = itTaxable + itCgst + itSgst;
+                    return (
+                      <tr key={idx} style={{ borderBottom: "1px solid #000" }}>
+                        <td style={{ border: "1px solid #000", padding: "4px", textAlign: "center" }}>{idx + 1}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px 6px", fontWeight: "bold" }}>{it.name || "Scrap Material"}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px", textAlign: "center" }}>{it.hsnCode || "4707"}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px", textAlign: "center" }}>kg</td>
+                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontWeight: "bold" }}>{it.quantity}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right" }}>{it.rate}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontWeight: "bold" }}>{itTaxable.toFixed(2)}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px", textAlign: "right" }}>{itSgst.toFixed(2)}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px", textAlign: "right" }}>{itCgst.toFixed(2)}</td>
+                        <td style={{ border: "1px solid #000", padding: "4px 6px", textAlign: "right", fontWeight: "bold" }}>{itTotal.toFixed(2)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <td colSpan="4" style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", fontWeight: "700" }}>Taxable Value</td>
-                    <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", fontWeight: "700" }}>₹{taxableVal.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan="4" style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", color: "#475569" }}>CGST (2.5%) + SGST (2.5%)</td>
-                    <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", color: "#475569" }}>₹{(cgstVal + sgstVal).toFixed(2)}</td>
-                  </tr>
-                  <tr style={{ background: "#f0fdf4", fontSize: "14px" }}>
-                    <td colSpan="4" style={{ border: "1px solid #bbf7d0", padding: "10px 8px", textAlign: "right", fontWeight: "900", color: "#166534" }}>TOTAL AMOUNT</td>
-                    <td style={{ border: "1px solid #bbf7d0", padding: "10px 8px", textAlign: "right", fontWeight: "900", color: "#0b8f3a" }}>₹{grandTotal.toFixed(2)}</td>
-                  </tr>
-                </tfoot>
               </table>
 
-              <div style={{ marginTop: "24px", display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "20px", alignItems: "flex-end" }}>
-                <div>
-                  <p style={{ fontSize: "11px", color: "#64748b", margin: "0 0 4px 0" }}>Amount in Words:</p>
-                  <strong style={{ textTransform: "capitalize", color: "#0f172a", fontSize: "12px" }}>
-                    {numberToWords(Math.round(grandTotal))} Rupees Only
-                  </strong>
+              {/* SUMMARY & TAX TOTALS 2-COLUMN SECTION */}
+              <div style={{ display: "flex", border: "1px solid #000", marginBottom: "6px" }}>
+                <div style={{ flex: 1.3, borderRight: "1px solid #000", padding: "6px 8px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div>
+                    <div style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "4px" }}>
+                      Total Invoice Value (in figure): <span style={{ fontSize: "14px", fontWeight: "900" }}>₹{grandTotal.toFixed(2)}/-</span>
+                    </div>
+                    <div style={{ fontSize: "11px", lineHeight: "1.4" }}>
+                      <strong>Total Invoice Value (in words):</strong> <em>{numberToWords(Math.round(grandTotal))} Rupees Only</em>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ height: "40px" }}></div>
-                  <div style={{ borderTop: "1.5px solid #0f172a", display: "inline-block", padding: "6px 20px" }}>
-                    <strong style={{ fontSize: "11px", color: "#0f172a" }}>For {firmName}</strong><br />
-                    <span style={{ fontSize: "10px", color: "#64748b" }}>Authorized Signatory</span>
+                <div style={{ flex: 1, padding: "6px 8px", fontSize: "10px", lineHeight: "1.5" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>Total Amount Before Tax:</span>
+                    <strong>₹{taxableVal.toFixed(2)}</strong>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>CGST (2.5%):</span>
+                    <strong>₹{cgstVal.toFixed(2)}</strong>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>SGST (2.5%):</span>
+                    <strong>₹{sgstVal.toFixed(2)}</strong>
+                  </div>
+                  {igstVal > 0 && (
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span>IGST:</span>
+                      <strong>₹{igstVal.toFixed(2)}</strong>
+                    </div>
+                  )}
+                  <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid #000", paddingTop: "3px", fontWeight: "900", fontSize: "11px" }}>
+                    <span>Total Amount After Tax:</span>
+                    <span>₹{grandTotal.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
 
-              <div style={{ textAlign: "center", fontSize: "10px", color: "#94a3b8", marginTop: "30px", borderTop: "1px dashed #e2e8f0", paddingTop: "10px" }}>
-                🌱 Certified Computer Generated GST Invoice • ScrapVex Digital Recycling Platform (https://scrapvex.in)
+              {/* BANK DETAILS & AUTHORISED SIGNATORY */}
+              <div style={{ display: "flex", border: "1px solid #000", padding: "6px 8px", alignItems: "flex-end" }}>
+                <div style={{ flex: 1.3, fontSize: "10px", lineHeight: "1.5" }}>
+                  <div><strong>Bank Name & Branch:-</strong> {bankName}</div>
+                  <div><strong>Bank Account No:-</strong> {bankAccountNo}</div>
+                  <div><strong>IFSC Code:-</strong> {bankIfsc}</div>
+                </div>
+                <div style={{ flex: 1, textAlign: "right" }}>
+                  <div style={{ fontSize: "11px", fontWeight: "bold" }}>For {firmName}</div>
+                  <div style={{ height: "35px" }}></div>
+                  <div style={{ borderTop: "1px solid #000", display: "inline-block", paddingTop: "2px", fontWeight: "bold", fontSize: "10px" }}>
+                    Authorised Signatory
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: "center", fontSize: "9px", color: "#666", marginTop: "6px" }}>
+                Certified Computer Generated GST Tax Invoice • ScrapVex Recycling Platform (https://scrapvex.in)
               </div>
             </div>
           </Modal>
