@@ -3811,21 +3811,76 @@ const playBellSound = () => {
       )}
 
       {showInvoiceModal && selectedInvoice && (
-
         <Modal title="Invoice Preview" onClose={() => setShowInvoiceModal(false)}>
-          <div id="invoice-print-area" style={{padding: "20px", border: "1px solid #000", background: "var(--card-bg, #ffffff)", marginBottom: "15px", fontFamily: "Arial, sans-serif", fontSize: "11px", color: "var(--text-main)"}}>
-            
-            <style>{`
-              #invoice-print-area table { width: 100%; border-collapse: collapse; }
-              #invoice-print-area th, #invoice-print-area td { border: 1px solid #000; padding: 4px; vertical-align: top; }
-              #invoice-print-area strong { font-weight: bold; }
-              @media print {
-                body * { visibility: hidden; }
-                #invoice-print-area, #invoice-print-area * { visibility: visible; }
-                #invoice-print-area { position: absolute; left: 0; top: 0; width: 100%; border: none; padding: 0; }
-              }
-            `}</style>
+          <div className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8f9fa", padding: "12px 16px", borderRadius: "12px", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>
+              Tax Invoice #{selectedInvoice.invoiceNumber || (selectedInvoice._id || "").slice(-6).toUpperCase()}
+            </div>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button 
+                className="native-btn" 
+                style={{ background: "#25D366", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "12px" }}
+                onClick={() => {
+                  const text = `🧾 *ScrapVex Official GST Tax Invoice*\nInvoice No: ${selectedInvoice.invoiceNumber || ""}\nBuyer: ${selectedInvoice.buyerName}\nAmount: ₹${selectedInvoice.totalAmount}\nDate: ${new Date(selectedInvoice.createdAt).toLocaleDateString()}`;
+                  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                }}
+              >
+                💬 WhatsApp
+              </button>
+              <button 
+                className="native-btn" 
+                style={{ background: "#0b8f3a", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "4px" }}
+                onClick={async () => {
+                  const element = document.getElementById("invoice-print-area");
+                  if (!element) return;
+                  try {
+                    showToast("info", "Generating PDF...");
+                    const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#ffffff" });
+                    const imgData = canvas.toDataURL("image/png");
+                    const pdf = new jsPDF("p", "mm", "a4");
+                    const pdfWidth = 210;
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(`ScrapVex_Invoice_${selectedInvoice.invoiceNumber || Date.now()}.pdf`);
+                    showToast("success", "PDF Downloaded!");
+                  } catch (e) { showToast("error", "Failed to generate PDF"); }
+                }}
+              >
+                <FaDownload /> 📥 Download PDF
+              </button>
+              <button 
+                className="native-btn" 
+                style={{ background: "#4f46e5", color: "#fff", border: "none", padding: "6px 12px", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "12px", display: "flex", alignItems: "center", gap: "4px" }}
+                onClick={() => {
+                  const printContent = document.getElementById("invoice-print-area");
+                  if (!printContent) return;
+                  const printWindow = window.open("", "_blank");
+                  if (!printWindow) { window.print(); return; }
+                  printWindow.document.write(`
+                    <html>
+                      <head>
+                        <title>Invoice - ${selectedInvoice.invoiceNumber || ""}</title>
+                        <style>
+                          @page { size: A4; margin: 10mm; }
+                          body { font-family: Arial, sans-serif; font-size: 11px; padding: 10px; }
+                          table { width: 100%; border-collapse: collapse; }
+                          th, td { border: 1px solid #000; padding: 4px; }
+                        </style>
+                      </head>
+                      <body>${printContent.innerHTML}</body>
+                    </html>
+                  `);
+                  printWindow.document.close();
+                  printWindow.focus();
+                  setTimeout(() => { printWindow.print(); printWindow.close(); }, 350);
+                }}
+              >
+                <FaFileInvoice /> 🖨️ Print
+              </button>
+            </div>
+          </div>
 
+          <div id="invoice-print-area" style={{padding: "20px", border: "1px solid #000", background: "var(--card-bg, #ffffff)", marginBottom: "15px", fontFamily: "Arial, sans-serif", fontSize: "11px", color: "var(--text-main)"}}>
             <div style={{textAlign: "center", borderBottom: "1px solid #000", paddingBottom: "5px", marginBottom: "5px"}}>
               <strong style={{fontSize: "14px"}}>Tax Invoice</strong>
             </div>

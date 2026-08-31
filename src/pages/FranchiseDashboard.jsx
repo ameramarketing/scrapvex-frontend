@@ -660,10 +660,14 @@ const playBellSound = () => {
     try {
       const { data } = await API.post("/billing/sales", { ...newSale, totalTaxableAmount, totalCGST, totalSGST, totalAmount });
       if (data.success) {
-        showToast("success", "Sale Recorded!");
+        showToast("success", "Sale Recorded Successfully!");
         setShowSaleModal(false);
         setNewSale(initialSaleState);
         fetchAccountingData();
+        if (data.sale) {
+          setSelectedInvoice(data.sale);
+          setShowInvoiceModal(true);
+        }
       }
     } catch (e) { showToast("error", "Failed to record sale"); }
   };
@@ -3261,109 +3265,220 @@ const playBellSound = () => {
         </div>
       )}
 
-      {showInvoiceModal && selectedInvoice && (
-        <Modal title="GST Tax Invoice Preview" onClose={() => setShowInvoiceModal(false)} wide>
-          <div className="no-print" style={{display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8f9fa", padding: "15px", borderRadius: "15px", marginBottom: "20px"}}>
-             <div style={{fontSize: "13px", color: "var(--text-muted)"}}>Professional A4 Portrait Layout Ready</div>
-             <button className="native-btn" style={{...saveBtnBig, marginTop: 0, width: "auto", background: "#4f46e5", padding: "10px 25px"}} onClick={() => window.print()}>
-                <FaFileInvoice style={{marginRight: "10px"}}/> Print A4 Invoice
-             </button>
-          </div>
+      {showInvoiceModal && selectedInvoice && (() => {
+        const franchiseUser = JSON.parse(localStorage.getItem("user") || "{}");
+        const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || "ScrapVex Authorized Regional Hub";
+        const firmGst = franchiseUser?.gstin || "01AAAAA0000A1Z5";
+        const firmAddr = franchiseUser?.businessAddress || franchiseUser?.address || franchiseUser?.assignedCity || "Jammu & Kashmir";
+        const firmPhone = franchiseUser?.mobile || "8491028539";
+        const invNo = selectedInvoice.invoiceNumber || `INV-${(selectedInvoice._id || Date.now().toString()).slice(-6).toUpperCase()}`;
+        const invDate = selectedInvoice.createdAt ? new Date(selectedInvoice.createdAt).toLocaleDateString("en-IN") : new Date().toLocaleDateString("en-IN");
+        const itemsList = selectedInvoice.items || [];
+        const taxableVal = selectedInvoice.totalTaxableAmount || itemsList.reduce((acc, it) => acc + (it.amount || 0), 0) || selectedInvoice.totalAmount || 0;
+        const cgstVal = selectedInvoice.totalCGST || 0;
+        const sgstVal = selectedInvoice.totalSGST || 0;
+        const grandTotal = selectedInvoice.totalAmount || (taxableVal + cgstVal + sgstVal);
 
-          <div id="invoice-print-area" style={{padding: "40px", background: "var(--card-bg, #ffffff)", color: "var(--text-main)", fontFamily: "'Inter', sans-serif", fontSize: "12px", border: "1px solid #eee", minHeight: "800px"}}>
-             <style>{`
-               @media print {
-                 @page { size: A4; margin: 15mm; }
-                 body * { visibility: hidden; }
-                 #invoice-print-area, #invoice-print-area * { visibility: visible; }
-                 #invoice-print-area { position: fixed; left: 0; top: 0; width: 100%; height: 100%; border: none; padding: 15mm; background: #fff; }
-                 .no-print { display: none !important; }
-               }
-               #invoice-print-area table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-               #invoice-print-area th, #invoice-print-area td { border: 1px solid #000; padding: 8px; text-align: left; }
-             `}</style>
+        const handleDownloadSalePDF = async () => {
+          const element = document.getElementById("invoice-print-area");
+          if (!element) return;
+          try {
+            showToast("info", "Generating High-Res PDF...");
+            const canvas = await html2canvas(element, { 
+              scale: 2,
+              useCORS: true,
+              backgroundColor: "#ffffff",
+              logging: false
+            });
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF({
+              orientation: "portrait",
+              unit: "mm",
+              format: "a4"
+            });
+            const pdfWidth = 210;
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`ScrapVex_Tax_Invoice_${invNo}.pdf`);
+            showToast("success", "Tax Invoice PDF Downloaded!");
+          } catch (e) {
+            console.error("PDF Gen error:", e);
+            showToast("error", "Failed to generate PDF");
+          }
+        };
 
-             <div style={{display: "flex", justifyContent: "space-between", borderBottom: "2px solid #000", paddingBottom: "20px", marginBottom: "20px"}}>
+        const handlePrintSaleInvoice = () => {
+          const printContent = document.getElementById("invoice-print-area");
+          if (!printContent) return;
+          const printWindow = window.open("", "_blank");
+          if (!printWindow) {
+            window.print();
+            return;
+          }
+          printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <title>Tax Invoice - ${invNo}</title>
+                <style>
+                  @page { size: A4 portrait; margin: 12mm; }
+                  body { font-family: 'Segoe UI', Arial, sans-serif; color: #111; margin: 0; padding: 20px; font-size: 12px; background: #fff; }
+                  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                  th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+                  th { background: #f8fafc; font-weight: 700; }
+                  .text-right { text-align: right; }
+                  .text-center { text-align: center; }
+                </style>
+              </head>
+              <body>
+                ${printContent.innerHTML}
+              </body>
+            </html>
+          `);
+          printWindow.document.close();
+          printWindow.focus();
+          setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+          }, 350);
+        };
+
+        return (
+          <Modal title="GST Tax Invoice Preview" onClose={() => setShowInvoiceModal(false)} wide>
+            <div className="no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8f9fa", padding: "14px 18px", borderRadius: "14px", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+              <div style={{ fontSize: "13px", fontWeight: "700", color: "#334155" }}>
+                📄 Official GST Tax Invoice (#{invNo})
+              </div>
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <button 
+                  className="native-btn" 
+                  style={{ background: "#25D366", color: "#fff", border: "none", padding: "8px 14px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}
+                  onClick={() => {
+                    const text = `🧾 *ScrapVex Official GST Tax Invoice*\nInvoice No: ${invNo}\nBuyer: ${selectedInvoice.buyerName}\nAmount: ₹${grandTotal}\nDate: ${invDate}`;
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+                  }}
+                >
+                  💬 WhatsApp
+                </button>
+                <button 
+                  className="native-btn" 
+                  style={{ background: "#0b8f3a", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}
+                  onClick={handleDownloadSalePDF}
+                >
+                  <FaDownload /> 📥 Download PDF
+                </button>
+                <button 
+                  className="native-btn" 
+                  style={{ background: "#4f46e5", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}
+                  onClick={handlePrintSaleInvoice}
+                >
+                  <FaFileInvoice /> 🖨️ Print
+                </button>
+              </div>
+            </div>
+
+            <div id="invoice-print-area" style={{ padding: "30px", background: "#ffffff", color: "#0f172a", fontFamily: "'Inter', Arial, sans-serif", fontSize: "12px", border: "1px solid #e2e8f0", borderRadius: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "2px solid #0f172a", paddingBottom: "16px", marginBottom: "20px" }}>
                 <div>
-                   <h1 style={{margin: 0, fontSize: "28px", fontWeight: "900"}}>TAX INVOICE</h1>
-                   <div style={{marginTop: "5px"}}>Invoice #: <strong>{selectedInvoice.invoiceNumber}</strong></div>
-                   <div>Date: <strong>{new Date(selectedInvoice.createdAt).toLocaleDateString()}</strong></div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#0b8f3a", fontSize: "20px", fontWeight: "900", marginBottom: "4px" }}>
+                    <FaRecycle /> ScrapVex
+                  </div>
+                  <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "900", color: "#0f172a" }}>TAX INVOICE</h1>
+                  <div style={{ marginTop: "4px", fontSize: "12px", color: "#475569" }}>Invoice No: <strong style={{ color: "#0f172a" }}>{invNo}</strong></div>
+                  <div style={{ fontSize: "12px", color: "#475569" }}>Date: <strong style={{ color: "#0f172a" }}>{invDate}</strong></div>
+                  {selectedInvoice.eWayBillNo && <div style={{ fontSize: "11px", color: "#475569" }}>e-Way Bill: {selectedInvoice.eWayBillNo}</div>}
+                  {selectedInvoice.motorVehicleNo && <div style={{ fontSize: "11px", color: "#475569" }}>Vehicle: {selectedInvoice.motorVehicleNo}</div>}
                 </div>
-                <div style={{textAlign: "right"}}>
-                   <h2 style={{margin: 0, fontSize: "18px"}}>JAI DATTI TRADING CO</h2>
-                   <p style={{margin: "5px 0", color: "var(--text-muted)"}}>DILLI, SAINIK COLONY JAMMU<br/>GSTIN: 01AMSPG9859M1ZA<br/>Ph: 9070000032</p>
+                <div style={{ textAlign: "right", maxWidth: "260px" }}>
+                  <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#0f172a" }}>{firmName}</h2>
+                  <p style={{ margin: "4px 0", color: "#475569", fontSize: "11px", lineHeight: "1.4" }}>
+                    {firmAddr}<br />
+                    <strong>GSTIN:</strong> {firmGst}<br />
+                    <strong>Phone:</strong> {firmPhone}
+                  </p>
                 </div>
-             </div>
+              </div>
 
-             <div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", marginBottom: "30px"}}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px", background: "#f8fafc", padding: "14px", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <div>
-                   <strong style={{fontSize: "10px", color: "#888", textTransform: "uppercase"}}>Bill To:</strong>
-                   <h3 style={{margin: "5px 0 0 0"}}>{selectedInvoice.buyerName}</h3>
-                   <p style={{margin: "5px 0", color: "var(--text-muted)"}}>{selectedInvoice.buyerAddress}<br/>GSTIN: {selectedInvoice.buyerGSTIN || "Unregistered"}</p>
+                  <strong style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Bill To (Buyer):</strong>
+                  <h3 style={{ margin: "4px 0 2px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>{selectedInvoice.buyerName}</h3>
+                  <div style={{ margin: 0, color: "#475569", fontSize: "11px", lineHeight: "1.4" }}>
+                    {selectedInvoice.buyerAddress || "Jammu & Kashmir"}<br />
+                    <strong>GSTIN:</strong> {selectedInvoice.buyerGSTIN || "Unregistered"}<br />
+                    {selectedInvoice.buyerContact && <span><strong>Phone:</strong> {selectedInvoice.buyerContact}</span>}
+                  </div>
                 </div>
                 <div>
-                   <strong style={{fontSize: "10px", color: "#888", textTransform: "uppercase"}}>Shipped To:</strong>
-                   <h3 style={{margin: "5px 0 0 0"}}>{selectedInvoice.consigneeName || selectedInvoice.buyerName}</h3>
-                   <p style={{margin: "5px 0", color: "var(--text-muted)"}}>{selectedInvoice.consigneeAddress || selectedInvoice.buyerAddress}</p>
+                  <strong style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Shipped To (Consignee):</strong>
+                  <h3 style={{ margin: "4px 0 2px 0", fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>{selectedInvoice.consigneeName || selectedInvoice.buyerName}</h3>
+                  <div style={{ margin: 0, color: "#475569", fontSize: "11px", lineHeight: "1.4" }}>
+                    {selectedInvoice.consigneeAddress || selectedInvoice.buyerAddress || "Same as billing address"}<br />
+                    <strong>GSTIN:</strong> {selectedInvoice.consigneeGSTIN || selectedInvoice.buyerGSTIN || "Unregistered"}
+                  </div>
                 </div>
-             </div>
+              </div>
 
-             <table>
-                <thead style={{background: "#f8f9fa"}}>
-                   <tr>
-                      <th>Description</th>
-                      <th style={{textAlign: "center"}}>HSN</th>
-                      <th style={{textAlign: "center"}}>Qty (KG)</th>
-                      <th style={{textAlign: "right"}}>Rate</th>
-                      <th style={{textAlign: "right"}}>Total</th>
-                   </tr>
+              <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+                <thead style={{ background: "#f1f5f9" }}>
+                  <tr>
+                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "left" }}>Description of Scrap Goods</th>
+                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center" }}>HSN/SAC</th>
+                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center" }}>Qty (kg)</th>
+                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right" }}>Rate (₹)</th>
+                    <th style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right" }}>Amount (₹)</th>
+                  </tr>
                 </thead>
                 <tbody>
-                   {selectedInvoice.items.map((it, idx) => (
-                      <tr key={idx}>
-                         <td>{it.name}</td>
-                         <td style={{textAlign: "center"}}>{it.hsnCode || "7204"}</td>
-                         <td style={{textAlign: "center"}}>{it.quantity}</td>
-                         <td style={{textAlign: "right"}}>₹{it.rate}</td>
-                         <td style={{textAlign: "right"}}>₹{it.amount}</td>
-                      </tr>
-                   ))}
+                  {itemsList.map((it, idx) => (
+                    <tr key={idx}>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", fontWeight: "600" }}>{it.name || "Scrap Material"}</td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center", color: "#475569" }}>{it.hsnCode || "47071000"}</td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "center" }}>{it.quantity}</td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right" }}>₹{it.rate}</td>
+                      <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", fontWeight: "700" }}>₹{it.amount}</td>
+                    </tr>
+                  ))}
                 </tbody>
                 <tfoot>
-                   <tr>
-                      <td colSpan="4" style={{textAlign: "right", fontWeight: "bold"}}>Taxable Value</td>
-                      <td style={{textAlign: "right"}}>₹{selectedInvoice.totalTaxableAmount || selectedInvoice.totalAmount}</td>
-                   </tr>
-                   <tr>
-                      <td colSpan="4" style={{textAlign: "right"}}>CGST (2.5%) + SGST (2.5%)</td>
-                      <td style={{textAlign: "right"}}>₹{(selectedInvoice.totalCGST + selectedInvoice.totalSGST).toFixed(2)}</td>
-                   </tr>
-                   <tr style={{background: "#f8f9fa", fontSize: "16px"}}>
-                      <td colSpan="4" style={{textAlign: "right", fontWeight: "900"}}>GRAND TOTAL</td>
-                      <td style={{textAlign: "right", fontWeight: "900"}}>₹{selectedInvoice.totalAmount}</td>
-                   </tr>
+                  <tr>
+                    <td colSpan="4" style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", fontWeight: "700" }}>Taxable Value</td>
+                    <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", fontWeight: "700" }}>₹{taxableVal.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4" style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", color: "#475569" }}>CGST (2.5%) + SGST (2.5%)</td>
+                    <td style={{ border: "1px solid #cbd5e1", padding: "8px", textAlign: "right", color: "#475569" }}>₹{(cgstVal + sgstVal).toFixed(2)}</td>
+                  </tr>
+                  <tr style={{ background: "#f0fdf4", fontSize: "14px" }}>
+                    <td colSpan="4" style={{ border: "1px solid #bbf7d0", padding: "10px 8px", textAlign: "right", fontWeight: "900", color: "#166534" }}>TOTAL AMOUNT</td>
+                    <td style={{ border: "1px solid #bbf7d0", padding: "10px 8px", textAlign: "right", fontWeight: "900", color: "#0b8f3a" }}>₹{grandTotal.toFixed(2)}</td>
+                  </tr>
                 </tfoot>
-             </table>
+              </table>
 
-             <div style={{marginTop: "40px", display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "20px"}}>
+              <div style={{ marginTop: "24px", display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: "20px", alignItems: "flex-end" }}>
                 <div>
-                   <p style={{fontSize: "11px", color: "var(--text-muted)", marginBottom: "5px"}}>Amount in words:</p>
-                   <strong style={{textTransform: "capitalize"}}>{numberToWords(Math.round(selectedInvoice.totalAmount))} Only</strong>
+                  <p style={{ fontSize: "11px", color: "#64748b", margin: "0 0 4px 0" }}>Amount in Words:</p>
+                  <strong style={{ textTransform: "capitalize", color: "#0f172a", fontSize: "12px" }}>
+                    {numberToWords(Math.round(grandTotal))} Rupees Only
+                  </strong>
                 </div>
-                <div style={{textAlign: "right", marginTop: "40px"}}>
-                   <div style={{height: "60px"}}></div>
-                   <div style={{borderTop: "1px solid #000", display: "inline-block", padding: "10px 40px"}}>
-                      <strong>Authorized Signatory</strong>
-                   </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ height: "40px" }}></div>
+                  <div style={{ borderTop: "1.5px solid #0f172a", display: "inline-block", padding: "6px 20px" }}>
+                    <strong style={{ fontSize: "11px", color: "#0f172a" }}>For {firmName}</strong><br />
+                    <span style={{ fontSize: "10px", color: "#64748b" }}>Authorized Signatory</span>
+                  </div>
                 </div>
-             </div>
-             
-             <div style={{textAlign: "center", fontSize: "10px", color: "#999", marginTop: "50px"}}>
-                This is a computer generated invoice and does not require a physical signature.
-             </div>
-          </div>
-        </Modal>
-      )}
+              </div>
+
+              <div style={{ textAlign: "center", fontSize: "10px", color: "#94a3b8", marginTop: "30px", borderTop: "1px dashed #e2e8f0", paddingTop: "10px" }}>
+                🌱 Certified Computer Generated GST Invoice • ScrapVex Digital Recycling Platform (https://scrapvex.in)
+              </div>
+            </div>
+          </Modal>
+        );
+      })()}
 
       {showPurchaseBillModal && selectedPurchaseBill && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(9, 13, 22, 0.75)", backdropFilter: "blur(6px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 2000, padding: "20px" }} onClick={() => setShowPurchaseBillModal(false)}>
