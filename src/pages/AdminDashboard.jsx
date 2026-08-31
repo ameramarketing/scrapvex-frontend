@@ -1175,14 +1175,27 @@ const playBellSound = () => {
   const handleDeleteItem = async (id, type) => {
     if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
     try {
-      let ep = type === "rate" ? `/admin/scrap-items/${id}` : type === "ad" ? `/ads/${id}` : `/admin/${type}s/${id}`;
+      let ep = "";
+      if (type === "rate") ep = `/admin/scrap-items/${id}`;
+      else if (type === "ad") ep = `/ads/${id}`;
+      else if (type === "buyer") ep = `/buyers/${id}`;
+      else if (type === "supplier") ep = `/suppliers/${id}`;
+      else if (type === "collector") ep = `/admin/collectors/${id}`;
+      else if (type === "franchise") ep = `/admin/franchises/${id}`;
+      else if (type === "user") ep = `/admin/users/${id}`;
+      else ep = `/admin/${type}s/${id}`;
+
       const { data } = await API.delete(ep);
       if (data?.success || data === "" || data?.message === "Item deleted") {
-        showToast("success", "Item deleted successfully!");
-        if (type === "rate") {
+        showToast("success", `${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
+        if (type === "buyer") fetchBuyers();
+        else if (type === "supplier") fetchSuppliers();
+        else if (type === "rate") {
           setItems(prev => prev.filter(i => i._id !== id));
+          fetchAdminData();
+        } else {
+          fetchAdminData();
         }
-        fetchAdminData();
       } else {
         showToast("error", data?.message || "Failed to delete item");
       }

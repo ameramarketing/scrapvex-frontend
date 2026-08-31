@@ -226,9 +226,14 @@ const playBellSound = () => {
     }
   };
 
+  const [savingSupplier, setSavingSupplier] = useState(false);
+  const [savingBuyer, setSavingBuyer] = useState(false);
+
   const handleSaveSupplier = async (e) => {
     e?.preventDefault();
+    if (savingSupplier) return;
     if (!newSupplier.name || !newSupplier.contact) return showToast("error", "Name aur Mobile Number zaroori hai");
+    setSavingSupplier(true);
     try {
       if (newSupplier._id) {
         const { data } = await API.put(`/suppliers/${newSupplier._id}`, newSupplier);
@@ -236,6 +241,7 @@ const playBellSound = () => {
           showToast("success", "Seller details updated!");
           fetchSuppliers();
           setShowSupplierModal(false);
+          setNewSupplier({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", category: "Individual" });
         }
       } else {
         const { data } = await API.post("/suppliers", newSupplier);
@@ -243,16 +249,21 @@ const playBellSound = () => {
           showToast("success", "New Seller (Supplier) saved!");
           fetchSuppliers();
           setShowSupplierModal(false);
+          setNewSupplier({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", category: "Individual" });
         }
       }
     } catch (err) {
       showToast("error", err.response?.data?.message || "Failed to save seller");
+    } finally {
+      setSavingSupplier(false);
     }
   };
 
   const handleSaveBuyer = async (e) => {
     e?.preventDefault();
+    if (savingBuyer) return;
     if (!newBuyer.name || !newBuyer.contact) return showToast("error", "Name aur Mobile Number zaroori hai");
+    setSavingBuyer(true);
     try {
       if (newBuyer._id) {
         const { data } = await API.put(`/buyers/${newBuyer._id}`, newBuyer);
@@ -260,6 +271,7 @@ const playBellSound = () => {
           showToast("success", "Buyer details updated!");
           fetchBuyers();
           setShowBuyerModal(false);
+          setNewBuyer({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", state: "Jammu & Kashmir", stateCode: "01" });
         }
       } else {
         const { data } = await API.post("/buyers", newBuyer);
@@ -267,10 +279,13 @@ const playBellSound = () => {
           showToast("success", "New Buyer / Mill saved!");
           fetchBuyers();
           setShowBuyerModal(false);
+          setNewBuyer({ name: "", contact: "", email: "", address: "", gstin: "", pan: "", state: "Jammu & Kashmir", stateCode: "01" });
         }
       }
     } catch (err) {
       showToast("error", err.response?.data?.message || "Failed to save buyer");
+    } finally {
+      setSavingBuyer(false);
     }
   };
 
@@ -946,14 +961,25 @@ const playBellSound = () => {
   const handleDeleteItem = async (id, type) => {
     if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
     try {
-      let ep = type === "rate" ? `/admin/scrap-items/${id}` : type === "ad" ? `/ads/${id}` : `/admin/${type}s/${id}`;
+      let ep = "";
+      if (type === "rate") ep = `/admin/scrap-items/${id}`;
+      else if (type === "ad") ep = `/ads/${id}`;
+      else if (type === "buyer") ep = `/buyers/${id}`;
+      else if (type === "supplier") ep = `/suppliers/${id}`;
+      else if (type === "collector") ep = `/admin/collectors/${id}`;
+      else ep = `/admin/${type}s/${id}`;
+
       const { data } = await API.delete(ep);
       if (data?.success || data === "" || data?.message === "Item deleted") {
-        showToast("success", "Item deleted successfully!");
-        if (type === "rate") {
+        showToast("success", `${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
+        if (type === "buyer") fetchBuyers();
+        else if (type === "supplier") fetchSuppliers();
+        else if (type === "rate") {
           setItems(prev => prev.filter(i => i._id !== id));
+          fetchAdminData();
+        } else {
+          fetchAdminData();
         }
-        fetchAdminData();
       } else {
         showToast("error", data?.message || "Failed to delete item");
       }
