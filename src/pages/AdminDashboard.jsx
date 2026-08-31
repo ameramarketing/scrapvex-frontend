@@ -381,7 +381,20 @@ const playBellSound = () => {
   const [newItem, setNewItem] = useState({ name: "", price: "", unit: "kg", category: "Other" });
   const [newUser, setNewUser] = useState({ name: "", mobile: "", email: "", password: "" });
   const [newCollector, setNewCollector] = useState({ name: "", mobile: "", email: "", password: "", area: "" });
-  const [newFranchise, setNewFranchise] = useState({ name: "", mobile: "", email: "", password: "", assignedCity: "" });
+  const [newFranchise, setNewFranchise] = useState({ 
+    name: "", 
+    mobile: "", 
+    email: "", 
+    password: "", 
+    assignedCity: "",
+    legalFirmName: "",
+    gstin: "",
+    businessAddress: "",
+    bankName: "",
+    bankAccountNo: "",
+    bankIfsc: "",
+    invoiceStartNumber: 1
+  });
 
   const showToast = (type, message) => setToast({ show: true, type, message });
 
@@ -3305,13 +3318,38 @@ const playBellSound = () => {
       )}
 
       {showFranchiseModal && (
-        <Modal title="New Franchise" onClose={() => setShowFranchiseModal(false)}>
-           <Input placeholder="Franchise Name / Manager" value={newFranchise.name} onChange={v => setNewFranchise({...newFranchise, name: v})} />
-           <Input placeholder="Mobile No" value={newFranchise.mobile} onChange={v => setNewFranchise({...newFranchise, mobile: v})} />
-           <Input placeholder="Email (For Login)" value={newFranchise.email} onChange={v => setNewFranchise({...newFranchise, email: v})} />
-           <Input placeholder="Assigned District/City" value={newFranchise.assignedCity} onChange={v => setNewFranchise({...newFranchise, assignedCity: v})} />
-           <Input placeholder="Initial Password" value={newFranchise.password} onChange={v => setNewFranchise({...newFranchise, password: v})} />
-           <button className="native-btn" style={saveBtnBig} onClick={handleCreateFranchise}>Register Franchise</button>
+        <Modal title="🏢 Register New Franchise" onClose={() => setShowFranchiseModal(false)}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "75vh", overflowY: "auto", paddingRight: "6px" }}>
+            <Input placeholder="Franchise Name / Manager *" value={newFranchise.name} onChange={v => setNewFranchise({...newFranchise, name: v})} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <Input placeholder="Mobile No *" value={newFranchise.mobile} onChange={v => setNewFranchise({...newFranchise, mobile: v})} />
+              <Input placeholder="Assigned City / District *" value={newFranchise.assignedCity} onChange={v => setNewFranchise({...newFranchise, assignedCity: v})} />
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <Input placeholder="Email (For Login) *" value={newFranchise.email} onChange={v => setNewFranchise({...newFranchise, email: v})} />
+              <Input placeholder="Initial Password *" value={newFranchise.password} onChange={v => setNewFranchise({...newFranchise, password: v})} />
+            </div>
+            
+            {/* Optional Legal Profile */}
+            <div style={{ background: "#f8fafc", padding: "12px", borderRadius: "10px", border: "1px solid #e2e8f0", marginTop: "4px" }}>
+              <div style={{ fontSize: "11px", fontWeight: "800", color: "#334155", marginBottom: "8px" }}>Legal & GST Profile (Printed on Invoices)</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <Input placeholder="Legal Firm Name (e.g. M/S ABC Scrap Traders)" value={newFranchise.legalFirmName} onChange={v => setNewFranchise({...newFranchise, legalFirmName: v})} />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                  <Input placeholder="GSTIN (15 Digits)" value={newFranchise.gstin} onChange={v => setNewFranchise({...newFranchise, gstin: v.toUpperCase()})} />
+                  <Input placeholder="Starting Invoice Number (e.g. 1)" type="number" value={newFranchise.invoiceStartNumber} onChange={v => setNewFranchise({...newFranchise, invoiceStartNumber: v})} />
+                </div>
+                <Input placeholder="Office / Godown Address" value={newFranchise.businessAddress} onChange={v => setNewFranchise({...newFranchise, businessAddress: v})} />
+                <Input placeholder="Bank Name & Branch" value={newFranchise.bankName} onChange={v => setNewFranchise({...newFranchise, bankName: v})} />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                  <Input placeholder="Bank A/C No" value={newFranchise.bankAccountNo} onChange={v => setNewFranchise({...newFranchise, bankAccountNo: v})} />
+                  <Input placeholder="IFSC Code" value={newFranchise.bankIfsc} onChange={v => setNewFranchise({...newFranchise, bankIfsc: v.toUpperCase()})} />
+                </div>
+              </div>
+            </div>
+
+            <button className="native-btn" style={saveBtnBig} onClick={handleCreateFranchise}>Register Franchise</button>
+          </div>
         </Modal>
       )}
 

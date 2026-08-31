@@ -29,17 +29,23 @@ function FranchiseLogin() {
 
   const handleLogin = async (e) => {
     if (e) e.preventDefault();
-    if (!email) return showToast("error", "Enter franchise email or mobile");
-    if (!password) return showToast("error", "Enter password");
+    const cleanInput = (email || "").trim();
+    const cleanPass = (password || "").trim();
+    if (!cleanInput) return showToast("error", "Enter franchise email or mobile");
+    if (!cleanPass) return showToast("error", "Enter password");
     setLoading(true);
     try {
-      const loginPayload = email.includes("@") ? { email, password } : { mobile: email, password };
+      const loginPayload = {
+        email: cleanInput,
+        mobile: cleanInput,
+        password: cleanPass
+      };
       const { data } = await API.post("/auth/franchise-login", loginPayload);
       
       await saveAuthData(data.token, data.user, "franchise");
 
       showToast("success", "Franchise Login Successful 🔐");
-      setTimeout(() => navigate("/franchise-dashboard"), 700);
+      setTimeout(() => navigate("/franchise-dashboard"), 400);
     } catch (error) {
       showToast("error", error.response?.data?.message || "Login Failed");
     } finally {

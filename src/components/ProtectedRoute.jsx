@@ -26,10 +26,11 @@ function ProtectedRoute({
         let user = localStorage.getItem("user");
         let currentRole = localStorage.getItem("role");
 
-        /* Admin / Collector */
+        /* Admin / Collector / Franchise */
         if (role) {
           if (
-            currentRole === role
+            currentRole === role ||
+            (role === "franchise" && (currentRole === "franchise" || currentRole === "admin"))
           ) {
             setAllowed(true);
           } else {

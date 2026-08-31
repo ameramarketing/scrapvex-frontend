@@ -107,17 +107,23 @@ const playBellSound = () => {
   const initialFranchiseUser = (() => {
     try { return JSON.parse(localStorage.getItem("user") || "{}"); } catch (e) { return {}; }
   })();
+
+  const isRajouriOwner = initialFranchiseUser.mobile === "8491028539" || 
+                         initialFranchiseUser.assignedCity?.toLowerCase().includes("rajouri") ||
+                         initialFranchiseUser.name?.toLowerCase().includes("kamlak") ||
+                         initialFranchiseUser.name?.toLowerCase().includes("kamalak");
+
   const [gstProfileForm, setGstProfileForm] = useState({
-    legalFirmName: initialFranchiseUser.legalFirmName || "A.M KAMALAK SCRAP DEALER",
-    gstin: initialFranchiseUser.gstin || "01EMRPM6848D1ZT",
-    businessAddress: initialFranchiseUser.businessAddress || initialFranchiseUser.address || "Kheora Rajouri",
+    legalFirmName: initialFranchiseUser.legalFirmName || (isRajouriOwner ? "A.M KAMALAK SCRAP DEALER" : (initialFranchiseUser.name || "")),
+    gstin: initialFranchiseUser.gstin || (isRajouriOwner ? "01EMRPM6848D1ZT" : ""),
+    businessAddress: initialFranchiseUser.businessAddress || initialFranchiseUser.address || (isRajouriOwner ? "Kheora Rajouri" : (initialFranchiseUser.assignedCity ? `${initialFranchiseUser.assignedCity}, Jammu & Kashmir` : "")),
     stateCode: initialFranchiseUser.stateCode || "01",
-    secondaryPhone: initialFranchiseUser.secondaryPhone || "9086823081",
+    secondaryPhone: initialFranchiseUser.secondaryPhone || (isRajouriOwner ? "9086823081" : ""),
     dealsIn: initialFranchiseUser.dealsIn || "All Kinds of Scrap Except Single Use Plastic",
-    bankName: initialFranchiseUser.bankName || "Jammu & Kashmir Bank KHEORA RAJOURI",
-    bankAccountNo: initialFranchiseUser.bankAccountNo || "0804010100000234",
-    bankIfsc: initialFranchiseUser.bankIfsc || "JAKA0KHEORA",
-    invoiceStartNumber: initialFranchiseUser.invoiceStartNumber || 808,
+    bankName: initialFranchiseUser.bankName || (isRajouriOwner ? "Jammu & Kashmir Bank KHEORA RAJOURI" : ""),
+    bankAccountNo: initialFranchiseUser.bankAccountNo || (isRajouriOwner ? "0804010100000234" : ""),
+    bankIfsc: initialFranchiseUser.bankIfsc || (isRajouriOwner ? "JAKA0KHEORA" : ""),
+    invoiceStartNumber: initialFranchiseUser.invoiceStartNumber || (isRajouriOwner ? 808 : 1),
     tradeLicenseNo: initialFranchiseUser.tradeLicenseNo || ""
   });
 
@@ -295,14 +301,19 @@ const playBellSound = () => {
       document.body.appendChild(tempContainer);
 
       const franchiseUser = JSON.parse(localStorage.getItem("user") || "{}");
-      const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || "A.M KAMALAK SCRAP DEALER";
-      const firmGst = franchiseUser?.gstin || "01EMRPM6848D1ZT";
-      const firmAddr = franchiseUser?.businessAddress || "Kheora Rajouri";
-      const firmPhone = franchiseUser?.secondaryPhone || franchiseUser?.mobile || "9906063614, 9086823081";
+      const isRajouri = franchiseUser?.mobile === "8491028539" || 
+                        franchiseUser?.assignedCity?.toLowerCase().includes("rajouri") ||
+                        franchiseUser?.name?.toLowerCase().includes("kamlak") ||
+                        franchiseUser?.name?.toLowerCase().includes("kamalak");
+
+      const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || (isRajouri ? "A.M KAMALAK SCRAP DEALER" : "ScrapVex Authorized Regional Hub");
+      const firmGst = franchiseUser?.gstin || (isRajouri ? "01EMRPM6848D1ZT" : "Unregistered");
+      const firmAddr = franchiseUser?.businessAddress || franchiseUser?.address || (franchiseUser?.assignedCity ? `${franchiseUser.assignedCity}, Jammu & Kashmir` : (isRajouri ? "Kheora Rajouri" : "Jammu & Kashmir"));
+      const firmPhone = [franchiseUser?.mobile, franchiseUser?.secondaryPhone].filter(Boolean).join(", ") || (isRajouri ? "9906063614, 9086823081" : "8491028539");
       const dealsInText = franchiseUser?.dealsIn || "All Kinds of Scrap Except Single Use Plastic";
-      const bankName = franchiseUser?.bankName || "Jammu & Kashmir Bank KHEORA RAJOURI";
-      const bankAccountNo = franchiseUser?.bankAccountNo || "0804010100000234";
-      const bankIfsc = franchiseUser?.bankIfsc || "JAKA0KHEORA";
+      const bankName = franchiseUser?.bankName || (isRajouri ? "Jammu & Kashmir Bank KHEORA RAJOURI" : "Jammu & Kashmir Bank");
+      const bankAccountNo = franchiseUser?.bankAccountNo || (isRajouri ? "0804010100000234" : "—");
+      const bankIfsc = franchiseUser?.bankIfsc || (isRajouri ? "JAKA0KHEORA" : "—");
 
       for (let i = 0; i < monthSales.length; i++) {
         const sale = monthSales[i];
@@ -3666,14 +3677,19 @@ const playBellSound = () => {
 
       {showInvoiceModal && selectedInvoice && (() => {
         const franchiseUser = JSON.parse(localStorage.getItem("user") || "{}");
-        const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || "A.M KAMALAK SCRAP DEALER";
-        const firmGst = franchiseUser?.gstin || "01EMRPM6848D1ZT";
-        const firmAddr = franchiseUser?.businessAddress || franchiseUser?.address || "Kheora Rajouri";
-        const firmPhone = franchiseUser?.secondaryPhone || franchiseUser?.mobile || "9906063614, 9086823081";
+        const isRajouri = franchiseUser?.mobile === "8491028539" || 
+                          franchiseUser?.assignedCity?.toLowerCase().includes("rajouri") ||
+                          franchiseUser?.name?.toLowerCase().includes("kamlak") ||
+                          franchiseUser?.name?.toLowerCase().includes("kamalak");
+
+        const firmName = franchiseUser?.legalFirmName || franchiseUser?.name || (isRajouri ? "A.M KAMALAK SCRAP DEALER" : "ScrapVex Authorized Regional Hub");
+        const firmGst = franchiseUser?.gstin || (isRajouri ? "01EMRPM6848D1ZT" : "Unregistered");
+        const firmAddr = franchiseUser?.businessAddress || franchiseUser?.address || (franchiseUser?.assignedCity ? `${franchiseUser.assignedCity}, Jammu & Kashmir` : (isRajouri ? "Kheora Rajouri" : "Jammu & Kashmir"));
+        const firmPhone = [franchiseUser?.mobile, franchiseUser?.secondaryPhone].filter(Boolean).join(", ") || (isRajouri ? "9906063614, 9086823081" : "8491028539");
         const dealsInText = franchiseUser?.dealsIn || "All Kinds of Scrap Except Single Use Plastic";
-        const bankName = franchiseUser?.bankName || "Jammu & Kashmir Bank KHEORA RAJOURI";
-        const bankAccountNo = franchiseUser?.bankAccountNo || "0804010100000234";
-        const bankIfsc = franchiseUser?.bankIfsc || "JAKA0KHEORA";
+        const bankName = franchiseUser?.bankName || (isRajouri ? "Jammu & Kashmir Bank KHEORA RAJOURI" : "Jammu & Kashmir Bank");
+        const bankAccountNo = franchiseUser?.bankAccountNo || (isRajouri ? "0804010100000234" : "—");
+        const bankIfsc = franchiseUser?.bankIfsc || (isRajouri ? "JAKA0KHEORA" : "—");
 
         const invNo = selectedInvoice.invoiceNumber || `INV-${(selectedInvoice._id || Date.now().toString()).slice(-6).toUpperCase()}`;
         const invDate = selectedInvoice.createdAt ? new Date(selectedInvoice.createdAt).toLocaleDateString("en-IN") : new Date().toLocaleDateString("en-IN");
