@@ -3363,30 +3363,7 @@ const playBellSound = () => {
         </div>
       )}
 
-      {/* MOBILE BOTTOM NAVIGATION BAR */}
-      <div className="mobile-only" style={bottomNavStyle}>
-        <div style={bottomLinkStyle} onClick={() => setActiveTab("overview")}>
-          <FaHome size={18} color={activeTab === "overview" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
-          <span style={{ fontSize: "10px", fontWeight: activeTab === "overview" ? "800" : "600", color: activeTab === "overview" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Home</span>
-        </div>
-        <div style={bottomLinkStyle} onClick={() => setActiveTab("pickups")}>
-          <FaTruck size={18} color={activeTab === "pickups" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
-          <span style={{ fontSize: "10px", fontWeight: activeTab === "pickups" ? "800" : "600", color: activeTab === "pickups" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Pickups</span>
-        </div>
-        <div style={bottomLinkStyle} onClick={() => { setActiveTab("accounting"); fetchAccountingData(); }}>
-          <FaChartLine size={18} color={activeTab === "accounting" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
-          <span style={{ fontSize: "10px", fontWeight: activeTab === "accounting" ? "800" : "600", color: activeTab === "accounting" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Accounts</span>
-        </div>
-        <div style={bottomLinkStyle} onClick={() => { setActiveTab("wallet"); fetchWalletStats(); }}>
-          <FaWallet size={18} color={activeTab === "wallet" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
-          <span style={{ fontSize: "10px", fontWeight: activeTab === "wallet" ? "800" : "600", color: activeTab === "wallet" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Wallet</span>
-        </div>
-        <div style={bottomLinkStyle} onClick={() => setActiveTab("account")}>
-          <FaBuilding size={18} color={activeTab === "account" ? "#0b8f3a" : "var(--text-muted, #64748b)"} />
-          <span style={{ fontSize: "10px", fontWeight: activeTab === "account" ? "800" : "600", color: activeTab === "account" ? "#0b8f3a" : "var(--text-muted, #64748b)", marginTop: "3px" }}>Profile/GST</span>
-        </div>
-      </div>
-
+      {/* Franchise Dashboard Container End */}
     </div>
   );
 }

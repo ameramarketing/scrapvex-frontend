@@ -1297,16 +1297,6 @@ const playBellSound = () => {
         </div>
       )}
 
-      {/* BOTTOM NAVIGATION (MOBILE) */}
-      <div style={bottomNavStyle} className="mobile-only">
-         <BottomLink active={activeTab === "home"} icon={<FaHome/>} text="Home" onClick={() => setActiveTab("home")} />
-         <BottomLink active={activeTab === "book"} icon={<FaPlusCircle/>} text="Book" onClick={() => setActiveTab("book")} />
-         <BottomLink active={activeTab === "wallet"} icon={<FaWallet/>} text="Wallet" onClick={() => setActiveTab("wallet")} />
-         <BottomLink active={activeTab === "history"} icon={<FaHistory/>} text="History" onClick={() => setActiveTab("history")} />
-         <BottomLink active={activeTab === "support"} icon={<FaPhoneAlt/>} text="Support" onClick={() => { setActiveTab("support"); fetchTickets(); }} />
-         <BottomLink active={activeTab === "profile"} icon={<FaUser/>} text="Profile" onClick={() => setActiveTab("profile")} />
-      </div>
-
       {activeTab === "home" && <Footer />}
     </div>
   );
