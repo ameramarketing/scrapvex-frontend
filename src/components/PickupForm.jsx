@@ -238,6 +238,18 @@ function PickupForm() {
           await saveAuthData(data.token, data.user, "user");
         }
         showToast("success", "Success! Pickup Booked 🎉");
+        
+        // META PIXEL: Track successful booking (Lead/Conversion)
+        if (window.fbq) {
+          window.fbq('track', 'Lead', {
+            content_name: 'Scrap Pickup Booking',
+            value: total,
+            currency: 'INR',
+            mode: form.mode,
+            isBulk: (total >= 5000 || Object.values(form.selectedItems).reduce((a, b) => a + b, 0) >= 100)
+          });
+        }
+        
         setStep(5);
       }
     } catch (e) {
