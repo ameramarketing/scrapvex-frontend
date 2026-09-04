@@ -179,6 +179,7 @@ function CollectorDashboard() {
 
   useEffect(() => {
     if (!user?._id) return;
+    if (accountStatus === "blocked" || accountStatus === "pending_deposit") return;
     const interval = setInterval(async () => {
       try {
         const resP = await API.get("/collector/pickups", { hideLoader: true });
@@ -205,7 +206,7 @@ function CollectorDashboard() {
       }
     }, 10000);
     return () => clearInterval(interval);
-  }, [user?._id]);
+  }, [user?._id, accountStatus]);
 
   const activePickups = useMemo(
     () =>
@@ -281,6 +282,11 @@ function CollectorDashboard() {
         navigate("/collector-login");
       } else {
         setUser(loggedUser);
+        if (loggedUser.accountStatus) {
+          setAccountStatus(loggedUser.accountStatus);
+          setSecurityDeposit(loggedUser.securityDeposit || 0);
+          setBlockReason(loggedUser.blockReason || "");
+        }
         fetchData(loggedUser._id);
       }
     } catch (e) {

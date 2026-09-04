@@ -115,14 +115,14 @@ API.interceptors.response.use(
       // Removed alert(msg) per production rules
     }
 
-    // Auto-logout on 401/403 for non-login and non-public endpoints
-    // Public endpoints (scrap-items, price-history, cities, etc.) should NOT trigger logout
+    // Auto-logout on 401 (Unauthorized / expired token) only.
+    // 403 (Forbidden) should NOT clear session because blocked or restricted users must stay logged in to see their status/reason.
     const publicEndpoints = ["scrap-items", "price-history", "cities", "pickups/vote-area", "settings"];
     const isPublicEndpoint = publicEndpoints.some(ep => url.includes(ep));
 
     if (
       error.response &&
-      (error.response.status === 401 || error.response.status === 403) &&
+      error.response.status === 401 &&
       !url.includes("login") &&
       !isPublicEndpoint
     ) {
