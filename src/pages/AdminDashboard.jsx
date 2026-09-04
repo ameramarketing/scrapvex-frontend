@@ -1217,6 +1217,40 @@ const playBellSound = () => {
     }
   };
 
+  /* Approve a collector account */
+  const handleApproveCollector = async (collectorId, collectorName) => {
+    if (!window.confirm(`Kya aap ${collectorName} ka account approve karna chahte hain?`)) return;
+    try {
+      const { data } = await API.post(`/admin/collectors/${collectorId}/approve`);
+      if (data.success) {
+        showToast("success", data.message || `✅ ${collectorName} approved!`);
+        fetchAdminData();
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Approve karne mein error.");
+    }
+  };
+
+  /* Block/Unblock a collector */
+  const handleBlockCollector = async (collectorId, collectorName, currentStatus) => {
+    const isBlocking = currentStatus !== "blocked";
+    const reason = isBlocking ? window.prompt(`${collectorName} ko block karne ki wajah:`, "Policy violation / Cheating") : null;
+    if (isBlocking && reason === null) return;
+    if (!window.confirm(isBlocking ? `BLOCK ${collectorName}?` : `UNBLOCK ${collectorName}?`)) return;
+    try {
+      const { data } = await API.post(`/admin/collectors/${collectorId}/block`, {
+        action: isBlocking ? "block" : "unblock",
+        reason: reason || ""
+      });
+      if (data.success) {
+        showToast(isBlocking ? "error" : "success", data.message || `Status updated!`);
+        fetchAdminData();
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Block/Unblock error.");
+    }
+  };
+
   const numberToWords = (num) => {
     const a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
     const b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
@@ -2146,49 +2180,100 @@ const playBellSound = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).map(u => (
-                      <tr key={u._id} style={{ borderBottom: "1px solid var(--glass-border)" }}>
-                        <td style={{ padding: "12px 8px" }}>
-                          <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px" }}>{u.name}</div>
-                          <div style={{ color: "var(--text-muted)", fontSize: "12px" }}>{u.mobile}</div>
-                        </td>
-                        <td style={{ padding: "12px 8px", fontSize: "13px", color: "var(--text-muted)" }}>
-                          {u.area && <span style={{ display: "inline-block", background: "rgba(44, 62, 80, 0.1)", color: "#2c3e50", padding: "4px 8px", borderRadius: "6px", marginRight: "6px" }}>Area: {u.area}</span>}
-                          {u.assignedCity && <span style={{ display: "inline-block", background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", padding: "4px 8px", borderRadius: "6px", marginRight: "6px" }}>City: {u.assignedCity}</span>}
-                          {u.walletBalance !== undefined && <span style={{ display: "inline-block", background: "rgba(243, 156, 18, 0.1)", color: "#f39c12", padding: "4px 8px", borderRadius: "6px" }}>Wallet: ₹{u.walletBalance}</span>}
-                        </td>
-                        <td style={{ padding: "12px 8px", textAlign: "right" }}>
-                          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                            <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: "12px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Admin Transfer" }); setShowWalletModal(true); }}>Transfer</button>
-                            <button className="btn-secondary" style={{ padding: "6px 10px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey/></button>
-                            <button className="btn-danger" style={{ padding: "6px 10px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={() => handleDeleteItem(u._id, activeTab === "users" ? "user" : activeTab === "franchises" ? "franchise" : "collector")}><FaTrash/></button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).map(u => {
+                      const isCollector = activeTab === "collectors";
+                      const status = isCollector ? (u.accountStatus || "approved") : null;
+                      const statusConfig = isCollector ? ({
+                        pending_deposit: { label: "💰 Deposit Pending", color: "#92400e", bg: "#fef3c7" },
+                        pending_approval: { label: "⏳ Awaiting Approval", color: "#1e40af", bg: "#eff6ff" },
+                        approved: { label: "✅ Approved", color: "#166534", bg: "#f0fdf4" },
+                        blocked: { label: "🚫 Blocked", color: "#991b1b", bg: "#fef2f2" },
+                      }[status] || { label: "Unknown", color: "#64748b", bg: "#f1f5f9" }) : null;
+
+                      return (
+                        <tr key={u._id} style={{ borderBottom: "1px solid var(--glass-border)", background: isCollector && status === "blocked" ? "#fff5f5" : isCollector && status === "pending_approval" ? "#f0f9ff" : "transparent" }}>
+                          <td style={{ padding: "12px 8px" }}>
+                            <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "14px" }}>{u.name}</div>
+                            <div style={{ color: "var(--text-muted)", fontSize: "12px" }}>{u.mobile}</div>
+                            {isCollector && statusConfig && (
+                              <span style={{ display: "inline-block", marginTop: "4px", fontSize: "10px", fontWeight: "700", padding: "2px 8px", borderRadius: "10px", background: statusConfig.bg, color: statusConfig.color }}>
+                                {statusConfig.label}
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ padding: "12px 8px", fontSize: "13px", color: "var(--text-muted)" }}>
+                            {u.area && <span style={{ display: "inline-block", background: "rgba(44, 62, 80, 0.1)", color: "#2c3e50", padding: "4px 8px", borderRadius: "6px", marginRight: "6px" }}>Area: {u.area}</span>}
+                            {u.assignedCity && <span style={{ display: "inline-block", background: "rgba(11, 143, 58, 0.1)", color: "var(--primary)", padding: "4px 8px", borderRadius: "6px", marginRight: "6px" }}>City: {u.assignedCity}</span>}
+                            {u.walletBalance !== undefined && <span style={{ display: "inline-block", background: "rgba(243, 156, 18, 0.1)", color: "#f39c12", padding: "4px 8px", borderRadius: "6px" }}>Wallet: ₹{u.walletBalance}</span>}
+                            {isCollector && u.securityDeposit > 0 && <span style={{ display: "inline-block", background: "#fef3c7", color: "#92400e", padding: "4px 8px", borderRadius: "6px", marginLeft: "4px", fontSize: "11px" }}>🔒 Deposit: ₹{u.securityDeposit}</span>}
+                            {isCollector && u.blockReason && status === "blocked" && <div style={{ fontSize: "11px", color: "#dc2626", marginTop: "4px" }}>Wajah: {u.blockReason}</div>}
+                          </td>
+                          <td style={{ padding: "12px 8px", textAlign: "right" }}>
+                            <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                              {/* Approve button — only for pending_approval collectors */}
+                              {isCollector && status === "pending_approval" && (
+                                <button style={{ padding: "6px 10px", fontSize: "11px", fontWeight: "700", background: "#0b8f3a", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }} onClick={() => handleApproveCollector(u._id, u.name)}>
+                                  ✅ Approve
+                                </button>
+                              )}
+                              {/* Block/Unblock button for collectors */}
+                              {isCollector && status !== "pending_deposit" && (
+                                <button style={{ padding: "6px 10px", fontSize: "11px", fontWeight: "700", background: status === "blocked" ? "#f0fdf4" : "#fef2f2", color: status === "blocked" ? "#166534" : "#dc2626", border: `1px solid ${status === "blocked" ? "#bbf7d0" : "#fecaca"}`, borderRadius: "6px", cursor: "pointer" }} onClick={() => handleBlockCollector(u._id, u.name, status)}>
+                                  {status === "blocked" ? "🔓 Unblock" : "🚫 Block"}
+                                </button>
+                              )}
+                              <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: "12px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Admin Transfer" }); setShowWalletModal(true); }}>Transfer</button>
+                              <button className="btn-secondary" style={{ padding: "6px 10px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey/></button>
+                              <button className="btn-danger" style={{ padding: "6px 10px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={() => handleDeleteItem(u._id, activeTab === "users" ? "user" : activeTab === "franchises" ? "franchise" : "collector")}><FaTrash/></button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
               <div className="mobile-only" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).map(u => (
-                  <div key={u._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", border: "1px solid var(--glass-border)" }}>
-                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
-                        <div>
-                           <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>{u.name}</div>
-                           <div style={{ color: "var(--text-muted)", fontSize: "13px" }}>{u.mobile}</div>
-                        </div>
-                        {u.walletBalance !== undefined && <div style={{ fontSize: "14px", fontWeight: "bold", color: "#f39c12" }}>₹{u.walletBalance}</div>}
-                     </div>
-                     <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "12px" }}>
-                        {u.area && `Area: ${u.area} `} {u.assignedCity && `City: ${u.assignedCity}`}
-                     </div>
-                     <div style={{ display: "flex", gap: "8px" }}>
-                       <button className="btn-secondary" style={{ flex: 1, padding: "8px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Admin Transfer" }); setShowWalletModal(true); }}>Transfer</button>
-                       <button className="btn-secondary" style={{ padding: "8px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey/></button>
-                       <button className="btn-danger" style={{ padding: "8px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={() => handleDeleteItem(u._id, activeTab === "users" ? "user" : activeTab === "franchises" ? "franchise" : "collector")}><FaTrash/></button>
-                     </div>
-                  </div>
-                ))}
+                {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).map(u => {
+                  const isCollector = activeTab === "collectors";
+                  const status = isCollector ? (u.accountStatus || "approved") : null;
+                  const statusConfig = isCollector ? ({
+                    pending_deposit: { label: "💰 Deposit Pending", color: "#92400e", bg: "#fef3c7" },
+                    pending_approval: { label: "⏳ Awaiting Approval", color: "#1e40af", bg: "#eff6ff" },
+                    approved: { label: "✅ Approved", color: "#166534", bg: "#f0fdf4" },
+                    blocked: { label: "🚫 Blocked", color: "#991b1b", bg: "#fef2f2" },
+                  }[status] || null) : null;
+
+                  return (
+                    <div key={u._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", border: "1px solid var(--glass-border)" }}>
+                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                          <div>
+                             <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "15px" }}>{u.name}</div>
+                             <div style={{ color: "var(--text-muted)", fontSize: "13px" }}>{u.mobile}</div>
+                             {isCollector && statusConfig && <span style={{ display: "inline-block", marginTop: "4px", fontSize: "10px", fontWeight: "700", padding: "2px 8px", borderRadius: "10px", background: statusConfig.bg, color: statusConfig.color }}>{statusConfig.label}</span>}
+                          </div>
+                          {u.walletBalance !== undefined && <div style={{ fontSize: "14px", fontWeight: "bold", color: "#f39c12" }}>₹{u.walletBalance}</div>}
+                       </div>
+                       <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "12px" }}>
+                          {u.area && `Area: ${u.area} `} {u.assignedCity && `City: ${u.assignedCity}`}
+                          {isCollector && u.blockReason && status === "blocked" && <div style={{ color: "#dc2626", fontWeight: "600" }}>Wajah: {u.blockReason}</div>}
+                       </div>
+                       <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                         {isCollector && status === "pending_approval" && (
+                           <button style={{ padding: "8px 10px", fontSize: "11px", fontWeight: "700", background: "#0b8f3a", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }} onClick={() => handleApproveCollector(u._id, u.name)}>✅ Approve</button>
+                         )}
+                         {isCollector && status !== "pending_deposit" && (
+                           <button style={{ padding: "8px", fontSize: "11px", fontWeight: "700", background: status === "blocked" ? "#f0fdf4" : "#fef2f2", color: status === "blocked" ? "#166534" : "#dc2626", border: `1px solid ${status === "blocked" ? "#bbf7d0" : "#fecaca"}`, borderRadius: "6px", cursor: "pointer" }} onClick={() => handleBlockCollector(u._id, u.name, status)}>
+                             {status === "blocked" ? "🔓 Unblock" : "🚫 Block"}
+                           </button>
+                         )}
+                         <button className="btn-secondary" style={{ flex: 1, padding: "8px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Admin Transfer" }); setShowWalletModal(true); }}>Transfer</button>
+                         <button className="btn-secondary" style={{ padding: "8px", border: "1px solid var(--glass-border)", borderRadius: "6px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey/></button>
+                         <button className="btn-danger" style={{ padding: "8px", border: "1px solid #fca5a5", borderRadius: "6px", background: "#fee2e2", color: "#ef4444" }} onClick={() => handleDeleteItem(u._id, activeTab === "users" ? "user" : activeTab === "franchises" ? "franchise" : "collector")}><FaTrash/></button>
+                       </div>
+                    </div>
+                  );
+                })}
               </div>
               {(activeTab === "users" ? filteredUsers : activeTab === "franchises" ? filteredFranchises : filteredCollectors).length === 0 && <div className="empty-state" style={{ padding: "40px 0", textAlign: "center", color: "var(--text-muted)" }}>No records found.</div>}
             </div>

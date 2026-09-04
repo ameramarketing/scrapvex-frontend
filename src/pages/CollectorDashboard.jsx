@@ -119,6 +119,14 @@ function CollectorDashboard() {
   const [collectorDepositStep, setCollectorDepositStep] = useState(1);
   const [settings, setSettings] = useState({ upiId: "scrapvex@okaxis" });
 
+  // Collector Account Approval/Security Deposit States
+  const [accountStatus, setAccountStatus] = useState(null); // null = loading, then: pending_deposit/pending_approval/approved/blocked
+  const [securityDeposit, setSecurityDeposit] = useState(0);
+  const [blockReason, setBlockReason] = useState("");
+  const [secDepUpiRef, setSecDepUpiRef] = useState("");
+  const [secDepLoading, setSecDepLoading] = useState(false);
+
+
   useEffect(() => {
     requestNotificationPermission().catch(() => {});
     API.get("/settings").then(({ data }) => {
@@ -333,6 +341,37 @@ function CollectorDashboard() {
     }
   };
 
+  /* ========================================
+     SECURITY DEPOSIT — Account Activation
+  ======================================== */
+  const handleSecurityDeposit = async () => {
+    if (!secDepUpiRef || secDepUpiRef.trim().length < 4) {
+      return showToast("error", "UPI Transaction Reference Number zaroor enter karein (minimum 4 characters).");
+    }
+    try {
+      setSecDepLoading(true);
+      const { data } = await API.post("/wallet/security-deposit", { upiRefNo: secDepUpiRef.trim() });
+      if (data.success) {
+        showToast("success", data.message || "Security deposit submitted! Franchise approval ka wait karein.");
+        setAccountStatus("pending_approval");
+        setSecurityDeposit(2000);
+        setSecDepUpiRef("");
+        // Update localStorage
+        const stored = localStorage.getItem("user");
+        if (stored) {
+          const u = JSON.parse(stored);
+          u.accountStatus = "pending_approval";
+          u.securityDeposit = 2000;
+          localStorage.setItem("user", JSON.stringify(u));
+        }
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Deposit submit karne mein error aaya. Try again.");
+    } finally {
+      setSecDepLoading(false);
+    }
+  };
+
   const fetchData = async (uid) => {
     if (!uid) return;
     try {
@@ -371,6 +410,10 @@ function CollectorDashboard() {
           walletBalance: resW.data?.balance || resProf.data.walletBalance,
         };
         setUser(profileData);
+        // Sync account status
+        setAccountStatus(profileData.accountStatus || "approved");
+        setSecurityDeposit(profileData.securityDeposit || 0);
+        setBlockReason(profileData.blockReason || "");
         setProfileForm({
           name: profileData.name || "",
           address: profileData.address || "",
@@ -828,6 +871,148 @@ function CollectorDashboard() {
           .dashboard-main { overflow-y: auto; height: 100vh; }
         }
       `}</style>
+
+      {/* ====================================================
+          COLLECTOR ACCOUNT STATUS OVERLAYS
+          pending_deposit → Security Deposit Screen
+          pending_approval → Waiting for Franchise Approval
+          blocked → Account Blocked Screen
+      ==================================================== */}
+
+      {/* PENDING DEPOSIT OVERLAY */}
+      {accountStatus === "pending_deposit" && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 99999, background: "linear-gradient(135deg, #0b8f3a 0%, #065a25 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+          <div style={{ background: "#fff", borderRadius: "24px", padding: "32px 28px", maxWidth: "420px", width: "100%", textAlign: "center", boxShadow: "0 24px 60px rgba(0,0,0,0.2)" }}>
+            <div style={{ width: "72px", height: "72px", borderRadius: "20px", background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "32px" }}>💰</div>
+            <h2 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: "0 0 8px" }}>Security Deposit Required</h2>
+            <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 20px", lineHeight: "1.6" }}>
+              Aapka account activate karne ke liye <strong>Rs. 2,000 security deposit</strong> karna zaroori hai. Yeh amount aapke wallet mein lock rahega aur waapas hoga jab aap ScrapVex team chhoden.
+            </p>
+
+            {/* Steps */}
+            <div style={{ background: "#f8fafc", borderRadius: "14px", padding: "16px", marginBottom: "20px", textAlign: "left" }}>
+              <p style={{ fontSize: "12px", fontWeight: "800", color: "#0b8f3a", margin: "0 0 10px", textTransform: "uppercase", letterSpacing: "0.5px" }}>📋 Steps to Activate:</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                {[
+                  { step: "1", text: `UPI se Rs. 2000 bhejein: scrapvex@okaxis` },
+                  { step: "2", text: "Neeche UPI Transaction Reference (UTR) enter karein" },
+                  { step: "3", text: "Submit karne ke baad franchise approve karegi" },
+                ].map(({ step, text }) => (
+                  <div key={step} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+                    <span style={{ minWidth: "22px", height: "22px", borderRadius: "50%", background: "#0b8f3a", color: "#fff", fontSize: "11px", fontWeight: "800", display: "flex", alignItems: "center", justifyContent: "center" }}>{step}</span>
+                    <span style={{ fontSize: "12px", color: "#374151", lineHeight: "1.5" }}>{text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* UPI QR Info */}
+            <div style={{ background: "#f0fdf4", border: "1.5px solid #bbf7d0", borderRadius: "12px", padding: "12px", marginBottom: "16px" }}>
+              <p style={{ fontSize: "12px", color: "#065f46", fontWeight: "700", margin: 0 }}>
+                📱 UPI ID: <span style={{ letterSpacing: "0.5px" }}>scrapvex@okaxis</span>
+              </p>
+              <p style={{ fontSize: "11px", color: "#047857", margin: "4px 0 0", fontWeight: "600" }}>Amount: ₹2,000 exactly</p>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <input
+                type="text"
+                placeholder="UPI Transaction Reference / UTR Number"
+                value={secDepUpiRef}
+                onChange={(e) => setSecDepUpiRef(e.target.value)}
+                style={{ width: "100%", padding: "12px 14px", borderRadius: "10px", border: "1.5px solid #d1fae5", outline: "none", fontSize: "13px", fontWeight: "600", boxSizing: "border-box", background: "#f8fafc" }}
+              />
+              <button
+                onClick={handleSecurityDeposit}
+                disabled={secDepLoading}
+                style={{ background: "#0b8f3a", color: "#fff", border: "none", borderRadius: "12px", padding: "14px", fontWeight: "800", fontSize: "14px", cursor: "pointer", opacity: secDepLoading ? 0.7 : 1 }}
+              >
+                {secDepLoading ? "⏳ Submitting..." : "✅ Submit Security Deposit"}
+              </button>
+            </div>
+
+            <button onClick={() => { localStorage.clear(); navigate("/collector-login"); }} style={{ marginTop: "16px", background: "none", border: "none", color: "#94a3b8", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* PENDING APPROVAL OVERLAY */}
+      {accountStatus === "pending_approval" && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 99999, background: "linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+          <div style={{ background: "#fff", borderRadius: "24px", padding: "32px 28px", maxWidth: "420px", width: "100%", textAlign: "center", boxShadow: "0 24px 60px rgba(0,0,0,0.2)" }}>
+            <div style={{ width: "72px", height: "72px", borderRadius: "20px", background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "32px" }}>⏳</div>
+            <h2 style={{ fontSize: "20px", fontWeight: "900", color: "#0f172a", margin: "0 0 8px" }}>Approval Pending</h2>
+            <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 20px", lineHeight: "1.6" }}>
+              Aapka <strong>Rs. 2,000 security deposit</strong> receive ho gaya hai! ✅<br /><br />
+              Aapke area ki franchise aapka account review karke approve karegi. Yeh process usually <strong>24-48 ghante</strong> mein hoti hai.
+            </p>
+
+            <div style={{ background: "#eff6ff", borderRadius: "14px", padding: "16px", marginBottom: "20px", textAlign: "left" }}>
+              <p style={{ fontSize: "12px", fontWeight: "800", color: "#1d4ed8", margin: "0 0 8px" }}>📋 Current Status:</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  <span style={{ color: "#16a34a", fontSize: "14px" }}>✅</span>
+                  <span style={{ fontSize: "12px", color: "#374151" }}>Registration complete</span>
+                </div>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  <span style={{ color: "#16a34a", fontSize: "14px" }}>✅</span>
+                  <span style={{ fontSize: "12px", color: "#374151" }}>Security deposit (Rs. 2,000) paid</span>
+                </div>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  <span style={{ color: "#f59e0b", fontSize: "14px" }}>⏳</span>
+                  <span style={{ fontSize: "12px", color: "#374151" }}>Franchise approval — pending</span>
+                </div>
+              </div>
+            </div>
+
+            <p style={{ fontSize: "12px", color: "#94a3b8", margin: "0 0 16px" }}>
+              Approve hone ke baad aapko WhatsApp par notification milegi aur aap dashboard access kar sakte hain.
+            </p>
+
+            <button
+              onClick={() => { fetchData(user?._id); showToast("info", "Status refresh kar rahe hain..."); }}
+              style={{ background: "#1d4ed8", color: "#fff", border: "none", borderRadius: "12px", padding: "12px 24px", fontWeight: "700", fontSize: "13px", cursor: "pointer", width: "100%" }}
+            >
+              🔄 Refresh Status
+            </button>
+
+            <button onClick={() => { localStorage.clear(); navigate("/collector-login"); }} style={{ marginTop: "12px", background: "none", border: "none", color: "#94a3b8", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* BLOCKED OVERLAY */}
+      {accountStatus === "blocked" && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 99999, background: "linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}>
+          <div style={{ background: "#fff", borderRadius: "24px", padding: "32px 28px", maxWidth: "420px", width: "100%", textAlign: "center", boxShadow: "0 24px 60px rgba(0,0,0,0.2)" }}>
+            <div style={{ width: "72px", height: "72px", borderRadius: "20px", background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "32px" }}>🚫</div>
+            <h2 style={{ fontSize: "20px", fontWeight: "900", color: "#dc2626", margin: "0 0 8px" }}>Account Blocked</h2>
+            <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 16px", lineHeight: "1.6" }}>
+              Aapka collector account block kar diya gaya hai.
+            </p>
+            {blockReason && (
+              <div style={{ background: "#fef2f2", border: "1.5px solid #fecaca", borderRadius: "12px", padding: "12px", marginBottom: "16px" }}>
+                <p style={{ fontSize: "13px", color: "#dc2626", fontWeight: "700", margin: 0 }}>
+                  ⚠️ Wajah: {blockReason}
+                </p>
+              </div>
+            )}
+            <p style={{ fontSize: "12px", color: "#94a3b8", margin: "0 0 20px", lineHeight: "1.5" }}>
+              Agar aapko lagta hai yeh galti se hua hai to support se contact karein. Aapki Rs. 2,000 security deposit admin review ke baad return ki jayegi.
+            </p>
+            <a href="tel:+918491028539" style={{ display: "block", background: "#dc2626", color: "#fff", borderRadius: "12px", padding: "12px 24px", fontWeight: "700", fontSize: "13px", textDecoration: "none", marginBottom: "12px" }}>
+              📞 Contact Support
+            </a>
+            <button onClick={() => { localStorage.clear(); navigate("/collector-login"); }} style={{ background: "none", border: "none", color: "#94a3b8", fontSize: "12px", fontWeight: "600", cursor: "pointer" }}>
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* SIDEBAR */}
       <div style={sidebar} className="desktop-only">

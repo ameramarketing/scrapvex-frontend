@@ -780,6 +780,40 @@ const playBellSound = () => {
     } catch (e) { console.error(e); }
   };
 
+  /* Approve a collector (franchise can only approve own area collectors) */
+  const handleApproveCollector = async (collectorId, collectorName) => {
+    if (!window.confirm(`Kya aap ${collectorName} ka account approve karna chahte hain?`)) return;
+    try {
+      const { data } = await API.post(`/admin/collectors/${collectorId}/approve`);
+      if (data.success) {
+        showToast("success", data.message || `✅ ${collectorName} ka account approve ho gaya!`);
+        fetchCollectors();
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Approve karne mein error aaya.");
+    }
+  };
+
+  /* Block/Unblock a collector */
+  const handleBlockCollector = async (collectorId, collectorName, currentStatus) => {
+    const isBlocking = currentStatus !== "blocked";
+    const reason = isBlocking ? window.prompt(`${collectorName} ko block karne ki wajah enter karein:`, "Policy violation / Cheating") : null;
+    if (isBlocking && reason === null) return; // user cancelled
+    if (!window.confirm(isBlocking ? `Kya aap ${collectorName} ka account BLOCK karna chahte hain?` : `Kya aap ${collectorName} ka account UNBLOCK karna chahte hain?`)) return;
+    try {
+      const { data } = await API.post(`/admin/collectors/${collectorId}/block`, {
+        action: isBlocking ? "block" : "unblock",
+        reason: reason || ""
+      });
+      if (data.success) {
+        showToast(isBlocking ? "error" : "success", data.message || `Status updated for ${collectorName}`);
+        fetchCollectors();
+      }
+    } catch (err) {
+      showToast("error", err.response?.data?.message || "Block/Unblock karne mein error aaya.");
+    }
+  };
+
   const fetchReport = async () => {
     setReportLoading(true);
     setReportData([]);
@@ -2052,23 +2086,56 @@ const playBellSound = () => {
                 <button className="btn-premium" onClick={() => setShowCollectorModal(true)}><FaPlus /> Add Collector</button>
               </div>
               <div className="grid-2">
-                {filteredCollectors.map(u => (
-                  <div key={u._id} style={{ background: "var(--card-bg)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "var(--card-shadow)" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <div>
-                        <div style={{ fontWeight: "800", fontSize: "16px", color: "var(--text-main)" }}>{u.name}</div>
-                        <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>📞 {u.mobile} {u.area && `• 📍 ${u.area}`}</div>
-                        {u.walletBalance !== undefined && <div style={{ fontSize: "13px", fontWeight: "bold", color: "var(--primary)", marginTop: "6px" }}>Wallet: ₹{u.walletBalance}</div>}
+                {filteredCollectors.map(u => {
+                  const status = u.accountStatus || "approved";
+                  const statusConfig = {
+                    pending_deposit: { label: "💰 Deposit Pending", bg: "#fef3c7", color: "#92400e", border: "#fde68a" },
+                    pending_approval: { label: "⏳ Approval Pending", bg: "#eff6ff", color: "#1e40af", border: "#bfdbfe" },
+                    approved: { label: "✅ Approved", bg: "#f0fdf4", color: "#166534", border: "#bbf7d0" },
+                    blocked: { label: "🚫 Blocked", bg: "#fef2f2", color: "#991b1b", border: "#fecaca" },
+                  }[status] || { label: "Unknown", bg: "#f1f5f9", color: "#64748b", border: "#e2e8f0" };
+
+                  return (
+                    <div key={u._id} style={{ background: "var(--card-bg)", border: `1.5px solid ${status === "blocked" ? "#fecaca" : status === "pending_deposit" || status === "pending_approval" ? "#bfdbfe" : "var(--card-border)"}`, borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "var(--card-shadow)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <div>
+                          <div style={{ fontWeight: "800", fontSize: "16px", color: "var(--text-main)" }}>{u.name}</div>
+                          <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "4px" }}>📞 {u.mobile} {u.area && `• 📍 ${u.area}`}</div>
+                          {u.walletBalance !== undefined && <div style={{ fontSize: "13px", fontWeight: "bold", color: "var(--primary)", marginTop: "6px" }}>Wallet: ₹{u.walletBalance} {u.securityDeposit > 0 && <span style={{ color: "#92400e", fontSize: "11px" }}>(🔒 ₹{u.securityDeposit} locked)</span>}</div>}
+                          {u.blockReason && status === "blocked" && <div style={{ fontSize: "11px", color: "#dc2626", marginTop: "4px", fontWeight: "600" }}>Wajah: {u.blockReason}</div>}
+                        </div>
+                        <span style={{ fontSize: "11px", fontWeight: "700", padding: "4px 10px", borderRadius: "20px", background: statusConfig.bg, color: statusConfig.color, border: `1px solid ${statusConfig.border}`, whiteSpace: "nowrap" }}>{statusConfig.label}</span>
                       </div>
-                      <span className="badge-status badge-active">Active</span>
+
+                      {/* Action Buttons */}
+                      <div style={{ display: "flex", gap: "6px", marginTop: "4px", flexWrap: "wrap" }}>
+                        {/* Approve Button — only for pending_approval (deposit paid, not yet approved) */}
+                        {status === "pending_approval" && (
+                          <button
+                            style={{ flex: 1, padding: "8px 12px", fontSize: "12px", fontWeight: "700", background: "#0b8f3a", color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer" }}
+                            onClick={() => handleApproveCollector(u._id, u.name)}
+                          >
+                            ✅ Approve
+                          </button>
+                        )}
+
+                        {/* Block/Unblock Button */}
+                        {status !== "pending_deposit" && (
+                          <button
+                            style={{ padding: "8px 12px", fontSize: "12px", fontWeight: "700", background: status === "blocked" ? "#f0fdf4" : "#fef2f2", color: status === "blocked" ? "#166534" : "#dc2626", border: `1px solid ${status === "blocked" ? "#bbf7d0" : "#fecaca"}`, borderRadius: "8px", cursor: "pointer" }}
+                            onClick={() => handleBlockCollector(u._id, u.name, status)}
+                          >
+                            {status === "blocked" ? "🔓 Unblock" : "🚫 Block"}
+                          </button>
+                        )}
+
+                        <button className="btn-secondary" style={{ padding: "8px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Franchise Transfer" }); setShowWalletModal(true); }}>Transfer</button>
+                        <button className="btn-secondary" style={{ padding: "8px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey /></button>
+                        <button className="btn-danger" style={{ padding: "8px" }} onClick={() => handleDeleteItem(u._id, "collector")}><FaTrash /></button>
+                      </div>
                     </div>
-                    <div style={{ display: "flex", gap: "8px", marginTop: "4px" }}>
-                      <button className="btn-secondary" style={{ flex: 1, padding: "8px", fontSize: "12px" }} onClick={() => { setWalletForm({ userId: u._id, amount: "", type: "credit", description: "Franchise Transfer" }); setShowWalletModal(true); }}>Transfer</button>
-                      <button className="btn-secondary" style={{ padding: "8px" }} onClick={() => { setResetData({ userId: u._id, name: u.name, newPassword: "" }); setShowResetModal(true); }}><FaKey /></button>
-                      <button className="btn-danger" style={{ padding: "8px" }} onClick={() => handleDeleteItem(u._id, "collector")}><FaTrash /></button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
