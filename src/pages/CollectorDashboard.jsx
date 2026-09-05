@@ -143,6 +143,13 @@ function CollectorDashboard() {
   const [otpSent, setOtpSent] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
 
+  // Cancellation with Customer OTP states
+  const [cancelReason, setCancelReason] = useState("Customer requested cancellation");
+  const [cancelOtp, setCancelOtp] = useState("");
+  const [cancelOtpSent, setCancelOtpSent] = useState(false);
+  const [cancelOtpLoading, setCancelOtpLoading] = useState(false);
+  const [showCancelFlow, setShowCancelFlow] = useState(false);
+
   const [toast, setToast] = useState({
     show: false,
     type: "success",
@@ -605,6 +612,62 @@ function CollectorDashboard() {
       showToast("error", "OTP Failed");
     } finally {
       setOtpLoading(false);
+    }
+  };
+
+  const handleGenerateCancelOTP = async () => {
+    if (!selectedPickup) return;
+    if (!cancelReason.trim()) {
+      return showToast("error", "Please select or enter cancellation reason");
+    }
+    setCancelOtpLoading(true);
+    try {
+      const { data } = await API.post(
+        `/pickups/collector/generate-cancel-otp/${selectedPickup._id}`,
+        { reason: cancelReason.trim() }
+      );
+      if (data.success) {
+        setCancelOtpSent(true);
+        showToast("success", "Cancellation OTP sent to customer's WhatsApp & App! 📲");
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Failed to send Cancellation OTP");
+    } finally {
+      setCancelOtpLoading(false);
+    }
+  };
+
+  const handleConfirmCancellation = async () => {
+    if (!selectedPickup) return;
+    if (!cancelOtp || cancelOtp.length < 6) {
+      return showToast("error", "Please enter valid 6-digit Cancellation OTP");
+    }
+    setLoadingId(selectedPickup._id);
+    try {
+      const { data } = await API.put(
+        `/pickups/collector/status/${selectedPickup._id}`,
+        {
+          status: "Cancelled",
+          cancellationOtp: cancelOtp.trim(),
+          reason: cancelReason.trim() || "Collector cancelled with customer OTP verification"
+        }
+      );
+      if (data.success) {
+        showToast("success", "Pickup Cancelled with verified customer OTP");
+        setSelectedPickup(null);
+        setShowCancelFlow(false);
+        setCancelOtp("");
+        setCancelOtpSent(false);
+        setCancelReason("Customer requested cancellation");
+        setBillItems([]);
+        setOtp("");
+        setOtpSent(false);
+        fetchData(user?._id);
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Cancellation failed. Check OTP.");
+    } finally {
+      setLoadingId(null);
     }
   };
 
@@ -3250,9 +3313,146 @@ function CollectorDashboard() {
               </div>
             ) : null}
 
-            <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+            {/* CANCELLATION FLOW WITH CUSTOMER OTP */}
+            {showCancelFlow && (
+              <div
+                style={{
+                  marginTop: "20px",
+                  background: "rgba(231, 76, 60, 0.06)",
+                  border: "1.5px solid rgba(231, 76, 60, 0.25)",
+                  padding: "16px",
+                  borderRadius: "16px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#e74c3c", fontWeight: "800", fontSize: "14px", marginBottom: "8px" }}>
+                  <span>⚠️</span> Customer Verification Cancellation Flow
+                </div>
+                <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: "0 0 12px 0", lineHeight: "1.4" }}>
+                  To prevent unauthorized cancellations, a 6-digit Security OTP will be sent to the customer (+91 {selectedPickup.mobile}).
+                </p>
+
+                <div style={{ marginBottom: "12px" }}>
+                  <label style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-main)", display: "block", marginBottom: "4px" }}>
+                    Select Cancellation Reason *
+                  </label>
+                  <select
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: "10px",
+                      border: "1px solid var(--card-border, #cbd5e1)",
+                      background: "var(--bg-main)",
+                      color: "var(--text-main)",
+                      fontSize: "13px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    <option value="Customer requested cancellation">Customer requested cancellation</option>
+                    <option value="Customer Not At Home / Door Locked">Customer Not At Home / Door Locked</option>
+                    <option value="Customer Refused to Sell Scrap">Customer Refused to Sell Scrap</option>
+                    <option value="Scrap Quantity / Material Not Available">Scrap Quantity / Material Not Available</option>
+                    <option value="Rate Disagreement / Price Dispute">Rate Disagreement / Price Dispute</option>
+                    <option value="Customer Wants Later Reschedule">Customer Wants Later Reschedule</option>
+                  </select>
+                </div>
+
+                {!cancelOtpSent ? (
+                  <button
+                    type="button"
+                    onClick={handleGenerateCancelOTP}
+                    disabled={cancelOtpLoading}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      borderRadius: "10px",
+                      background: "#e74c3c",
+                      color: "#fff",
+                      border: "none",
+                      fontWeight: "800",
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "8px"
+                    }}
+                  >
+                    {cancelOtpLoading ? <FaRecycle className="spin" /> : "📲 Send Cancellation OTP to Customer"}
+                  </button>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div style={{ background: "#fef2f2", border: "1px solid #fecaca", padding: "10px", borderRadius: "10px", fontSize: "12px", color: "#991b1b" }}>
+                      ✅ 6-Digit Cancellation OTP sent to Customer's WhatsApp/SMS! Enter it below:
+                    </div>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      placeholder="Enter 6-Digit Cancellation OTP"
+                      value={cancelOtp}
+                      onChange={(e) => setCancelOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        borderRadius: "10px",
+                        border: "2px solid #e74c3c",
+                        background: "var(--bg-main)",
+                        color: "var(--text-main)",
+                        fontSize: "16px",
+                        fontWeight: "800",
+                        textAlign: "center",
+                        letterSpacing: "4px",
+                        boxSizing: "border-box"
+                      }}
+                    />
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button
+                        type="button"
+                        onClick={handleConfirmCancellation}
+                        disabled={loadingId === selectedPickup._id || cancelOtp.length < 6}
+                        style={{
+                          flex: 2,
+                          padding: "12px",
+                          borderRadius: "10px",
+                          background: "#e74c3c",
+                          color: "#fff",
+                          border: "none",
+                          fontWeight: "800",
+                          fontSize: "13px",
+                          cursor: "pointer",
+                          opacity: cancelOtp.length < 6 ? 0.6 : 1
+                        }}
+                      >
+                        {loadingId === selectedPickup._id ? <FaRecycle className="spin" /> : "Verify OTP & Cancel Pickup"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleGenerateCancelOTP}
+                        disabled={cancelOtpLoading}
+                        style={{
+                          flex: 1,
+                          padding: "12px",
+                          borderRadius: "10px",
+                          background: "var(--bg-main)",
+                          color: "var(--text-main)",
+                          border: "1px solid var(--card-border)",
+                          fontWeight: "700",
+                          fontSize: "11px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        Resend OTP
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "20px" }}>
               {selectedPickup.status !== "Accepted" ? (
-                <>
+                <div style={{ display: "flex", gap: "10px" }}>
                   <button
                     style={acceptBtn}
                     onClick={() => handleAction(selectedPickup._id, "Accepted")}
@@ -3265,24 +3465,71 @@ function CollectorDashboard() {
                   >
                     Reject
                   </button>
-                </>
+                </div>
               ) : (
-                <button
-                  style={{
-                    ...completeBtn,
-                    opacity: !otpSent || otp.length < 4 ? 0.5 : 1,
-                  }}
-                  disabled={
-                    billItems.length === 0 || !otpSent || otp.length < 4
-                  }
-                  onClick={() => handleAction(selectedPickup._id, "Completed")}
-                >
-                  {loadingId ? (
-                    <FaRecycle className="spin" />
+                <>
+                  {!showCancelFlow ? (
+                    <>
+                      <button
+                        style={{
+                          ...completeBtn,
+                          opacity: !otpSent || otp.length < 4 ? 0.5 : 1,
+                        }}
+                        disabled={
+                          billItems.length === 0 || !otpSent || otp.length < 4
+                        }
+                        onClick={() => handleAction(selectedPickup._id, "Completed")}
+                      >
+                        {loadingId ? (
+                          <FaRecycle className="spin" />
+                        ) : (
+                          "Finalize & Mark Complete"
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowCancelFlow(true)}
+                        style={{
+                          background: "transparent",
+                          color: "#e74c3c",
+                          border: "1px dashed #e74c3c",
+                          padding: "10px",
+                          borderRadius: "12px",
+                          fontWeight: "700",
+                          fontSize: "12px",
+                          cursor: "pointer",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          gap: "6px"
+                        }}
+                      >
+                        ⚠️ Cancel / Abort Pickup (Requires Customer OTP)
+                      </button>
+                    </>
                   ) : (
-                    "Finalize & Mark Complete"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowCancelFlow(false);
+                        setCancelOtp("");
+                        setCancelOtpSent(false);
+                      }}
+                      style={{
+                        background: "var(--bg-main)",
+                        color: "var(--text-main)",
+                        border: "1px solid var(--card-border)",
+                        padding: "10px",
+                        borderRadius: "12px",
+                        fontWeight: "700",
+                        fontSize: "12px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      ← Back to Weighing & Billing
+                    </button>
                   )}
-                </button>
+                </>
               )}
             </div>
           </div>

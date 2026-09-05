@@ -588,12 +588,35 @@ const playBellSound = () => {
                             )}
                          </div>
                        )}
-                       {["Pending", "Accepted", "Assigned"].includes(pickups[0].status) && (
-                         <div style={progressBoxStyle}>
-                            <div style={progressBarStyle}>
-                               <div style={{...progressFillStyle, width: pickups[0].status === "Pending" ? "30%" : (pickups[0].status === "Accepted" ? "60%" : "90%")}} />
-                            </div>
-                            <small style={mutedTextStyle}>Collector will reach you soon.</small>
+                       {["Pending", "Accepted", "Assigned", "Scheduled", "OnTheWay", "On The Way"].includes(pickups[0].status) && (
+                         <div style={{ marginTop: "15px" }}>
+                           <div style={progressBoxStyle}>
+                              <div style={progressBarStyle}>
+                                 <div style={{...progressFillStyle, width: pickups[0].status === "Pending" ? "30%" : (pickups[0].status === "Accepted" ? "60%" : "90%")}} />
+                              </div>
+                              <small style={mutedTextStyle}>Collector will reach you soon.</small>
+                           </div>
+                           <button 
+                             style={{
+                               marginTop: "12px", 
+                               width: "100%", 
+                               background: "rgba(231, 76, 60, 0.08)", 
+                               color: "#e74c3c", 
+                               border: "1px solid rgba(231, 76, 60, 0.2)", 
+                               padding: "10px 14px", 
+                               borderRadius: "12px", 
+                               fontWeight: "bold", 
+                               cursor: "pointer", 
+                               display: "flex", 
+                               justifyContent: "center", 
+                               alignItems: "center", 
+                               gap: "8px",
+                               fontSize: "13px"
+                             }} 
+                             onClick={() => cancelPickup(pickups[0]._id)}
+                           >
+                              <FaTimes /> Cancel Pickup Booking
+                           </button>
                          </div>
                        )}
                     </div>
@@ -1048,8 +1071,8 @@ const playBellSound = () => {
                                {p.status === "Completed" && (
                                   <div style={{marginTop:"15px", textAlign:"right", color:"var(--primary)", fontWeight:"bold", fontSize:"16px"}}>₹{p.amount}</div>
                                )}
-                               {p.status === "Pending" && (
-                                  <button style={{marginTop:"15px", width:"100%", background:"#fff0f0", color:"#e74c3c", border:"none", padding:"10px", borderRadius:"12px", fontWeight:"bold", cursor:"pointer", display:"flex", justifyContent:"center", alignItems:"center", gap:"10px"}} onClick={() => cancelPickup(p._id)}>
+                               {["Pending", "Accepted", "Assigned", "Scheduled", "OnTheWay", "On The Way"].includes(p.status) && (
+                                  <button style={{marginTop:"15px", width:"100%", background:"rgba(231, 76, 60, 0.08)", color:"#e74c3c", border:"1px solid rgba(231, 76, 60, 0.2)", padding:"10px", borderRadius:"12px", fontWeight:"bold", cursor:"pointer", display:"flex", justifyContent:"center", alignItems:"center", gap:"10px", fontSize: "13px"}} onClick={() => cancelPickup(p._id)}>
                                      <FaTimes /> Cancel Booking
                                   </button>
                                )}

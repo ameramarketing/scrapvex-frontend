@@ -25,6 +25,7 @@ function PickupForm() {
   const [voteAreaName, setVoteAreaName] = useState("");
   const [voteMobile, setVoteMobile] = useState("");
   const [voteLoading, setVoteLoading] = useState(false);
+  const [demandVotes, setDemandVotes] = useState([]);
 
   const [form, setForm] = useState({
     name: "", phone: "", otp: "", address: "", city: "", pincode: "",
@@ -33,6 +34,13 @@ function PickupForm() {
 
   const showToast = (type, message) => setToast({ show: true, type, message });
   const update = (key, value) => setForm(prev => ({ ...prev, [key]: value }));
+
+  const fetchDemandVotes = async () => {
+    try {
+      const { data } = await API.get("/pickups/area-votes");
+      if (data.success) setDemandVotes(data.summary || []);
+    } catch (e) {}
+  };
 
   const handleVoteSubmit = async (e) => {
     e?.preventDefault();
@@ -44,8 +52,8 @@ function PickupForm() {
         mobile: voteMobile || form.phone || ""
       });
       if (data.success) {
-        showToast("success", `Vote recorded for ${voteAreaName}! We will notify you once active! 🚀`);
-        setShowVoteModal(false);
+        showToast("success", `Vote recorded for ${data.area || voteAreaName}! Total votes: ${data.votesCount || 1} 🚀`);
+        fetchDemandVotes();
         setVoteAreaName("");
       }
     } catch (err) {
@@ -68,6 +76,7 @@ function PickupForm() {
     API.get("/scrap-items/cities").then(({ data }) => {
       if (data.success) setActiveCities(data.cities || []);
     });
+    fetchDemandVotes();
   }, []);
 
   useEffect(() => {
@@ -827,6 +836,34 @@ function PickupForm() {
                 </button>
               </div>
             </form>
+
+            {demandVotes.length > 0 && (
+              <div style={{ marginTop: "16px", paddingTop: "14px", borderTop: "1px solid var(--card-border, #e2e8f0)" }}>
+                <div style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", textTransform: "uppercase", marginBottom: "8px" }}>
+                  🔥 Top Demanded Expansion Areas:
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                  {demandVotes.slice(0, 6).map((dv) => (
+                    <span 
+                      key={dv.area} 
+                      onClick={() => setVoteAreaName(dv.area)}
+                      style={{ 
+                        background: "var(--bg-main, #f1f5f9)", 
+                        border: "1px solid var(--card-border, #cbd5e1)", 
+                        padding: "4px 10px", 
+                        borderRadius: "14px", 
+                        fontSize: "12px", 
+                        fontWeight: "700", 
+                        color: "var(--text-main, #334155)",
+                        cursor: "pointer"
+                      }}
+                    >
+                      📍 {dv.area}: <strong style={{ color: "var(--primary, #0b8f3a)" }}>{dv.count} {dv.count === 1 ? 'Vote' : 'Votes'}</strong>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

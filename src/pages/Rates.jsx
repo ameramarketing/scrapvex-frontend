@@ -107,6 +107,7 @@ function Rates() {
   const [voteMobile, setVoteMobile] = useState("");
   const [voteLoading, setVoteLoading] = useState(false);
   const [voteSuccessMsg, setVoteSuccessMsg] = useState("");
+  const [demandVotes, setDemandVotes] = useState([]);
 
   const [trendItem, setTrendItem] = useState(null);
   const [trendHistory, setTrendHistory] = useState([]);
@@ -116,7 +117,15 @@ function Rates() {
     document.title = "Scrap Rates Today | ScrapVex Online Kabadiwala Rajouri J&K";
     fetchActiveCities();
     fetchRates();
+    fetchDemandVotes();
   }, []);
+
+  const fetchDemandVotes = async () => {
+    try {
+      const { data } = await API.get("/pickups/area-votes");
+      if (data.success) setDemandVotes(data.summary || []);
+    } catch (e) {}
+  };
 
   useEffect(() => {
     if (selectedCity) fetchRates();
@@ -159,12 +168,13 @@ function Rates() {
         mobile: voteMobile || ""
       });
       if (data.success) {
-        setVoteSuccessMsg(`Vote recorded for ${voteAreaName}! We will notify you once active! 🚀`);
+        setVoteSuccessMsg(`Vote recorded for ${data.area || voteAreaName}! Total votes: ${data.votesCount || 1} 🚀`);
+        fetchDemandVotes();
         setTimeout(() => {
           setShowVoteModal(false);
           setVoteSuccessMsg("");
           setVoteAreaName("");
-        }, 2000);
+        }, 2500);
       }
     } catch (err) {
       alert(err.response?.data?.message || "Failed to record vote");
@@ -947,6 +957,34 @@ function Rates() {
                     </button>
                   </div>
                 </form>
+              )}
+
+              {demandVotes.length > 0 && (
+                <div style={{ marginTop: "16px", paddingTop: "14px", borderTop: "1px solid var(--card-border, #e2e8f0)" }}>
+                  <div style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted, #64748b)", textTransform: "uppercase", marginBottom: "8px" }}>
+                    🔥 Top Demanded Expansion Areas:
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {demandVotes.slice(0, 6).map((dv) => (
+                      <span 
+                        key={dv.area} 
+                        onClick={() => setVoteAreaName(dv.area)}
+                        style={{ 
+                          background: "var(--bg-main, #f1f5f9)", 
+                          border: "1px solid var(--card-border, #cbd5e1)", 
+                          padding: "4px 10px", 
+                          borderRadius: "14px", 
+                          fontSize: "12px", 
+                          fontWeight: "700", 
+                          color: "var(--text-main, #334155)",
+                          cursor: "pointer"
+                        }}
+                      >
+                        📍 {dv.area}: <strong style={{ color: "var(--primary, #0b8f3a)" }}>{dv.count} {dv.count === 1 ? 'Vote' : 'Votes'}</strong>
+                      </span>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>

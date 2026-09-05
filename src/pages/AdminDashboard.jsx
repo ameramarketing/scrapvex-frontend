@@ -2122,9 +2122,8 @@ const playBellSound = () => {
                       <Input value={settings.grievanceOfficerAddress || ""} onChange={v => setSettings({...settings, grievanceOfficerAddress: v})} placeholder="Main Market, Rajouri, Jammu & Kashmir - 185131" />
                    </div>
                  </div>
-                 <div style={{ display: "flex", gap: "15px", marginTop: "20px" }}>
-                   <button style={{ ...saveBtnBig, flex: 2 }} onClick={handleUpdateSettings}>Save All Configurations</button>
-                   <button style={{ ...saveBtnBig, flex: 1, background: "#dc2626" }} onClick={handleCleanTestData}>🧹 Clean Test Data (Keep Franchise)</button>
+                 <div style={{ display: "flex", marginTop: "20px" }}>
+                   <button style={{ ...saveBtnBig, width: "100%" }} onClick={handleUpdateSettings}>Save All Configurations</button>
                  </div>
               </div>
           )}

@@ -291,7 +291,7 @@ function MyPickups() {
                       </div>
 
                       {/* Cancel Booking Action */}
-                      {item.status === "Pending" && (
+                      {["Pending", "Accepted", "Assigned", "Scheduled", "OnTheWay", "On The Way"].includes(item.status) && (
                         <button style={mobileCancelBtn} onClick={() => cancelPickup(item._id)}>
                           <FaTrashAlt /> Cancel Request
                         </button>
@@ -550,7 +550,7 @@ function MyPickups() {
                     </>
                   )}
 
-                  {item.status === "Pending" && (
+                  {["Pending", "Accepted", "Assigned", "Scheduled", "OnTheWay", "On The Way"].includes(item.status) && (
                     <button style={cancelBtn} onClick={() => cancelPickup(item._id)}><FaTrashAlt /> Cancel Booking</button>
                   )}
                 </div>
