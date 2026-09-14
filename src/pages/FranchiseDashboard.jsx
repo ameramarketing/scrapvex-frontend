@@ -164,6 +164,7 @@ const playBellSound = () => {
   const emptyDraft = (id) => ({ id: id || Date.now(), supplierId: "", supplierName: "", supplierContact: "", notes: "", items: [], paymentStatus: "Paid", paymentMethod: "Cash", pickupId: null });
   const [purchaseDrafts, setPurchaseDrafts] = useState([emptyDraft(1)]);
   const [activeDraftId, setActiveDraftId] = useState(1);
+  const [isPurchaseSubmitting, setIsPurchaseSubmitting] = useState(false);
   // Purchase Bill Modal
   const [showPurchaseBillModal, setShowPurchaseBillModal] = useState(false);
   const [selectedPurchaseBill, setSelectedPurchaseBill] = useState(null);
@@ -1161,6 +1162,10 @@ const playBellSound = () => {
   const handleCreatePurchase = async () => {
     const draft = getActiveDraft();
     if (!draft.supplierName || draft.items.length === 0) return showToast("error", "Supplier aur kam se kam ek item add karein");
+
+    // Double-click guard: agar already submit ho raha hai toh kuch mat karo
+    if (isPurchaseSubmitting) return;
+
     const totalAmount = draft.items.reduce((acc, item) => acc + item.amount, 0);
 
     // Wallet Balance Check for App Payments
@@ -1172,12 +1177,28 @@ const playBellSound = () => {
        }
     }
 
+    setIsPurchaseSubmitting(true);
     try {
-      const { data } = await API.post("/billing/purchases", { ...draft, totalAmount });
-      if (data.success) {
-        showToast("success", `✅ ${draft.supplierName} ka purchase complete!`);
-        // Save for print bill
-        setLastCreatedPurchase(data.purchase);
+      let data;
+      // Agar draft me _id hai matlab yeh edit hai — PUT call karo
+      if (draft._id) {
+        const res = await API.put(`/billing/purchases/${draft._id}`, { ...draft, totalAmount });
+        data = res.data;
+        if (data.success) {
+          showToast("success", `✅ ${draft.supplierName} ka purchase update ho gaya!`);
+          setLastCreatedPurchase(data.purchase);
+        }
+      } else {
+        // Naya purchase create karo — POST call
+        const res = await API.post("/billing/purchases", { ...draft, totalAmount });
+        data = res.data;
+        if (data.success) {
+          showToast("success", `✅ ${draft.supplierName} ka purchase complete!`);
+          setLastCreatedPurchase(data.purchase);
+        }
+      }
+
+      if (data?.success) {
         // Remove completed draft
         removeDraft(activeDraftId);
         // If no more drafts, close modal
@@ -1190,6 +1211,8 @@ const playBellSound = () => {
       }
     } catch (e) {
       showToast("error", e.response?.data?.message || "Purchase record karne mein error");
+    } finally {
+      setIsPurchaseSubmitting(false);
     }
   };
 
@@ -3743,8 +3766,17 @@ const playBellSound = () => {
 
           </div>
 
-          <button style={{ ...saveBtnBig, marginTop: "15px", background: "linear-gradient(135deg,#0b8f3a,#16a34a)" , color: "#fff"}} onClick={handleCreatePurchase}>
-            ✅ Complete — {getActiveDraft()?.supplierName || "This Draft"}
+          <button
+            style={{ ...saveBtnBig, marginTop: "15px", background: isPurchaseSubmitting ? "#9ca3af" : "linear-gradient(135deg,#0b8f3a,#16a34a)", color: "#fff", cursor: isPurchaseSubmitting ? "not-allowed" : "pointer", opacity: isPurchaseSubmitting ? 0.7 : 1 }}
+            onClick={handleCreatePurchase}
+            disabled={isPurchaseSubmitting}
+          >
+            {isPurchaseSubmitting
+              ? "⏳ Saving..."
+              : getActiveDraft()?._id
+                ? `✏️ Update — ${getActiveDraft()?.supplierName || "This Draft"}`
+                : `✅ Complete — ${getActiveDraft()?.supplierName || "This Draft"}`
+            }
           </button>
         </Modal>
       )}
