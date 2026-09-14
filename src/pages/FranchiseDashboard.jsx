@@ -1923,7 +1923,9 @@ const playBellSound = () => {
                 {/* Recent Pickups */}
                 <div className="card-premium" style={{ flex: 2 }}>
                   <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Pickup Requests</h3>
-                  {filteredPickups.slice(0, 5).map(p => (
+                  {filteredPickups.slice(0, 5).map(p => {
+                    const totalAmt = p.amount > 0 ? p.amount : (p.items && p.items.length > 0 ? p.items.reduce((s, it) => s + ((it.quantity || 0) * (it.rate || 0)), 0) : 0);
+                    return (
                     <div key={p._id} style={{
                       background: "var(--bg-subtle)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)",
                       padding: "16px 18px", marginBottom: "10px", display: "flex", justifyContent: "space-between", alignItems: "center"
@@ -1931,10 +1933,14 @@ const playBellSound = () => {
                       <div>
                         <div style={{ fontWeight: "700", fontSize: "14px", color: "var(--text-main)" }}>{p.name} <span style={{ color: "var(--text-muted)", fontSize: "12px", fontWeight: "normal" }}>({p.scrapType})</span></div>
                         <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>📍 {p.address}</div>
+                        {totalAmt > 0 && (
+                          <div style={{ fontSize: "13px", fontWeight: "800", color: "var(--success)", marginTop: "4px" }}>💰 ₹{totalAmt.toFixed(0)}</div>
+                        )}
                       </div>
                       <span className={`badge-status badge-${p.status.toLowerCase()}`}>{p.status}</span>
                     </div>
-                  ))}
+                    );
+                  })}
                   {pickups.length === 0 && (
                     <div className="empty-state">
                       <div className="empty-state-icon">🚚</div>
@@ -1982,9 +1988,43 @@ const playBellSound = () => {
                       <div style={{ fontSize: "13px", color: "var(--text-muted)", marginTop: "8px", background: "var(--bg-subtle)", padding: "8px", borderRadius: "8px" }}>
                         📍 {p.address}
                       </div>
-                      <div style={{ fontSize: "13px", fontWeight: "bold", color: "var(--text-main)", marginTop: "12px" }}>
-                        Scrap Type: {p.scrapType}
+                      <div style={{ fontSize: "13px", fontWeight: "bold", color: "var(--text-main)", marginTop: "10px" }}>
+                        🗂️ Scrap Type: {p.scrapType}
                       </div>
+
+                      {/* Total Amount — priority: p.amount > items calculated */}
+                      {(() => {
+                        const totalAmt = p.amount > 0
+                          ? p.amount
+                          : (p.items && p.items.length > 0
+                              ? p.items.reduce((s, it) => s + ((it.quantity || 0) * (it.rate || 0)), 0)
+                              : 0);
+                        return totalAmt > 0 ? (
+                          <div style={{ marginTop: "10px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "8px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span style={{ fontSize: "12px", color: "#15803d", fontWeight: "700" }}>💰 Total Amount</span>
+                            <span style={{ fontSize: "16px", fontWeight: "900", color: "#15803d" }}>₹{totalAmt.toFixed(0)}</span>
+                          </div>
+                        ) : null;
+                      })()}
+
+                      {/* Weight if available */}
+                      {p.weight > 0 && (
+                        <div style={{ marginTop: "6px", fontSize: "12px", color: "var(--text-muted)" }}>
+                          ⚖️ Weight: <strong>{p.weight} kg</strong>
+                        </div>
+                      )}
+
+                      {/* Items breakdown */}
+                      {p.items && p.items.length > 0 && (
+                        <div style={{ marginTop: "8px", fontSize: "12px", color: "var(--text-muted)" }}>
+                          📦 {p.items.length} item{p.items.length > 1 ? "s" : ""}:{" "}
+                          {p.items.map((it, i) => (
+                            <span key={i} style={{ marginRight: "6px" }}>
+                              {it.name || it.scrapType || "Item"}{it.quantity ? ` (${it.quantity}kg)` : ""}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     
                     <div style={{ marginTop: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
