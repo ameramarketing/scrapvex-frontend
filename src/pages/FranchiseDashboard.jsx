@@ -1924,7 +1924,7 @@ const playBellSound = () => {
                 <div className="card-premium" style={{ flex: 2 }}>
                   <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Pickup Requests</h3>
                   {filteredPickups.slice(0, 5).map(p => {
-                    const totalAmt = p.amount > 0 ? p.amount : (p.items && p.items.length > 0 ? p.items.reduce((s, it) => s + ((it.quantity || 0) * (it.rate || 0)), 0) : 0);
+                    const totalAmt = p.amount > 0 ? p.amount : (p.items && p.items.length > 0 ? p.items.reduce((s, it) => s + (it.subtotal || (it.quantity || 0) * (it.price || it.rate || 0)), 0) : 0);
                     return (
                     <div key={p._id} style={{
                       background: "var(--bg-subtle)", border: "1px solid var(--card-border)", borderRadius: "var(--radius-lg)",
@@ -1997,12 +1997,15 @@ const playBellSound = () => {
                         const totalAmt = p.amount > 0
                           ? p.amount
                           : (p.items && p.items.length > 0
-                              ? p.items.reduce((s, it) => s + ((it.quantity || 0) * (it.rate || 0)), 0)
+                              ? p.items.reduce((s, it) => s + (it.subtotal || (it.quantity || 0) * (it.price || it.rate || 0)), 0)
                               : 0);
+                        const isEstimated = p.status !== "Completed";
                         return totalAmt > 0 ? (
-                          <div style={{ marginTop: "10px", background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: "8px", padding: "8px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ fontSize: "12px", color: "#15803d", fontWeight: "700" }}>💰 Total Amount</span>
-                            <span style={{ fontSize: "16px", fontWeight: "900", color: "#15803d" }}>₹{totalAmt.toFixed(0)}</span>
+                          <div style={{ marginTop: "10px", background: isEstimated ? "#fefce8" : "#f0fdf4", border: `1px solid ${isEstimated ? "#fde68a" : "#bbf7d0"}`, borderRadius: "8px", padding: "8px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span style={{ fontSize: "12px", color: isEstimated ? "#92400e" : "#15803d", fontWeight: "700" }}>
+                              {isEstimated ? "📊 Estimated Amount" : "💰 Final Amount"}
+                            </span>
+                            <span style={{ fontSize: "16px", fontWeight: "900", color: isEstimated ? "#b45309" : "#15803d" }}>₹{totalAmt.toFixed(0)}</span>
                           </div>
                         ) : null;
                       })()}
@@ -2016,12 +2019,15 @@ const playBellSound = () => {
 
                       {/* Items breakdown */}
                       {p.items && p.items.length > 0 && (
-                        <div style={{ marginTop: "8px", fontSize: "12px", color: "var(--text-muted)" }}>
-                          📦 {p.items.length} item{p.items.length > 1 ? "s" : ""}:{" "}
+                        <div style={{ marginTop: "8px", background: "var(--bg-subtle)", borderRadius: "8px", padding: "8px 10px" }}>
+                          <div style={{ fontSize: "11px", fontWeight: "800", color: "var(--text-muted)", marginBottom: "6px" }}>📦 ITEMS ({p.items.length})</div>
                           {p.items.map((it, i) => (
-                            <span key={i} style={{ marginRight: "6px" }}>
-                              {it.name || it.scrapType || "Item"}{it.quantity ? ` (${it.quantity}kg)` : ""}
-                            </span>
+                            <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--text-main)", marginBottom: "3px" }}>
+                              <span>{it.name || it.scrapType || "Item"} × {it.quantity || "?"} {it.unit || "kg"}</span>
+                              <span style={{ fontWeight: "700", color: "var(--primary)" }}>
+                                {it.subtotal ? `₹${it.subtotal}` : (it.price || it.rate) ? `@ ₹${it.price || it.rate}/${it.unit || "kg"}` : ""}
+                              </span>
+                            </div>
                           ))}
                         </div>
                       )}
