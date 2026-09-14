@@ -26,6 +26,8 @@ function PickupForm() {
   const [voteMobile, setVoteMobile] = useState("");
   const [voteLoading, setVoteLoading] = useState(false);
   const [demandVotes, setDemandVotes] = useState([]);
+  const [lastBookingTotal, setLastBookingTotal] = useState(0);
+  const [lastBookingItems, setLastBookingItems] = useState([]);
 
   const [form, setForm] = useState({
     name: "", phone: "", otp: "", address: "", city: "", pincode: "",
@@ -259,6 +261,13 @@ function PickupForm() {
           });
         }
         
+        setLastBookingTotal(total);
+        setLastBookingItems(Object.entries(form.selectedItems).map(([name, qty]) => ({
+          name, quantity: qty,
+          unit: items.find(it => it.name === name)?.unit || "kg",
+          price: items.find(it => it.name === name)?.price || 0,
+          subtotal: (items.find(it => it.name === name)?.price || 0) * qty
+        })));
         setStep(5);
       }
     } catch (e) {
@@ -711,11 +720,42 @@ function PickupForm() {
         )}
 
         {step === 5 && (
-          <div style={{ textAlign: "center", padding: "30px 10px" }}>
+          <div style={{ textAlign: "center", padding: "24px 10px" }}>
             <FaCheckCircle size={55} color="#0b8f3a" />
-            <h2 style={{ margin: "16px 0 8px 0", fontSize: "18px", fontWeight: "800", color: "#0f172a" }}>Booking Confirmed!</h2>
-            <p style={{ color: "#64748b", fontSize: "12px", margin: 0, lineHeight: "1.5" }}>Our verified collector will arrive as per your slot. Track request status in your dashboard.</p>
-            <button className="btn-premium" style={{ marginTop: "24px", height: "44px", width: "100%", maxWidth: "200px", border: "none" }} onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
+            <h2 style={{ margin: "16px 0 4px 0", fontSize: "18px", fontWeight: "800", color: "#0f172a" }}>Booking Confirmed! 🎉</h2>
+            <p style={{ color: "#64748b", fontSize: "12px", margin: "0 0 16px 0", lineHeight: "1.5" }}>
+              Our verified collector will arrive as per your slot.
+            </p>
+
+            {/* ESTIMATED EARNINGS SUMMARY */}
+            {lastBookingTotal > 0 && (
+              <div style={{
+                background: "#f0fdf4", border: "1.5px solid #bbf7d0", borderRadius: "14px",
+                padding: "16px", marginBottom: "16px", textAlign: "left"
+              }}>
+                <div style={{ fontSize: "11px", fontWeight: "800", color: "#15803d", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px" }}>
+                  💰 Aapki Estimated Earnings
+                </div>
+                {lastBookingItems.map((it, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#334155", marginBottom: "6px" }}>
+                    <span>{it.name} × {it.quantity} {it.unit} @ ₹{it.price}/{it.unit}</span>
+                    <strong style={{ color: "#0b8f3a" }}>₹{it.subtotal}</strong>
+                  </div>
+                ))}
+                <div style={{ height: "1px", background: "#bbf7d0", margin: "10px 0" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "900", fontSize: "15px", color: "#0f172a" }}>
+                  <span>Estimated Total</span>
+                  <span style={{ color: "#15803d" }}>₹{lastBookingTotal.toFixed(0)}</span>
+                </div>
+                <div style={{ fontSize: "10px", color: "#64748b", marginTop: "6px" }}>
+                  * Yeh estimated amount hai. Final amount collector ke digital scale se weighing ke baad confirm hoga.
+                </div>
+              </div>
+            )}
+
+            <button className="btn-premium" style={{ height: "44px", width: "100%", maxWidth: "240px", border: "none" }} onClick={() => navigate("/dashboard")}>
+              Go to Dashboard
+            </button>
           </div>
         )}
       </div>
