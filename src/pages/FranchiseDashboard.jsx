@@ -238,6 +238,21 @@ const playBellSound = () => {
     }
   };
 
+  const handleDeletePurchase = async (purchaseId, supplierName) => {
+    if (!window.confirm(`Kya aap "${supplierName || "is purchase"}" ki purchase record delete karna chahte hain?\n\nYeh purchase inventory se bhi reverse ho jayega.`)) {
+      return;
+    }
+    try {
+      const res = await API.delete(`/billing/purchases/${purchaseId}`);
+      if (res.data?.success) {
+        showToast("success", `Purchase record deleted & inventory reversed!`);
+        fetchAccountingData();
+      }
+    } catch (e) {
+      showToast("error", e.response?.data?.message || "Purchase delete karne mein error");
+    }
+  };
+
   const handleExportGSTR1CSV = () => {
     const monthSales = sales.filter(s => {
       if (!s.createdAt) return false;
@@ -2337,7 +2352,7 @@ const playBellSound = () => {
                   <h3 style={{ fontSize: "16px", fontWeight: "800", color: "var(--text-main)", marginBottom: "16px" }}>Recent Purchases</h3>
                   <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     {filteredPurchases.map(p => (
-                      <div key={p._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", border: "1px solid var(--card-border)", cursor: "pointer" }} onClick={() => openPurchaseBillModal(p)}>
+                      <div key={p._id} style={{ background: "var(--bg-subtle)", borderRadius: "var(--radius-lg)", padding: "16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px", border: "1px solid var(--card-border)", cursor: "pointer" }} onClick={() => openPurchaseBillModal(p)}>
                         <div>
                           <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{p.supplierName} <span style={{ color: "var(--text-muted)", fontSize: "12px", fontWeight: "normal" }}>({p.supplierContact})</span></div>
                           <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "4px" }}>Items: {p.items.length} • {new Date(p.createdAt).toLocaleDateString()}</div>
@@ -2346,6 +2361,11 @@ const playBellSound = () => {
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
                           <span className={`badge-status badge-${p.paymentStatus === "Paid" ? 'completed' : 'pending'}`}>{p.paymentStatus}</span>
                           <div style={{ fontWeight: "800", color: "var(--danger)" }}>-₹{p.totalAmount}</div>
+                          <button
+                            className="btn-secondary"
+                            style={{ fontSize: "11px", padding: "5px 10px", height: "auto", background: "#fee2e2", color: "#ef4444", borderColor: "#fca5a5", display: "flex", alignItems: "center", gap: "4px" }}
+                            onClick={(e) => { e.stopPropagation(); handleDeletePurchase(p._id, p.supplierName); }}
+                          >🗑️ Delete</button>
                         </div>
                       </div>
                     ))}
